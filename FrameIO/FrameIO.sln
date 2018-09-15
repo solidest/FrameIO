@@ -11,6 +11,8 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "FrameIOHelper", "..\FrameIO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIODriver", "..\FrameIODriver\FrameIODriver.csproj", "{2692F73E-6A74-45C1-B668-BA2A502748F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIOCodeTemplate", "..\FrameIOCodeTemplate\FrameIOCodeTemplate.csproj", "{29A111F1-28C8-420D-B366-A9FA93BFC365}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{2692F73E-6A74-45C1-B668-BA2A502748F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2692F73E-6A74-45C1-B668-BA2A502748F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2692F73E-6A74-45C1-B668-BA2A502748F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
