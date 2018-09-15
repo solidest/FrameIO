@@ -9,6 +9,10 @@ namespace PROJECT1.Frame
 {
     public class FRAME1 : FrameBase, IFramePack
     {
+
+        public ushort SEGMENTA { get; set; }
+        public byte[] SEGMENTB { get; set; } = new byte[4];
+        public double SEGMENTC { get; set; }
         public int FrameCount => throw new NotImplementedException();
 
         public byte[] GetAllPack()

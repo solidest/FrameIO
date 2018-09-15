@@ -6,7 +6,7 @@ namespace FrameIO.Interface
 {
 
     /// <summary>
-    /// 帧式数据流接口
+    /// 帧式数据流接口，用于封装硬件驱动调用的接口
     /// </summary>
     public interface IFrameStream
     {
@@ -23,7 +23,7 @@ namespace FrameIO.Interface
         void Close();
 
         /// <summary>
-        /// 清空通道缓存，复位数据帧流
+        /// 清空通道缓存，复位读写缓冲区
         /// </summary>
         void ClearChannel();
     }

@@ -12,7 +12,7 @@ namespace FrameIO.Interface
     public delegate void AsyncWriteCallback(int completedCount, object AsyncState);
 
     /// <summary>
-    /// 在流上写入数据帧的接口
+    /// 在流上执行写入数据帧操作的接口
     /// </summary>
     public interface IFrameWriter
     {
@@ -27,7 +27,7 @@ namespace FrameIO.Interface
         /// 在帧式流上异步写入数据帧
         /// </summary>
         /// <param name="p">数据帧打包接口</param>
-        /// <param name="callback">写入完成后的回调函数</param>
+        /// <param name="callback">写入操作完成后的回调函数</param>
         /// <param name="AsyncState">一个用户提供的对象，它将该特定的异步读取请求与其他请求区别开来</param>
         void BeginWriteFrame(IFramePack p, AsyncWriteCallback callback, object AsyncState);
     }
