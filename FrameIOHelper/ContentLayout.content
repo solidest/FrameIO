@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+  <Topic id="aa0d97d2-1cc8-4695-b243-a1b700a404a8" visible="True" isDefault="true" title="欢迎阅读 FrameIO 开发手册">
+    <HelpKeywords>
+      <HelpKeyword index="K" term="Welcome" />
+    </HelpKeywords>
+  </Topic>
+  <Topic id="f18f1f74-078f-4476-a51e-2f905852c5f5" visible="False" isExpanded="true" title="Version History">
+    <HelpKeywords>
+      <HelpKeyword index="K" term="version, history" />
+    </HelpKeywords>
+    <Topic id="ca6b8e7e-eae7-45bc-8979-8ecfcd3a7c5e" visible="True" isSelected="true" title="Version 3.5">
+      <HelpKeywords>
+        <HelpKeyword index="K" term="version, 1.0.0.0" />
+      </HelpKeywords>
+    </Topic>
+  </Topic>
+</Topics>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ca6b8e7e-eae7-45bc-8979-8ecfcd3a7c5e" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+			<para> FrameIO 3.5 发布日期2018-10-15
+      </para>
+		</introduction>
+
+    <section>
+      <title>本次版本发布主要内容</title>
+      <content>
+
+        <list class="bullet">
+          <listItem>
+            <para>代号“绵羊”项目专用版本发布</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+		<relatedTopics>
+			<link xlink:href="f18f1f74-078f-4476-a51e-2f905852c5f5" />
+		</relatedTopics>
+
+	</developerConceptualDocument>
+</topic>

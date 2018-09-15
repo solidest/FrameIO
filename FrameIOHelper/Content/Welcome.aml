@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="aa0d97d2-1cc8-4695-b243-a1b700a404a8" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>欢迎阅读 FrameIO 开发手册</para>
+    </introduction>
+
+    <section>
+      <title>预期读者</title>
+      <content>
+        <para>本手册的预期阅读对象包括：</para>
+
+        <list class="bullet">
+          <listItem>
+            <para>FrameIO库开发人员</para>
+          </listItem>
+
+          <listItem>
+            <para>为FrameIO库提供扩展功能的开发人员</para>
+          </listItem>
+
+          <listItem>
+            <para>希望了解FrameIO内部实现的人员</para>
+          </listItem>
+
+        </list>
+
+        <para> FrameIO 是专用于嵌入式系统开发与测试的底层通信类库，采用开放式可扩展框架</para>
+        <para> FrameIO Interface 是开发 FrameIO 扩展功能模块时使用的接口</para>
+      </content>
+    </section>
+
+		<relatedTopics>
+			<link xlink:href="f18f1f74-078f-4476-a51e-2f905852c5f5" />
+		</relatedTopics>
+	</developerConceptualDocument>
+</topic>
