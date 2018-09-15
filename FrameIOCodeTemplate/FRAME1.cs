@@ -7,31 +7,9 @@ using FrameIO.Interface;
 
 namespace PROJECT1.Frame
 {
-    public class FRAME1 : FrameBase, IFramePack, IFrameUnpack
+    public class FRAME1 : FrameBase, IFramePack
     {
-        public ushort SEGMENTA { get; set; }
-        public byte[] SEGMENTB { get; set; } = new byte[4];
-        public double SEGMENTC { get; set; }
-        public byte[] Pack()
-        {
-            return null;
-        }
-        public FRAME1 Unpack()
-        {
-            throw new NotImplementedException();
-        }
-
-
         public int FrameCount => throw new NotImplementedException();
-
-        public int FirstBlockSize => throw new NotImplementedException();
-
-        public int BlockCount => throw new NotImplementedException();
-
-        public int AppendBlock(byte[] buffer)
-        {
-            throw new NotImplementedException();
-        }
 
         public byte[] GetAllPack()
         {
@@ -39,16 +17,6 @@ namespace PROJECT1.Frame
         }
 
         public byte[] NextPack()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
-
-        FrameBase IFrameUnpack.Unpack()
         {
             throw new NotImplementedException();
         }
