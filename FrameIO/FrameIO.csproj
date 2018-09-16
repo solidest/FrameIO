@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{06B3609F-E8C7-465E-B6D1-5F27616BA4E6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>FrameIO</RootNamespace>
+    <RootNamespace>FrameIO.Main</RootNamespace>
     <AssemblyName>FrameIO</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -14,9 +14,24 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>3.5.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,9 +53,15 @@
   <PropertyGroup>
     <ApplicationIcon>frameio.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>FrameIO.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>libs\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TreeView">
+      <HintPath>libs\ICSharpCode.TreeView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -55,6 +77,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Wpf.TabControl">
+      <HintPath>libs\Wpf.TabControl.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -64,28 +89,23 @@
     <Compile Include="Dlg\AboutDlg.xaml.cs">
       <DependentUpon>AboutDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TabControl\Converters.cs" />
-    <Compile Include="TabControl\Helper.cs" />
-    <Compile Include="TabControl\TabControl.cs" />
-    <Compile Include="TabControl\TabEventArgs.cs" />
-    <Compile Include="TabControl\TabItem.cs" />
-    <Compile Include="TabControl\TabPanel.cs" />
-    <Compile Include="TreeViewControl\Converters.cs" />
-    <Compile Include="TreeViewControl\EditTextBox.cs" />
-    <Compile Include="TreeViewControl\ExtensionMethods.cs" />
-    <Compile Include="TreeViewControl\FlatListTreeNode.cs" />
-    <Compile Include="TreeViewControl\GeneralAdorner.cs" />
-    <Compile Include="TreeViewControl\InsertMarker.cs" />
-    <Compile Include="TreeViewControl\LinesRenderer.cs" />
-    <Compile Include="TreeViewControl\SharpGridView.cs" />
-    <Compile Include="TreeViewControl\SharpTreeNode.cs" />
-    <Compile Include="TreeViewControl\SharpTreeNodeCollection.cs" />
-    <Compile Include="TreeViewControl\SharpTreeNodeView.cs" />
-    <Compile Include="TreeViewControl\SharpTreeView.cs" />
-    <Compile Include="TreeViewControl\SharpTreeViewItem.cs" />
-    <Compile Include="TreeViewControl\TreeFlattener.cs" />
-    <Compile Include="TreeViewControl\TreeTraversal.cs" />
+    <Compile Include="Dlg\InputDlg.xaml.cs">
+      <DependentUpon>InputDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TreeNode\FrameListNode.cs" />
+    <Compile Include="Model\Frame.cs" />
+    <Compile Include="Model\IOProject.cs" />
+    <Compile Include="Model\SubSys.cs" />
+    <Compile Include="TreeNode\FrameNode.cs" />
+    <Compile Include="TreeNode\ProjectNode.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="TreeNode\SubsysListNode.cs" />
+    <Compile Include="TreeNode\SubsysNode.cs" />
     <Page Include="Dlg\AboutDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dlg\InputDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,6 +175,45 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="img\frame.png" />
+    <EmbeddedResource Include="img\project.png" />
+    <EmbeddedResource Include="img\subsys.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="img\folder.png" />
+    <EmbeddedResource Include="img\openfolder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.2 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\del.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\frame1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\subsys1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\rename.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\expand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\input.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

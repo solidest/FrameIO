@@ -4,13 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FrameIO.Main"
-        xmlns:sd="clr-namespace:ICSharpCode.TreeView"
-        xmlns:r="clr-namespace:Wpf.Controls"
+        xmlns:r="clr-namespace:Wpf.Controls;assembly=Wpf.TabControl"
+        xmlns:tree="http://icsharpcode.net/sharpdevelop/treeview"
         xmlns:ed ="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Loaded="MainFormLoaded"
         Title="FrameIO" Height="450" Width="800"
-        Icon="img\frameio.ico" WindowState="Maximized">
+        Icon="img\frameio.ico" WindowState="Maximized"
+        Closing="OnBeforeClose">
 
     <Window.Resources>
         <Style TargetType="Image">
@@ -57,8 +58,7 @@
                 </Button.Content>
             </Button>
             <Separator/>
-
-            <Button ToolTip="切换视图"  Click="SwitchView">
+            <Button ToolTip="切换编辑视图"  Click="SwitchView">
                 <Button.Content>
                     <Image Source="img/leftdisp.png"></Image>
                 </Button.Content>
@@ -68,28 +68,55 @@
                     <Image Source="img/bottomdisp.png"></Image>
                 </Button.Content>
             </Button>
+
             <Separator/>
-            <Button ToolTip="剪切" Command="ApplicationCommands.Cut">
+            <Button Name="btExpand" ToolTip="展开/收缩节点" Click="Expand">
+                <Button.Content>
+                    <Image Source="img/expand.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Name="btAddSubsys" ToolTip="添加分系统" Click="AddSubsys">
+                <Button.Content>
+                    <Image Source="img/subsys1.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Name="btAddFrame" ToolTip="添加数据帧" Click="AddFrame">
+                <Button.Content>
+                    <Image Source="img/frame1.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button Name="btRename" ToolTip="重命名选中项" Click="RenameSelected">
+                <Button.Content>
+                    <Image Source="img/rename.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button Name="btDelete" ToolTip="删除选中项" Command="ApplicationCommands.Delete">
+                <Button.Content>
+                    <Image Source="img/del.png"></Image>
+                </Button.Content>
+            </Button>
+
+            <Button Name="btCut" ToolTip="剪切" Command="ApplicationCommands.Cut" Visibility="Collapsed">
                 <Button.Content>
                     <Image Source="img/cut.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="复制" Command="ApplicationCommands.Copy">
+            <Button Name="btCopy" ToolTip="复制" Command="ApplicationCommands.Copy" Visibility="Collapsed">
                 <Button.Content>
                     <Image Source="img/copy.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="粘贴" Command="ApplicationCommands.Paste">
+            <Button Name="btPaste" ToolTip="粘贴" Command="ApplicationCommands.Paste" Visibility="Collapsed">
                 <Button.Content>
                     <Image Source="img/paste.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="撤销" Command="ApplicationCommands.Undo">
+            <Button Name="btUndo" ToolTip="撤销" Command="ApplicationCommands.Undo" Visibility="Collapsed">
                 <Button.Content>
                     <Image Source="img/undo.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="重做" Command="ApplicationCommands.Redo">
+            <Button Name="btRedo" ToolTip="重做" Command="ApplicationCommands.Redo" Visibility="Collapsed">
                 <Button.Content>
                     <Image Source="img/redo.png"></Image>
                 </Button.Content>
@@ -119,14 +146,46 @@
             </Button>
         </ToolBar>
 
-        <ed:TextEditor Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed">
+        <ed:TextEditor IsEnabled="False" Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed">
             
         </ed:TextEditor>
-        <TabControl Name="tbDocTree" Grid.Row="1" BorderBrush="{x:Null}" Margin="3,0,0,0" >
+        <TabControl BorderBrush="{x:Null}"  Name="tbDocTree" Grid.Row="1"  Margin="3,0,0,0" >
             <TabItem Header="项目管理器">
-                <sd:SharpTreeView>
-                </sd:SharpTreeView>
-            </TabItem>
+                <Grid>
+                    <tree:SharpTreeView  x:Name="trProject"  ShowRoot="True"  ContextMenuOpening="trMain_ContextMenuOpening" >
+                        <tree:SharpTreeView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="新建分系统" Name="miAddSubsys" Click="AddSubsys">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/subsys1.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="新建数据帧" Name="miAddFrame" Click ="AddFrame">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/frame1.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="重命名" Name="miRename" Click="RenameSelected">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/rename.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="展开/收缩" Click="Expand">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/expand.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="删除" Command="ApplicationCommands.Delete">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/del.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </tree:SharpTreeView.ContextMenu>
+                    </tree:SharpTreeView>
+                </Grid>
+            </TabItem>            
         </TabControl>
 
 
@@ -138,7 +197,7 @@
         </r:TabControl>
 
 
-        <Grid Grid.Row="3" Grid.ColumnSpan="3">
+        <Grid Grid.Row="3" Grid.ColumnSpan="3" Margin="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30px"/>
                 <RowDefinition />
@@ -150,7 +209,13 @@
             <TextBox Name="txtOut" Grid.Row="1" Margin="3" IsReadOnly="True"/>
         </Grid>
 
-
-
     </Grid>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New" Executed="NewProject"/>
+        <CommandBinding Command="ApplicationCommands.Open" Executed="OpenProject"/>
+        <CommandBinding Command="ApplicationCommands.Save" Executed="SaveProject" CanExecute="CanSave" />
+        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs" CanExecute="CanSaveAs" />
+        <CommandBinding Command="ApplicationCommands.Delete" Executed="DeleteSelected" CanExecute="CanDelete" />
+    </Window.CommandBindings>
+
 </Window>
