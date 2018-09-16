@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FrameIO
 {
-    public class Subsys
+    public class Subsys: INotifyPropertyChanged
     {
         public Subsys(string name)
         {
@@ -14,5 +15,7 @@ namespace FrameIO
         }
         public string SubsysName { get; set; }
         public string SubsysNotes { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
