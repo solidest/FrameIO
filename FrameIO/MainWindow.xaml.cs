@@ -45,6 +45,8 @@ namespace FrameIO.Main
             }
         }
 
+        #region --Event--
+
         //窗体加载 UI初始化
         private void MainFormLoaded(object sender, RoutedEventArgs e)
         {
@@ -60,6 +62,34 @@ namespace FrameIO.Main
                 mainPanelBorder.Margin = new Thickness(0);
             }
         }
+
+        //窗口关闭之前
+        private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_isCoding)
+            {
+                _isModified = edCode.IsModified;
+                _code = edCode.Text;
+            }
+
+            if (_isModified)
+            {
+                var res = MessageBox.Show(this, "是否保存对当前文档的更改？", "FrameIO", MessageBoxButton.YesNoCancel);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        File.WriteAllText(FileName, _code);
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                    default:
+                        e.Cancel = true;
+                        return;
+                }
+            }
+        }
+
+        #endregion
 
 
         #region --Helper--
@@ -421,29 +451,9 @@ namespace FrameIO.Main
 
         #endregion
 
-        private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
+        private void onfoobar(object sender, RoutedEventArgs e)
         {
-           if(_isCoding)
-            {
-                _isModified = edCode.IsModified;
-                _code = edCode.Text;
-            }
-
-            if (_isModified)
-            {
-                var res = MessageBox.Show(this, "是否保存对当前文档的更改？", "FrameIO", MessageBoxButton.YesNoCancel);
-                switch (res)
-                {
-                    case MessageBoxResult.Yes:
-                        File.WriteAllText(FileName, _code);
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                    default:
-                        e.Cancel = true;
-                        return;
-                }
-            }
+            txtOut.AppendText(foobar.Add(100, 200).ToString() + Environment.NewLine);
         }
     }
 

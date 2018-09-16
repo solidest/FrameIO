@@ -92,6 +92,7 @@
     <Compile Include="Dlg\InputDlg.xaml.cs">
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="foobar.cs" />
     <Compile Include="TreeNode\FrameListNode.cs" />
     <Compile Include="Model\Frame.cs" />
     <Compile Include="Model\IOProject.cs" />

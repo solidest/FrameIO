@@ -139,7 +139,7 @@
                     <Image Source="img/help.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="foobar">
+            <Button ToolTip="foobar" Click="onfoobar">
                 <Button.Content>
                     <Image Source="img/foobar.png"></Image>
                 </Button.Content>
