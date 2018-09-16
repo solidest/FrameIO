@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>frameio.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>libs\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -58,6 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dlg\AboutDlg.xaml.cs">
+      <DependentUpon>AboutDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TabControl\Converters.cs" />
     <Compile Include="TabControl\Helper.cs" />
     <Compile Include="TabControl\TabControl.cs" />
@@ -79,6 +85,10 @@
     <Compile Include="TreeViewControl\SharpTreeViewItem.cs" />
     <Compile Include="TreeViewControl\TreeFlattener.cs" />
     <Compile Include="TreeViewControl\TreeTraversal.cs" />
+    <Page Include="Dlg\AboutDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -136,6 +146,15 @@
     <Resource Include="img\redo.png" />
     <Resource Include="img\save.png" />
     <Resource Include="img\undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="frameio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="img\flash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FrameIO
+namespace FrameIO.Main
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -76,6 +76,12 @@ namespace FrameIO
                     break;
             }
             e.Handled = true;
+        }
+
+        //显示关于窗口
+        private void OnHelper(object sender, RoutedEventArgs e)
+        {
+            new AboutDlg().ShowDialog();
         }
     }
 
