@@ -4,9 +4,148 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FrameIO"
+        xmlns:sd="clr-namespace:ICSharpCode.TreeView"
+        xmlns:r="clr-namespace:Wpf.Controls"
+        xmlns:ed ="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Loaded="MainFormLoaded"
+        Title="FrameIO Studio" Height="450" Width="800"
+        Icon="img\frameio.ico" WindowState="Maximized">
+
+    <Window.Resources>
+        <Style TargetType="Image">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Name="gridMain">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30px"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2px"/>
+            <RowDefinition Height="160"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300px"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <GridSplitter Name="VSplitter" Grid.Column="1" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Width="3"/>
+        <GridSplitter Name="HSplitter" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="3"/>
+
+
+        <ToolBar Name="MainToolBar" Grid.ColumnSpan="10" Margin="5,0,0,0">
+            <Button ToolTip="新建项目" Command="ApplicationCommands.New">
+                <Button.Content>
+                    <Image Source="img/newfile.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="打开项目" Command="ApplicationCommands.Open">
+                <Button.Content>
+                    <Image Source="img/fileopen.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="保存" Command="ApplicationCommands.Save">
+                <Button.Content>
+                    <Image Source="img/save.png"></Image>
+                </Button.Content>
+            </Button>
+            <Separator/>
+
+            <Button ToolTip="切换视图"  Click="SwitchView">
+                <Button.Content>
+                    <Image Source="img/leftdisp.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="显示/隐藏输出面板" Click="OutDispHide" >
+                <Button.Content>
+                    <Image Source="img/bottomdisp.png"></Image>
+                </Button.Content>
+            </Button>
+            <Separator/>
+            <Button ToolTip="剪切" Command="ApplicationCommands.Cut">
+                <Button.Content>
+                    <Image Source="img/cut.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="复制" Command="ApplicationCommands.Copy">
+                <Button.Content>
+                    <Image Source="img/copy.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="粘贴" Command="ApplicationCommands.Paste">
+                <Button.Content>
+                    <Image Source="img/paste.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="撤销" Command="ApplicationCommands.Undo">
+                <Button.Content>
+                    <Image Source="img/undo.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="重做" Command="ApplicationCommands.Redo">
+                <Button.Content>
+                    <Image Source="img/redo.png"></Image>
+                </Button.Content>
+            </Button>
+
+            <Separator/>
+
+            <Button ToolTip="语法检查">
+                <Button.Content>
+                    <Image Source="img/check.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="输出" Command="ApplicationCommands.SaveAs">
+                <Button.Content>
+                    <Image Source="img/compile.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="foobar">
+                <Button.Content>
+                    <Image Source="img/foobar.png"></Image>
+                </Button.Content>
+            </Button>
+        </ToolBar>
+
+        <ed:TextEditor Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed">
+            
+        </ed:TextEditor>
+        <TabControl Name="tbDocTree" Grid.Row="1" BorderBrush="{x:Null}" Margin="3,0,0,0" >
+            <TabItem Header="项目管理器">
+                <sd:SharpTreeView>
+                </sd:SharpTreeView>
+            </TabItem>
+        </TabControl>
+
+
+        <r:TabControl Margin="3,0,3,3" x:Name="tbPages" Grid.Row="1" Grid.Column="2"  
+            TabStripPlacement="{Binding ElementName=listBox, Path=SelectedItem}" 
+            TabItemMinWidth="80" TabItemMaxWidth="300" TabItemMinHeight="20" TabItemMaxHeight="40"
+            VerticalContentAlignment="Center" AllowAddNew="False">
+
+        </r:TabControl>
+
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30px"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin = "3" VerticalAlignment="Center">输出信息：</TextBlock>
+            </StackPanel>
+
+            <TextBox Name="txtOut" Grid.Row="1" Margin="3" IsReadOnly="True"/>
+        </Grid>
+
+
+
     </Grid>
 </Window>

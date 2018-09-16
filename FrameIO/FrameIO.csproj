@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>libs\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,6 +58,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TabControl\Converters.cs" />
+    <Compile Include="TabControl\Helper.cs" />
+    <Compile Include="TabControl\TabControl.cs" />
+    <Compile Include="TabControl\TabEventArgs.cs" />
+    <Compile Include="TabControl\TabItem.cs" />
+    <Compile Include="TabControl\TabPanel.cs" />
+    <Compile Include="TreeViewControl\Converters.cs" />
+    <Compile Include="TreeViewControl\EditTextBox.cs" />
+    <Compile Include="TreeViewControl\ExtensionMethods.cs" />
+    <Compile Include="TreeViewControl\FlatListTreeNode.cs" />
+    <Compile Include="TreeViewControl\GeneralAdorner.cs" />
+    <Compile Include="TreeViewControl\InsertMarker.cs" />
+    <Compile Include="TreeViewControl\LinesRenderer.cs" />
+    <Compile Include="TreeViewControl\SharpGridView.cs" />
+    <Compile Include="TreeViewControl\SharpTreeNode.cs" />
+    <Compile Include="TreeViewControl\SharpTreeNodeCollection.cs" />
+    <Compile Include="TreeViewControl\SharpTreeNodeView.cs" />
+    <Compile Include="TreeViewControl\SharpTreeView.cs" />
+    <Compile Include="TreeViewControl\SharpTreeViewItem.cs" />
+    <Compile Include="TreeViewControl\TreeFlattener.cs" />
+    <Compile Include="TreeViewControl\TreeTraversal.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,6 +117,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\frameio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\add.png" />
+    <Resource Include="img\bottomdisp.png" />
+    <Resource Include="img\check.png" />
+    <Resource Include="img\compile.png" />
+    <Resource Include="img\copy.png" />
+    <Resource Include="img\cut.png" />
+    <Resource Include="img\fileopen.png" />
+    <Resource Include="img\foobar.png" />
+    <Resource Include="img\leftdisp.png" />
+    <Resource Include="img\newfile.png" />
+    <Resource Include="img\paste.png" />
+    <Resource Include="img\redo.png" />
+    <Resource Include="img\save.png" />
+    <Resource Include="img\undo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
