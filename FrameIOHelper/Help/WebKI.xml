@@ -4,8 +4,8 @@
   <HelpKINode Title="AsyncReadCallback 委托" Url="html/61967852-bce9-1e92-b19b-18967fb3c83f.htm" />
   <HelpKINode Title="AsyncReadListCallback 委托" Url="html/aae40435-1175-d2e6-1c6e-ab96be6bcc3c.htm" />
   <HelpKINode Title="AsyncWriteCallback 委托" Url="html/eb56c612-ac36-5918-6212-377f251a4238.htm" />
-  <HelpKINode Title="BeginReadFrame 方法" Url="html/bf8c5878-10ce-063a-a761-7e8b5e0105a6.htm" />
-  <HelpKINode Title="BeginReadFrameList 方法" Url="html/e8acf053-9372-f9b1-690b-92ac360075b4.htm" />
+  <HelpKINode Title="BeginReadFrame 方法" Url="html/41f8debf-a8a5-4c19-a7a9-30faf6ab78f1.htm" />
+  <HelpKINode Title="BeginReadFrameList 方法" Url="html/cccb6dfa-a563-f5a6-9e03-2f1af15b6575.htm" />
   <HelpKINode Title="BeginWriteFrame 方法" Url="html/d63e93a3-540e-0d84-e9bb-2b8b19c0618f.htm" />
   <HelpKINode Title="BlockCount 属性" Url="html/4ed48a30-20da-ede5-cb26-26310b9319a7.htm" />
   <HelpKINode Title="ClearChannel 方法" Url="html/cb346225-eb16-3bc2-14e4-8ee911dd1a2c.htm" />
@@ -41,8 +41,8 @@
     <HelpKINode Title="IFrameReader 接口" Url="html/ab2e51dc-39ce-8fa7-3cfc-3fc0d1fe32d4.htm" />
     <HelpKINode Title="方法" Url="html/435685e8-0f46-63df-9688-67ea75ef02a0.htm" />
   </HelpKINode>
-  <HelpKINode Title="IFrameReader.BeginReadFrame 方法" Url="html/bf8c5878-10ce-063a-a761-7e8b5e0105a6.htm" />
-  <HelpKINode Title="IFrameReader.BeginReadFrameList 方法" Url="html/e8acf053-9372-f9b1-690b-92ac360075b4.htm" />
+  <HelpKINode Title="IFrameReader.BeginReadFrame 方法" Url="html/41f8debf-a8a5-4c19-a7a9-30faf6ab78f1.htm" />
+  <HelpKINode Title="IFrameReader.BeginReadFrameList 方法" Url="html/cccb6dfa-a563-f5a6-9e03-2f1af15b6575.htm" />
   <HelpKINode Title="IFrameReader.ReadFrame 方法" Url="html/3e5f8126-e338-86c0-a724-b6b0da2524a1.htm" />
   <HelpKINode Title="IFrameReader.ReadFrameList 方法" Url="html/846d0085-12d6-af11-6d8b-cae3550ec274.htm" />
   <HelpKINode Title="IFrameStream 接口">
@@ -60,7 +60,6 @@
   <HelpKINode Title="IFrameUnpack.AppendBlock 方法" Url="html/3834209b-4ab1-ed51-bd1e-77dde1ed2cde.htm" />
   <HelpKINode Title="IFrameUnpack.BlockCount 属性" Url="html/4ed48a30-20da-ede5-cb26-26310b9319a7.htm" />
   <HelpKINode Title="IFrameUnpack.FirstBlockSize 属性" Url="html/68744689-07d4-e66c-94ec-fdc23295add5.htm" />
-  <HelpKINode Title="IFrameUnpack.Reset 方法" Url="html/389395ea-4a16-27e2-557f-1e7c6f7b358a.htm" />
   <HelpKINode Title="IFrameUnpack.Unpack 方法" Url="html/b2dc1851-42a7-a9cf-697a-fbd0f66fc19a.htm" />
   <HelpKINode Title="IFrameWriter 接口">
     <HelpKINode Title="IFrameWriter 接口" Url="html/c54a96aa-9311-9c13-132b-a6e753fc5a28.htm" />
@@ -72,7 +71,6 @@
   <HelpKINode Title="Open 方法" Url="html/b70eb72f-bf34-becf-b4e7-a669c3fe93a4.htm" />
   <HelpKINode Title="ReadFrame 方法" Url="html/3e5f8126-e338-86c0-a724-b6b0da2524a1.htm" />
   <HelpKINode Title="ReadFrameList 方法" Url="html/846d0085-12d6-af11-6d8b-cae3550ec274.htm" />
-  <HelpKINode Title="Reset 方法" Url="html/389395ea-4a16-27e2-557f-1e7c6f7b358a.htm" />
   <HelpKINode Title="Unpack 方法" Url="html/b2dc1851-42a7-a9cf-697a-fbd0f66fc19a.htm" />
   <HelpKINode Title="version">
     <HelpKINode Title="1.0.0.0" Url="html/ca6b8e7e-eae7-45bc-8979-8ecfcd3a7c5e.htm" />
