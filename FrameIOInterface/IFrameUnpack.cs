@@ -32,9 +32,5 @@ namespace FrameIO.Interface
         /// <returns>解包后的数据帧对象</returns>
         FrameBase Unpack();
 
-        /// <summary>
-        /// 重置解包缓冲区
-        /// </summary>
-        void Reset();
     }
 }
