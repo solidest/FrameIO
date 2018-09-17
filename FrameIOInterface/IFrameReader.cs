@@ -44,7 +44,8 @@ namespace FrameIO.Interface
         /// </summary>
         /// <param name="up">用于数据解包的接口</param>
         /// <param name="callback">完成读取后传递读取结果的回调函数</param>
-        void BeginReadFrame(IFrameUnpack up, AsyncReadCallback callback);
+        /// <param name="AsyncState">发起异步操作时用户提供的对象，它将该特定的异步读取请求与其他请求区别开来</param>
+        void BeginReadFrame(IFrameUnpack up, AsyncReadCallback callback, object AsyncState);
 
         /// <summary>
         /// 从帧式流上异步读取多帧数据
@@ -53,6 +54,7 @@ namespace FrameIO.Interface
         /// <param name="framecount">一次性读取的数据帧数量</param>
         /// <param name="isloop">是否循环读取</param>
         /// <param name="callback">完成读取后传递读取结果的回调函数</param>
-        void BeginReadFrameList(IFrameUnpack up, int framecount, bool isloop, AsyncReadListCallback callback);
+        /// <param name="AsyncState">发起异步操作时用户提供的对象，它将该特定的异步读取请求与其他请求区别开来</param>
+        void BeginReadFrameList(IFrameUnpack up, int framecount, bool isloop, AsyncReadListCallback callback, object AsyncState);
     }
 }
