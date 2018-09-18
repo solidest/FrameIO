@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIODriver", "..\FrameIO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIOCodeTemplate", "..\FrameIOCodeTemplate\FrameIOCodeTemplate.csproj", "{29A111F1-28C8-420D-B366-A9FA93BFC365}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameParser", "..\FrameParser\FrameParser.vcxproj", "{AD03CE21-57B9-44AC-8635-BE201395AC7A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,16 +83,6 @@ Global
 		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Release|x64.Build.0 = Release|Any CPU
 		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Release|x86.ActiveCfg = Release|Any CPU
 		{29A111F1-28C8-420D-B366-A9FA93BFC365}.Release|x86.Build.0 = Release|Any CPU
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Debug|x64.ActiveCfg = Debug|x64
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Debug|x64.Build.0 = Debug|x64
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Debug|x86.ActiveCfg = Debug|Win32
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Debug|x86.Build.0 = Debug|Win32
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Release|Any CPU.ActiveCfg = Release|Win32
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Release|x64.ActiveCfg = Release|x64
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Release|x64.Build.0 = Release|x64
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Release|x86.ActiveCfg = Release|Win32
-		{AD03CE21-57B9-44AC-8635-BE201395AC7A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
