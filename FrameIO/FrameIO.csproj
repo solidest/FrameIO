@@ -93,6 +93,9 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="foobar.cs" />
+    <Compile Include="Model\Enumdef.cs" />
+    <Compile Include="TreeNode\EnumdefListNode.cs" />
+    <Compile Include="TreeNode\EnumdefNode.cs" />
     <Compile Include="TreeNode\FrameListNode.cs" />
     <Compile Include="Model\Frame.cs" />
     <Compile Include="Model\IOProject.cs" />
@@ -211,10 +214,13 @@
     <Resource Include="img\rename.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\expand.png" />
+    <EmbeddedResource Include="img\enum.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\input.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\enum1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

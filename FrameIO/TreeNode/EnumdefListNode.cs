@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    public class SubsysListNode:SharpTreeNode
+    class EnumdefListNode : SharpTreeNode
     {
-        ObservableCollection<Subsys> _sysList;
-        public SubsysListNode(ObservableCollection<Subsys> sysList)
+        private ObservableCollection<Enumdef> _enlist;
+        public EnumdefListNode(ObservableCollection<Enumdef> enlist)
         {
-            _sysList = sysList;
+            _enlist = enlist;
             LoadChildren();
             IsExpanded = true;
         }
@@ -22,7 +22,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return "受控对象";
+                return "枚举";
             }
         }
 
@@ -53,33 +53,35 @@ namespace FrameIO.Main
 
 
         //删除子节点
-        public void DeleteChild(SubsysNode fn)
+        public void DeleteChild(EnumdefNode fn)
         {
-            _sysList.Remove(fn.TheValue);
+            _enlist.Remove(fn.TheValue);
             Children.Remove(fn);
         }
 
-
-        //增加字节的
-        public SharpTreeNode AddChild(string name)
+        //增加子节点
+        public SharpTreeNode AddChild(string n)
         {
-            var n = new Subsys(name);
-            _sysList.Add(n);
+            var newf = new Enumdef(n);
+            _enlist.Add(newf);
             Children.Clear();
             LoadChildren();
             IsExpanded = true;
-            foreach(SubsysNode sn in Children)
+            foreach (EnumdefNode cn in Children)
             {
-                if (sn.TheValue == n) return sn;
+                if (cn.TheValue == newf)
+                {
+                    return cn;
+                }
             }
             return null;
         }
 
         protected override void LoadChildren()
         {
-            foreach (var i in _sysList.OrderBy(p=>p.SubsysName))
+            foreach (var i in _enlist.OrderBy(p => p.EnumName))
             {
-                Children.Add(new SubsysNode(i));
+                Children.Add(new EnumdefNode(i));
             }
         }
     }

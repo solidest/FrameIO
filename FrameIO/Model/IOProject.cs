@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrameIO
+namespace FrameIO.Main
 {
     public class IOProject:INotifyPropertyChanged
     {
@@ -24,6 +24,7 @@ namespace FrameIO
         public ObservableCollection<Subsys> SubSysList { get; } = new ObservableCollection<Subsys>();
 
         public ObservableCollection<Frame> FrameList { get; } = new ObservableCollection<Frame>();
+        public ObservableCollection<Enumdef> EnumdefList { get; } = new ObservableCollection<Enumdef>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

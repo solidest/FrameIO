@@ -29,5 +29,29 @@ namespace FrameIO.Main
             //TODO
             return "";
         }
+
+        static public UInt64 GetUInt64FromByte(byte[] buff, uint bitStart)
+        {
+            uint word_index = bitStart >> 6;
+            uint word_offset = bitStart & 63;
+            ulong result = BitConverter.ToUInt64(buff,(int)word_index*8) >> (UInt16)word_offset;
+            uint bits_taken = 64 - word_offset;
+
+
+            if (word_offset > 0 && bitStart + bits_taken < (uint)(8*buff.Length))
+            {
+                result |= BitConverter.ToUInt64(buff, (int)(word_index+1)*8) << (UInt16)(64 - word_offset);
+            }
+
+            return result;
+        }
+
+        static public UInt64 GetUIntxFromByte(byte[] buff, uint bitStart, int x)
+        {
+            return GetUInt64FromByte(buff, bitStart) & ((x!=0) ? (~(ulong)0>>(sizeof(ulong)*8-x)):(ulong)0);
+
+            //((nbits) ? ~(type)0 >> (sizeof(type) * 8 - (nbits)) : (type)0)
+        }
+
     }
 }

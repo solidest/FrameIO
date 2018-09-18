@@ -70,12 +70,8 @@
             </Button>
 
             <Separator/>
-            <Button Name="btExpand" ToolTip="展开/收缩节点" Click="Expand">
-                <Button.Content>
-                    <Image Source="img/expand.png" ></Image>
-                </Button.Content>
-            </Button>
-            <Button Name="btAddSubsys" ToolTip="添加分系统" Click="AddSubsys">
+            
+            <Button Name="btAddSubsys" ToolTip="添加受控对象" Click="AddSubsys">
                 <Button.Content>
                     <Image Source="img/subsys1.png" ></Image>
                 </Button.Content>
@@ -85,7 +81,12 @@
                     <Image Source="img/frame1.png"></Image>
                 </Button.Content>
             </Button>
-            <Button Name="btRename" ToolTip="重命名选中项" Click="RenameSelected">
+            <Button Name="btAddEnum" ToolTip="添加枚举" Click="AddEnum">
+                <Button.Content>
+                    <Image Source="img/enum1.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Name="btRename" ToolTip="重命名" Click="RenameSelected">
                 <Button.Content>
                     <Image Source="img/rename.png"></Image>
                 </Button.Content>
@@ -155,7 +156,7 @@
                     <tree:SharpTreeView  x:Name="trProject"  ShowRoot="True"  ContextMenuOpening="trMain_ContextMenuOpening" >
                         <tree:SharpTreeView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="新建分系统" Name="miAddSubsys" Click="AddSubsys">
+                                <MenuItem Header="新建受控对象" Name="miAddSubsys" Click="AddSubsys">
                                     <MenuItem.Icon>
                                         <Image Source="img/subsys1.png"/>
                                     </MenuItem.Icon>
@@ -165,15 +166,16 @@
                                         <Image Source="img/frame1.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Header="新建枚举" Name="miAddEnum" Click ="AddEnum">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/enum1.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="展开/收缩" Click="Expand"/>
                                 <Separator />
                                 <MenuItem Header="重命名" Name="miRename" Click="RenameSelected">
                                     <MenuItem.Icon>
                                         <Image Source="img/rename.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="展开/收缩" Click="Expand">
-                                    <MenuItem.Icon>
-                                        <Image Source="img/expand.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem Header="删除" Command="ApplicationCommands.Delete">

@@ -108,7 +108,7 @@ namespace FrameIO.Main
                 btAddSubsys.Visibility = Visibility.Collapsed;
                 btDelete.Visibility = Visibility.Collapsed;
                 btRename.Visibility = Visibility.Collapsed;
-                btExpand.Visibility = Visibility.Collapsed;
+                btAddEnum.Visibility = Visibility.Collapsed;
 
                 btCopy.Visibility = Visibility.Visible;
                 btCut.Visibility = Visibility.Visible;
@@ -132,7 +132,7 @@ namespace FrameIO.Main
                 btAddSubsys.Visibility = Visibility.Visible;
                 btDelete.Visibility = Visibility.Visible;
                 btRename.Visibility = Visibility.Visible;
-                btExpand.Visibility = Visibility.Visible;
+                btAddEnum.Visibility = Visibility.Visible;
 
                 btCopy.Visibility = Visibility.Collapsed;
                 btCut.Visibility = Visibility.Collapsed;
@@ -205,12 +205,24 @@ namespace FrameIO.Main
             return null;
         }
 
+        //取受控对象父节点
         private SubsysListNode GetSubsysParent()
         {
             foreach (var n in trProject.Root.Children)
             {
                 if (typeof(SubsysListNode) == n.GetType())
                     return (SubsysListNode)n;
+            }
+            return null;
+        }
+
+        //取枚举定义父节点
+        private EnumdefListNode GetEnumdefList()
+        {
+            foreach (var n in trProject.Root.Children)
+            {
+                if (typeof(EnumdefListNode) == n.GetType())
+                    return (EnumdefListNode)n;
             }
             return null;
         }
@@ -356,7 +368,7 @@ namespace FrameIO.Main
             btRename.IsEnabled = b && n != null && ((ICSharpCode.TreeView.SharpTreeNode)n).IsEditable;
             btAddFrame.IsEnabled = b;
             btAddSubsys.IsEnabled = b;
-            btExpand.IsEnabled = b;
+            btAddEnum.IsEnabled = b;
             e.Handled = true;
         }
 
@@ -374,11 +386,11 @@ namespace FrameIO.Main
             e.Handled = true;
         }
 
-        //添加分系统
+        //添加受控对象
         private void AddSubsys(object sender, RoutedEventArgs e)
         {
             var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新建分系统的名称:";
+            dlg.caption.Text = "请输入新受控对象的名称:";
             dlg.Validate = Helper.ValidId;
             dlg.Owner = this;
             if (dlg.ShowDialog() == true)
@@ -399,6 +411,22 @@ namespace FrameIO.Main
             if (dlg.ShowDialog() == true)
             {
                 var p = GetFrameParent().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+            }
+            e.Handled = true;
+        }
+
+
+        //添加枚举
+        private void AddEnum(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新建枚举的名称:";
+            dlg.Validate = Helper.ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                var p = GetEnumdefList().AddChild(dlg.input.Text);
                 trProject.SelectedItem = p;
             }
             e.Handled = true;
@@ -431,20 +459,29 @@ namespace FrameIO.Main
             if( n != null)
             {
                 var t = n.GetType();
-                if(t == typeof(FrameNode) || t== typeof(FrameListNode))
+                if(t == typeof(FrameNode) || t == typeof(FrameListNode))
                 {
                     miAddFrame.Visibility = Visibility.Visible;
                     miAddSubsys.Visibility = Visibility.Collapsed;
+                    miAddEnum.Visibility = Visibility.Collapsed;
                 }
-                else if(t == typeof(SubsysNode) || t== typeof(SubsysListNode))
+                else if(t == typeof(SubsysNode) || t == typeof(SubsysListNode))
                 {
                     miAddFrame.Visibility = Visibility.Collapsed;
                     miAddSubsys.Visibility = Visibility.Visible;
+                    miAddEnum.Visibility = Visibility.Collapsed;
+                }
+                else if(t == typeof(EnumdefNode) || t == typeof(EnumdefListNode))
+                {
+                    miAddFrame.Visibility = Visibility.Collapsed;
+                    miAddSubsys.Visibility = Visibility.Collapsed;
+                    miAddEnum.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     miAddFrame.Visibility = Visibility.Visible;
                     miAddSubsys.Visibility = Visibility.Visible;
+                    miAddEnum.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -453,8 +490,19 @@ namespace FrameIO.Main
 
         private void onfoobar(object sender, RoutedEventArgs e)
         {
-            txtOut.AppendText(foobar.Add(100, 200).ToString() + Environment.NewLine);
+            //txtOut.AppendText(foobar.Add(100, 200).ToString() + Environment.NewLine);
+
+            byte[] buff = new byte[8];
+            UInt32 x = 0xffff;
+            var bf = BitConverter.GetBytes(x);
+            for(int i=0; i<4; i++)
+            {
+                buff[i + 4] = bf[i]; 
+            }
+            ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
+            txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
         }
+
     }
 
 

@@ -43,6 +43,7 @@ namespace FrameIO.Main
         {
             Children.Add(new SubsysListNode(_project.SubSysList));
             Children.Add(new FrameListNode(_project.FrameList));
+            Children.Add(new EnumdefListNode(_project.EnumdefList));
         }
     }
 }
