@@ -147,7 +147,13 @@
             </Button>
         </ToolBar>
 
-        <ed:TextEditor IsEnabled="False" Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed">
+        <ed:TextEditor IsEnabled="False" Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" 
+                       Visibility="Collapsed"
+                       FontSize="16" ShowLineNumbers="True"
+                       HorizontalScrollBarVisibility="Auto"
+                       Margin="3"
+                       BorderBrush="LightGray"
+                       BorderThickness="1">
             
         </ed:TextEditor>
         <TabControl BorderBrush="{x:Null}"  Name="tbDocTree" Grid.Row="1"  Margin="3,0,0,0" >
@@ -208,7 +214,7 @@
                 <TextBlock Margin = "3" VerticalAlignment="Center">输出信息：</TextBlock>
             </StackPanel>
 
-            <TextBox Name="txtOut" Grid.Row="1" Margin="3" IsReadOnly="True"/>
+            <TextBox BorderBrush="LightGray" Name="txtOut" Grid.Row="1" Margin="3" IsReadOnly="True"/>
         </Grid>
 
     </Grid>
