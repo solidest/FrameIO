@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace PROJECT1.SYS1
 {
-    public class SYS1:INotifyPropertyChanged
+    public class SYS1
     {
 
         public void Initialization()
@@ -73,13 +73,13 @@ namespace PROJECT1.SYS1
 
         public void send_FRAME1_CH1()
         {
-            var data = new FRAME1();
-            data.SEGMENTA = _PROPERTYA.TValue ?? 0;
+            var data = new MSG1();
+            data.SEGMENTA = _PROPERTYA.Value ?? 0;
             for(int i=0; i<4; i++)
             {
-                data.SEGMENTB[i] = _PROPERTYB[i].TValue ?? 0;
+                data.SEGMENTB[i] = _PROPERTYB[i].Value ?? 0;
             }
-            data.SEGMENTC = _PROPERTYC.TValue ?? 0;
+            data.SEGMENTC = _PROPERTYC.Value ?? 0;
             CH1.WriteFrame(data);
         }
 

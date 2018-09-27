@@ -71,7 +71,7 @@ namespace PROJECT1.SYS2
         public void recv_FRAME1_CHA()
         {
             var _p = new FRAME1Parser();
-            var data = (FRAME1)CHA.ReadFrame(_p);
+            var data = (MSG1)CHA.ReadFrame(_p);
             UpdatePropertys(data);
         }
 
@@ -96,14 +96,14 @@ namespace PROJECT1.SYS2
         }
         */
 
-        public void UpdatePropertys(FRAME1 fdata)
+        public void UpdatePropertys(MSG1 fdata)
         {
-            _PROPERTYA.TValue = fdata.SEGMENTA;
+            _PROPERTYA.Value = fdata.SEGMENTA;
             for (int i = 0; i < 4; i++)
             {
-                _PROPERTYB[i].TValue = fdata.SEGMENTB[i];
+                _PROPERTYB[i].Value = fdata.SEGMENTB[i];
             }
-            _PROPERTYC.TValue = fdata.SEGMENTC;
+            _PROPERTYC.Value = fdata.SEGMENTC;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

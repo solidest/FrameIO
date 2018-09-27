@@ -42,7 +42,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FRAME1.cs" />
+    <Compile Include="MSG1.cs" />
     <Compile Include="FrameIOCodeTemplate.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

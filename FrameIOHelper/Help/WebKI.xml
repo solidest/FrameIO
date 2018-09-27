@@ -7,7 +7,9 @@
   <HelpKINode Title="BeginReadFrame 方法" Url="html/41f8debf-a8a5-4c19-a7a9-30faf6ab78f1.htm" />
   <HelpKINode Title="BeginReadFrameList 方法" Url="html/cccb6dfa-a563-f5a6-9e03-2f1af15b6575.htm" />
   <HelpKINode Title="BeginWriteFrame 方法" Url="html/d63e93a3-540e-0d84-e9bb-2b8b19c0618f.htm" />
+  <HelpKINode Title="BeginWriteFrameList 方法" Url="html/9d18879b-eb1a-8925-98f3-c5931ec518b5.htm" />
   <HelpKINode Title="BlockCount 属性" Url="html/4ed48a30-20da-ede5-cb26-26310b9319a7.htm" />
+  <HelpKINode Title="ByteSize 属性" Url="html/95caf0f9-dc92-e7ad-1c9c-29cd57fb01f7.htm" />
   <HelpKINode Title="ClearChannel 方法" Url="html/cb346225-eb16-3bc2-14e4-8ee911dd1a2c.htm" />
   <HelpKINode Title="Close 方法" Url="html/7f08e1ab-d77c-8121-c71a-9a797056aebd.htm" />
   <HelpKINode Title="FirstBlockSize 属性" Url="html/68744689-07d4-e66c-94ec-fdc23295add5.htm" />
@@ -17,7 +19,6 @@
     <HelpKINode Title="构造函数" Url="html/7bfeca70-7fe7-6efc-5306-df5240aefe8a.htm" />
   </HelpKINode>
   <HelpKINode Title="FrameBase.FrameBase 构造函数" Url="html/7bfeca70-7fe7-6efc-5306-df5240aefe8a.htm" />
-  <HelpKINode Title="FrameCount 属性" Url="html/60dba1cf-573b-7cb3-e79f-0fc9b30732fd.htm" />
   <HelpKINode Title="FrameIO.Interface 命名空间" Url="html/c848caee-9d0e-0657-aa82-d6e9d2ea9835.htm" />
   <HelpKINode Title="FrameIO.Interface.AsyncReadCallback 委托" Url="html/61967852-bce9-1e92-b19b-18967fb3c83f.htm" />
   <HelpKINode Title="FrameIO.Interface.AsyncReadListCallback 委托" Url="html/aae40435-1175-d2e6-1c6e-ab96be6bcc3c.htm" />
@@ -28,15 +29,13 @@
   <HelpKINode Title="FrameIO.Interface.IFrameStream 接口" Url="html/a080ab90-62b0-003b-07d8-6cdd341f5076.htm" />
   <HelpKINode Title="FrameIO.Interface.IFrameUnpack 接口" Url="html/53e2d314-597d-63f0-403e-c58411352ee5.htm" />
   <HelpKINode Title="FrameIO.Interface.IFrameWriter 接口" Url="html/c54a96aa-9311-9c13-132b-a6e753fc5a28.htm" />
-  <HelpKINode Title="GetAllPack 方法" Url="html/ec87b06b-211a-c4d6-be51-cc18ec37aedc.htm" />
   <HelpKINode Title="IFramePack 接口">
     <HelpKINode Title="IFramePack 接口" Url="html/aaf40136-a7cd-3396-a47b-b312584fe180.htm" />
     <HelpKINode Title="属性" Url="html/ace1a701-ae1c-c7c1-d00a-cd3410beb25d.htm" />
     <HelpKINode Title="方法" Url="html/86ff58a5-e5d4-1fb5-2ca0-20ab92a9bb5a.htm" />
   </HelpKINode>
-  <HelpKINode Title="IFramePack.FrameCount 属性" Url="html/60dba1cf-573b-7cb3-e79f-0fc9b30732fd.htm" />
-  <HelpKINode Title="IFramePack.GetAllPack 方法" Url="html/ec87b06b-211a-c4d6-be51-cc18ec37aedc.htm" />
-  <HelpKINode Title="IFramePack.NextPack 方法" Url="html/31f4dbd6-909e-947d-13c1-3eb168116a35.htm" />
+  <HelpKINode Title="IFramePack.ByteSize 属性" Url="html/95caf0f9-dc92-e7ad-1c9c-29cd57fb01f7.htm" />
+  <HelpKINode Title="IFramePack.Pack 方法" Url="html/dbbadfe0-1e5b-342b-417c-71ef0180cdae.htm" />
   <HelpKINode Title="IFrameReader 接口">
     <HelpKINode Title="IFrameReader 接口" Url="html/ab2e51dc-39ce-8fa7-3cfc-3fc0d1fe32d4.htm" />
     <HelpKINode Title="方法" Url="html/435685e8-0f46-63df-9688-67ea75ef02a0.htm" />
@@ -66,9 +65,11 @@
     <HelpKINode Title="方法" Url="html/ce17e1e1-faa4-8c1c-fc99-39ce90d820fe.htm" />
   </HelpKINode>
   <HelpKINode Title="IFrameWriter.BeginWriteFrame 方法" Url="html/d63e93a3-540e-0d84-e9bb-2b8b19c0618f.htm" />
+  <HelpKINode Title="IFrameWriter.BeginWriteFrameList 方法" Url="html/9d18879b-eb1a-8925-98f3-c5931ec518b5.htm" />
   <HelpKINode Title="IFrameWriter.WriteFrame 方法" Url="html/1b490122-161e-6e71-a3b0-d46ff7a7dcef.htm" />
-  <HelpKINode Title="NextPack 方法" Url="html/31f4dbd6-909e-947d-13c1-3eb168116a35.htm" />
+  <HelpKINode Title="IFrameWriter.WriteFrameList 方法" Url="html/cd11f2da-78ca-a5d4-7f54-ae9cabe0d22b.htm" />
   <HelpKINode Title="Open 方法" Url="html/b70eb72f-bf34-becf-b4e7-a669c3fe93a4.htm" />
+  <HelpKINode Title="Pack 方法" Url="html/dbbadfe0-1e5b-342b-417c-71ef0180cdae.htm" />
   <HelpKINode Title="ReadFrame 方法" Url="html/3e5f8126-e338-86c0-a724-b6b0da2524a1.htm" />
   <HelpKINode Title="ReadFrameList 方法" Url="html/846d0085-12d6-af11-6d8b-cae3550ec274.htm" />
   <HelpKINode Title="Unpack 方法" Url="html/b2dc1851-42a7-a9cf-697a-fbd0f66fc19a.htm" />
@@ -78,4 +79,5 @@
   </HelpKINode>
   <HelpKINode Title="Welcome" Url="html/aa0d97d2-1cc8-4695-b243-a1b700a404a8.htm" />
   <HelpKINode Title="WriteFrame 方法" Url="html/1b490122-161e-6e71-a3b0-d46ff7a7dcef.htm" />
+  <HelpKINode Title="WriteFrameList 方法" Url="html/cd11f2da-78ca-a5d4-7f54-ae9cabe0d22b.htm" />
 </HelpKI>

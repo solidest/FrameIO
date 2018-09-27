@@ -64,7 +64,8 @@
       <Word>oneof</Word>
       <Word>max</Word>
       <Word>min</Word>
-      <Word>crc</Word>
+      <Word>check</Word>
+      <Word>checkrange</Word>
       <Word>device</Word>      
     </Keywords>
 
@@ -76,11 +77,45 @@
       <Word>primitive</Word>
       <Word>inversion</Word>
       <Word>complement</Word>
-      <Word>crc_xor_16</Word>
-      
+      <Word>sum8</Word>
+      <Word>xor8</Word>
+      <Word>sum16</Word>
+      <Word>sum16_false</Word>
+      <Word>xor16</Word>
+      <Word>xor16_false</Word>
+      <Word>sum32</Word>
+      <Word>sum32_false</Word>
+      <Word>xor32</Word>
+      <Word>xor32_false</Word>
+      <Word>crc4_itu</Word>
+      <Word>crc5_epc</Word>
+      <Word>crc5_itu</Word>
+      <Word>crc5_usb</Word>
+      <Word>crc6_itu</Word>
+      <Word>crc7_mmc</Word>
+      <Word>crc8</Word>
+      <Word>crc8_itu</Word>
+      <Word>crc8_rohc</Word>
+      <Word>crc8_maxim</Word>
+      <Word>crc16_ibm</Word>
+      <Word>crc16_maxim</Word>
+      <Word>crc16_usb</Word>
+      <Word>crc16_modbus</Word>
+      <Word>crc16_ccitt</Word>
+      <Word>crc16_ccitt_false</Word>
+      <Word>crc16_x25</Word>
+      <Word>crc16_xmodem</Word>
+      <Word>crc16_dnp</Word>
+      <Word>crc32</Word>
+      <Word>crc32_mpeg_2</Word>
+      <Word>crc64</Word>
+      <Word>crc64_we</Word>      
     </Keywords>
 
-		
+    <!--<Rule foreground="Gray">
+       @[a-zA-Z][0-9a-zA-Z_]*
+    </Rule>-->
+    
 		<!-- Digits -->
 		<Rule foreground="DarkBlue">
             \b0[xX][0-9a-fA-F]+  # hex number
@@ -89,6 +124,6 @@
             |    \.[0-9]+         #or just starting with floating point
             )
             ([eE][+-]?[0-9]+)? # optional exponent
-        </Rule>
+    </Rule>
 	</RuleSet>
 </SyntaxDefinition>
