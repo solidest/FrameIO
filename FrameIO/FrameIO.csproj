@@ -89,6 +89,9 @@
     <Compile Include="Dlg\AboutDlg.xaml.cs">
       <DependentUpon>AboutDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dlg\FindReplaceDlg.xaml.cs">
+      <DependentUpon>FindReplaceDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dlg\InputDlg.xaml.cs">
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,10 @@
     <Compile Include="TreeNode\SubsysListNode.cs" />
     <Compile Include="TreeNode\SubsysNode.cs" />
     <Page Include="Dlg\AboutDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dlg\FindReplaceDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -222,6 +229,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\enum1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\find.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

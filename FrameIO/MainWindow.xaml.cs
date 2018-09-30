@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,9 @@ namespace FrameIO.Main
         {
             InitializeComponent();
             LoadEditorConfig();
+
+            _isCoding = true;
+            UpdateEditMode();
         }
 
         private IOProject _project;
@@ -140,7 +144,9 @@ namespace FrameIO.Main
                 btPaste.Visibility = Visibility.Visible;
                 btUndo.Visibility = Visibility.Visible;
                 btRedo.Visibility = Visibility.Visible;
-                edCode.IsEnabled = true;
+                btFindReplace.Visibility = Visibility.Visible;
+
+                edCode.IsEnabled = (__file!="");
                 edCode.Text = _code;
                 edCode.IsModified = _isModified;
                 edCode.Focus();
@@ -164,6 +170,8 @@ namespace FrameIO.Main
                 btPaste.Visibility = Visibility.Collapsed;
                 btUndo.Visibility = Visibility.Collapsed;
                 btRedo.Visibility = Visibility.Collapsed;
+                btFindReplace.Visibility = Visibility.Collapsed;
+
                 edCode.IsEnabled = false;
                 _code = edCode.Text;
                 _isModified = edCode.IsModified;
@@ -343,7 +351,8 @@ namespace FrameIO.Main
                 edCode.Text = _code;
                 _project = new IOProject();
                 ResetCodeState();
-           }
+            }
+            UpdateEditMode();
             e.Handled = true;
         }
 
@@ -369,6 +378,7 @@ namespace FrameIO.Main
                 _project = new IOProject(System.IO.Path.GetFileNameWithoutExtension(sfd.FileName));
                 ResetCodeState();
             }
+            UpdateEditMode();
             e.Handled = true;
 
             //_project = new IOProject();
@@ -383,6 +393,12 @@ namespace FrameIO.Main
             //trProject.Root = new ProjectNode(_project);
         }
 
+        //是否可以查找替换
+        private void CanFind(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _isCoding;
+            e.Handled = true;
+        }
 
         //是否可以删除
         private void CanDelete(object sender, CanExecuteRoutedEventArgs e)
@@ -478,6 +494,7 @@ namespace FrameIO.Main
         {
             miAddFrame.IsEnabled = btAddFrame.IsEnabled;
             miAddSubsys.IsEnabled = btAddSubsys.IsEnabled;
+            miAddEnum.IsEnabled = btAddEnum.IsEnabled;
             miRename.IsEnabled = btRename.IsEnabled;
 
             var n = trProject.SelectedItem;
@@ -511,22 +528,30 @@ namespace FrameIO.Main
             }
         }
 
+        //查找 替换
+        private void FindAndReplace(object sender, ExecutedRoutedEventArgs e)
+        {
+            FindReplaceDlg.ShowForReplace(edCode);
+        }
+
         #endregion
 
         private void onfoobar(object sender, RoutedEventArgs e)
         {
             //txtOut.AppendText(foobar.Add(100, 200).ToString() + Environment.NewLine);
 
-            byte[] buff = new byte[8];
-            UInt32 x = 0xffff;
-            var bf = BitConverter.GetBytes(x);
-            for(int i=0; i<4; i++)
-            {
-                buff[i + 4] = bf[i]; 
-            }
-            ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
-            txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
+            //byte[] buff = new byte[8];
+            //UInt32 x = 0xffff;
+            //var bf = BitConverter.GetBytes(x);
+            //for(int i=0; i<4; i++)
+            //{
+            //    buff[i + 4] = bf[i]; 
+            //}
+            //ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
+            //txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
+
         }
+
 
     }
 

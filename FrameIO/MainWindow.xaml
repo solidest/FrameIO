@@ -122,7 +122,11 @@
                     <Image Source="img/redo.png"></Image>
                 </Button.Content>
             </Button>
-
+            <Button Name="btFindReplace" ToolTip="查找/替换" Command="ApplicationCommands.Find" Visibility="Collapsed">
+                <Button.Content>
+                    <Image Source="img/find.png"></Image>
+                </Button.Content>
+            </Button>
             <Separator/>
 
             <Button ToolTip="语法检查">
@@ -221,6 +225,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New" Executed="NewProject"/>
         <CommandBinding Command="ApplicationCommands.Open" Executed="OpenProject"/>
+        <CommandBinding Command="ApplicationCommands.Find" Executed="FindAndReplace" CanExecute="CanFind"/>
         <CommandBinding Command="ApplicationCommands.Save" Executed="SaveProject" CanExecute="CanSave" />
         <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs" CanExecute="CanSaveAs" />
         <CommandBinding Command="ApplicationCommands.Delete" Executed="DeleteSelected" CanExecute="CanDelete" />
