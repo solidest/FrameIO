@@ -96,6 +96,7 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="foobar.cs" />
+    <Compile Include="Helper\CodeFolding.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="TreeNode\EnumdefListNode.cs" />
     <Compile Include="TreeNode\EnumdefNode.cs" />
@@ -105,7 +106,7 @@
     <Compile Include="Model\SubSys.cs" />
     <Compile Include="TreeNode\FrameNode.cs" />
     <Compile Include="TreeNode\ProjectNode.cs" />
-    <Compile Include="Helper.cs" />
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="TreeNode\SubsysListNode.cs" />
     <Compile Include="TreeNode\SubsysNode.cs" />
     <Page Include="Dlg\AboutDlg.xaml">

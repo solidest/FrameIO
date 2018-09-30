@@ -6,7 +6,7 @@
 	<!-- This is the main ruleset. -->
 	<RuleSet>
 		<Span color="Comment" begin="//" />
-		<Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+		<!--<Span color="Comment" multiline="true" begin="/\*" end="\*/" />-->
 		
 		<Span color="String">
 			<Begin>"</Begin>
@@ -51,6 +51,8 @@
       <Word>send</Word>
       <Word>on</Word>
       <Word>recv</Word>
+      <Word>recvloop</Word>
+
       <Word>com</Word>
       <Word>can</Word>
       <Word>tcpserver</Word>

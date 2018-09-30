@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit.Highlighting;
+﻿using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml;
 
 namespace FrameIO.Main
@@ -102,6 +104,8 @@ namespace FrameIO.Main
 
         #region --Helper--
 
+        FoldingManager _foldingManager;
+        CodeFolding _foldingStrategy;
         //加载编辑器配置
         private void LoadEditorConfig()
         {
@@ -119,8 +123,21 @@ namespace FrameIO.Main
             // and register it in the HighlightingManager
             HighlightingManager.Instance.RegisterHighlighting("Custom Highlighting", new string[] { ".cool" }, customHighlighting);
             edCode.SyntaxHighlighting = customHighlighting;
-            edCode.TextArea.TextView.Margin = new Thickness(10, 0, 0, 0);
+            //edCode.TextArea.TextView.Margin = new Thickness(10, 0, 0, 0);
 
+            
+            _foldingManager = FoldingManager.Install(edCode.TextArea);
+            _foldingStrategy = new CodeFolding();
+            DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
+            foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+            foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
+            foldingUpdateTimer.Start();
+        }
+
+        void UpdateFoldings()
+        {
+            if (!_isCoding) return;
+            _foldingStrategy.UpdateFoldings(_foldingManager, edCode.Document);
         }
 
         //更新工作模式
