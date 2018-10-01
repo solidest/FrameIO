@@ -160,6 +160,7 @@
                        BorderThickness="1">
             
         </ed:TextEditor>
+        
         <TabControl BorderBrush="{x:Null}"  Name="tbDocTree" Grid.Row="1"  Margin="3,0,0,0" >
             <TabItem Header="项目管理器">
                 <Grid>
@@ -199,7 +200,6 @@
                 </Grid>
             </TabItem>            
         </TabControl>
-
 
         <r:TabControl Margin="3,0,3,3" x:Name="tbPages" Grid.Row="1" Grid.Column="2"  
             TabStripPlacement="{Binding ElementName=listBox, Path=SelectedItem}" 

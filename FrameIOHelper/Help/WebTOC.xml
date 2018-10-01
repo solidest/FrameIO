@@ -2,49 +2,49 @@
 <HelpTOC>
 
   <HelpTOCNode Title="欢迎阅读 FrameIO 开发手册" Url="html/aa0d97d2-1cc8-4695-b243-a1b700a404a8.htm" />
-  <HelpTOCNode Id="28d23757-3285-40eb-966f-385b558859ce" Title="FrameIO.Interface" Url="html/c848caee-9d0e-0657-aa82-d6e9d2ea9835.htm">
+  <HelpTOCNode Id="1a839238-2123-4870-97d0-99493a594793" Title="FrameIO.Interface" Url="html/c848caee-9d0e-0657-aa82-d6e9d2ea9835.htm">
     <HelpTOCNode Title="AsyncReadCallback 委托" Url="html/61967852-bce9-1e92-b19b-18967fb3c83f.htm" />
     <HelpTOCNode Title="AsyncReadListCallback 委托" Url="html/aae40435-1175-d2e6-1c6e-ab96be6bcc3c.htm" />
     <HelpTOCNode Title="AsyncWriteCallback 委托" Url="html/eb56c612-ac36-5918-6212-377f251a4238.htm" />
-    <HelpTOCNode Id="fbf67ac0-2e2f-49a6-8024-c64f0b974fbd" Title="FrameBase 类" Url="html/3960e714-4f8e-b2ec-59e0-972f9b5a4a65.htm">
+    <HelpTOCNode Id="a44322ca-35ed-40bb-98e4-2d21929daeac" Title="FrameBase 类" Url="html/3960e714-4f8e-b2ec-59e0-972f9b5a4a65.htm">
       <HelpTOCNode Title="FrameBase 构造函数 " Url="html/7bfeca70-7fe7-6efc-5306-df5240aefe8a.htm" />
       <HelpTOCNode Title="FrameBase 方法" Url="html/94e72908-43ea-cf19-bc17-494ab665f009.htm" />
     </HelpTOCNode>
-    <HelpTOCNode Id="1aa2d6d6-2a4d-48e6-851a-be8c10dcbb67" Title="IFramePack 接口" Url="html/aaf40136-a7cd-3396-a47b-b312584fe180.htm">
-      <HelpTOCNode Id="e8d38ff2-f290-42a7-b327-f0bec2e4069e" Title="IFramePack 属性" Url="html/ace1a701-ae1c-c7c1-d00a-cd3410beb25d.htm">
+    <HelpTOCNode Id="f8eb01c0-0493-476f-81e3-a10f75969d6c" Title="IFramePack 接口" Url="html/aaf40136-a7cd-3396-a47b-b312584fe180.htm">
+      <HelpTOCNode Id="7c09f6ec-3a34-4184-ba39-d252c947e9c6" Title="IFramePack 属性" Url="html/ace1a701-ae1c-c7c1-d00a-cd3410beb25d.htm">
         <HelpTOCNode Title="ByteSize 属性 " Url="html/95caf0f9-dc92-e7ad-1c9c-29cd57fb01f7.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="80f17cc7-073b-484e-aaf3-57b911f8e08d" Title="IFramePack 方法" Url="html/86ff58a5-e5d4-1fb5-2ca0-20ab92a9bb5a.htm">
+      <HelpTOCNode Id="a2d179a2-0c6c-47cc-ab8d-10fc872ad864" Title="IFramePack 方法" Url="html/86ff58a5-e5d4-1fb5-2ca0-20ab92a9bb5a.htm">
         <HelpTOCNode Title="Pack 方法 " Url="html/dbbadfe0-1e5b-342b-417c-71ef0180cdae.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="ce69d29c-7492-4d85-bdfb-e829238b6fbd" Title="IFrameReader 接口" Url="html/ab2e51dc-39ce-8fa7-3cfc-3fc0d1fe32d4.htm">
-      <HelpTOCNode Id="ea81ea7e-97c0-4152-a619-ef9a6eddcce3" Title="IFrameReader 方法" Url="html/435685e8-0f46-63df-9688-67ea75ef02a0.htm">
+    <HelpTOCNode Id="ec193c4b-526e-4c85-9318-429aed6f5a2f" Title="IFrameReader 接口" Url="html/ab2e51dc-39ce-8fa7-3cfc-3fc0d1fe32d4.htm">
+      <HelpTOCNode Id="a47bbc38-784f-4a12-aa94-3eaad635366c" Title="IFrameReader 方法" Url="html/435685e8-0f46-63df-9688-67ea75ef02a0.htm">
         <HelpTOCNode Title="BeginReadFrame 方法 " Url="html/41f8debf-a8a5-4c19-a7a9-30faf6ab78f1.htm" />
         <HelpTOCNode Title="BeginReadFrameList 方法 " Url="html/cccb6dfa-a563-f5a6-9e03-2f1af15b6575.htm" />
         <HelpTOCNode Title="ReadFrame 方法 " Url="html/3e5f8126-e338-86c0-a724-b6b0da2524a1.htm" />
         <HelpTOCNode Title="ReadFrameList 方法 " Url="html/846d0085-12d6-af11-6d8b-cae3550ec274.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="a40b8aac-98d9-47cd-9093-c54b324c9d3c" Title="IFrameStream 接口" Url="html/a080ab90-62b0-003b-07d8-6cdd341f5076.htm">
-      <HelpTOCNode Id="528da98d-90fb-490c-b6d1-ff88cf8d4be2" Title="IFrameStream 方法" Url="html/2825a85c-ec99-0738-5411-69677f2bbbc1.htm">
+    <HelpTOCNode Id="821565f4-a1e2-4629-8dad-951a05f06abb" Title="IFrameStream 接口" Url="html/a080ab90-62b0-003b-07d8-6cdd341f5076.htm">
+      <HelpTOCNode Id="07738684-e657-4ea4-9307-470a4559d0bc" Title="IFrameStream 方法" Url="html/2825a85c-ec99-0738-5411-69677f2bbbc1.htm">
         <HelpTOCNode Title="ClearChannel 方法 " Url="html/cb346225-eb16-3bc2-14e4-8ee911dd1a2c.htm" />
         <HelpTOCNode Title="Close 方法 " Url="html/7f08e1ab-d77c-8121-c71a-9a797056aebd.htm" />
         <HelpTOCNode Title="Open 方法 " Url="html/b70eb72f-bf34-becf-b4e7-a669c3fe93a4.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="d7f7592a-b94c-4690-9b29-3bf33ba9132f" Title="IFrameUnpack 接口" Url="html/53e2d314-597d-63f0-403e-c58411352ee5.htm">
-      <HelpTOCNode Id="31e83349-0943-4795-b8e0-f2fa6850be08" Title="IFrameUnpack 属性" Url="html/5a8ea46a-5b5c-476b-91bf-90294e94af62.htm">
+    <HelpTOCNode Id="d6bd8812-f1a3-4ada-ab60-4bade0372145" Title="IFrameUnpack 接口" Url="html/53e2d314-597d-63f0-403e-c58411352ee5.htm">
+      <HelpTOCNode Id="8540fb9f-b52b-4f37-bf95-3e6af92dabb0" Title="IFrameUnpack 属性" Url="html/5a8ea46a-5b5c-476b-91bf-90294e94af62.htm">
         <HelpTOCNode Title="BlockCount 属性 " Url="html/4ed48a30-20da-ede5-cb26-26310b9319a7.htm" />
         <HelpTOCNode Title="FirstBlockSize 属性 " Url="html/68744689-07d4-e66c-94ec-fdc23295add5.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="2bb0e5e7-1604-4761-a82c-50f2780f5e82" Title="IFrameUnpack 方法" Url="html/6625e6c8-dc4f-2de5-33ab-89ccce02c4f9.htm">
+      <HelpTOCNode Id="ba045bba-c14f-4697-99f9-4caf3ed77b5a" Title="IFrameUnpack 方法" Url="html/6625e6c8-dc4f-2de5-33ab-89ccce02c4f9.htm">
         <HelpTOCNode Title="AppendBlock 方法 " Url="html/3834209b-4ab1-ed51-bd1e-77dde1ed2cde.htm" />
         <HelpTOCNode Title="Unpack 方法 " Url="html/b2dc1851-42a7-a9cf-697a-fbd0f66fc19a.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="87783544-e205-44b4-939d-52f9d12f2d71" Title="IFrameWriter 接口" Url="html/c54a96aa-9311-9c13-132b-a6e753fc5a28.htm">
-      <HelpTOCNode Id="c1ad51e6-2182-4bb0-9f4c-91436705e4f8" Title="IFrameWriter 方法" Url="html/ce17e1e1-faa4-8c1c-fc99-39ce90d820fe.htm">
+    <HelpTOCNode Id="5a5d5ab8-b0cd-4f8d-aabd-2ae76a010fda" Title="IFrameWriter 接口" Url="html/c54a96aa-9311-9c13-132b-a6e753fc5a28.htm">
+      <HelpTOCNode Id="e1622e78-a065-4912-9a85-b7224c637a52" Title="IFrameWriter 方法" Url="html/ce17e1e1-faa4-8c1c-fc99-39ce90d820fe.htm">
         <HelpTOCNode Title="BeginWriteFrame 方法 " Url="html/d63e93a3-540e-0d84-e9bb-2b8b19c0618f.htm" />
         <HelpTOCNode Title="BeginWriteFrameList 方法 " Url="html/9d18879b-eb1a-8925-98f3-c5931ec518b5.htm" />
         <HelpTOCNode Title="WriteFrame 方法 " Url="html/1b490122-161e-6e71-a3b0-d46ff7a7dcef.htm" />

@@ -101,7 +101,6 @@ namespace FrameIO.Main
 
         #endregion
 
-
         #region --Helper--
 
         FoldingManager _foldingManager;
@@ -279,7 +278,6 @@ namespace FrameIO.Main
 
         #endregion
 
-
         #region --Command--
 
 
@@ -288,6 +286,7 @@ namespace FrameIO.Main
         {
             _isCoding = !_isCoding;
             UpdateEditMode();
+            OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), true);
             e.Handled = true;
         }
 
@@ -348,6 +347,7 @@ namespace FrameIO.Main
             File.WriteAllText(FileName, _code);
             _isModified = false;
             edCode.IsModified = false;
+            OutText(string.Format("信息：保存文件【{0}】", FileName), false);
             e.Handled = true;
         }
 
@@ -368,6 +368,7 @@ namespace FrameIO.Main
                 edCode.Text = _code;
                 _project = new IOProject();
                 ResetCodeState();
+                OutText(string.Format("信息：打开文件【{0}】", FileName), true);
             }
             UpdateEditMode();
             e.Handled = true;
@@ -394,6 +395,7 @@ namespace FrameIO.Main
                 edCode.Text = _code;
                 _project = new IOProject(System.IO.Path.GetFileNameWithoutExtension(sfd.FileName));
                 ResetCodeState();
+                OutText(string.Format("信息：新建文件【{0}】", FileName), true);
             }
             UpdateEditMode();
             e.Handled = true;
@@ -549,6 +551,18 @@ namespace FrameIO.Main
         private void FindAndReplace(object sender, ExecutedRoutedEventArgs e)
         {
             FindReplaceDlg.ShowForReplace(edCode);
+        }
+
+        #endregion
+
+        #region --Output--
+
+        public void OutText(string info, bool clear)
+        {
+            if (clear) txtOut.Clear();
+            txtOut.AppendText(info);
+            txtOut.AppendText(Environment.NewLine);
+            txtOut.ScrollToEnd();
         }
 
         #endregion

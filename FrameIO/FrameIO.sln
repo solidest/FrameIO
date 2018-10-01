@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIOCodeTemplate", "..\F
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CRC", "..\CRC\CRC.vcxproj", "{999231AB-84D3-42F8-ACA5-BBD935E87084}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameIOParser", "..\FrameIOParser\FrameIOParser.vcxproj", "{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,16 @@ Global
 		{999231AB-84D3-42F8-ACA5-BBD935E87084}.Release|x64.Build.0 = Release|x64
 		{999231AB-84D3-42F8-ACA5-BBD935E87084}.Release|x86.ActiveCfg = Release|Win32
 		{999231AB-84D3-42F8-ACA5-BBD935E87084}.Release|x86.Build.0 = Release|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Debug|x64.ActiveCfg = Debug|x64
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Debug|x64.Build.0 = Debug|x64
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Debug|x86.ActiveCfg = Debug|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Debug|x86.Build.0 = Debug|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Release|x64.ActiveCfg = Release|x64
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Release|x64.Build.0 = Release|x64
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Release|x86.ActiveCfg = Release|Win32
+		{8A5598D5-DF78-4945-AB2B-D08F9D41D31F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

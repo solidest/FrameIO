@@ -23,8 +23,7 @@
       <Word>frame</Word>
       <Word>channel</Word>
       <Word>enum</Word>
-      <Word>action</Word>     
-			<!-- ... -->
+      <Word>action</Word>  
 		</Keywords>
 		
 		<Keywords fontWeight="bold" foreground="SaddleBrown">
@@ -64,7 +63,7 @@
 
 
     <Keywords foreground="SaddleBrown">
-      <Word>id</Word>
+      <Word>deviceid</Word>
       <Word>baudrate</Word>
       
       <Word>signed</Word>
@@ -127,7 +126,8 @@
       <Word>crc32</Word>
       <Word>crc32_mpeg_2</Word>
       <Word>crc64</Word>
-      <Word>crc64_we</Word>      
+      <Word>crc64_we</Word>
+      <Word>crc</Word>
     </Keywords>
 
     <!--<Rule foreground="Gray">
