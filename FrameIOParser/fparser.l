@@ -28,7 +28,7 @@ int utf8len = 0;
 %%
 
 
-^("//"|([ \t]+"//")).*\n	{ yycolumn = 1; yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column);  return T_NOTE; }
+^("//"|([ \t]+"//")).*\n	{ yycolumn = 1; yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line-1, yylloc->first_column, yylloc->last_column-1);  return T_NOTE; }
 "//".*\n					{ yycolumn = 1; }
 
 
@@ -73,7 +73,6 @@ int utf8len = 0;
 "long"					{ return T_LONG; }
 "float"					{ return T_FLOAT; }
 "double"				{ return T_DOUBLE; }
-"string"				{ return T_STRING; }
 
 "send"					{ return T_SEND; }
 "on"					{ return T_ON; }
@@ -97,7 +96,6 @@ int utf8len = 0;
 "repeated"				{ return T_REPEATED; }
 "byteorder"				{ return T_BYTEORDER; }
 "encoded"				{ return T_ENCODED; }
-"repeated"				{ return T_REPEATED; }
 "isdouble"				{ return T_ISDOUBLE; }
 "tail"					{ return T_TAIL; }
 "alignedlen"			{ return T_ALIGEDLEN; }

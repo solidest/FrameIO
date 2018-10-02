@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit.Folding;
+﻿using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
@@ -160,7 +161,12 @@ namespace FrameIO.Main
         private void ShowParseEroor(int codeVer, IList<ParseError> errorlist)
         {
             if (codeVer != _codeVersion) return;
-            if (errorlist == null || errorlist.Count == 0) return;
+            if (errorlist == null || errorlist.Count == 0)
+            {
+                ClearErrTip();
+                OutText("", true);
+                return;
+            }
 
             IServiceProvider sp = edCode;
             var markerService = (TextMarkerService)sp.GetService(typeof(TextMarkerService));
@@ -172,11 +178,75 @@ namespace FrameIO.Main
                 var of1 = edCode.Document.GetOffset(err.FirstLine, err.FirstCol);
                 var of2 = edCode.Document.GetOffset(err.LastLine, err.LastCol);
                 if (of2 >= of1) textMarkerService.Create(of1, of2 - of1 + 1, err.ErrorTip);
-                OutText(string.Format("错误：{0} 错误号：{1}, 行号：{2} 列号：{3}", err.ErrorTip, err.ErrorCode, err.FirstLine, err.FirstCol), false);
+                OutText(string.Format("错误：{0}, 行号：{2} 列号：{3}", err.ErrorTip, err.ErrorCode, err.FirstLine, err.FirstCol), false);
             }
 
         }
 
+        #region --error tip--
+        private void VisualinesChanged(object sender, EventArgs e)
+        {
+            if (toolTip != null)
+            {
+                toolTip.IsOpen = false;
+            }
+        }
+
+        private void CodeEditorMouseHoverStopped(object sender, MouseEventArgs e)
+        {
+            if (toolTip != null)
+            {
+                toolTip.IsOpen = false;
+                e.Handled = true;
+            }
+        }
+
+        private void ToolTipClosed(object sender, RoutedEventArgs e)
+        {
+            toolTip = null; ;
+        }
+
+        private void MouseHover(object sender, MouseEventArgs e)
+        {
+            var textEditor = edCode;
+            var pos = textEditor.TextArea.TextView.GetPositionFloor(e.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
+            bool inDocument = pos.HasValue;
+            if (inDocument)
+            {
+                TextLocation logicalPosition = pos.Value.Location;
+                int offset = textEditor.Document.GetOffset(logicalPosition);
+
+                var markersAtOffset = textMarkerService.GetMarkersAtOffset(offset);
+                TextMarkerService.TextMarker markerWithToolTip = markersAtOffset.FirstOrDefault(marker => marker.ToolTip != null);
+
+
+                if (markerWithToolTip != null)
+                {
+                    if (toolTip == null)
+                    {
+                        toolTip = new ToolTip();
+                        toolTip.Closed += ToolTipClosed;
+                        toolTip.PlacementTarget = this;
+                        toolTip.Content = new TextBlock
+                        {
+                            Text = markerWithToolTip.ToolTip,
+                            TextWrapping = TextWrapping.Wrap
+                        };
+                        toolTip.IsOpen = true;
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        toolTip.Content = new TextBlock
+                        {
+                            Text = markerWithToolTip.ToolTip,
+                            TextWrapping = TextWrapping.Wrap
+                        };
+                    }
+                }
+            }
+        }
+        #endregion
 
         //定时器更新
         void UpdateTimer()
@@ -241,6 +311,8 @@ namespace FrameIO.Main
         private FoldingManager _foldingManager;
         private CodeFolding _foldingStrategy;
         private TextMarkerService textMarkerService;
+        private ToolTip toolTip;
+
         //加载编辑器配置
         private void LoadEditorConfig()
         {
@@ -269,7 +341,9 @@ namespace FrameIO.Main
             tv.BackgroundRenderers.Add(textMarkerService);
             //tv.LineTransformers.Add(textMarkerService);
             tv.Services.AddService(typeof(TextMarkerService), textMarkerService);
-
+            tv.MouseHover += MouseHover;
+            tv.MouseHoverStopped += CodeEditorMouseHoverStopped;
+            tv.VisualLinesChanged += VisualinesChanged;
         }
 
         //更新工作模式
@@ -405,6 +479,15 @@ namespace FrameIO.Main
             }
             return null;
         }
+
+        //清除错误提示
+        private void ClearErrTip()
+        {
+            IServiceProvider sp = edCode;
+            var markerService = (TextMarkerService)sp.GetService(typeof(TextMarkerService));
+            markerService.Clear();
+        }
+
 
         #endregion
 
@@ -685,6 +768,7 @@ namespace FrameIO.Main
         public void OutText(string info, bool clear)
         {
             if (clear) txtOut.Clear();
+            if (info == "") return;
             txtOut.AppendText(info);
             txtOut.AppendText(Environment.NewLine);
             txtOut.ScrollToEnd();
