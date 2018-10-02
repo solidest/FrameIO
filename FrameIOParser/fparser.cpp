@@ -1,6 +1,11 @@
 
 #include "fparser.h"
 
+#include <iostream>
+#include <istream>
+#include <streambuf>
+#include <string>
+
 unsigned char utf8_look_for_table[] =
 {
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -35,3 +40,5 @@ int get_utf8_length(char *str, int clen)
 		len++, ptr += UTFLEN((unsigned char)*ptr));
 	return len;
 }
+
+

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,13 +33,21 @@ namespace FrameIO.Main
             InitializeComponent();
             LoadEditorConfig();
 
+            Thread parseThread = new Thread(this.Parse);
+            parseThread.IsBackground = true;
+            parseThread.Start();
+
+            DispatcherTimer fUpdateTimer = new DispatcherTimer();
+            fUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+            fUpdateTimer.Tick += delegate { UpdateTimer(); };
+            fUpdateTimer.Start();
+
             _isCoding = true;
             UpdateEditMode();
         }
 
         private IOProject _project;
         private bool _isCoding = false;
-        private string _code = "";
         private string __file = "";
         private bool _isModified = false;
 
@@ -55,7 +64,129 @@ namespace FrameIO.Main
             }
         }
 
+        #region --Parse--
+
+        private string _parseCode = "";
+        private int _codeVersion = 0;
+        private int _workVersion = 0;
+        private int _lastprojectid = -1;
+        private ParseDb _db = new ParseDb();
+
+        [DllImport("FrameIOParser.dll")]
+        private extern static int parse(int projectid);
+
+
+        private delegate void ParseErrorHandler(int codeVer, IList<ParseError> errorlist);
+
+        //分析代码 被主线程调用的接口
+        private void ParseCode()
+        {
+            if (edCode.Text == _parseCode) return;
+            lock (this)
+            {
+                _parseCode = edCode.Text; //保存代码
+                _codeVersion += 1; //更新版本
+            }
+        }
+
+        //分析线程的入口
+        private void Parse()
+        {
+            string workCode = "";
+            int projectid = -1;
+            while (true)
+            {
+                if (_workVersion != _codeVersion)
+                {
+                    lock (this)
+                    {
+                        _workVersion = _codeVersion;
+                        workCode = _parseCode;
+                    }
+                    if (projectid != -1) _db.DeleteProject(projectid);
+                    UTF8Encoding utf8 = new UTF8Encoding(false);
+                    workCode = GetUTF8String(utf8.GetBytes(workCode));
+                    projectid = _db.CreateProject(workCode);
+                    _lastprojectid = projectid;
+                    int iret = parse(projectid);
+                    if(iret==0)
+                    {
+                        //加载错误信息
+                        Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, _db.LoadError(projectid));
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
+                    }
+                    
+                    Thread.Sleep(1);
+                }
+                else
+                {
+                    Thread.Sleep(1);
+                }
+            }
+        }
+        
+
+        //转换成UTF8编码
+        private static string GetUTF8String(byte[] buffer)
+        {
+            if (buffer == null)
+                return null;
+
+            if (buffer.Length <= 3)
+            {
+                return Encoding.UTF8.GetString(buffer);
+            }
+
+            byte[] bomBuffer = new byte[] { 0xef, 0xbb, 0xbf };
+
+            if (buffer[0] == bomBuffer[0]
+                && buffer[1] == bomBuffer[1]
+                && buffer[2] == bomBuffer[2])
+            {
+                return new UTF8Encoding(false).GetString(buffer, 3, buffer.Length - 3);
+            }
+
+            return Encoding.UTF8.GetString(buffer);
+        }
+
+        #endregion
+
         #region --Event--
+
+        //分析结果信息输出
+        private void ShowParseEroor(int codeVer, IList<ParseError> errorlist)
+        {
+            if (codeVer != _codeVersion) return;
+            if (errorlist == null || errorlist.Count == 0) return;
+
+            IServiceProvider sp = edCode;
+            var markerService = (TextMarkerService)sp.GetService(typeof(TextMarkerService));
+            markerService.Clear();
+
+            OutText("", true);
+            foreach (var err in errorlist)
+            {
+                var of1 = edCode.Document.GetOffset(err.FirstLine, err.FirstCol);
+                var of2 = edCode.Document.GetOffset(err.LastLine, err.LastCol);
+                if (of2 >= of1) textMarkerService.Create(of1, of2 - of1 + 1, err.ErrorTip);
+                OutText(string.Format("错误：{0} 错误号：{1}, 行号：{2} 列号：{3}", err.ErrorTip, err.ErrorCode, err.FirstLine, err.FirstCol), false);
+            }
+
+        }
+
+
+        //定时器更新
+        void UpdateTimer()
+        {
+            ParseCode();
+            if (_isCoding)
+            {
+                _foldingStrategy.UpdateFoldings(_foldingManager, edCode.Document);
+            }
+        }
 
         //窗体加载 UI初始化
         private void MainFormLoaded(object sender, RoutedEventArgs e)
@@ -76,10 +207,14 @@ namespace FrameIO.Main
         //窗口关闭之前
         private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if(_lastprojectid>0)
+            {
+                _db.DeleteProject(_lastprojectid);
+            }
+
             if (_isCoding)
             {
                 _isModified = edCode.IsModified;
-                _code = edCode.Text;
             }
 
             if (_isModified)
@@ -88,7 +223,7 @@ namespace FrameIO.Main
                 switch (res)
                 {
                     case MessageBoxResult.Yes:
-                        File.WriteAllText(FileName, _code);
+                        File.WriteAllText(FileName, edCode.Text);
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -103,8 +238,9 @@ namespace FrameIO.Main
 
         #region --Helper--
 
-        FoldingManager _foldingManager;
-        CodeFolding _foldingStrategy;
+        private FoldingManager _foldingManager;
+        private CodeFolding _foldingStrategy;
+        private TextMarkerService textMarkerService;
         //加载编辑器配置
         private void LoadEditorConfig()
         {
@@ -124,19 +260,16 @@ namespace FrameIO.Main
             edCode.SyntaxHighlighting = customHighlighting;
             //edCode.TextArea.TextView.Margin = new Thickness(10, 0, 0, 0);
 
-            
             _foldingManager = FoldingManager.Install(edCode.TextArea);
             _foldingStrategy = new CodeFolding();
-            DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
-            foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
-            foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
-            foldingUpdateTimer.Start();
-        }
 
-        void UpdateFoldings()
-        {
-            if (!_isCoding) return;
-            _foldingStrategy.UpdateFoldings(_foldingManager, edCode.Document);
+            //error tip
+            textMarkerService = new TextMarkerService(edCode);
+            var tv = edCode.TextArea.TextView;
+            tv.BackgroundRenderers.Add(textMarkerService);
+            //tv.LineTransformers.Add(textMarkerService);
+            tv.Services.AddService(typeof(TextMarkerService), textMarkerService);
+
         }
 
         //更新工作模式
@@ -163,7 +296,6 @@ namespace FrameIO.Main
                 btFindReplace.Visibility = Visibility.Visible;
 
                 edCode.IsEnabled = (__file!="");
-                edCode.Text = _code;
                 edCode.IsModified = _isModified;
                 edCode.Focus();
 
@@ -189,7 +321,6 @@ namespace FrameIO.Main
                 btFindReplace.Visibility = Visibility.Collapsed;
 
                 edCode.IsEnabled = false;
-                _code = edCode.Text;
                 _isModified = edCode.IsModified;
                 tbDocTree.Focus();
             }
@@ -221,7 +352,6 @@ namespace FrameIO.Main
             if (_isCoding)
             {
                 _isModified = edCode.IsModified;
-                _code = edCode.Text;
             }
             if(_isModified)
             {
@@ -229,7 +359,7 @@ namespace FrameIO.Main
                 switch (res)
                 {
                     case MessageBoxResult.Yes:
-                        File.WriteAllText(FileName, _code);
+                        File.WriteAllText(FileName, edCode.Text);
                         return true;
                     case MessageBoxResult.No:
                         return true;
@@ -284,6 +414,7 @@ namespace FrameIO.Main
         //切换视图
         private void SwitchView(object sender, RoutedEventArgs e)
         {
+
             _isCoding = !_isCoding;
             UpdateEditMode();
             OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), true);
@@ -340,11 +471,7 @@ namespace FrameIO.Main
         //保存
         private void SaveProject(object sender, ExecutedRoutedEventArgs e)
         {
-            if (_isCoding)
-            {
-                _code = edCode.Text;
-            }
-            File.WriteAllText(FileName, _code);
+            File.WriteAllText(FileName, edCode.Text);
             _isModified = false;
             edCode.IsModified = false;
             OutText(string.Format("信息：保存文件【{0}】", FileName), false);
@@ -364,8 +491,7 @@ namespace FrameIO.Main
             if (ofd.ShowDialog() == true && ofd.FileName != FileName)
             {
                 FileName = ofd.FileName;
-                _code = File.ReadAllText(FileName);
-                edCode.Text = _code;
+                edCode.Text = File.ReadAllText(FileName);
                 _project = new IOProject();
                 ResetCodeState();
                 OutText(string.Format("信息：打开文件【{0}】", FileName), true);
@@ -391,8 +517,7 @@ namespace FrameIO.Main
                 if (File.Exists(sfd.FileName)) File.Delete(sfd.FileName);
                 FileName = sfd.FileName;
                 File.WriteAllText(FileName, "");
-                _code = "";
-                edCode.Text = _code;
+                edCode.Text = "";
                 _project = new IOProject(System.IO.Path.GetFileNameWithoutExtension(sfd.FileName));
                 ResetCodeState();
                 OutText(string.Format("信息：新建文件【{0}】", FileName), true);

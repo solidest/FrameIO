@@ -9,12 +9,13 @@ UCN (\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8})
 CHS (\xE9\xBE[\x80-\xA5]|(\xE4[\xB8-\xBF]|\xE9[\x80-\xBD]|[\xE5-\xE8][\x80-\xBF])[\x80-\xBF])
 
 %{
-#define YY_DECL int FrameLexer::yylex(YYSTYPE* yylval, YYLTYPE* yylloc)
+#define YY_DECL int yyFlexLexer::yylex(YYSTYPE* yylval, YYLTYPE* yylloc, FrameIOParserDb* db)
 
 #include "stdafx.h"
 #include "fparser.h"
 #include "fparser.tab.h"
-#include "FrameLexer.h"
+#include <FlexLexer.h>
+#include "FrameIOParserDb.h"
 
 
 int yycolumn = 1;
@@ -27,7 +28,7 @@ int utf8len = 0;
 %%
 
 
-^("//"|([ \t]+"//")).*\n	{ yycolumn = 1; /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return T_NOTE; }
+^("//"|([ \t]+"//")).*\n	{ yycolumn = 1; yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column);  return T_NOTE; }
 "//".*\n					{ yycolumn = 1; }
 
 
@@ -45,7 +46,8 @@ int utf8len = 0;
 "[" |
 "]" |
 ":" |
-";"						{ return yytext[0]; }
+";"	|
+","						{ return yytext[0]; }
 
 
 "project"				{ return T_PROJECT; }
@@ -153,12 +155,12 @@ int utf8len = 0;
 
 0[0-7]* |
 [1-9][0-9]* |
-0[Xx][0-9a-fA-F]+		{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return VALUE_INT; }
+0[Xx][0-9a-fA-F]+		{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_INT; }
 
 -?([0-9]*\.[0-9]+|[0-9]+\.){EXP}? |
-[0-9]+{EXP}				{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return VALUE_REAL; }
+[0-9]+{EXP}				{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_REAL; }
 
-[a-zA-Z_][a-zA-Z0-9_]*	{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return T_ID; }
+[a-zA-Z_][a-zA-Z0-9_]*	{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_ID; }
 
 \r\n					{ yycolumn=1; }
 \n						{ yycolumn=1; }
@@ -166,5 +168,5 @@ int utf8len = 0;
 
 [\xEF\xBB\xBF]			{ yycolumn=1; }
 <<EOF>>					{ return 0; }
-.						{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);out_error(ERROR_CODE_SYMBOL, yylval.symbol, yylval.symbol);*/  }
+.						{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column);  db->SaveError(ERROR_CODE_SYMBOL, yylval->symbol, yylval->symbol);  }
 %%

@@ -27,7 +27,10 @@
     <ClInclude Include="fparser.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FrameLexer.h">
+    <ClInclude Include="sqlite3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameIOParserDb.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,11 +50,17 @@
     <ClCompile Include="fparser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FrameIOParserDb.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Flex Include="fparser.l" />
   </ItemGroup>
   <ItemGroup>
     <Bison Include="fparser.y" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="sqlite3.lib" />
   </ItemGroup>
 </Project>

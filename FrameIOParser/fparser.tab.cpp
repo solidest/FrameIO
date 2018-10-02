@@ -62,24 +62,26 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 5 "fparser.y" /* yacc.c:339  */
+#line 7 "fparser.y" /* yacc.c:339  */
 
 #include <stdlib.h>
-#include "stdafx.h"
+#include "stdafx.h" 
 #include "fparser.h"
-#include "FrameLexer.h"
+#include "fparser.tab.h"
+#include <FlexLexer.h>
+#include "FrameIOParserDb.h"
 
 #undef yylex
-#define yylex context.m_pLexer->yylex
-#define yyerror(msg) my_yyerror(yylloc, context, msg)
+#define yylex plexer->yylex
+#define yyerror(pyylloc, plexer, db, msg) fyyerror(yylval, db, msg)
 
-int my_yyerror(YYLTYPE yylloc, class ParserContext& parm, void* msg) 
-{ 
-   
-    return 1; 
+int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg) 
+{
+	db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
+	return 1; 
 }
 
-#line 83 "fparser.tab.cpp" /* yacc.c:339  */
+#line 85 "fparser.tab.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -219,7 +221,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "fparser.y" /* yacc.c:355  */
+#line 27 "fparser.y" /* yacc.c:355  */
 
 	int symbol;
 
@@ -228,7 +230,7 @@ union YYSTYPE
 	FRAME * framelist;
 	ENUMCFG * enumcfglist;
 
-#line 232 "fparser.tab.cpp" /* yacc.c:355  */
+#line 234 "fparser.tab.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -252,13 +254,13 @@ struct YYLTYPE
 
 
 
-int yyparse (class ParserContext& context);
+int yyparse (class yyFlexLexer* plexer, class FrameIOParserDb* db);
 
 #endif /* !YY_YY_FPARSER_TAB_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-#line 262 "fparser.tab.cpp" /* yacc.c:358  */
+#line 264 "fparser.tab.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -505,13 +507,13 @@ union yyalloc
 #define YYLAST   102
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  107
+#define YYNTOKENS  108
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  8
+#define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  12
+#define YYNRULES  16
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  28
+#define YYNSTATES  35
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -529,7 +531,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,   103,   101,     2,   102,     2,   104,     2,     2,
+       2,     2,   103,   101,   107,   102,     2,   104,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,   100,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -567,8 +569,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    57,    58,    62,    63,    64,    67,    70,
-      73,    76,    77
+       0,    58,    58,    61,    62,    66,    67,    68,    71,    74,
+      77,    81,    82,    86,    87,    90,    91
 };
 #endif
 
@@ -596,8 +598,8 @@ static const char *const yytname[] =
   "T_CRC16_CCITT_FALSE", "T_CRC16_X25", "T_CRC16_XMODEM", "T_CRC16_DNP",
   "T_CRC32", "T_CRC32_MPEG_2", "T_CRC64", "T_CRC64_WE", "VALUE_STRING",
   "VALUE_INT", "VALUE_REAL", "'='", "'+'", "'-'", "'*'", "'/'", "'{'",
-  "'}'", "$accept", "project", "projectitemlist", "projectitem", "system",
-  "frame", "enumcfg", "notelist", YY_NULLPTR
+  "'}'", "','", "$accept", "project", "projectitemlist", "projectitem",
+  "system", "frame", "enumcfg", "enumitemlist", "enumitem", "notelist", YY_NULLPTR
 };
 #endif
 
@@ -616,14 +618,14 @@ static const yytype_uint16 yytoknum[] =
      325,   326,   327,   328,   329,   330,   331,   332,   333,   334,
      335,   336,   337,   338,   339,   340,   341,   342,   343,   344,
      345,   346,   347,   348,   349,   350,   351,   352,   353,   354,
-      61,    43,    45,    42,    47,   123,   125
+      61,    43,    45,    42,    47,   123,   125,    44
 };
 # endif
 
-#define YYPACT_NINF -98
+#define YYPACT_NINF -101
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-98)))
+  (!!((Yystate) == (-101)))
 
 #define YYTABLE_NINF -1
 
@@ -634,9 +636,10 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -98,     6,     1,   -98,    -3,   -98,   -97,   -98,   -98,   -98,
-     -98,   -98,   -98,    -4,    -1,     2,     3,   -98,   -91,   -90,
-     -89,     8,   -88,   -87,   -86,   -98,   -98,   -98
+    -101,     8,     1,  -101,    -1,  -101,   -93,  -101,  -101,  -101,
+    -101,  -101,  -101,    -4,     3,     4,     5,  -101,   -89,   -88,
+     -87,    10,   -86,   -85,    12,  -101,  -101,   -77,  -100,  -101,
+     -74,  -101,    12,  -101,  -101
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -644,21 +647,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-      11,     0,     0,     1,     0,    12,     0,     3,    11,     4,
-       5,     6,     7,     0,     0,     0,     0,    11,     0,     0,
-       0,     2,     0,     0,     0,     8,     9,    10
+      15,     0,     0,     1,     0,    16,     0,     3,    15,     4,
+       5,     6,     7,     0,     0,     0,     0,    15,     0,     0,
+       0,     2,     0,     0,     0,     8,     9,    14,     0,    11,
+       0,    10,     0,    13,    12
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -98,   -98,   -98,   -98,   -98,   -98,   -98,    -6
+    -101,  -101,  -101,  -101,  -101,  -101,  -101,  -101,    -7,    -6
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     8,     9,    10,    11,    12,     2
+      -1,     1,     8,     9,    10,    11,    12,    28,    29,     2
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -666,9 +670,9 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      14,    15,    13,    16,     4,     5,     3,     6,     7,    18,
-       5,    21,    19,    20,    22,    23,    24,     5,    25,    26,
-      27,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      14,    15,    13,    16,     4,     5,    31,    32,     3,     6,
+       5,    21,     7,    18,    19,    20,    22,    23,    24,     5,
+      25,    26,    27,    30,    33,    34,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -681,9 +685,9 @@ static const yytype_uint8 yytable[] =
 
 static const yytype_int8 yycheck[] =
 {
-       4,     5,     8,     7,     3,     9,     0,    10,   105,    10,
-       9,    17,    10,    10,   105,   105,   105,     9,   106,   106,
-     106,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+       4,     5,     8,     7,     3,     9,   106,   107,     0,    10,
+       9,    17,   105,    10,    10,    10,   105,   105,   105,     9,
+     106,   106,    10,   100,    98,    32,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
@@ -698,23 +702,24 @@ static const yytype_int8 yycheck[] =
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,   108,   114,     0,     3,     9,    10,   105,   109,   110,
-     111,   112,   113,   114,     4,     5,     7,   106,    10,    10,
-      10,   114,   105,   105,   105,   106,   106,   106
+       0,   109,   117,     0,     3,     9,    10,   105,   110,   111,
+     112,   113,   114,   117,     4,     5,     7,   106,    10,    10,
+      10,   117,   105,   105,   105,   106,   106,    10,   115,   116,
+     100,   106,   107,    98,   116
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,   107,   108,   109,   109,   110,   110,   110,   111,   112,
-     113,   114,   114
+       0,   108,   109,   110,   110,   111,   111,   111,   112,   113,
+     114,   115,   115,   116,   116,   117,   117
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     8,     0,     2,     1,     1,     1,     5,     5,
-       5,     0,     2
+       6,     1,     3,     3,     1,     0,     2
 };
 
 
@@ -742,7 +747,7 @@ do                                                              \
     }                                                           \
   else                                                          \
     {                                                           \
-      yyerror (&yylloc, context, YY_("syntax error: cannot back up")); \
+      yyerror (&yylloc, plexer, db, YY_("syntax error: cannot back up")); \
       YYERROR;                                                  \
     }                                                           \
 while (0)
@@ -844,7 +849,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Type, Value, Location, context); \
+                  Type, Value, Location, plexer, db); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -855,12 +860,13 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, class ParserContext& context)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, class yyFlexLexer* plexer, class FrameIOParserDb* db)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
   YYUSE (yylocationp);
-  YYUSE (context);
+  YYUSE (plexer);
+  YYUSE (db);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -876,14 +882,14 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, class ParserContext& context)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, class yyFlexLexer* plexer, class FrameIOParserDb* db)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
   YY_LOCATION_PRINT (yyoutput, *yylocationp);
   YYFPRINTF (yyoutput, ": ");
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, context);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, plexer, db);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -916,7 +922,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, class ParserContext& context)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, class yyFlexLexer* plexer, class FrameIOParserDb* db)
 {
   unsigned long yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -930,7 +936,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule
       yy_symbol_print (stderr,
                        yystos[yyssp[yyi + 1 - yynrhs]],
                        &(yyvsp[(yyi + 1) - (yynrhs)])
-                       , &(yylsp[(yyi + 1) - (yynrhs)])                       , context);
+                       , &(yylsp[(yyi + 1) - (yynrhs)])                       , plexer, db);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -938,7 +944,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, yylsp, Rule, context); \
+    yy_reduce_print (yyssp, yyvsp, yylsp, Rule, plexer, db); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1197,11 +1203,12 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, class ParserContext& context)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, class yyFlexLexer* plexer, class FrameIOParserDb* db)
 {
   YYUSE (yyvaluep);
   YYUSE (yylocationp);
-  YYUSE (context);
+  YYUSE (plexer);
+  YYUSE (db);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
@@ -1219,7 +1226,7 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
 `----------*/
 
 int
-yyparse (class ParserContext& context)
+yyparse (class yyFlexLexer* plexer, class FrameIOParserDb* db)
 {
 /* The lookahead symbol.  */
 int yychar;
@@ -1413,7 +1420,7 @@ yybackup:
   if (yychar == YYEMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token: "));
-      yychar = yylex (&yylval, &yylloc);
+      yychar = yylex (&yylval, &yylloc, db);
     }
 
   if (yychar <= YYEOF)
@@ -1494,7 +1501,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1498 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1505 "fparser.tab.cpp" /* yacc.c:1651  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1545,7 +1552,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (&yylloc, context, YY_("syntax error"));
+      yyerror (&yylloc, plexer, db, YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
                                         yyssp, yytoken)
@@ -1572,7 +1579,7 @@ yyerrlab:
                 yymsgp = yymsg;
               }
           }
-        yyerror (&yylloc, context, yymsgp);
+        yyerror (&yylloc, plexer, db, yymsgp);
         if (yysyntax_error_status == 2)
           goto yyexhaustedlab;
       }
@@ -1596,7 +1603,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, &yylloc, context);
+                      yytoken, &yylval, &yylloc, plexer, db);
           yychar = YYEMPTY;
         }
     }
@@ -1652,7 +1659,7 @@ yyerrlab1:
 
       yyerror_range[1] = *yylsp;
       yydestruct ("Error: popping",
-                  yystos[yystate], yyvsp, yylsp, context);
+                  yystos[yystate], yyvsp, yylsp, plexer, db);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1694,7 +1701,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (&yylloc, context, YY_("memory exhausted"));
+  yyerror (&yylloc, plexer, db, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1706,7 +1713,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, &yylloc, context);
+                  yytoken, &yylval, &yylloc, plexer, db);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1715,7 +1722,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  yystos[*yyssp], yyvsp, yylsp, context);
+                  yystos[*yyssp], yyvsp, yylsp, plexer, db);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1728,6 +1735,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 82 "fparser.y" /* yacc.c:1910  */
+#line 96 "fparser.y" /* yacc.c:1910  */
 
 

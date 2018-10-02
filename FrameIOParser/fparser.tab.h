@@ -150,7 +150,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "fparser.y" /* yacc.c:1913  */
+#line 27 "fparser.y" /* yacc.c:1913  */
 
 	int symbol;
 
@@ -183,6 +183,6 @@ struct YYLTYPE
 
 
 
-int yyparse (class ParserContext& context);
+int yyparse (class yyFlexLexer* plexer, class FrameIOParserDb* db);
 
 #endif /* !YY_YY_FPARSER_TAB_H_INCLUDED  */

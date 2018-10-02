@@ -1,5 +1,13 @@
 #pragma once
 
+/*
+
+fparser.h
+
+解析器使用到的函数及数据结构
+
+*/
+
 #define ERROR_CODE_SYMBOL			-1	//词法错误
 #define ERROR_CODE_SYNTAX			-2	//语法错误
 

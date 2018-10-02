@@ -1,21 +1,25 @@
 %locations
 %pure_parser 
-%parse-param    { class ParserContext& context }
+%parse-param    { class yyFlexLexer* plexer }
+%parse-param    { class FrameIOParserDb* db }
+%lex-param {db}
 
 %{
 #include <stdlib.h>
-#include "stdafx.h"
+#include "stdafx.h" 
 #include "fparser.h"
-#include "FrameLexer.h"
+#include "fparser.tab.h"
+#include <FlexLexer.h>
+#include "FrameIOParserDb.h"
 
 #undef yylex
-#define yylex context.m_pLexer->yylex
-#define yyerror(msg) my_yyerror(yylloc, context, msg)
+#define yylex plexer->yylex
+#define yyerror(pyylloc, plexer, db, msg) fyyerror(yylval, db, msg)
 
-int my_yyerror(YYLTYPE yylloc, class ParserContext& parm, void* msg) 
-{ 
-   
-    return 1; 
+int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg) 
+{
+	db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
+	return 1; 
 }
 %}
 
@@ -70,7 +74,17 @@ system: notelist T_SYSTEM T_ID '{' '}'
 frame: notelist T_FRAME T_ID '{' '}'
 ;
 
-enumcfg: notelist T_ENUM T_ID '{' '}'
+enumcfg: notelist T_ENUM T_ID '{' enumitemlist '}'
+;
+
+enumitemlist: 
+	enumitem
+	| enumitemlist ',' enumitem
+;
+
+enumitem:
+	T_ID '=' VALUE_INT
+	| T_ID
 ;
 
 notelist:

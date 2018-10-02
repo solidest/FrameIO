@@ -35,11 +35,12 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -97,7 +98,12 @@
     </Compile>
     <Compile Include="foobar.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
+    <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="Model\Enumdef.cs" />
+    <Compile Include="Parse\ParseDb.cs" />
+    <Compile Include="Parse\ParseError.cs" />
+    <Compile Include="Parse\Project.cs" />
+    <Compile Include="Parse\SQLLiteWrapper.cs" />
     <Compile Include="TreeNode\EnumdefListNode.cs" />
     <Compile Include="TreeNode\EnumdefNode.cs" />
     <Compile Include="TreeNode\FrameListNode.cs" />
