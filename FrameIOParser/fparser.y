@@ -72,7 +72,6 @@ system: notelist T_SYSTEM T_ID '{' systemitemlist notelist '}'
 ;
 
 systemitemlist:
-	systemitem
 	| systemitemlist systemitem
 ;
 
@@ -159,7 +158,6 @@ frame:
 ;
 
 framesegmentlist:
-	framesegment
 	| framesegmentlist framesegment
 ;
 
