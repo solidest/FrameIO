@@ -28,6 +28,7 @@ namespace FrameIO.Main
         }
 
         //删除项目
+
         public void DeleteProject(int projectid)
         {
             _db.ExecuteNonQuery("DELETE FROM fio_project WHERE rowid = " + projectid.ToString());
