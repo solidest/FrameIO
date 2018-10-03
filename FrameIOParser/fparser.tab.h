@@ -152,18 +152,27 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 30 "fparser.y" /* yacc.c:1913  */
+#line 27 "fparser.y" /* yacc.c:1913  */
 
 	int symbol;
+	int optionvalue;
 	segpropertytype segproptype;
 	segpropertyvaluetype segprovtype;
 	segmenttype segtype;
+	syspropertytype sysptype;
+	channeloptiontype choptype;
+	syschanneltype syschtype;
+	actioniotype iotype;
 
 	PROJECT * project;
-	SYS * syslist;
-	FRAME * framelist;
-	ENUMCFG * enumcfglist;
+	PROJECTITEM* pitem;
+	PROJECTITEMLIST* pitemlist;
 
+	SYSITEM* sysitem;
+	SYSITEMLIST* sysitemlist;
+	CHANNELOPTION* choplist;
+	ACTIONMAP* amaplist;
+	
 	SEGMENT* seglist;
 	SEGPROPERTY* segprolist;
 	EXPVALUE* valueexp;
@@ -173,7 +182,7 @@ union YYSTYPE
 	NOTE* notelist;
 
 
-#line 177 "fparser.tab.h" /* yacc.c:1913  */
+#line 186 "fparser.tab.h" /* yacc.c:1913  */
 };
 
 typedef union YYSTYPE YYSTYPE;

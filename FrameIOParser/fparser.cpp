@@ -33,10 +33,6 @@ ENUMCFG* new_enumcfg(int namesyid, ENUMITEM * enumitemlist, NOTE  * notes)
 	return NULL;
 }
 
-ENUMCFG* append_enumcfg(ENUMCFG* enumcfglist, ENUMCFG* lastenumcfg)
-{
-	return NULL;
-}
 
 EXPVALUE* new_exp(exptype valuetype, EXPVALUE * lexp, EXPVALUE * rexp, int valuesyid)
 {
@@ -78,7 +74,72 @@ FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes)
 	return NULL;
 }
 
-FRAME* append_frame(FRAME* list, FRAME* lastitem)
+
+
+
+SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray, NOTE* notes)
+{
+	return NULL;
+}
+
+CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* oplist, NOTE* notes)
+{
+	return NULL;
+}
+
+SYSITEM* new_sysitem(systitemtype itype, void* item)
+{
+	return NULL;
+}
+
+CHANNELOPTION* new_channeloption(channeloptiontype optype, int valuesyid, NOTE* notes)
+{
+	return NULL;
+}
+
+CHANNELOPTION* append_channeloption(CHANNELOPTION* list, CHANNELOPTION* lastitem)
+{
+	return NULL;
+}
+
+ACTIONMAP* new_actionmap(int segsyid, int prosyid, NOTE* notes)
+{
+	return NULL;
+}
+
+ACTIONMAP* append_actionmap(ACTIONMAP* list, ACTIONMAP* lastitem)
+{
+	return NULL;
+}
+
+ACTION* new_action(int namesyid, actioniotype iotype, int framesyid, int channelsyid, ACTIONMAP* maplist, NOTE* notes)
+{
+	return NULL;
+}
+
+SYSITEMLIST* add_sysitem(SYSITEMLIST* list, SYSITEM* item)
+{
+	return NULL;
+}
+
+SYS* new_sys(int namesyid, SYSITEMLIST* list, NOTE* notes)
+{
+	return NULL;
+}
+
+
+
+PROJECTITEM* new_projectitem(projectitemtype itype, void* item)
+{
+	return NULL;
+}
+
+PROJECTITEMLIST* add_projectitem(PROJECTITEMLIST* list, PROJECTITEM* item)
+{
+	return NULL;
+}
+
+PROJECT* new_project(int namesyid, PROJECTITEMLIST* itemlist, NOTE* notes)
 {
 	return NULL;
 }

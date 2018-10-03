@@ -21,23 +21,29 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 	db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
 	return 1; 
 }
-SYS * result_sys = NULL;
-FRAME * result_frame = NULL;
-ENUMCFG * result_enumcfg = NULL;
 %}
 
 
 %union {
 	int symbol;
+	int optionvalue;
 	segpropertytype segproptype;
 	segpropertyvaluetype segprovtype;
 	segmenttype segtype;
+	syspropertytype sysptype;
+	channeloptiontype choptype;
+	syschanneltype syschtype;
+	actioniotype iotype;
 
 	PROJECT * project;
-	SYS * syslist;
-	FRAME * framelist;
-	ENUMCFG * enumcfglist;
+	PROJECTITEM* pitem;
+	PROJECTITEMLIST* pitemlist;
 
+	SYSITEM* sysitem;
+	SYSITEMLIST* sysitemlist;
+	CHANNELOPTION* choplist;
+	ACTIONMAP* amaplist;
+	
 	SEGMENT* seglist;
 	SEGPROPERTY* segprolist;
 	EXPVALUE* valueexp;
@@ -62,13 +68,21 @@ ENUMCFG * result_enumcfg = NULL;
 %token T_CRC16_CCITT T_CRC16_CCITT_FALSE T_CRC16_X25 T_CRC16_XMODEM T_CRC16_DNP T_CRC32 T_CRC32_MPEG_2 T_CRC64 T_CRC64_WE
 
 %token <symbol> VALUE_STRING VALUE_INT VALUE_REAL T_ID T_NOTE
-%type <project> project projectitemlist projectitem
-%type <project>	system systemitemlist systemitem sysproperty syspropertytype
-%type <project>	channel channeltype channeloptionlist channeloption channeloptionname channeloptionvalue
-%type <project>	action actiontype actionmaplist actionmap
-   
 
-%type <framelist> frame
+%type <project> project 
+%type <pitem> projectitem frame enumcfg system
+%type <pitemlist> projectitemlist
+
+%type <sysitemlist> systemitemlist
+%type <sysitem> systemitem sysproperty channel action
+%type <sysptype> sysprotype
+%type <choplist> channeloptionlist channeloption
+%type <choptype> channeloptionname
+%type <syschtype> channeltype
+%type <optionvalue> channeloptionvalue
+%type <amaplist> actionmaplist actionmap
+%type <iotype> actiontype
+
 %type <seglist> framesegmentlist framesegment
 %type <segtype> framesegmenttype
 %type <segprolist> framesegmentproperty framesegmentpropertylist framesegmentpropertytypevalue
@@ -76,7 +90,6 @@ ENUMCFG * result_enumcfg = NULL;
 %type <segprovtype> framesegmentpropertyboolvalue framesegmentcheckvalue framesegmentpropertyorder framesegmentpropertyencoded 
 
 %type <oneofitemlist> framesegmentoneoflist framesegmentoneofitem
-%type <enumcfglist> enumcfg
 %type <enumitemlist> enumitemlist enumitem
 %type <valueexp> exp 
 %type <notelist> notelist 
@@ -91,105 +104,105 @@ ENUMCFG * result_enumcfg = NULL;
 %%
 
 project:
-	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = NULL; }
+	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = new_project($3, $5, $1); }
 ;
 
 projectitemlist:															{ $$ = NULL; }
-	| projectitemlist projectitem											{ $$ = NULL; }														
+	| projectitemlist projectitem											{ $$ = add_projectitem($1, $2); }														
 ;
 
 projectitem:
-	system																	{ $$ = NULL; }
-	| frame																	{ append_frame(result_frame, $1); }
-	| enumcfg																{ append_enumcfg(result_enumcfg, $1); }
+	system																	{ $$ = $1; }
+	| frame																	{ $$ = $1; }
+	| enumcfg																{ $$ = $1; }
 ;
 
 system: 
-	notelist T_SYSTEM T_ID '{' systemitemlist notelist '}'					{ $$ = NULL; }
+	notelist T_SYSTEM T_ID '{' systemitemlist notelist '}'					{ $$ = new_projectitem(PI_SYSTEM, new_sys($3, $5, $1)); }
 ;
 
 systemitemlist:																{ $$ = NULL; }
-	| systemitemlist systemitem												{ $$ = NULL; }
+	| systemitemlist systemitem												{ $$ = add_sysitem($1, $2); }
 ;
 
 systemitem:
-	sysproperty																{ $$ = NULL; }
-	| channel																{ $$ = NULL; }
-	| action																{ $$ = NULL; }
+	sysproperty																{ $$ = $1; }
+	| channel																{ $$ = $1; }
+	| action																{ $$ = $1; }
 ;
 
 sysproperty:
-	notelist syspropertytype T_ID ';'										{ $$ = NULL; }
-	| notelist syspropertytype '[' ']' T_ID ';'								{ $$ = NULL; }
+	notelist sysprotype T_ID ';'										{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, FALSE, $1)); }
+	| notelist sysprotype '[' ']' T_ID ';'								{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, TRUE, $1)); }
 ;
 
-syspropertytype:
-	T_BOOL																	{ $$ = NULL; }
-	| T_BYTE																{ $$ = NULL; }
-	| T_SBYTE																{ $$ = NULL; }
-	| T_USHORT																{ $$ = NULL; }
-	| T_SHORT																{ $$ = NULL; }
-	| T_UINT																{ $$ = NULL; }
-	| T_INT																	{ $$ = NULL; }
-	| T_ULONG																{ $$ = NULL; }
-	| T_LONG																{ $$ = NULL; }
-	| T_FLOAT																{ $$ = NULL; }
-	| T_DOUBLE																{ $$ = NULL; }
+sysprotype:
+	T_BOOL																	{ $$ = SYSPT_BOOL; }
+	| T_BYTE																{ $$ = SYSPT_BYTE; }
+	| T_SBYTE																{ $$ = SYSPT_SBYTE; }
+	| T_USHORT																{ $$ = SYSPT_USHORT; }
+	| T_SHORT																{ $$ = SYSPT_SHORT; }
+	| T_UINT																{ $$ = SYSPT_UINT; }
+	| T_INT																	{ $$ = SYSPT_INT; }
+	| T_ULONG																{ $$ = SYSPT_ULONG; }
+	| T_LONG																{ $$ = SYSPT_LONG; }
+	| T_FLOAT																{ $$ = SYSPT_FLOAT; }
+	| T_DOUBLE																{ $$ = SYSPT_DOUBLE; }
 ;
 
 channel: 
-	notelist T_CHANNEL T_ID ':' channeltype '{' channeloptionlist notelist '}'	{ $$ = NULL; }
+	notelist T_CHANNEL T_ID ':' channeltype '{' channeloptionlist notelist '}'	{ $$ = new_sysitem(SYSI_CHANNEL, new_syschannel($3, $5, $7, $1)); }
 ;
 
 channeltype:
-	T_COM																		{ $$ = NULL; }
-	| T_CAN																		{ $$ = NULL; }
-	| T_TCPSERVER																{ $$ = NULL; }
-	| T_TCPCLIENT																{ $$ = NULL; }
-	| T_UDP																		{ $$ = NULL; }
-	| T_DI																		{ $$ = NULL; }
-	| T_DO																		{ $$ = NULL; }
+	T_COM																		{ $$ = SCHT_COM; }
+	| T_CAN																		{ $$ = SCHT_CAN; }
+	| T_TCPSERVER																{ $$ = SCHT_TCPSERVER; }
+	| T_TCPCLIENT																{ $$ = SCHT_TCPCLIENT; }
+	| T_UDP																		{ $$ = SCHT_UDP; }
+	| T_DI																		{ $$ = SCHT_DI; }
+	| T_DO																		{ $$ = SCHT_DO; }
 ;
 
 channeloptionlist:																{ $$ = NULL; }
-	| channeloptionlist channeloption											{ $$ = NULL; }
+	| channeloptionlist channeloption											{ $$ = append_channeloption($1, $2); }
 ;
 
 channeloption:
-	notelist channeloptionname '=' channeloptionvalue ';'						{ $$ = NULL; }
+	notelist channeloptionname '=' channeloptionvalue ';'						{ $$ = new_channeloption($2, $4, $1); }
 ;
 
 channeloptionname:
-	T_DEVICEID																	{ $$ = NULL; }
-	| T_BAUDRATE																{ $$ = NULL; }
+	T_DEVICEID																	{ $$ = CHOP_DEVICEID; }
+	| T_BAUDRATE																{ $$ = CHOP_BAUDRATE; }
 ;
 
 channeloptionvalue:
-	VALUE_INT																	{ $$ = NULL; }
-	| VALUE_STRING																{ $$ = NULL; }
-	| VALUE_REAL																{ $$ = NULL; }
+	VALUE_INT																	{ $$ = $1; }
+	| VALUE_STRING																{ $$ = $1; }
+	| VALUE_REAL																{ $$ = $1; }
 ;
 
 action:
-	notelist T_ACTION T_ID ':' actiontype T_ID T_ON T_ID '{' actionmaplist notelist'}'	{ $$ = NULL; }
+	notelist T_ACTION T_ID ':' actiontype T_ID T_ON T_ID '{' actionmaplist notelist'}'	{ $$ = new_sysitem(SYSI_ACTION, new_action($3, $5, $6, $8, $10, $1)); }
 ;
 
 actiontype:
-	T_SEND																				{ $$ = NULL; }
-	| T_RECV																			{ $$ = NULL; }
-	| T_RECVLOOP																		{ $$ = NULL; }
+	T_SEND																				{ $$ = AIO_SEND; }
+	| T_RECV																			{ $$ = AIO_RECV; }
+	| T_RECVLOOP																		{ $$ = AIO_RECVLOOP; }
 ;
 
 actionmaplist:																			{ $$ = NULL; }
-	| actionmaplist actionmap															{ $$ = NULL; }
+	| actionmaplist actionmap															{ $$ = append_actionmap($1, $2); }
 ;
 
 actionmap:
-	notelist T_ID ':' T_ID ';'															{ $$ = NULL; }
+	notelist T_ID ':' T_ID ';'															{ $$ = new_actionmap($2, $4, $1); }
 ;
 
 frame: 
-	notelist T_FRAME T_ID '{' framesegmentlist notelist '}'								{ $$ = new_frame($3, $5, $1); }
+	notelist T_FRAME T_ID '{' framesegmentlist notelist '}'								{ $$ = new_projectitem(PI_FRAME, new_frame($3, $5, $1)); }
 ;
 
 framesegmentlist:																		{ $$ = NULL; }
@@ -322,7 +335,7 @@ exp:
 ;
 
 enumcfg: 
-	notelist T_ENUM T_ID '{' enumitemlist notelist '}'							{ $$ = new_enumcfg($3, $5, $1); }
+	notelist T_ENUM T_ID '{' enumitemlist notelist '}'							{ $$ = new_projectitem(PI_ENUMCFG, new_enumcfg($3, $5, $1)); }
 ;
 
 enumitemlist: 

@@ -20,6 +20,64 @@ typedef struct note
 	struct note * nextnote;
 } NOTE;
 
+//项目成员类型
+enum projectitemtype
+{
+	PI_SYSTEM = 1,
+	PI_FRAME,
+	PI_ENUMCFG
+};
+
+//系统成员类型
+enum systitemtype
+{
+	SYSI_PROPERTY = 1,
+	SYSI_CHANNEL,
+	SYSI_ACTION
+};
+
+//系统属性类型
+enum syspropertytype
+{
+	SYSPT_BOOL = 1,
+	SYSPT_BYTE,
+	SYSPT_SBYTE,
+	SYSPT_USHORT,
+	SYSPT_SHORT,
+	SYSPT_UINT,
+	SYSPT_INT,
+	SYSPT_ULONG,
+	SYSPT_LONG,
+	SYSPT_FLOAT,
+	SYSPT_DOUBLE
+};
+
+//通道类型
+enum syschanneltype
+{
+	SCHT_COM = 1,
+	SCHT_CAN,
+	SCHT_TCPSERVER,
+	SCHT_TCPCLIENT,
+	SCHT_UDP,
+	SCHT_DI,
+	SCHT_DO
+};
+
+//通道选项
+enum channeloptiontype
+{
+	CHOP_DEVICEID = 1,
+	CHOP_BAUDRATE
+};
+
+//IO操作类型
+enum actioniotype
+{
+	AIO_SEND = 1,
+	AIO_RECV,
+	AIO_RECVLOOP
+};
 
 //表达式类型
 enum exptype
@@ -147,7 +205,6 @@ typedef struct segoneofitem
 	struct segoneofitem * nextitem;
 } ONEOFITEM;
 
-
 //字段
 typedef struct segment
 {
@@ -157,7 +214,6 @@ typedef struct segment
 	SEGPROPERTY segpropertylist;
 	struct segment * nextsegment;
 } SEGMENT;
-
 
 //数据帧
 typedef struct frame
@@ -171,22 +227,22 @@ typedef struct frame
 
 
 
-//选项
-typedef struct option
+//通道参数选项
+typedef struct channeloption
 {
 	NOTE  * notes;
-	int optionid;
-	int optionvalue;
+	channeloptiontype optiontype;
+	int valuesyid;
 	struct option * nextoption;
-} OPTION;
+} CHANNELOPTION;
 
 //通道
 typedef struct channel
 {
 	NOTE  * notes;
 	int namesyid;
-	int channeltype;
-	OPTION * channeloption;
+	syschanneltype channeltype;
+	CHANNELOPTION * channeloption;
 	struct channel * nextchannel;
 } CHANNEL;
 
@@ -194,9 +250,9 @@ typedef struct channel
 typedef struct actionmap
 {
 	NOTE  * notes;
-	int segmentid;
-	int propertyid;
-	struct actionmap * nextactionmap;
+	int segsyid;
+	int prosyid;
+	struct actionmap * nextmap;
 } ACTIONMAP;
 
 //动作
@@ -204,22 +260,53 @@ typedef struct action
 {
 	NOTE  * notes;
 	int namesyid;
-	int actiontype;
-	int frameid;
-	int channelid;
-	ACTIONMAP * segmap;
+	actioniotype iotype;
+	int framesyid;
+	int channelsyid;
+	ACTIONMAP * maplist;
 	struct action * nextaction;
 } ACTION;
+
+
 
 //系统-属性
 typedef struct sysproperty
 {
 	NOTE  * notes;
-	int syspropertytype;
+	syspropertytype protype;
 	int namesyid;
-	int repetated;
+	bool isarray;
 	struct sysproperty * nextsysproperty;
 } SYSPROPERTY;
+
+//系统内部成员
+typedef struct sysitem
+{
+	systitemtype itemtype;
+	void* item;
+} SYSITEM;
+
+//系统内部成员列表
+typedef struct sysitemlist
+{
+	SYSITEM* sysprolist;
+	SYSITEM* channellist;
+	SYSITEM* actionlist;
+}SYSITEMLIST;
+
+//系统
+typedef struct sys
+{
+	int namesyid;
+	NOTE  * notes;
+	SYSPROPERTY * propertylist;
+	CHANNEL * channellist;
+	ACTION * actionlist;
+	struct sys * nextsys;
+} SYS;
+
+
+
 
 
 //枚举项
@@ -241,22 +328,25 @@ typedef struct enumcfg
 	struct enumcfg * nextenumcfg;
 } ENUMCFG;
 
-
-//系统
-typedef struct sys
+//项目内部成员
+typedef struct projectitem
 {
-	int namesyid;
-	NOTE  * notes;
-	SYSPROPERTY * propertylist;
-	CHANNEL * channellist;
-	ACTION * actionlist;
-	struct sys * nextsys;
-} SYS;
+	projectitemtype itemtype;
+	void* item;
+} PROJECTITEM;
+
+//项目内部成员列表
+typedef struct projectitemlist
+{
+	PROJECTITEM* syslist;
+	PROJECTITEM* framelist;
+	PROJECTITEM* enumcfglist;
+}PROJECTITEMLIST;
 
 //项目
 typedef struct project
 {
-	int name_syid;
+	int namesyid;
 	struct NOTE * notes;
 	struct SYS * syslist;
 	struct FRAME * framelist;
@@ -265,11 +355,13 @@ typedef struct project
 
 
 NOTE* new_note(int notesyid);
-NOTE* append_note(NOTE* notelist, int notesyid);
+NOTE* append_note(NOTE* notelist, int notesyid);\
+
 ENUMITEM* new_enumitem(int itemsyid, int valuesyid, NOTE  * notes);
 ENUMITEM* append_enumitem(ENUMITEM* enumitemlist, ENUMITEM* lastenumitem);
 ENUMCFG* new_enumcfg(int namesyid, ENUMITEM * enumitemlist, NOTE  * notes);
-ENUMCFG* append_enumcfg(ENUMCFG* enumcfglist, ENUMCFG* lastenumcfg);
+
+
 EXPVALUE* new_exp(exptype valuetype, EXPVALUE * lexp, EXPVALUE * rexp, int valuesyid=-1);
 SEGPROPERTY* new_segproperty(segpropertytype segprotype, segpropertyvaluetype segprovtype, int iv=-1, void* pv=0);
 SEGPROPERTY* append_segproperty(SEGPROPERTY* segprolist, SEGPROPERTY* lassegpro);
@@ -278,4 +370,18 @@ ONEOFITEM* append_oneofitem(ONEOFITEM* list, ONEOFITEM* lastitem);
 SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NOTE* notes);
 SEGMENT* append_segment(SEGMENT* list, SEGMENT* lastitem);
 FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes);
-FRAME* append_frame(FRAME* list, FRAME* lastitem);
+
+SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray, NOTE* notes);
+CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* oplist, NOTE* notes);
+CHANNELOPTION* new_channeloption(channeloptiontype optype, int valuesyid, NOTE* notes);
+CHANNELOPTION* append_channeloption(CHANNELOPTION* list, CHANNELOPTION* lastitem);
+ACTIONMAP* new_actionmap(int segsyid, int prosyid, NOTE* notes);
+ACTIONMAP* append_actionmap(ACTIONMAP* list, ACTIONMAP* lastitem);
+ACTION* new_action(int namesyid, actioniotype iotype, int framesyid, int channelsyid, ACTIONMAP* maplist, NOTE* notes);
+SYSITEM* new_sysitem(systitemtype itype, void* item);
+SYSITEMLIST* add_sysitem(SYSITEMLIST* list, SYSITEM* item);
+SYS* new_sys(int namesyid, SYSITEMLIST* list, NOTE* notes);
+
+PROJECTITEM* new_projectitem(projectitemtype itype, void* item);
+PROJECTITEMLIST* add_projectitem(PROJECTITEMLIST* list, PROJECTITEM* item);
+PROJECT* new_project(int namesyid, PROJECTITEMLIST* itemlist, NOTE* notes);

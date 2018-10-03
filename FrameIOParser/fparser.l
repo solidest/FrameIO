@@ -84,7 +84,7 @@ int utf8len = 0;
 "can"					{ return T_CAN; }
 "tcpserver"				{ return T_TCPSERVER; }
 "tcpclient"				{ return T_TCPCLIENT; }
-"upd"					{ return T_UDP; }
+"udp"					{ return T_UDP; }
 "di"					{ return T_DI; }
 "do"					{ return T_DO; }
 
