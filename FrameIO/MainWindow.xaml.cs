@@ -39,7 +39,7 @@ namespace FrameIO.Main
             parseThread.Start();
 
             DispatcherTimer fUpdateTimer = new DispatcherTimer();
-            fUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+            fUpdateTimer.Interval = TimeSpan.FromSeconds(1);
             fUpdateTimer.Tick += delegate { UpdateTimer(); };
             fUpdateTimer.Start();
 

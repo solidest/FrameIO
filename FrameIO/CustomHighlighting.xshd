@@ -23,7 +23,7 @@
       <Word>frame</Word>
       <Word>channel</Word>
       <Word>enum</Word>
-      <Word>action</Word>  
+      <Word>action</Word>
 		</Keywords>
 		
 		<Keywords fontWeight="bold" foreground="SaddleBrown">
@@ -65,7 +65,8 @@
     <Keywords foreground="SaddleBrown">
       <Word>deviceid</Word>
       <Word>baudrate</Word>
-      
+
+      <Word>value</Word>
       <Word>signed</Word>
       <Word>bitcount</Word>
       <Word>default</Word>
@@ -80,6 +81,7 @@
       <Word>bytesize</Word>
       <Word>toenum</Word>
       <Word>oneof</Word>
+      <Word>bytesizeof</Word>
       <Word>max</Word>
       <Word>min</Word>
       <Word>check</Word>
@@ -87,6 +89,7 @@
     </Keywords>
 
     <Keywords foreground="DarkBlue">
+      <Word>this</Word>
       <Word>true</Word>
       <Word>false</Word>
       <Word>small</Word>

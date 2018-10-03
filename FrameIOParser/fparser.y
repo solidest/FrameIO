@@ -21,31 +21,66 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 	db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
 	return 1; 
 }
+SYS * result_sys = NULL;
+FRAME * result_frame = NULL;
+ENUMCFG * result_enumcfg = NULL;
 %}
 
 
 %union {
 	int symbol;
+	segpropertytype segproptype;
+	segpropertyvaluetype segprovtype;
+	segmenttype segtype;
 
 	PROJECT * project;
 	SYS * syslist;
 	FRAME * framelist;
 	ENUMCFG * enumcfglist;
+
+	SEGMENT* seglist;
+	SEGPROPERTY* segprolist;
+	EXPVALUE* valueexp;
+	ONEOFITEM* oneofitemlist;
+
+	ENUMITEM * enumitemlist;
+	NOTE* notelist;
+
 }
 
-%token T_PROJECT T_SYSTEM T_FRAME T_CHANNEL T_ENUM T_ACTION T_NOTE T_ID
+%token T_PROJECT T_SYSTEM T_FRAME T_CHANNEL T_ENUM T_ACTION T_THIS
 %token T_INTEGER T_REAL T_BLOCK T_TEXT
 %token T_BOOL T_BYTE T_SBYTE T_USHORT T_SHORT T_UINT T_INT T_ULONG T_LONG T_FLOAT T_DOUBLE T_STRING
 %token T_SEND T_ON T_RECV T_RECVLOOP
 %token T_COM T_CAN T_TCPSERVER T_TCPCLIENT T_UDP T_DI T_DO
 %token T_DEVICEID T_BAUDRATE
-%token T_SIGNED T_BITCOUNT T_VALUE T_REPEATED T_BYTEORDER T_ENCODED T_REPEATED T_ISDOUBLE T_TAIL T_ALIGEDLEN T_TYPE T_BYTESIZE T_TOENUM T_ONEOF T_MAX T_MIN T_CHECK T_CHECKRANGE
-%token T_TRUE T_FALSE T_SMALL T_BIG T_PRIMITIVE T_INVRSION T_COMPLEMENT
+%token T_SIGNED T_BITCOUNT T_VALUE T_REPEATED T_BYTEORDER T_ENCODED T_REPEATED T_ISDOUBLE T_TAIL T_ALIGNEDLEN T_TYPE T_BYTESIZE 
+%token T_BYTESIZEOF T_TOENUM T_ONEOF T_MAX T_MIN T_CHECK T_CHECKRANGE
+%token T_TRUE T_FALSE T_SMALL T_BIG T_PRIMITIVE T_INVERSION T_COMPLEMENT
 %token T_SUM8 T_XOR8 T_SUM16 T_SUM16_FALSE T_XOR16 T_XOR16_FALSE T_SUM32 T_SUM32_FALSE T_XOR32 T_XOR32_FALSE T_CRC4_ITU T_CRC5_EPC T_CRC5_ITU
 %token T_CRC5_USB T_CRC6_ITU T_CRC7_MMC T_CRC8 T_CRC8_ITU T_CRC8_ROHC T_CRC8_MAXIM T_CRC16_IBM T_CRC16_MAXIM T_CRC16_USB T_CRC16_MODBUS
 %token T_CRC16_CCITT T_CRC16_CCITT_FALSE T_CRC16_X25 T_CRC16_XMODEM T_CRC16_DNP T_CRC32 T_CRC32_MPEG_2 T_CRC64 T_CRC64_WE
 
-%token VALUE_STRING VALUE_INT VALUE_REAL
+%token <symbol> VALUE_STRING VALUE_INT VALUE_REAL T_ID T_NOTE
+%type <project> project projectitemlist projectitem
+%type <project>	system systemitemlist systemitem sysproperty syspropertytype
+%type <project>	channel channeltype channeloptionlist channeloption channeloptionname channeloptionvalue
+%type <project>	action actiontype actionmaplist actionmap
+   
+
+%type <framelist> frame
+%type <seglist> framesegmentlist framesegment
+%type <segtype> framesegmenttype
+%type <segprolist> framesegmentproperty framesegmentpropertylist framesegmentpropertytypevalue
+%type <segproptype> framesegmentpropertyexp framesegmentpropertyconst framesegmentpropertyint framesegmentpropertybool
+%type <segprovtype> framesegmentpropertyboolvalue framesegmentcheckvalue framesegmentpropertyorder framesegmentpropertyencoded 
+
+%type <oneofitemlist> framesegmentoneoflist framesegmentoneofitem
+%type <enumcfglist> enumcfg
+%type <enumitemlist> enumitemlist enumitem
+%type <valueexp> exp 
+%type <notelist> notelist 
+
 
 %right '='
 %left '+' '-'
@@ -55,253 +90,253 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 
 %%
 
-project: notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist
+project:
+	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = NULL; }
 ;
 
-projectitemlist:
-	| projectitemlist projectitem
+projectitemlist:															{ $$ = NULL; }
+	| projectitemlist projectitem											{ $$ = NULL; }														
 ;
 
 projectitem:
-	system
-	| frame
-	| enumcfg
+	system																	{ $$ = NULL; }
+	| frame																	{ append_frame(result_frame, $1); }
+	| enumcfg																{ append_enumcfg(result_enumcfg, $1); }
 ;
 
-system: notelist T_SYSTEM T_ID '{' systemitemlist notelist '}'
+system: 
+	notelist T_SYSTEM T_ID '{' systemitemlist notelist '}'					{ $$ = NULL; }
 ;
 
-systemitemlist:
-	| systemitemlist systemitem
+systemitemlist:																{ $$ = NULL; }
+	| systemitemlist systemitem												{ $$ = NULL; }
 ;
 
 systemitem:
-	sysproperty
-	| channel
-	| action
+	sysproperty																{ $$ = NULL; }
+	| channel																{ $$ = NULL; }
+	| action																{ $$ = NULL; }
 ;
 
 sysproperty:
-	notelist syspropertytype T_ID ';'
-	| notelist syspropertytype '[' ']' T_ID ';'
+	notelist syspropertytype T_ID ';'										{ $$ = NULL; }
+	| notelist syspropertytype '[' ']' T_ID ';'								{ $$ = NULL; }
 ;
 
 syspropertytype:
-	T_BOOL
-	| T_BYTE
-	| T_SBYTE
-	| T_USHORT
-	| T_SHORT
-	| T_UINT
-	| T_INT
-	| T_ULONG
-	| T_LONG
-	| T_FLOAT
-	| T_DOUBLE
+	T_BOOL																	{ $$ = NULL; }
+	| T_BYTE																{ $$ = NULL; }
+	| T_SBYTE																{ $$ = NULL; }
+	| T_USHORT																{ $$ = NULL; }
+	| T_SHORT																{ $$ = NULL; }
+	| T_UINT																{ $$ = NULL; }
+	| T_INT																	{ $$ = NULL; }
+	| T_ULONG																{ $$ = NULL; }
+	| T_LONG																{ $$ = NULL; }
+	| T_FLOAT																{ $$ = NULL; }
+	| T_DOUBLE																{ $$ = NULL; }
 ;
 
 channel: 
-	notelist T_CHANNEL T_ID ':' channeltype '{' channeloptionlist notelist '}'
+	notelist T_CHANNEL T_ID ':' channeltype '{' channeloptionlist notelist '}'	{ $$ = NULL; }
 ;
 
 channeltype:
-	T_COM
-	| T_CAN
-	| T_TCPSERVER
-	| T_TCPCLIENT
-	| T_UDP
-	| T_DI
-	| T_DO
+	T_COM																		{ $$ = NULL; }
+	| T_CAN																		{ $$ = NULL; }
+	| T_TCPSERVER																{ $$ = NULL; }
+	| T_TCPCLIENT																{ $$ = NULL; }
+	| T_UDP																		{ $$ = NULL; }
+	| T_DI																		{ $$ = NULL; }
+	| T_DO																		{ $$ = NULL; }
 ;
 
-channeloptionlist:
-	channeloption
-	|channeloptionlist channeloption
+channeloptionlist:																{ $$ = NULL; }
+	| channeloptionlist channeloption											{ $$ = NULL; }
 ;
 
 channeloption:
-	notelist channeloptionname '=' channeloptionvalue ';'
+	notelist channeloptionname '=' channeloptionvalue ';'						{ $$ = NULL; }
 ;
 
 channeloptionname:
-	T_DEVICEID
-	| T_BAUDRATE
+	T_DEVICEID																	{ $$ = NULL; }
+	| T_BAUDRATE																{ $$ = NULL; }
 ;
 
 channeloptionvalue:
-	VALUE_INT;
-	| VALUE_STRING
-	| VALUE_REAL
+	VALUE_INT																	{ $$ = NULL; }
+	| VALUE_STRING																{ $$ = NULL; }
+	| VALUE_REAL																{ $$ = NULL; }
 ;
 
 action:
-	notelist T_ACTION T_ID ':' actiontype T_ID T_ON T_ID '{' actionmaplist notelist'}'
+	notelist T_ACTION T_ID ':' actiontype T_ID T_ON T_ID '{' actionmaplist notelist'}'	{ $$ = NULL; }
 ;
 
 actiontype:
-	T_SEND
-	| T_RECV
-	| T_RECVLOOP
+	T_SEND																				{ $$ = NULL; }
+	| T_RECV																			{ $$ = NULL; }
+	| T_RECVLOOP																		{ $$ = NULL; }
 ;
 
-actionmaplist:
-	actionmap
-	| actionmaplist actionmap
+actionmaplist:																			{ $$ = NULL; }
+	| actionmaplist actionmap															{ $$ = NULL; }
 ;
 
 actionmap:
-	notelist T_ID ':' T_ID ';'
+	notelist T_ID ':' T_ID ';'															{ $$ = NULL; }
 ;
 
 frame: 
-	notelist T_FRAME T_ID '{' framesegmentlist notelist '}'
+	notelist T_FRAME T_ID '{' framesegmentlist notelist '}'								{ $$ = new_frame($3, $5, $1); }
 ;
 
-framesegmentlist:
-	| framesegmentlist framesegment
+framesegmentlist:																		{ $$ = NULL; }
+	| framesegmentlist framesegment														{ $$ = append_segment($1, $2); }
 ;
 
 framesegment:
-	notelist framesegmenttype T_ID framesegmentpropertylist ';'
+	notelist framesegmenttype T_ID framesegmentpropertylist ';'							{ $$ = new_segment($2, $3, $4, $1); }
 ;
 
 framesegmenttype:
-	T_INTEGER
-	| T_REAL
-	| T_BLOCK
-	| T_TEXT
+	T_INTEGER																			{ $$ = SEGT_INTEGER; }
+	| T_REAL																			{ $$ = SEGT_REAL; }
+	| T_BLOCK																			{ $$ = SEGT_BLOCK; }
+	| T_TEXT																			{ $$ = SEGT_TEXT; }
 ;
 
-framesegmentpropertylist:
-	| framesegmentpropertylist framesegmentproperty
+framesegmentpropertylist:																{ $$ = NULL; }
+	| framesegmentpropertylist framesegmentproperty										{ $$ = append_segproperty($1, $2); }
 ;
 
 framesegmentproperty:
-	framesegmentpropertybool '=' framesegmentpropertyboolvalue
-	| framesegmentpropertyint '=' VALUE_INT
-	| framesegmentpropertyconst '=' framesegmentpropertyconstvalue
-	| T_BYTEORDER '=' framesegmentpropertyorder
-	| T_ENCODED '=' framesegmentpropertyencoded
-	| T_CHECK '=' framesegmentchecktype
-	| T_CHECKRANGE '=' '(' T_ID ',' T_ID ')'
-	| T_TOENUM '=' T_ID
-	| T_TAIL '=' VALUE_STRING
-	| T_TYPE '=' framesegmentproperttype
-	| framesegmentpropertyexp '=' exp
+	framesegmentpropertybool '=' framesegmentpropertyboolvalue							{ $$ = new_segproperty($1, $3); }
+	| framesegmentpropertyint '=' VALUE_INT												{ $$ = new_segproperty($1, SEGPV_INT, $3); }
+	| framesegmentpropertyconst '=' VALUE_INT											{ $$ = new_segproperty($1, SEGPV_INT, $3); }
+	| framesegmentpropertyconst '=' VALUE_REAL											{ $$ = new_segproperty($1, SEGPV_REAL, $3); }
+	| T_BYTEORDER '=' framesegmentpropertyorder											{ $$ = new_segproperty(SEGP_BYTEORDER, $3); }
+	| T_ENCODED '=' framesegmentpropertyencoded											{ $$ = new_segproperty(SEGP_ENCODED, $3); }
+	| T_CHECK '=' framesegmentcheckvalue												{ $$ = new_segproperty(SEGP_ENCODED, $3); }
+	| T_CHECKRANGE '=' '(' T_ID ',' T_ID ')'											{ $$ = append_segproperty(new_segproperty(SEGP_CHECKRANGE_BEGIN, SEGPV_ID, $4), new_segproperty(SEGP_CHECKRANGE_END, SEGPV_ID, $6)); }
+	| T_TOENUM '=' T_ID																	{ $$ = new_segproperty(SEGP_TOENUM, SEGPV_STRING, $3); }
+	| T_TAIL '=' VALUE_STRING															{ $$ = new_segproperty(SEGP_TAIL, SEGPV_STRING, $3); }
+	| T_TYPE '=' framesegmentpropertytypevalue											{ $$ = $3; }
+	| framesegmentpropertyexp '=' exp													{ $$ = new_segproperty($1, SEGPV_EXP, -1, $3); }
 ;
 
 
 framesegmentpropertybool:
-	T_ISDOUBLE	
-	| T_SIGNED
+	T_ISDOUBLE																			{ $$ = SEGP_ISDOUBLE; }
+	| T_SIGNED																			{ $$ = SEGP_SIGNED; }
 ;
 
 framesegmentpropertyboolvalue:
-	T_TRUE
-	| T_FALSE
+	T_TRUE																				{ $$ = SEGPV_TRUE; }
+	| T_FALSE																			{ $$ = SEGPV_FALSE; }
 ;
 
 framesegmentpropertyint:
-	T_BITCOUNT
-	| T_ALIGEDLEN
+	T_BITCOUNT																			{ $$ = SEGP_BITCOUNT; }
+	| T_ALIGNEDLEN																		{ $$ = SEGP_ALIGNEDLEN; }
 ;
 
 framesegmentpropertyconst:
-	T_MAX
-	| T_MIN
+	T_MAX																				{ $$ = SEGP_MAX; }
+	| T_MIN																				{ $$ = SEGP_MIN; }
 ;
 
-framesegmentpropertyconstvalue:
-	VALUE_INT
-	| VALUE_REAL
-;
 
 framesegmentpropertyorder:
-	T_SMALL
-	| T_BIG
+	T_SMALL																				{ $$ = SEGPV_SMALL; }
+	| T_BIG																				{ $$ = SEGPV_BIG; }
 ;
 
 framesegmentpropertyencoded:
-	T_PRIMITIVE
-	| T_INVRSION
-	| T_COMPLEMENT
+	T_PRIMITIVE																			{ $$ = SEGPV_PRIMITIVE; }
+	| T_INVERSION																		{ $$ = SEGPV_INVERSION; }
+	| T_COMPLEMENT																		{ $$ = SEGPV_COMPLEMENT; }
 ;
 
-framesegmentchecktype:
-	T_SUM8
-	| T_XOR8
-	| T_SUM16
-	| T_CRC5_EPC
-	| T_CRC5_ITU
-	| T_CRC5_USB
-	| T_CRC6_ITU
-	| T_CRC7_MMC
-	| T_CRC8
-	| T_CRC8_ITU
-	| T_CRC8_ROHC
-	| T_CRC8_MAXIM
-	| T_CRC16_IBM
-	| T_CRC16_MAXIM
-	| T_CRC16_USB
-	| T_CRC16_MODBUS
-	| T_CRC16_CCITT
-	| T_CRC16_CCITT_FALSE
-	| T_CRC16_X25
-	| T_CRC16_XMODEM
-	| T_CRC16_DNP
-	| T_CRC32
-	| T_CRC32_MPEG_2
-	| T_CRC64
-	| T_CRC64_WE
+framesegmentcheckvalue:
+	T_SUM8																		{ $$ = SEGPV_SUM8; }
+	| T_XOR8																	{ $$ = SEGPV_XOR8; }
+	| T_SUM16																	{ $$ = SEGPV_SUM16; }
+	| T_CRC5_EPC																{ $$ = SEGPV_CRC5_EPC; }
+	| T_CRC5_ITU																{ $$ = SEGPV_CRC5_ITU; }
+	| T_CRC5_USB																{ $$ = SEGPV_CRC5_USB; }
+	| T_CRC6_ITU																{ $$ = SEGPV_CRC6_ITU; }
+	| T_CRC7_MMC																{ $$ = SEGPV_CRC7_MMC; }
+	| T_CRC8																	{ $$ = SEGPV_CRC8; }
+	| T_CRC8_ITU																{ $$ = SEGPV_CRC8_ITU; }
+	| T_CRC8_ROHC																{ $$ = SEGPV_CRC8_ROHC; }
+	| T_CRC8_MAXIM																{ $$ = SEGPV_CRC8_MAXIM; }
+	| T_CRC16_IBM																{ $$ = SEGPV_CRC16_IBM; }
+	| T_CRC16_MAXIM																{ $$ = SEGPV_CRC16_MAXIM; }
+	| T_CRC16_USB																{ $$ = SEGPV_CRC16_USB; }
+	| T_CRC16_MODBUS															{ $$ = SEGPV_CRC16_MODBUS; }
+	| T_CRC16_CCITT																{ $$ = SEGPV_CRC16_CCITT; }
+	| T_CRC16_CCITT_FALSE														{ $$ = SEGPV_CRC16_CCITT_FALSE; }
+	| T_CRC16_X25																{ $$ = SEGPV_CRC16_X25; }
+	| T_CRC16_XMODEM															{ $$ = SEGPV_CRC16_XMODEM; }
+	| T_CRC16_DNP																{ $$ = SEGPV_CRC16_DNP; }
+	| T_CRC32																	{ $$ = SEGPV_CRC32; }
+	| T_CRC32_MPEG_2															{ $$ = SEGPV_CRC32_MPEG_2; }
+	| T_CRC64																	{ $$ = SEGPV_CRC64; }
+	| T_CRC64_WE																{ $$ = SEGPV_CRC64_WE; }
 ;
 
-framesegmentproperttype:
-	T_ID
-	| '{' framesegmentlist notelist '}'
-	| T_ONEOF '(' T_ID ')' '{' framesegmentoneoflist notelist '}'
+framesegmentpropertytypevalue:
+	T_ID																		{ $$ = new_segproperty(SEGP_TYPE, SEGPV_ID, $1); }
+	| '{' framesegmentlist notelist '}'											{ $$ = new_segproperty(SEGP_TYPE, SEGPV_NONAMEFRAME, -1, $2); }
+	| T_ONEOF '(' T_ID ')' '{' framesegmentoneoflist notelist '}'				{ $$ = new_segproperty(SEGP_TYPE, SEGPV_ONEOF, $3, $6); }
 ;
 
 framesegmentoneoflist:
-	framesegmentoneofitem
-	|framesegmentoneoflist ',' framesegmentoneofitem
+	framesegmentoneofitem														{ $$ = $1; }
+	|framesegmentoneoflist ',' framesegmentoneofitem							{ $$ = append_oneofitem($1, $3); }
 ;
 
 framesegmentoneofitem:
-	T_ID ':' T_ID 
+	T_ID ':' T_ID																{ $$ = new_oneofitem($1, $3); }
 ;
 
 framesegmentpropertyexp:
-	T_VALUE
-	| T_REPEATED
-	| T_BYTESIZE
+	T_VALUE																		{ $$ = SEGP_VALUE; }
+	| T_REPEATED																{ $$ = SEGP_REPEATED; }
+	| T_BYTESIZE																{ $$ = SEGP_BYTESIZE; }
 ;
 
 exp:
-	exp '+' exp
-	| exp '-' exp
-	| exp '*' exp
-	| exp '/' exp
-	| '(' exp ')'
-	| T_ID	
-	| VALUE_REAL
-	| VALUE_INT
+	exp '+' exp																	{ $$ = new_exp(EXP_ADD, $1, $3); }
+	| exp '-' exp																{ $$ = new_exp(EXP_SUB, $1, $3); }
+	| exp '*' exp																{ $$ = new_exp(EXP_MUL, $1, $3); }
+	| exp '/' exp																{ $$ = new_exp(EXP_DIV, $1, $3); }
+	| '(' exp ')'																{ $$ = $2; }
+	| T_ID																		{ $$ = new_exp(EXP_ID, NULL, NULL, $1); }
+	| VALUE_REAL																{ $$ = new_exp(EXP_REAL, NULL, NULL, $1); }
+	| VALUE_INT																	{ $$ = new_exp(EXP_INT, NULL, NULL, $1); }
+	| T_BYTESIZEOF '(' T_ID ')'													{ $$ = new_exp(EXP_BYTESIZEOF, NULL, NULL, $3); }
+	| T_BYTESIZEOF '(' T_THIS ')'												{ $$ = new_exp(EXP_BYTESIZEOF, NULL, NULL, -1); }
 ;
 
-enumcfg: notelist T_ENUM T_ID '{' enumitemlist '}'
+enumcfg: 
+	notelist T_ENUM T_ID '{' enumitemlist notelist '}'							{ $$ = new_enumcfg($3, $5, $1); }
 ;
 
 enumitemlist: 
-	enumitem
-	| enumitemlist ',' enumitem
+	enumitem																	{ $$ = $1; }
+	| enumitemlist ',' enumitem													{ $$ = append_enumitem($1, $3); }
 ;
 
 enumitem:
-	T_ID '=' VALUE_INT
-	| T_ID
+	notelist T_ID '=' VALUE_INT													{ $$ = new_enumitem($2, $4, $1); }
+	| notelist T_ID																{ $$ = new_enumitem($2, -1, $1); }
 ;
 
-notelist:
-	| notelist T_NOTE
+notelist:																		{ $$ = NULL; }
+	| notelist T_NOTE															{ $$ = append_note($1, $2); }
 ;
 
 

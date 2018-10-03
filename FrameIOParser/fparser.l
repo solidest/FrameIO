@@ -56,6 +56,7 @@ int utf8len = 0;
 "channel"				{ return T_CHANNEL; }
 "enum"					{ return T_ENUM; }
 "action"				{ return T_ACTION; }
+"this"					{ return T_THIS; }
 
 "integer"				{ return T_INTEGER; }
 "real"					{ return T_REAL; }
@@ -98,22 +99,24 @@ int utf8len = 0;
 "encoded"				{ return T_ENCODED; }
 "isdouble"				{ return T_ISDOUBLE; }
 "tail"					{ return T_TAIL; }
-"alignedlen"			{ return T_ALIGEDLEN; }
+"alignedlen"			{ return T_ALIGNEDLEN; }
 "type"					{ return T_TYPE; }
 "bytesize"				{ return T_BYTESIZE; }
 "toenum"				{ return T_TOENUM; }
-"oneof"					{ return T_ONEOF; }
 "max"					{ return T_MAX; }
 "min"					{ return T_MIN; }
 "check"					{ return T_CHECK; }
 "checkrange"			{ return T_CHECKRANGE;}
+
+"oneof"					{ return T_ONEOF; }
+"bytesizeof"			{ return T_BYTESIZEOF; }
 
 "true"					{ return T_TRUE; }
 "false"					{ return T_FALSE; }
 "small"					{ return T_SMALL; }
 "big"					{ return T_BIG; }
 "primitive"				{ return T_PRIMITIVE; }
-"inversion"				{ return T_INVRSION; }
+"inversion"				{ return T_INVERSION; }
 "complement"			{ return T_COMPLEMENT; }
 
 "sum8"					{ return T_SUM8; }

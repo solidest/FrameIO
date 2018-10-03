@@ -51,48 +51,48 @@ extern int yydebug;
     T_CHANNEL = 261,
     T_ENUM = 262,
     T_ACTION = 263,
-    T_NOTE = 264,
-    T_ID = 265,
-    T_INTEGER = 266,
-    T_REAL = 267,
-    T_BLOCK = 268,
-    T_TEXT = 269,
-    T_BOOL = 270,
-    T_BYTE = 271,
-    T_SBYTE = 272,
-    T_USHORT = 273,
-    T_SHORT = 274,
-    T_UINT = 275,
-    T_INT = 276,
-    T_ULONG = 277,
-    T_LONG = 278,
-    T_FLOAT = 279,
-    T_DOUBLE = 280,
-    T_STRING = 281,
-    T_SEND = 282,
-    T_ON = 283,
-    T_RECV = 284,
-    T_RECVLOOP = 285,
-    T_COM = 286,
-    T_CAN = 287,
-    T_TCPSERVER = 288,
-    T_TCPCLIENT = 289,
-    T_UDP = 290,
-    T_DI = 291,
-    T_DO = 292,
-    T_DEVICEID = 293,
-    T_BAUDRATE = 294,
-    T_SIGNED = 295,
-    T_BITCOUNT = 296,
-    T_VALUE = 297,
-    T_REPEATED = 298,
-    T_BYTEORDER = 299,
-    T_ENCODED = 300,
-    T_ISDOUBLE = 301,
-    T_TAIL = 302,
-    T_ALIGEDLEN = 303,
-    T_TYPE = 304,
-    T_BYTESIZE = 305,
+    T_THIS = 264,
+    T_INTEGER = 265,
+    T_REAL = 266,
+    T_BLOCK = 267,
+    T_TEXT = 268,
+    T_BOOL = 269,
+    T_BYTE = 270,
+    T_SBYTE = 271,
+    T_USHORT = 272,
+    T_SHORT = 273,
+    T_UINT = 274,
+    T_INT = 275,
+    T_ULONG = 276,
+    T_LONG = 277,
+    T_FLOAT = 278,
+    T_DOUBLE = 279,
+    T_STRING = 280,
+    T_SEND = 281,
+    T_ON = 282,
+    T_RECV = 283,
+    T_RECVLOOP = 284,
+    T_COM = 285,
+    T_CAN = 286,
+    T_TCPSERVER = 287,
+    T_TCPCLIENT = 288,
+    T_UDP = 289,
+    T_DI = 290,
+    T_DO = 291,
+    T_DEVICEID = 292,
+    T_BAUDRATE = 293,
+    T_SIGNED = 294,
+    T_BITCOUNT = 295,
+    T_VALUE = 296,
+    T_REPEATED = 297,
+    T_BYTEORDER = 298,
+    T_ENCODED = 299,
+    T_ISDOUBLE = 300,
+    T_TAIL = 301,
+    T_ALIGNEDLEN = 302,
+    T_TYPE = 303,
+    T_BYTESIZE = 304,
+    T_BYTESIZEOF = 305,
     T_TOENUM = 306,
     T_ONEOF = 307,
     T_MAX = 308,
@@ -104,7 +104,7 @@ extern int yydebug;
     T_SMALL = 314,
     T_BIG = 315,
     T_PRIMITIVE = 316,
-    T_INVRSION = 317,
+    T_INVERSION = 317,
     T_COMPLEMENT = 318,
     T_SUM8 = 319,
     T_XOR8 = 320,
@@ -141,7 +141,9 @@ extern int yydebug;
     T_CRC64_WE = 351,
     VALUE_STRING = 352,
     VALUE_INT = 353,
-    VALUE_REAL = 354
+    VALUE_REAL = 354,
+    T_ID = 355,
+    T_NOTE = 356
   };
 #endif
 
@@ -150,16 +152,28 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 27 "fparser.y" /* yacc.c:1913  */
+#line 30 "fparser.y" /* yacc.c:1913  */
 
 	int symbol;
+	segpropertytype segproptype;
+	segpropertyvaluetype segprovtype;
+	segmenttype segtype;
 
 	PROJECT * project;
 	SYS * syslist;
 	FRAME * framelist;
 	ENUMCFG * enumcfglist;
 
-#line 163 "fparser.tab.h" /* yacc.c:1913  */
+	SEGMENT* seglist;
+	SEGPROPERTY* segprolist;
+	EXPVALUE* valueexp;
+	ONEOFITEM* oneofitemlist;
+
+	ENUMITEM * enumitemlist;
+	NOTE* notelist;
+
+
+#line 177 "fparser.tab.h" /* yacc.c:1913  */
 };
 
 typedef union YYSTYPE YYSTYPE;
