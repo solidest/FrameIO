@@ -592,20 +592,20 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   107,   107,   110,   111,   115,   116,   117,   121,   124,
-     125,   129,   130,   131,   135,   136,   140,   141,   142,   143,
-     144,   145,   146,   147,   148,   149,   150,   154,   158,   159,
-     160,   161,   162,   163,   164,   167,   168,   172,   176,   177,
-     181,   182,   183,   187,   191,   192,   193,   196,   197,   201,
-     205,   208,   209,   213,   217,   218,   219,   220,   223,   224,
-     228,   229,   230,   231,   232,   233,   234,   235,   236,   237,
-     238,   239,   244,   245,   249,   250,   254,   255,   259,   260,
-     265,   266,   270,   271,   272,   276,   277,   278,   279,   280,
-     281,   282,   283,   284,   285,   286,   287,   288,   289,   290,
-     291,   292,   293,   294,   295,   296,   297,   298,   299,   300,
-     304,   305,   306,   310,   311,   315,   319,   320,   321,   325,
-     326,   327,   328,   329,   330,   331,   332,   333,   334,   338,
-     342,   343,   347,   348,   351,   352
+       0,   120,   120,   123,   124,   128,   129,   130,   134,   137,
+     138,   142,   143,   144,   148,   149,   153,   154,   155,   156,
+     157,   158,   159,   160,   161,   162,   163,   167,   171,   172,
+     173,   174,   175,   176,   177,   180,   181,   185,   189,   190,
+     194,   195,   196,   200,   204,   205,   206,   209,   210,   214,
+     218,   221,   222,   226,   230,   231,   232,   233,   236,   237,
+     241,   242,   243,   244,   245,   246,   247,   248,   249,   250,
+     251,   252,   257,   258,   262,   263,   267,   268,   272,   273,
+     278,   279,   283,   284,   285,   289,   290,   291,   292,   293,
+     294,   295,   296,   297,   298,   299,   300,   301,   302,   303,
+     304,   305,   306,   307,   308,   309,   310,   311,   312,   313,
+     317,   318,   319,   323,   324,   328,   332,   333,   334,   338,
+     339,   340,   341,   342,   343,   344,   345,   346,   347,   351,
+     355,   356,   360,   361,   364,   365
 };
 #endif
 
@@ -1378,7 +1378,168 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YYUSE (yytype);
+  switch (yytype)
+    {
+          case 117: /* project  */
+#line 97 "fparser.y" /* yacc.c:1258  */
+      { free_project(((*yyvaluep).project)); ((*yyvaluep).project)=NULL; }
+#line 1387 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 118: /* projectitemlist  */
+#line 99 "fparser.y" /* yacc.c:1258  */
+      { free_projectitemlist(((*yyvaluep).pitemlist)); ((*yyvaluep).pitemlist)=NULL; }
+#line 1393 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 119: /* projectitem  */
+#line 98 "fparser.y" /* yacc.c:1258  */
+      { free_projectitem(((*yyvaluep).pitem)); ((*yyvaluep).pitem)=NULL; }
+#line 1399 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 120: /* system  */
+#line 98 "fparser.y" /* yacc.c:1258  */
+      { free_projectitem(((*yyvaluep).pitem)); ((*yyvaluep).pitem)=NULL; }
+#line 1405 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 121: /* systemitemlist  */
+#line 101 "fparser.y" /* yacc.c:1258  */
+      { free_sysitemlist(((*yyvaluep).sysitemlist)); ((*yyvaluep).sysitemlist)=NULL; }
+#line 1411 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 122: /* systemitem  */
+#line 100 "fparser.y" /* yacc.c:1258  */
+      { free_sysitem(((*yyvaluep).sysitem)); ((*yyvaluep).sysitem)=NULL; }
+#line 1417 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 123: /* sysproperty  */
+#line 100 "fparser.y" /* yacc.c:1258  */
+      { free_sysitem(((*yyvaluep).sysitem)); ((*yyvaluep).sysitem)=NULL; }
+#line 1423 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 125: /* channel  */
+#line 100 "fparser.y" /* yacc.c:1258  */
+      { free_sysitem(((*yyvaluep).sysitem)); ((*yyvaluep).sysitem)=NULL; }
+#line 1429 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 127: /* channeloptionlist  */
+#line 102 "fparser.y" /* yacc.c:1258  */
+      { free_channeloption(((*yyvaluep).choplist)); ((*yyvaluep).choplist)=NULL; }
+#line 1435 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 128: /* channeloption  */
+#line 102 "fparser.y" /* yacc.c:1258  */
+      { free_channeloption(((*yyvaluep).choplist)); ((*yyvaluep).choplist)=NULL; }
+#line 1441 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 131: /* action  */
+#line 100 "fparser.y" /* yacc.c:1258  */
+      { free_sysitem(((*yyvaluep).sysitem)); ((*yyvaluep).sysitem)=NULL; }
+#line 1447 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 133: /* actionmaplist  */
+#line 103 "fparser.y" /* yacc.c:1258  */
+      { free_actionmap(((*yyvaluep).amaplist)); ((*yyvaluep).amaplist)=NULL; }
+#line 1453 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 134: /* actionmap  */
+#line 103 "fparser.y" /* yacc.c:1258  */
+      { free_actionmap(((*yyvaluep).amaplist)); ((*yyvaluep).amaplist)=NULL; }
+#line 1459 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 135: /* frame  */
+#line 98 "fparser.y" /* yacc.c:1258  */
+      { free_projectitem(((*yyvaluep).pitem)); ((*yyvaluep).pitem)=NULL; }
+#line 1465 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 136: /* framesegmentlist  */
+#line 104 "fparser.y" /* yacc.c:1258  */
+      { free_segment(((*yyvaluep).seglist)); ((*yyvaluep).seglist)=NULL; }
+#line 1471 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 137: /* framesegment  */
+#line 104 "fparser.y" /* yacc.c:1258  */
+      { free_segment(((*yyvaluep).seglist)); ((*yyvaluep).seglist)=NULL; }
+#line 1477 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 139: /* framesegmentpropertylist  */
+#line 105 "fparser.y" /* yacc.c:1258  */
+      { free_segproperty(((*yyvaluep).segprolist)); ((*yyvaluep).segprolist)=NULL; }
+#line 1483 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 140: /* framesegmentproperty  */
+#line 105 "fparser.y" /* yacc.c:1258  */
+      { free_segproperty(((*yyvaluep).segprolist)); ((*yyvaluep).segprolist)=NULL; }
+#line 1489 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 148: /* framesegmentpropertytypevalue  */
+#line 105 "fparser.y" /* yacc.c:1258  */
+      { free_segproperty(((*yyvaluep).segprolist)); ((*yyvaluep).segprolist)=NULL; }
+#line 1495 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 149: /* framesegmentoneoflist  */
+#line 107 "fparser.y" /* yacc.c:1258  */
+      { free_oneofitem(((*yyvaluep).oneofitemlist)); ((*yyvaluep).oneofitemlist)=NULL; }
+#line 1501 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 150: /* framesegmentoneofitem  */
+#line 107 "fparser.y" /* yacc.c:1258  */
+      { free_oneofitem(((*yyvaluep).oneofitemlist)); ((*yyvaluep).oneofitemlist)=NULL; }
+#line 1507 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 152: /* exp  */
+#line 106 "fparser.y" /* yacc.c:1258  */
+      { free_expvalue(((*yyvaluep).valueexp)); ((*yyvaluep).valueexp)=NULL; }
+#line 1513 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 153: /* enumcfg  */
+#line 98 "fparser.y" /* yacc.c:1258  */
+      { free_projectitem(((*yyvaluep).pitem)); ((*yyvaluep).pitem)=NULL; }
+#line 1519 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 154: /* enumitemlist  */
+#line 108 "fparser.y" /* yacc.c:1258  */
+      { free_enumitem(((*yyvaluep).enumitemlist)); ((*yyvaluep).enumitemlist)=NULL; }
+#line 1525 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 155: /* enumitem  */
+#line 108 "fparser.y" /* yacc.c:1258  */
+      { free_enumitem(((*yyvaluep).enumitemlist)); ((*yyvaluep).enumitemlist)=NULL; }
+#line 1531 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+    case 156: /* notelist  */
+#line 109 "fparser.y" /* yacc.c:1258  */
+      { free_note(((*yyvaluep).notelist)); ((*yyvaluep).notelist)=NULL; }
+#line 1537 "fparser.tab.cpp" /* yacc.c:1258  */
+        break;
+
+
+      default:
+        break;
+    }
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -1665,811 +1826,811 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 107 "fparser.y" /* yacc.c:1651  */
+#line 120 "fparser.y" /* yacc.c:1651  */
     { (yyval.project) = new_project((yyvsp[-5].symbol), (yyvsp[-3].pitemlist), (yyvsp[-7].notelist)); }
-#line 1671 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1832 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 3:
-#line 110 "fparser.y" /* yacc.c:1651  */
+#line 123 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitemlist) = NULL; }
-#line 1677 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1838 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 4:
-#line 111 "fparser.y" /* yacc.c:1651  */
+#line 124 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitemlist) = add_projectitem((yyvsp[-1].pitemlist), (yyvsp[0].pitem)); }
-#line 1683 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1844 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 5:
-#line 115 "fparser.y" /* yacc.c:1651  */
+#line 128 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = (yyvsp[0].pitem); }
-#line 1689 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1850 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 6:
-#line 116 "fparser.y" /* yacc.c:1651  */
+#line 129 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = (yyvsp[0].pitem); }
-#line 1695 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1856 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 7:
-#line 117 "fparser.y" /* yacc.c:1651  */
+#line 130 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = (yyvsp[0].pitem); }
-#line 1701 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1862 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 8:
-#line 121 "fparser.y" /* yacc.c:1651  */
+#line 134 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = new_projectitem(PI_SYSTEM, new_sys((yyvsp[-4].symbol), (yyvsp[-2].sysitemlist), (yyvsp[-6].notelist))); }
-#line 1707 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1868 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 9:
-#line 124 "fparser.y" /* yacc.c:1651  */
+#line 137 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitemlist) = NULL; }
-#line 1713 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1874 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 10:
-#line 125 "fparser.y" /* yacc.c:1651  */
+#line 138 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitemlist) = add_sysitem((yyvsp[-1].sysitemlist), (yyvsp[0].sysitem)); }
-#line 1719 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1880 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 11:
-#line 129 "fparser.y" /* yacc.c:1651  */
+#line 142 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = (yyvsp[0].sysitem); }
-#line 1725 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1886 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 12:
-#line 130 "fparser.y" /* yacc.c:1651  */
+#line 143 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = (yyvsp[0].sysitem); }
-#line 1731 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1892 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 13:
-#line 131 "fparser.y" /* yacc.c:1651  */
+#line 144 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = (yyvsp[0].sysitem); }
-#line 1737 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1898 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 14:
-#line 135 "fparser.y" /* yacc.c:1651  */
+#line 148 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = new_sysitem(SYSI_PROPERTY, new_sysproperty((yyvsp[-1].symbol), (yyvsp[-2].sysptype), FALSE, (yyvsp[-3].notelist))); }
-#line 1743 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1904 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 15:
-#line 136 "fparser.y" /* yacc.c:1651  */
+#line 149 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = new_sysitem(SYSI_PROPERTY, new_sysproperty((yyvsp[-1].symbol), (yyvsp[-4].sysptype), TRUE, (yyvsp[-5].notelist))); }
-#line 1749 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1910 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 16:
-#line 140 "fparser.y" /* yacc.c:1651  */
+#line 153 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_BOOL; }
-#line 1755 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1916 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 17:
-#line 141 "fparser.y" /* yacc.c:1651  */
+#line 154 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_BYTE; }
-#line 1761 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1922 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 18:
-#line 142 "fparser.y" /* yacc.c:1651  */
+#line 155 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_SBYTE; }
-#line 1767 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1928 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 19:
-#line 143 "fparser.y" /* yacc.c:1651  */
+#line 156 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_USHORT; }
-#line 1773 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1934 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 20:
-#line 144 "fparser.y" /* yacc.c:1651  */
+#line 157 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_SHORT; }
-#line 1779 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1940 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 21:
-#line 145 "fparser.y" /* yacc.c:1651  */
+#line 158 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_UINT; }
-#line 1785 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1946 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 22:
-#line 146 "fparser.y" /* yacc.c:1651  */
+#line 159 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_INT; }
-#line 1791 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1952 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 23:
-#line 147 "fparser.y" /* yacc.c:1651  */
+#line 160 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_ULONG; }
-#line 1797 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1958 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 24:
-#line 148 "fparser.y" /* yacc.c:1651  */
+#line 161 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_LONG; }
-#line 1803 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1964 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 25:
-#line 149 "fparser.y" /* yacc.c:1651  */
+#line 162 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_FLOAT; }
-#line 1809 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1970 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 26:
-#line 150 "fparser.y" /* yacc.c:1651  */
+#line 163 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysptype) = SYSPT_DOUBLE; }
-#line 1815 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1976 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 27:
-#line 154 "fparser.y" /* yacc.c:1651  */
+#line 167 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = new_sysitem(SYSI_CHANNEL, new_syschannel((yyvsp[-6].symbol), (yyvsp[-4].syschtype), (yyvsp[-2].choplist), (yyvsp[-8].notelist))); }
-#line 1821 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1982 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 28:
-#line 158 "fparser.y" /* yacc.c:1651  */
+#line 171 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_COM; }
-#line 1827 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1988 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 29:
-#line 159 "fparser.y" /* yacc.c:1651  */
+#line 172 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_CAN; }
-#line 1833 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 1994 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 30:
-#line 160 "fparser.y" /* yacc.c:1651  */
+#line 173 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_TCPSERVER; }
-#line 1839 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2000 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 31:
-#line 161 "fparser.y" /* yacc.c:1651  */
+#line 174 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_TCPCLIENT; }
-#line 1845 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2006 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 32:
-#line 162 "fparser.y" /* yacc.c:1651  */
+#line 175 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_UDP; }
-#line 1851 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2012 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 33:
-#line 163 "fparser.y" /* yacc.c:1651  */
+#line 176 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_DI; }
-#line 1857 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2018 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 34:
-#line 164 "fparser.y" /* yacc.c:1651  */
+#line 177 "fparser.y" /* yacc.c:1651  */
     { (yyval.syschtype) = SCHT_DO; }
-#line 1863 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2024 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 35:
-#line 167 "fparser.y" /* yacc.c:1651  */
+#line 180 "fparser.y" /* yacc.c:1651  */
     { (yyval.choplist) = NULL; }
-#line 1869 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2030 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 36:
-#line 168 "fparser.y" /* yacc.c:1651  */
+#line 181 "fparser.y" /* yacc.c:1651  */
     { (yyval.choplist) = append_channeloption((yyvsp[-1].choplist), (yyvsp[0].choplist)); }
-#line 1875 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2036 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 37:
-#line 172 "fparser.y" /* yacc.c:1651  */
+#line 185 "fparser.y" /* yacc.c:1651  */
     { (yyval.choplist) = new_channeloption((yyvsp[-3].choptype), (yyvsp[-1].optionvalue), (yyvsp[-4].notelist)); }
-#line 1881 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2042 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 38:
-#line 176 "fparser.y" /* yacc.c:1651  */
+#line 189 "fparser.y" /* yacc.c:1651  */
     { (yyval.choptype) = CHOP_DEVICEID; }
-#line 1887 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2048 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 39:
-#line 177 "fparser.y" /* yacc.c:1651  */
+#line 190 "fparser.y" /* yacc.c:1651  */
     { (yyval.choptype) = CHOP_BAUDRATE; }
-#line 1893 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2054 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 40:
-#line 181 "fparser.y" /* yacc.c:1651  */
+#line 194 "fparser.y" /* yacc.c:1651  */
     { (yyval.optionvalue) = (yyvsp[0].symbol); }
-#line 1899 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2060 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 41:
-#line 182 "fparser.y" /* yacc.c:1651  */
+#line 195 "fparser.y" /* yacc.c:1651  */
     { (yyval.optionvalue) = (yyvsp[0].symbol); }
-#line 1905 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2066 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 42:
-#line 183 "fparser.y" /* yacc.c:1651  */
+#line 196 "fparser.y" /* yacc.c:1651  */
     { (yyval.optionvalue) = (yyvsp[0].symbol); }
-#line 1911 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2072 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 43:
-#line 187 "fparser.y" /* yacc.c:1651  */
+#line 200 "fparser.y" /* yacc.c:1651  */
     { (yyval.sysitem) = new_sysitem(SYSI_ACTION, new_action((yyvsp[-9].symbol), (yyvsp[-7].iotype), (yyvsp[-6].symbol), (yyvsp[-4].symbol), (yyvsp[-2].amaplist), (yyvsp[-11].notelist))); }
-#line 1917 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2078 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 44:
-#line 191 "fparser.y" /* yacc.c:1651  */
+#line 204 "fparser.y" /* yacc.c:1651  */
     { (yyval.iotype) = AIO_SEND; }
-#line 1923 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2084 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 45:
-#line 192 "fparser.y" /* yacc.c:1651  */
+#line 205 "fparser.y" /* yacc.c:1651  */
     { (yyval.iotype) = AIO_RECV; }
-#line 1929 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2090 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 46:
-#line 193 "fparser.y" /* yacc.c:1651  */
+#line 206 "fparser.y" /* yacc.c:1651  */
     { (yyval.iotype) = AIO_RECVLOOP; }
-#line 1935 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2096 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 47:
-#line 196 "fparser.y" /* yacc.c:1651  */
+#line 209 "fparser.y" /* yacc.c:1651  */
     { (yyval.amaplist) = NULL; }
-#line 1941 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2102 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 48:
-#line 197 "fparser.y" /* yacc.c:1651  */
+#line 210 "fparser.y" /* yacc.c:1651  */
     { (yyval.amaplist) = append_actionmap((yyvsp[-1].amaplist), (yyvsp[0].amaplist)); }
-#line 1947 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2108 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 49:
-#line 201 "fparser.y" /* yacc.c:1651  */
+#line 214 "fparser.y" /* yacc.c:1651  */
     { (yyval.amaplist) = new_actionmap((yyvsp[-3].symbol), (yyvsp[-1].symbol), (yyvsp[-4].notelist)); }
-#line 1953 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2114 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 50:
-#line 205 "fparser.y" /* yacc.c:1651  */
+#line 218 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = new_projectitem(PI_FRAME, new_frame((yyvsp[-4].symbol), (yyvsp[-2].seglist), (yyvsp[-6].notelist))); }
-#line 1959 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2120 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 51:
-#line 208 "fparser.y" /* yacc.c:1651  */
+#line 221 "fparser.y" /* yacc.c:1651  */
     { (yyval.seglist) = NULL; }
-#line 1965 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2126 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 52:
-#line 209 "fparser.y" /* yacc.c:1651  */
+#line 222 "fparser.y" /* yacc.c:1651  */
     { (yyval.seglist) = append_segment((yyvsp[-1].seglist), (yyvsp[0].seglist)); }
-#line 1971 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2132 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 53:
-#line 213 "fparser.y" /* yacc.c:1651  */
+#line 226 "fparser.y" /* yacc.c:1651  */
     { (yyval.seglist) = new_segment((yyvsp[-3].segtype), (yyvsp[-2].symbol), (yyvsp[-1].segprolist), (yyvsp[-4].notelist)); }
-#line 1977 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2138 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 54:
-#line 217 "fparser.y" /* yacc.c:1651  */
+#line 230 "fparser.y" /* yacc.c:1651  */
     { (yyval.segtype) = SEGT_INTEGER; }
-#line 1983 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2144 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 55:
-#line 218 "fparser.y" /* yacc.c:1651  */
+#line 231 "fparser.y" /* yacc.c:1651  */
     { (yyval.segtype) = SEGT_REAL; }
-#line 1989 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2150 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 56:
-#line 219 "fparser.y" /* yacc.c:1651  */
+#line 232 "fparser.y" /* yacc.c:1651  */
     { (yyval.segtype) = SEGT_BLOCK; }
-#line 1995 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2156 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 57:
-#line 220 "fparser.y" /* yacc.c:1651  */
+#line 233 "fparser.y" /* yacc.c:1651  */
     { (yyval.segtype) = SEGT_TEXT; }
-#line 2001 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2162 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 58:
-#line 223 "fparser.y" /* yacc.c:1651  */
+#line 236 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = NULL; }
-#line 2007 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2168 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 59:
-#line 224 "fparser.y" /* yacc.c:1651  */
+#line 237 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = append_segproperty((yyvsp[-1].segprolist), (yyvsp[0].segprolist)); }
-#line 2013 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2174 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 60:
-#line 228 "fparser.y" /* yacc.c:1651  */
+#line 241 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty((yyvsp[-2].segproptype), (yyvsp[0].segprovtype)); }
-#line 2019 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2180 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 61:
-#line 229 "fparser.y" /* yacc.c:1651  */
+#line 242 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty((yyvsp[-2].segproptype), SEGPV_INT, (yyvsp[0].symbol)); }
-#line 2025 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2186 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 62:
-#line 230 "fparser.y" /* yacc.c:1651  */
+#line 243 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty((yyvsp[-2].segproptype), SEGPV_INT, (yyvsp[0].symbol)); }
-#line 2031 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2192 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 63:
-#line 231 "fparser.y" /* yacc.c:1651  */
+#line 244 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty((yyvsp[-2].segproptype), SEGPV_REAL, (yyvsp[0].symbol)); }
-#line 2037 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2198 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 64:
-#line 232 "fparser.y" /* yacc.c:1651  */
+#line 245 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_BYTEORDER, (yyvsp[0].segprovtype)); }
-#line 2043 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2204 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 65:
-#line 233 "fparser.y" /* yacc.c:1651  */
+#line 246 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_ENCODED, (yyvsp[0].segprovtype)); }
-#line 2049 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2210 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 66:
-#line 234 "fparser.y" /* yacc.c:1651  */
+#line 247 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_ENCODED, (yyvsp[0].segprovtype)); }
-#line 2055 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2216 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 67:
-#line 235 "fparser.y" /* yacc.c:1651  */
+#line 248 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = append_segproperty(new_segproperty(SEGP_CHECKRANGE_BEGIN, SEGPV_ID, (yyvsp[-3].symbol)), new_segproperty(SEGP_CHECKRANGE_END, SEGPV_ID, (yyvsp[-1].symbol))); }
-#line 2061 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2222 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 68:
-#line 236 "fparser.y" /* yacc.c:1651  */
+#line 249 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_TOENUM, SEGPV_STRING, (yyvsp[0].symbol)); }
-#line 2067 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2228 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 69:
-#line 237 "fparser.y" /* yacc.c:1651  */
+#line 250 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_TAIL, SEGPV_STRING, (yyvsp[0].symbol)); }
-#line 2073 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2234 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 70:
-#line 238 "fparser.y" /* yacc.c:1651  */
+#line 251 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = (yyvsp[0].segprolist); }
-#line 2079 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2240 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 71:
-#line 239 "fparser.y" /* yacc.c:1651  */
+#line 252 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty((yyvsp[-2].segproptype), SEGPV_EXP, -1, (yyvsp[0].valueexp)); }
-#line 2085 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2246 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 72:
-#line 244 "fparser.y" /* yacc.c:1651  */
+#line 257 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_ISDOUBLE; }
-#line 2091 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2252 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 73:
-#line 245 "fparser.y" /* yacc.c:1651  */
+#line 258 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_SIGNED; }
-#line 2097 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2258 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 74:
-#line 249 "fparser.y" /* yacc.c:1651  */
+#line 262 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_TRUE; }
-#line 2103 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2264 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 75:
-#line 250 "fparser.y" /* yacc.c:1651  */
+#line 263 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_FALSE; }
-#line 2109 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2270 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 76:
-#line 254 "fparser.y" /* yacc.c:1651  */
+#line 267 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_BITCOUNT; }
-#line 2115 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2276 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 77:
-#line 255 "fparser.y" /* yacc.c:1651  */
+#line 268 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_ALIGNEDLEN; }
-#line 2121 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2282 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 78:
-#line 259 "fparser.y" /* yacc.c:1651  */
+#line 272 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_MAX; }
-#line 2127 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2288 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 79:
-#line 260 "fparser.y" /* yacc.c:1651  */
+#line 273 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_MIN; }
-#line 2133 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2294 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 80:
-#line 265 "fparser.y" /* yacc.c:1651  */
+#line 278 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_SMALL; }
-#line 2139 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2300 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 81:
-#line 266 "fparser.y" /* yacc.c:1651  */
+#line 279 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_BIG; }
-#line 2145 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2306 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 82:
-#line 270 "fparser.y" /* yacc.c:1651  */
+#line 283 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_PRIMITIVE; }
-#line 2151 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2312 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 83:
-#line 271 "fparser.y" /* yacc.c:1651  */
+#line 284 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_INVERSION; }
-#line 2157 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2318 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 84:
-#line 272 "fparser.y" /* yacc.c:1651  */
+#line 285 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_COMPLEMENT; }
-#line 2163 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2324 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 85:
-#line 276 "fparser.y" /* yacc.c:1651  */
+#line 289 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_SUM8; }
-#line 2169 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2330 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 86:
-#line 277 "fparser.y" /* yacc.c:1651  */
+#line 290 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_XOR8; }
-#line 2175 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2336 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 87:
-#line 278 "fparser.y" /* yacc.c:1651  */
+#line 291 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_SUM16; }
-#line 2181 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2342 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 88:
-#line 279 "fparser.y" /* yacc.c:1651  */
+#line 292 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC5_EPC; }
-#line 2187 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2348 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 89:
-#line 280 "fparser.y" /* yacc.c:1651  */
+#line 293 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC5_ITU; }
-#line 2193 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2354 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 90:
-#line 281 "fparser.y" /* yacc.c:1651  */
+#line 294 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC5_USB; }
-#line 2199 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2360 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 91:
-#line 282 "fparser.y" /* yacc.c:1651  */
+#line 295 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC6_ITU; }
-#line 2205 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2366 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 92:
-#line 283 "fparser.y" /* yacc.c:1651  */
+#line 296 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC7_MMC; }
-#line 2211 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2372 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 93:
-#line 284 "fparser.y" /* yacc.c:1651  */
+#line 297 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC8; }
-#line 2217 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2378 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 94:
-#line 285 "fparser.y" /* yacc.c:1651  */
+#line 298 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC8_ITU; }
-#line 2223 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2384 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 95:
-#line 286 "fparser.y" /* yacc.c:1651  */
+#line 299 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC8_ROHC; }
-#line 2229 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2390 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 96:
-#line 287 "fparser.y" /* yacc.c:1651  */
+#line 300 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC8_MAXIM; }
-#line 2235 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2396 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 97:
-#line 288 "fparser.y" /* yacc.c:1651  */
+#line 301 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_IBM; }
-#line 2241 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2402 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 98:
-#line 289 "fparser.y" /* yacc.c:1651  */
+#line 302 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_MAXIM; }
-#line 2247 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2408 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 99:
-#line 290 "fparser.y" /* yacc.c:1651  */
+#line 303 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_USB; }
-#line 2253 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2414 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 100:
-#line 291 "fparser.y" /* yacc.c:1651  */
+#line 304 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_MODBUS; }
-#line 2259 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2420 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 101:
-#line 292 "fparser.y" /* yacc.c:1651  */
+#line 305 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_CCITT; }
-#line 2265 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2426 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 102:
-#line 293 "fparser.y" /* yacc.c:1651  */
+#line 306 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_CCITT_FALSE; }
-#line 2271 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2432 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 103:
-#line 294 "fparser.y" /* yacc.c:1651  */
+#line 307 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_X25; }
-#line 2277 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2438 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 104:
-#line 295 "fparser.y" /* yacc.c:1651  */
+#line 308 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_XMODEM; }
-#line 2283 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2444 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 105:
-#line 296 "fparser.y" /* yacc.c:1651  */
+#line 309 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC16_DNP; }
-#line 2289 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2450 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 106:
-#line 297 "fparser.y" /* yacc.c:1651  */
+#line 310 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC32; }
-#line 2295 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2456 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 107:
-#line 298 "fparser.y" /* yacc.c:1651  */
+#line 311 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC32_MPEG_2; }
-#line 2301 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2462 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 108:
-#line 299 "fparser.y" /* yacc.c:1651  */
+#line 312 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC64; }
-#line 2307 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2468 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 109:
-#line 300 "fparser.y" /* yacc.c:1651  */
+#line 313 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprovtype) = SEGPV_CRC64_WE; }
-#line 2313 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2474 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 110:
-#line 304 "fparser.y" /* yacc.c:1651  */
+#line 317 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_TYPE, SEGPV_ID, (yyvsp[0].symbol)); }
-#line 2319 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2480 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 111:
-#line 305 "fparser.y" /* yacc.c:1651  */
+#line 318 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_TYPE, SEGPV_NONAMEFRAME, -1, (yyvsp[-2].seglist)); }
-#line 2325 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2486 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 112:
-#line 306 "fparser.y" /* yacc.c:1651  */
+#line 319 "fparser.y" /* yacc.c:1651  */
     { (yyval.segprolist) = new_segproperty(SEGP_TYPE, SEGPV_ONEOF, (yyvsp[-5].symbol), (yyvsp[-2].oneofitemlist)); }
-#line 2331 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2492 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 113:
-#line 310 "fparser.y" /* yacc.c:1651  */
+#line 323 "fparser.y" /* yacc.c:1651  */
     { (yyval.oneofitemlist) = (yyvsp[0].oneofitemlist); }
-#line 2337 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2498 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 114:
-#line 311 "fparser.y" /* yacc.c:1651  */
+#line 324 "fparser.y" /* yacc.c:1651  */
     { (yyval.oneofitemlist) = append_oneofitem((yyvsp[-2].oneofitemlist), (yyvsp[0].oneofitemlist)); }
-#line 2343 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2504 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 115:
-#line 315 "fparser.y" /* yacc.c:1651  */
+#line 328 "fparser.y" /* yacc.c:1651  */
     { (yyval.oneofitemlist) = new_oneofitem((yyvsp[-2].symbol), (yyvsp[0].symbol)); }
-#line 2349 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2510 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 116:
-#line 319 "fparser.y" /* yacc.c:1651  */
+#line 332 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_VALUE; }
-#line 2355 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2516 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 117:
-#line 320 "fparser.y" /* yacc.c:1651  */
+#line 333 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_REPEATED; }
-#line 2361 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2522 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 118:
-#line 321 "fparser.y" /* yacc.c:1651  */
+#line 334 "fparser.y" /* yacc.c:1651  */
     { (yyval.segproptype) = SEGP_BYTESIZE; }
-#line 2367 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2528 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 119:
-#line 325 "fparser.y" /* yacc.c:1651  */
+#line 338 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_ADD, (yyvsp[-2].valueexp), (yyvsp[0].valueexp)); }
-#line 2373 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2534 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 120:
-#line 326 "fparser.y" /* yacc.c:1651  */
+#line 339 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_SUB, (yyvsp[-2].valueexp), (yyvsp[0].valueexp)); }
-#line 2379 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2540 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 121:
-#line 327 "fparser.y" /* yacc.c:1651  */
+#line 340 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_MUL, (yyvsp[-2].valueexp), (yyvsp[0].valueexp)); }
-#line 2385 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2546 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 122:
-#line 328 "fparser.y" /* yacc.c:1651  */
+#line 341 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_DIV, (yyvsp[-2].valueexp), (yyvsp[0].valueexp)); }
-#line 2391 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2552 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 123:
-#line 329 "fparser.y" /* yacc.c:1651  */
+#line 342 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = (yyvsp[-1].valueexp); }
-#line 2397 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2558 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 124:
-#line 330 "fparser.y" /* yacc.c:1651  */
+#line 343 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_ID, NULL, NULL, (yyvsp[0].symbol)); }
-#line 2403 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2564 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 125:
-#line 331 "fparser.y" /* yacc.c:1651  */
+#line 344 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_REAL, NULL, NULL, (yyvsp[0].symbol)); }
-#line 2409 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2570 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 126:
-#line 332 "fparser.y" /* yacc.c:1651  */
+#line 345 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_INT, NULL, NULL, (yyvsp[0].symbol)); }
-#line 2415 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2576 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 127:
-#line 333 "fparser.y" /* yacc.c:1651  */
+#line 346 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_BYTESIZEOF, NULL, NULL, (yyvsp[-1].symbol)); }
-#line 2421 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2582 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 128:
-#line 334 "fparser.y" /* yacc.c:1651  */
+#line 347 "fparser.y" /* yacc.c:1651  */
     { (yyval.valueexp) = new_exp(EXP_BYTESIZEOF, NULL, NULL, -1); }
-#line 2427 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2588 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 129:
-#line 338 "fparser.y" /* yacc.c:1651  */
+#line 351 "fparser.y" /* yacc.c:1651  */
     { (yyval.pitem) = new_projectitem(PI_ENUMCFG, new_enumcfg((yyvsp[-4].symbol), (yyvsp[-2].enumitemlist), (yyvsp[-6].notelist))); }
-#line 2433 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2594 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 130:
-#line 342 "fparser.y" /* yacc.c:1651  */
+#line 355 "fparser.y" /* yacc.c:1651  */
     { (yyval.enumitemlist) = (yyvsp[0].enumitemlist); }
-#line 2439 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2600 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 131:
-#line 343 "fparser.y" /* yacc.c:1651  */
+#line 356 "fparser.y" /* yacc.c:1651  */
     { (yyval.enumitemlist) = append_enumitem((yyvsp[-2].enumitemlist), (yyvsp[0].enumitemlist)); }
-#line 2445 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2606 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 132:
-#line 347 "fparser.y" /* yacc.c:1651  */
+#line 360 "fparser.y" /* yacc.c:1651  */
     { (yyval.enumitemlist) = new_enumitem((yyvsp[-2].symbol), (yyvsp[0].symbol), (yyvsp[-3].notelist)); }
-#line 2451 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2612 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 133:
-#line 348 "fparser.y" /* yacc.c:1651  */
+#line 361 "fparser.y" /* yacc.c:1651  */
     { (yyval.enumitemlist) = new_enumitem((yyvsp[0].symbol), -1, (yyvsp[-1].notelist)); }
-#line 2457 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2618 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 134:
-#line 351 "fparser.y" /* yacc.c:1651  */
+#line 364 "fparser.y" /* yacc.c:1651  */
     { (yyval.notelist) = NULL; }
-#line 2463 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2624 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
   case 135:
-#line 352 "fparser.y" /* yacc.c:1651  */
+#line 365 "fparser.y" /* yacc.c:1651  */
     { (yyval.notelist) = append_note((yyvsp[-1].notelist), (yyvsp[0].symbol)); }
-#line 2469 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2630 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 
 
-#line 2473 "fparser.tab.cpp" /* yacc.c:1651  */
+#line 2634 "fparser.tab.cpp" /* yacc.c:1651  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2703,6 +2864,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 357 "fparser.y" /* yacc.c:1910  */
+#line 370 "fparser.y" /* yacc.c:1910  */
 
 

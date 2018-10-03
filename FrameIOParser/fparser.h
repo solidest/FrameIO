@@ -267,8 +267,6 @@ typedef struct action
 	struct action * nextaction;
 } ACTION;
 
-
-
 //œµÕ≥- Ù–‘
 typedef struct sysproperty
 {
@@ -304,8 +302,6 @@ typedef struct sys
 	ACTION * actionlist;
 	struct sys * nextsys;
 } SYS;
-
-
 
 
 
@@ -385,3 +381,17 @@ SYS* new_sys(int namesyid, SYSITEMLIST* list, NOTE* notes);
 PROJECTITEM* new_projectitem(projectitemtype itype, void* item);
 PROJECTITEMLIST* add_projectitem(PROJECTITEMLIST* list, PROJECTITEM* item);
 PROJECT* new_project(int namesyid, PROJECTITEMLIST* itemlist, NOTE* notes);
+
+void free_project(PROJECT * project);
+void free_projectitem(PROJECTITEM* pitem);
+void free_projectitemlist(PROJECTITEMLIST* pitemlist);
+void free_sysitem(SYSITEM* sysitem);
+void free_sysitemlist(SYSITEMLIST* sysitemlist);
+void free_channeloption(CHANNELOPTION* choplist);
+void free_actionmap(ACTIONMAP* amaplist);
+void free_segment(SEGMENT* seglist);
+void free_segproperty(SEGPROPERTY* segprolist);
+void free_expvalue(EXPVALUE* valueexp);
+void free_oneofitem(ONEOFITEM* oneofitemlist);
+void free_enumitem(ENUMITEM * enumitemlist);
+void free_note(NOTE* notelist);

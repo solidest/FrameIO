@@ -144,6 +144,71 @@ PROJECT* new_project(int namesyid, PROJECTITEMLIST* itemlist, NOTE* notes)
 	return NULL;
 }
 
+void free_project(PROJECT * project)
+{
+
+}
+
+void free_projectitem(PROJECTITEM* pitem)
+{
+
+}
+
+void free_projectitemlist(PROJECTITEMLIST* pitemlist)
+{
+
+}
+
+void free_sysitem(SYSITEM* sysitem)
+{
+
+}
+
+void free_sysitemlist(SYSITEMLIST* sysitemlist)
+{
+
+}
+
+void free_channeloption(CHANNELOPTION* choplist)
+{
+
+}
+
+void free_actionmap(ACTIONMAP* amaplist)
+{
+
+}
+
+void free_segment(SEGMENT* seglist)
+{
+
+}
+
+void free_segproperty(SEGPROPERTY* segprolist)
+{
+
+}
+
+void free_expvalue(EXPVALUE* valueexp)
+{
+
+}
+
+void free_oneofitem(ONEOFITEM* oneofitemlist)
+{
+
+}
+
+void free_enumitem(ENUMITEM * enumitemlist)
+{
+
+}
+
+void free_note(NOTE* notelist)
+{
+
+}
+
 unsigned char utf8_look_for_table[] =
 {
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

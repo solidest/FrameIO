@@ -94,6 +94,19 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %type <valueexp> exp 
 %type <notelist> notelist 
 
+%destructor { free_project($$); $$=NULL; } <project>
+%destructor { free_projectitem($$); $$=NULL; } <pitem>
+%destructor { free_projectitemlist($$); $$=NULL; } <pitemlist>
+%destructor { free_sysitem($$); $$=NULL; } <sysitem>
+%destructor { free_sysitemlist($$); $$=NULL; } <sysitemlist>
+%destructor { free_channeloption($$); $$=NULL; } <choplist>
+%destructor { free_actionmap($$); $$=NULL; } <amaplist>
+%destructor { free_segment($$); $$=NULL; } <seglist>
+%destructor { free_segproperty($$); $$=NULL; } <segprolist>
+%destructor { free_expvalue($$); $$=NULL; } <valueexp>
+%destructor { free_oneofitem($$); $$=NULL; } <oneofitemlist>
+%destructor { free_enumitem($$); $$=NULL; } <enumitemlist>
+%destructor { free_note($$); $$=NULL; } <notelist>
 
 %right '='
 %left '+' '-'
