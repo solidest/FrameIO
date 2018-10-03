@@ -30,6 +30,7 @@ public:
 
 	int SaveSymbol(const char* symbol, int lineno, int firstcolumn, int lastcolumn);
 	int SaveError(int errorcode, int firstsyid, int lastsyid);
+	void SaveProject(PROJECT* pj);
 
 	bool LoadProject(int projectid);
 

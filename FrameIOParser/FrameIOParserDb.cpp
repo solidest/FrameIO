@@ -132,3 +132,10 @@ int FrameIOParserDb::SaveSymbol(const char* symbol, int lineno, int firstcolumn,
 }
 
 
+//±£´æÏîÄ¿ast
+void FrameIOParserDb::SaveProject(PROJECT* pj)
+{
+	auto _pj = pj;
+	auto _name = pj->namesyid;
+}
+

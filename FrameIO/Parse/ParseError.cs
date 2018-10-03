@@ -22,7 +22,7 @@ namespace FrameIO.Main
                 var str = GetErrorStr();
                 //if (str == "UNKNOW")
                 {
-                    return "Error(" + ErrorCode.ToString() + "):" + str;
+                    return "Error(" + ErrorCode.ToString() + ") " + str;
                 }
                 //else
                 //  return str;
@@ -33,6 +33,8 @@ namespace FrameIO.Main
         {
             switch (ErrorCode)
             {
+                case 0:
+                    return "开始位置出现错误";
                 case -1:
                     return "拼写错误";
                 case -2:

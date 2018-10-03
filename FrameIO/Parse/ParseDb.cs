@@ -48,16 +48,34 @@ namespace FrameIO.Main
             var tb = _db.ExecuteQuery(str);
             foreach (DataRow r in tb.Rows)
             {
-                ret.Add(new ParseError()
+                int errcode = Convert.ToInt32(r["errorcode"]);
+                if(errcode ==0)
                 {
-                    ErrorCode = Convert.ToInt32(r["errorcode"]),
-                    FirstLine = Convert.ToInt32(r["firstline"]),
-                    FirstCol = Convert.ToInt32(r["firstcol"]),
-                    LastLine = Convert.ToInt32(r["lastline"]),
-                    LastCol = Convert.ToInt32(r["lastcol"]),
-                    FirstSymbol = r["firstsy"].ToString(),
-                    LastSymbol = r["lastsy"].ToString()
-                });
+                    ret.Add(new ParseError()
+                    {
+                        ErrorCode = errcode,
+                        FirstLine = 1,
+                        FirstCol = 0,
+                        LastLine = 1,
+                        LastCol = 1,
+                        FirstSymbol = "",
+                        LastSymbol = ""
+                    });
+                }
+                else
+                {
+                    ret.Add(new ParseError()
+                    {
+                        ErrorCode = errcode,
+                        FirstLine = Convert.ToInt32(r["firstline"]),
+                        FirstCol = Convert.ToInt32(r["firstcol"]),
+                        LastLine = Convert.ToInt32(r["lastline"]),
+                        LastCol = Convert.ToInt32(r["lastcol"]),
+                        FirstSymbol = r["firstsy"].ToString(),
+                        LastSymbol = r["lastsy"].ToString()
+                    });
+                }
+
             }
             return ret;
         }

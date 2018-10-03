@@ -152,7 +152,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 27 "fparser.y" /* yacc.c:1913  */
+#line 30 "fparser.y" /* yacc.c:1913  */
 
 	int symbol;
 	int optionvalue;

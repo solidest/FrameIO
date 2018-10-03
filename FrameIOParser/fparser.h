@@ -10,15 +10,17 @@ fparser.h
 
 #define ERROR_CODE_SYMBOL			-1	//词法错误
 #define ERROR_CODE_SYNTAX			-2	//语法错误
+#define ERROR_CODE_0				0	//开始位置错误
 
 int get_utf8_length(char *str, int clen);
 
 //注释
-typedef struct note
+struct NOTE
 {
 	int notesyid;
-	struct note * nextnote;
-} NOTE;
+	struct NOTE * nextnote;
+} ;
+
 
 //项目成员类型
 enum projectitemtype
@@ -179,84 +181,84 @@ enum segmenttype
 };
 
 //字段属性
-typedef struct segproperty
+struct SEGPROPERTY
 {
 	segpropertytype pro;
 	segpropertyvaluetype vtype;
 	int iv;
 	void * pv;
-	struct segproperty * nextsegpro;
-} SEGPROPERTY;
+	struct SEGPROPERTY * nextsegpro;
+} ;
 
 //表达式
-typedef struct expvalue
+struct EXPVALUE
 {
 	exptype valuetype;
-	struct expvalue* lexp;
-	struct expvalue* rexp;
+	struct EXPVALUE* lexp;
+	struct EXPVALUE* rexp;
 	int valuesyid;
-} EXPVALUE;
+} ;
 
 //oneoflist
-typedef struct segoneofitem
+struct ONEOFITEM
 {
 	int enumitemsyid;
 	int framesyid;
-	struct segoneofitem * nextitem;
-} ONEOFITEM;
+	struct ONEOFITEM * nextitem;
+} ;
 
 //字段
-typedef struct segment
+struct SEGMENT
 {
 	segmenttype segtype;
 	NOTE  * notes;
 	int namesyid;
-	SEGPROPERTY segpropertylist;
-	struct segment * nextsegment;
-} SEGMENT;
+	SEGPROPERTY* segpropertylist;
+	struct SEGMENT * nextsegment;
+} ;
 
 //数据帧
-typedef struct frame
+struct FRAME
 {
 	int namesyid;
 	NOTE  * notes;
 	SEGMENT *seglist;
-	struct frame * nextframe;
-} FRAME;
+	struct FRAME * nextframe;
+} ;
 
 
 
 
 //通道参数选项
-typedef struct channeloption
+struct CHANNELOPTION
 {
 	NOTE  * notes;
 	channeloptiontype optiontype;
 	int valuesyid;
-	struct option * nextoption;
-} CHANNELOPTION;
+	struct CHANNELOPTION * nextoption;
+} ;
 
 //通道
-typedef struct channel
+struct CHANNEL
 {
 	NOTE  * notes;
 	int namesyid;
 	syschanneltype channeltype;
 	CHANNELOPTION * channeloption;
-	struct channel * nextchannel;
-} CHANNEL;
+	struct CHANNEL * nextchannel;
+} ;
 
 //动作-映射
-typedef struct actionmap
+struct ACTIONMAP
 {
 	NOTE  * notes;
 	int segsyid;
 	int prosyid;
-	struct actionmap * nextmap;
-} ACTIONMAP;
+	struct ACTIONMAP * nextmap;
+} ;
 
 //动作
-typedef struct action
+struct ACTION
 {
 	NOTE  * notes;
 	int namesyid;
@@ -264,94 +266,94 @@ typedef struct action
 	int framesyid;
 	int channelsyid;
 	ACTIONMAP * maplist;
-	struct action * nextaction;
-} ACTION;
+	struct ACTION * nextaction;
+} ;
 
 //系统-属性
-typedef struct sysproperty
+struct SYSPROPERTY
 {
 	NOTE  * notes;
 	syspropertytype protype;
 	int namesyid;
 	bool isarray;
-	struct sysproperty * nextsysproperty;
-} SYSPROPERTY;
+	struct SYSPROPERTY * nextsysproperty;
+} ;
 
 //系统内部成员
-typedef struct sysitem
+struct SYSITEM
 {
 	systitemtype itemtype;
 	void* item;
-} SYSITEM;
+} ;
 
 //系统内部成员列表
-typedef struct sysitemlist
+struct SYSITEMLIST
 {
-	SYSITEM* sysprolist;
-	SYSITEM* channellist;
-	SYSITEM* actionlist;
-}SYSITEMLIST;
+	SYSPROPERTY* sysprolist;
+	CHANNEL* channellist;
+	ACTION* actionlist;
+};
 
 //系统
-typedef struct sys
+struct SYS
 {
 	int namesyid;
 	NOTE  * notes;
 	SYSPROPERTY * propertylist;
 	CHANNEL * channellist;
 	ACTION * actionlist;
-	struct sys * nextsys;
-} SYS;
+	struct SYS * nextsys;
+};
 
 
 
 //枚举项
-typedef struct enumitem
+struct ENUMITEM
 {
 	NOTE  * notes;
 	int itemsyid;
 	int valuesyid;
-	struct enumitem * nextitem;
-} ENUMITEM;
+	struct ENUMITEM * nextitem;
+} ;
 
 
 //枚举定义
-typedef struct enumcfg
+struct ENUMCFG
 {
 	int namesyid;
 	ENUMITEM * enumitemlist;
 	NOTE  * notes;
-	struct enumcfg * nextenumcfg;
-} ENUMCFG;
+	struct ENUMCFG * nextenumcfg;
+} ;
 
 //项目内部成员
-typedef struct projectitem
+struct PROJECTITEM
 {
 	projectitemtype itemtype;
 	void* item;
-} PROJECTITEM;
+} ;
 
 //项目内部成员列表
-typedef struct projectitemlist
+struct PROJECTITEMLIST
 {
-	PROJECTITEM* syslist;
-	PROJECTITEM* framelist;
-	PROJECTITEM* enumcfglist;
-}PROJECTITEMLIST;
+	SYS* syslist;
+	FRAME* framelist;
+	ENUMCFG* enumcfglist;
+};
 
 //项目
-typedef struct project
+struct PROJECT
 {
 	int namesyid;
 	struct NOTE * notes;
 	struct SYS * syslist;
 	struct FRAME * framelist;
 	struct ENUMCFG * enumcfglist;
-} PROJECT;
+} ;
 
 
 NOTE* new_note(int notesyid);
-NOTE* append_note(NOTE* notelist, int notesyid);\
+NOTE* append_note(NOTE* list, NOTE* lastitem);
 
 ENUMITEM* new_enumitem(int itemsyid, int valuesyid, NOTE  * notes);
 ENUMITEM* append_enumitem(ENUMITEM* enumitemlist, ENUMITEM* lastenumitem);

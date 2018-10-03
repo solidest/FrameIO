@@ -178,7 +178,7 @@ namespace FrameIO.Main
                 var of1 = edCode.Document.GetOffset(err.FirstLine, err.FirstCol);
                 var of2 = edCode.Document.GetOffset(err.LastLine, err.LastCol);
                 if (of2 >= of1) textMarkerService.Create(of1, of2 - of1 + 1, err.ErrorTip);
-                OutText(string.Format("错误：{0}, 行号：{2} 列号：{3}", err.ErrorTip, err.ErrorCode, err.FirstLine, err.FirstCol), false);
+                OutText(string.Format("错误：{0}, 行号{2} 列号{3}", err.ErrorTip, err.ErrorCode, err.FirstLine, err.FirstCol), false);
             }
 
         }

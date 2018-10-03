@@ -18,7 +18,10 @@
 
 int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg) 
 {
-	db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
+	if (yylval.symbol==0)
+		db->SaveError(ERROR_CODE_0, yylval.symbol, yylval.symbol);
+	else
+		db->SaveError(ERROR_CODE_SYNTAX, yylval.symbol, yylval.symbol);
 	return 1; 
 }
 %}
@@ -94,7 +97,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %type <valueexp> exp 
 %type <notelist> notelist 
 
-%destructor { free_project($$); $$=NULL; } <project>
 %destructor { free_projectitem($$); $$=NULL; } <pitem>
 %destructor { free_projectitemlist($$); $$=NULL; } <pitemlist>
 %destructor { free_sysitem($$); $$=NULL; } <sysitem>
@@ -117,7 +119,7 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %%
 
 project:
-	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = new_project($3, $5, $1); }
+	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = new_project($3, $5, $1); db->SaveProject($$); free_project($$); $$=NULL; }
 ;
 
 projectitemlist:															{ $$ = NULL; }
@@ -362,7 +364,7 @@ enumitem:
 ;
 
 notelist:																		{ $$ = NULL; }
-	| notelist T_NOTE															{ $$ = append_note($1, $2); }
+	| notelist T_NOTE															{ $$ = append_note($1, new_note($2)); }
 ;
 
 
