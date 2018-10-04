@@ -37,6 +37,7 @@ private:
 	sqlite3_stmt *m_fio_sys_channel_stmt;
 	sqlite3_stmt *m_fio_sys_channel_option_stmt;
 	sqlite3_stmt *m_fio_sys_property_stmt;
+	sqlite3_stmt *m_semantics_stmt;
 
 public:
 	FrameIOParserDb();
@@ -69,5 +70,7 @@ private:
 	int SaveSysChannelOption(CHANNELOPTION* op, int chid);
 	int SaveSysProperty(SYSPROPERTY* pt, int sysid);
 
+	int Semantics();
+	int RunSqlWithProjectId(const char* sql);
 };
 

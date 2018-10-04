@@ -40,7 +40,7 @@ namespace FrameIO.Main
                 case -2:
                     return "语法错误";
                 case 1:
-                    return "属性重复设置";
+                    return "存在重复的属性配置";
                 case 101:
                     return "协议名称重复";
                 case 102:

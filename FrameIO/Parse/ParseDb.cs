@@ -92,6 +92,7 @@ namespace FrameIO.Main
             var ts  = _db.GetTables();
             foreach(var t in ts)
             {
+                if (!t.ToString().StartsWith("fio")) continue;
                 _db.ExecuteNonQuery(string.Format("DELETE FROM {0} WHERE {1} = {2}", t, t.ToString()=="fio_project"?"rowid":"projectid",projectid.ToString()));
             }
 
