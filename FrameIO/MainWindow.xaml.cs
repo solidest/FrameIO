@@ -71,13 +71,41 @@ namespace FrameIO.Main
         private int _codeVersion = 0;
         private int _workVersion = 0;
         private int _lastprojectid = -1;
+        private bool _lastparseok = false;
         private ParseDb _db = new ParseDb();
+        private Mutex _parseMutext = new Mutex(false);
 
         [DllImport("FrameIOParser.dll")]
         private extern static int parse(int projectid);
 
-
         private delegate void ParseErrorHandler(int codeVer, IList<ParseError> errorlist);
+
+        //挂起后台分析线程 如果有分析错误则无法挂起
+        private bool SuspendBackgroundParse()
+        {
+            ParseCode();
+            Thread.Sleep(100);
+            _parseMutext.WaitOne();
+            while (_workVersion != _codeVersion)
+            {
+                _parseMutext.ReleaseMutex();
+                Thread.Sleep(100);
+                _parseMutext.WaitOne();
+            }
+            if (_lastparseok)
+                return true;
+            else
+            {
+                _parseMutext.ReleaseMutex();
+                return false;
+            }
+        }
+
+        //恢复后台分析线程
+        private void RecoveryBackgroundParse()
+        {
+            _parseMutext.ReleaseMutex();
+        }
 
         //分析代码 被主线程调用的接口
         private void ParseCode()
@@ -97,6 +125,7 @@ namespace FrameIO.Main
             int projectid = -1;
             while (true)
             {
+                _parseMutext.WaitOne();
                 if (_workVersion != _codeVersion)
                 {
                     lock (this)
@@ -110,22 +139,13 @@ namespace FrameIO.Main
                     projectid = _db.CreateProject(workCode);
                     _lastprojectid = projectid;
                     int iret = parse(projectid);
-                    if(iret==0)
-                    {
-                        //加载错误信息
-                        Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, _db.LoadError(projectid));
-                    }
-                    else
-                    {
-                        throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
-                    }
-                    
-                    Thread.Sleep(1);
+                    _lastparseok = (iret == 0);
+                    //加载错误信息
+                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, iret==0?null:_db.LoadError(projectid));
+                    if (iret>1) throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
                 }
-                else
-                {
-                    Thread.Sleep(1);
-                }
+                _parseMutext.ReleaseMutex();
+                Thread.Sleep(10);
             }
         }
         
@@ -497,7 +517,19 @@ namespace FrameIO.Main
         //切换视图
         private void SwitchView(object sender, RoutedEventArgs e)
         {
-
+            if(_isCoding)
+            {
+                if(!SuspendBackgroundParse())
+                {
+                    if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+                    OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
+                    return;
+                }
+                else
+                {
+                    RecoveryBackgroundParse();
+                }
+            }
             _isCoding = !_isCoding;
             UpdateEditMode();
             OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), true);
@@ -518,7 +550,7 @@ namespace FrameIO.Main
                     gridMain.RowDefinitions[3].Height = new GridLength(160, GridUnitType.Pixel);
                     break;
             }
-            e.Handled = true;
+            if(e!=null) e.Handled = true;
         }
 
 
