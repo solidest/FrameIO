@@ -10,6 +10,16 @@ namespace FrameIO.Main
 {
     public class IOProject:INotifyPropertyChanged
     {
+
+        public string ProjectName { get; set; }
+        public string ProjectNotes { get; set; }
+        public ObservableCollection<Subsys> SubSysList { get; set; } = new ObservableCollection<Subsys>();
+
+        public ObservableCollection<Frame> FrameList { get; set; } = new ObservableCollection<Frame>();
+        public ObservableCollection<Enumdef> EnumdefList { get; set;  }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public IOProject(string name)
         {
             ProjectName = name;
@@ -19,14 +29,6 @@ namespace FrameIO.Main
         {
         }
 
-        public string ProjectName { get; set; }
-        public string ProjectNotes { get; set; }
-        public ObservableCollection<Subsys> SubSysList { get; } = new ObservableCollection<Subsys>();
-
-        public ObservableCollection<Frame> FrameList { get; } = new ObservableCollection<Frame>();
-        public ObservableCollection<Enumdef> EnumdefList { get; } = new ObservableCollection<Enumdef>();
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
 
     }

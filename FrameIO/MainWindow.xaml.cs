@@ -77,12 +77,12 @@ namespace FrameIO.Main
         private bool SuspendBackgroundParse()
         {
             ParseCode();
-            Thread.Sleep(100);
+            Thread.Sleep(1);
             _parseMutext.WaitOne();
             while (_workVersion != _codeVersion)
             {
                 _parseMutext.ReleaseMutex();
-                Thread.Sleep(100);
+                Thread.Sleep(1);
                 _parseMutext.WaitOne();
             }
             if (_lastparseok)
@@ -90,6 +90,7 @@ namespace FrameIO.Main
             else
             {
                 _parseMutext.ReleaseMutex();
+                if (!_isCoding) SwitchView(this, null);
                 return false;
             }
         }
@@ -107,7 +108,13 @@ namespace FrameIO.Main
             lock (this)
             {
                 _parseCode = edCode.Text; //保存代码
-                _codeVersion += 1; //更新版本
+                if (_codeVersion > 0)
+                    _codeVersion += 1; //更新版本
+                else
+                {
+                    _codeVersion = 1;
+                    _workVersion = 0;
+                }
             }
         }
 
@@ -140,7 +147,7 @@ namespace FrameIO.Main
                     
                 }
                 _parseMutext.ReleaseMutex();
-                Thread.Sleep(10);
+                Thread.Sleep(1);
             }
         }
         
@@ -449,7 +456,11 @@ project main
         {
             _isModified = false;
             edCode.IsModified = false;
-            trProject.Root = new ProjectNode(_project);
+            lock(this)
+            {
+                _codeVersion = -1;
+            }
+            ReLoadProjectToUI();
         }
 
         //提示保存
@@ -541,23 +552,36 @@ project main
         //切换视图
         private void SwitchView(object sender, RoutedEventArgs e)
         {
-            if(_isCoding && FileName.Length>0)
+            if(FileName.Length != 0)
             {
-                if(!SuspendBackgroundParse())
+                if(_isCoding)
                 {
-                    if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
-                    OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
-                    return;
+                    if(!SuspendBackgroundParse())
+                    {
+                        if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+                        OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
+                        return;
+                    }
+                    ReLoadProjectToUI();
                 }
                 else
                 {
-                    RecoveryBackgroundParse();
+                    if(e!=null) RecoveryBackgroundParse();//when e==null : code have some error,parse thread is alive
                 }
             }
+            else
+            {
+                if (_isCoding)
+                    _parseMutext.WaitOne();
+                else
+                    _parseMutext.ReleaseMutex();
+            }
+
             _isCoding = !_isCoding;
             UpdateEditMode();
             OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), true);
-            e.Handled = true;
+
+            if(e!=null) e.Handled = true;
         }
 
         //显示隐藏输出面板
@@ -631,7 +655,6 @@ project main
             {
                 FileName = ofd.FileName;
                 edCode.Text = File.ReadAllText(FileName);
-                _project = new IOProject();
                 ResetCodeState();
                 OutText(string.Format("信息：打开文件【{0}】", FileName), true);
             }
@@ -658,7 +681,6 @@ project main
                 var code = DefaultCode.Replace("{0}", System.IO.Path.GetFileNameWithoutExtension(FileName));
                 File.WriteAllText(FileName, code);
                 edCode.Text = code;
-                _project = new IOProject(System.IO.Path.GetFileNameWithoutExtension(sfd.FileName));
                 ResetCodeState();
                 OutText(string.Format("信息：新建文件【{0}】", FileName), true);
             }
@@ -817,9 +839,33 @@ project main
             if (clear) txtOut.Clear();
             if (info == "") return;
             txtOut.AppendText(info);
-            txtOut.AppendText(Environment.NewLine);
+            if(!info.EndsWith(Environment.NewLine)) txtOut.AppendText(Environment.NewLine);
             txtOut.ScrollToEnd();
         }
+
+        #endregion
+
+        #region --BindingData--
+
+        //重新加载整个项目到UI
+        private void ReLoadProjectToUI()
+        {
+            if (_isCoding)
+            {
+               if(!SuspendBackgroundParse()) return; //有语法错误无法加载UI
+            }
+            else
+            {
+                RecoveryBackgroundParse();
+                if (!SuspendBackgroundParse()) return;
+            }
+            _project = _db.LoadProject(_lastprojectid);
+            //TODO tbPages.RemoveTabItem(tbPages.Items[0]);
+            trProject.Root = new ProjectNode(_project);
+            if (_isCoding) RecoveryBackgroundParse();
+        }
+
+
 
         #endregion
 
@@ -836,6 +882,19 @@ project main
             //}
             //ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
             //txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
+
+            OutText(_project.ProjectName, true);
+            foreach(var em in _project.EnumdefList)
+            {
+                OutText(em.EnumNote, false);
+                OutText(em.EnumName, false);
+                foreach(var emi in em.ItemsList)
+                {
+                    OutText("\t" + emi.Notes, false);
+                    OutText("\t" + emi.ItemName, false);
+                    OutText("\t" + emi.ItemValue, false);
+                }
+            }
 
         }
 

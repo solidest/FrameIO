@@ -228,7 +228,6 @@ struct FRAME
 
 
 
-
 //通道参数选项
 struct CHANNELOPTION
 {

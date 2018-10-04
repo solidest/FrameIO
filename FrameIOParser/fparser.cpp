@@ -349,6 +349,7 @@ SYS* new_sys(int namesyid, SYSITEMLIST* list, NOTE* notes)
 		ret->actionlist = list->actionlist;
 		ret->channellist = list->channellist;
 		ret->propertylist = list->sysprolist;
+		delete list;
 	}
 	else
 	{
@@ -464,6 +465,7 @@ PROJECT* new_project(int namesyid, PROJECTITEMLIST* itemlist, NOTE* notes)
 		ret->enumcfglist = itemlist->enumcfglist;
 		ret->framelist = itemlist->framelist;
 		ret->syslist = itemlist->syslist;
+		delete itemlist;
 	}
 	else
 	{

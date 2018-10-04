@@ -100,6 +100,7 @@
     <Compile Include="Helper\CodeFolding.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="Model\Enumdef.cs" />
+    <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />
     <Compile Include="Parse\Project.cs" />
