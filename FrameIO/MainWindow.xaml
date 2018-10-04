@@ -129,7 +129,7 @@
             </Button>
             <Separator/>
 
-            <Button ToolTip="语法检查">
+            <Button ToolTip="代码检查">
                 <Button.Content>
                     <Image Source="img/check.png"></Image>
                 </Button.Content>

@@ -9,16 +9,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 
@@ -139,10 +132,12 @@ namespace FrameIO.Main
                     projectid = _db.CreateProject(workCode);
                     _lastprojectid = projectid;
                     int iret = parse(projectid);
-                    _lastparseok = (iret == 0);
-                    //加载错误信息
-                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, iret==0?null:_db.LoadError(projectid));
                     if (iret>1) throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
+                    //加载错误信息
+                    var errlist = _db.LoadError(projectid);
+                    _lastparseok = errlist.Count == 0;
+                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, errlist);
+                    
                 }
                 _parseMutext.ReleaseMutex();
                 Thread.Sleep(10);
@@ -332,6 +327,22 @@ namespace FrameIO.Main
         private CodeFolding _foldingStrategy;
         private TextMarkerService textMarkerService;
         private ToolTip toolTip;
+        private const string DefaultCode = @"
+//项目:{0}
+project main
+{
+    //受控对象
+    system subsys1
+    {
+
+    }
+    
+    //数据帧
+    frame frame1
+    {
+
+    }
+}";
 
         //加载编辑器配置
         private void LoadEditorConfig()
@@ -517,7 +528,7 @@ namespace FrameIO.Main
         //切换视图
         private void SwitchView(object sender, RoutedEventArgs e)
         {
-            if(_isCoding)
+            if(_isCoding && FileName.Length>0)
             {
                 if(!SuspendBackgroundParse())
                 {
@@ -631,8 +642,9 @@ namespace FrameIO.Main
             {
                 if (File.Exists(sfd.FileName)) File.Delete(sfd.FileName);
                 FileName = sfd.FileName;
-                File.WriteAllText(FileName, "");
-                edCode.Text = "";
+                var code = DefaultCode.Replace("{0}", System.IO.Path.GetFileNameWithoutExtension(FileName));
+                File.WriteAllText(FileName, code);
+                edCode.Text = code;
                 _project = new IOProject(System.IO.Path.GetFileNameWithoutExtension(sfd.FileName));
                 ResetCodeState();
                 OutText(string.Format("信息：新建文件【{0}】", FileName), true);
@@ -640,16 +652,6 @@ namespace FrameIO.Main
             UpdateEditMode();
             e.Handled = true;
 
-            //_project = new IOProject();
-            //_project.SubSysList.Add(new Subsys("SYS1"));
-            //_project.SubSysList.Add(new Subsys("SYS2"));
-            //_project.SubSysList.Add(new Subsys("SYS3"));
-            //_project.FrameList.Add(new Frame("FRAME1"));
-            //_project.FrameList.Add(new Frame("FRAME2"));
-            //_project.FrameList.Add(new Frame("FRAME3"));
-            //_project.FrameList.Add(new Frame("FRAME4"));
-            //_project.ProjectName = "PROJECT1";
-            //trProject.Root = new ProjectNode(_project);
         }
 
         //是否可以查找替换
