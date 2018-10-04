@@ -343,6 +343,7 @@ project main
 
     }
 }";
+        
 
         //加载编辑器配置
         private void LoadEditorConfig()
@@ -524,6 +525,18 @@ project main
 
         #region --Command--
 
+        //代码检查
+        private void CheckCode(object sender, RoutedEventArgs e)
+        {
+            if(_isCoding)
+            {
+                if (!SuspendBackgroundParse()) return;
+                //TODO 加载数据模型
+            }
+
+            //TODO 执行语义检查
+
+        }
 
         //切换视图
         private void SwitchView(object sender, RoutedEventArgs e)
@@ -825,7 +838,6 @@ project main
             //txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
 
         }
-
 
     }
 
