@@ -53,7 +53,12 @@ namespace FrameIO.Main
                     return "字段值重复设置";
                 case 8:
                     return "属性名称重复";
-
+                case 9:
+                    return "数据帧名称重复";
+                case 10:
+                    return "字段名称重复";
+                case 11:
+                    return "字段属性重复设置";
 
 
                 case 101:

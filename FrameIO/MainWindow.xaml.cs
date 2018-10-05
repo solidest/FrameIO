@@ -523,7 +523,7 @@ namespace FrameIO.Main
             bool isok = true;
             isok = ReLoadProjectToUI(false, true);
 
-            if (!isok && HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+            if ( HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
             OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
             return isok;
         }
@@ -840,18 +840,21 @@ namespace FrameIO.Main
         bool ReLoadProjectToUI(bool startUI, bool checkSemantics = false)
         {
             bool ret = true;
+            bool needRelease = false;
             if (_isCoding)
             {
                 SuspendBackgroundParse();
                 ret = _lastparseok;
-                RecoveryBackgroundParse();
+                needRelease = true;
             }
             else
             {
                 RecoveryBackgroundParse();
+                Thread.Sleep(1);
                 SuspendBackgroundParse();
                 ret = _lastparseok;
             }
+
             IOProject p = null;
             if(ret)
             {
@@ -876,6 +879,8 @@ namespace FrameIO.Main
                 if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
                 if(startUI) OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
             }
+
+            if(needRelease) RecoveryBackgroundParse();
 
             return ret;
         }

@@ -17,7 +17,7 @@ namespace FrameIO.Main
         public string Name { get; set; }
         public string Notes { get; set; }
 
-        public ObservableCollection<FrameSegmentBase> Channels { get; set; }
+        public ObservableCollection<FrameSegmentBase> Segments { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

@@ -287,12 +287,133 @@ PRAGMA foreign_keys = on;
             return ret;
         }
 
+        //检查数据帧
+        private void CheckFrame()
+        {
+            // TODO
+        }
 
         //加载数据帧
         private ObservableCollection<Frame> LoadFrame(int projectid)
         {
             var ret = new ObservableCollection<Frame>();
+            var tb = _db.ExecuteQuery("SELECT fr.rowid, namesyid, sy.symbol FROM fio_frame fr LEFT JOIN fio_symbol sy ON fr.namesyid=sy.rowid WHERE fr.namesyid>0 AND fr.projectid="
+               + projectid.ToString());
+            foreach (DataRow r in tb.Rows)
+            {
+                var fr = new Frame(r["symbol"].ToString())
+                {
+                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
+                     Segments = LoadSegments(Convert.ToInt32(r["rowid"]))
+                };
+                if (_checkSemantics && ret.Where(p => p.Name == fr.Name).Count() > 0)
+                {
+                    AddError(Convert.ToInt32(r["namesyid"]), 9);
+                }
+                ret.Add(fr);
+            }
+            if (_checkSemantics) CheckFrame();
+            return ret;
+        }
 
+
+        //加载整数字段属性
+        private void LoadSegProInterger(int segid, FrameSegmentInteger seg, List<SegPro> pros)
+        {
+
+        }
+
+        //加载浮点数字段属性
+        private void LoadSegProReal(int segid, FrameSegmentReal seg, List<SegPro> pros)
+        {
+
+        }
+
+        //加载文本字段属性
+        private void LoadSegProText(int segid, FrameSegmentText seg, List<SegPro> pros)
+        {
+
+        }
+
+        //加载整数字段属性
+        private void LoadSegProBlock(int segid, FrameSegmentBlock seg, List<SegPro> pros)
+        {
+
+        }
+
+        private class SegPro
+        {
+            public Int32 proid { get; set; }
+            public Int32 vsyid { get; set; }
+            public string value { get; set; }
+            public segpropertytype proname { get; set; }
+            public segpropertyvaluetype vtype { get; set; }
+        }
+
+        //加载数据帧字段
+        private ObservableCollection<FrameSegmentBase> LoadSegments(int frameid)
+        {
+            var ret = new ObservableCollection<FrameSegmentBase>();
+            var tb = _db.ExecuteQuery("SELECT sg.rowid, namesyid, segmenttype, sy.symbol segname FROM fio_frame_segment sg LEFT JOIN fio_symbol sy ON sg.namesyid=sy.rowid WHERE sg.frameid="
+                + frameid.ToString());
+            foreach(DataRow r in tb.Rows)
+            {
+                segmenttype st = (segmenttype)Convert.ToInt32(r["segmenttype"]);
+                var segid = Convert.ToInt32(r["rowid"]);
+                var syid = Convert.ToInt32(r["namesyid"]);
+                FrameSegmentBase seg = null;
+                var pros = new List<SegPro>();
+
+                var tpro = _db.ExecuteQuery("SELECT pr.rowid proid, proname, protype vtype, pr.ivalue, sy.symbol value FROM fio_frame_segment_property pr LEFT JOIN fio_symbol sy ON pr.ivalue=sy.rowid WHERE pr.segmentid="
+                    + segid.ToString());
+                foreach(DataRow rp in tpro.Rows)
+                {
+                    var pr = new SegPro()
+                    {
+                        proid = Convert.ToInt32(rp["proid"]),
+                        vsyid = Convert.ToInt32(rp["ivalue"]),
+                        proname = (segpropertytype)Convert.ToInt32(rp["proname"]),
+                        value = rp["value"].ToString(),
+                        vtype = (segpropertyvaluetype)Convert.ToInt32(rp["vtype"])
+                    };
+                    if (pros.Where(p => p.proname == pr.proname).Count() > 0)
+                    {
+                        AddError(syid, 11);
+                    }
+                    pros.Add(pr);
+                }
+                switch(st)
+                {
+                    case segmenttype.SEGT_INTEGER:
+                        var iseg = new FrameSegmentInteger();
+                        LoadSegProInterger(segid, iseg, pros);
+                        seg = iseg;
+                        break;
+                    case segmenttype.SEGT_REAL:
+                        var rseg = new FrameSegmentReal();
+                        LoadSegProReal(segid, rseg, pros);
+                        seg = rseg;
+                        break;
+                    case segmenttype.SEGT_TEXT:
+                        var tseg = new FrameSegmentText();
+                        LoadSegProText(segid, tseg, pros);
+                        seg = tseg;
+                        break;
+                    case segmenttype.SEGT_BLOCK:
+                        var bseg = new FrameSegmentBlock();
+                        LoadSegProBlock(segid, bseg, pros);
+                        seg = bseg;
+                        break;
+                }
+                seg.Name = r["segname"].ToString();
+                seg.Notes = LoadNotes(syid);
+                seg.SegmentType = st;
+                if (_checkSemantics && ret.Where(p => p.Name == seg.Name).Count() > 0)
+                {
+                    AddError(syid, 10);
+                }
+                ret.Add(seg);
+            }
             return ret;
         }
 

@@ -103,6 +103,10 @@
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Model\FrameSegmentBase.cs" />
+    <Compile Include="Model\FrameSegmentBlock.cs" />
+    <Compile Include="Model\FrameSegmentInteger.cs" />
+    <Compile Include="Model\FrameSegmentReal.cs" />
+    <Compile Include="Model\FrameSegmentText.cs" />
     <Compile Include="Model\SubSysActionMap.cs" />
     <Compile Include="Model\SubSysChannel.cs" />
     <Compile Include="Model\SubSysChannelOption.cs" />

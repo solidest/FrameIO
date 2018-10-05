@@ -15,7 +15,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
         public ObservableCollection<Subsys> SubsysList { get; set; }
 
-        public ObservableCollection<Frame> FrameList { get; set; } = new ObservableCollection<Frame>();
+        public ObservableCollection<Frame> FrameList { get; set; }
         public ObservableCollection<Enumdef> EnumdefList { get; set;  }
 
         public event PropertyChangedEventHandler PropertyChanged;
