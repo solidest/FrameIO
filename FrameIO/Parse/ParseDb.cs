@@ -320,25 +320,53 @@ PRAGMA foreign_keys = on;
         //加载整数字段属性
         private void LoadSegProInterger(int segid, FrameSegmentInteger seg, List<SegPro> pros)
         {
-
+            foreach(var pro in pros)
+            {
+                switch(pro.proname)
+                {
+                    case segpropertytype.SEGP_SIGNED:
+                        break;
+                }
+            }
         }
 
         //加载浮点数字段属性
         private void LoadSegProReal(int segid, FrameSegmentReal seg, List<SegPro> pros)
         {
-
+            foreach (var pro in pros)
+            {
+                switch (pro.proname)
+                {
+                    case segpropertytype.SEGP_ISDOUBLE:
+                        break;
+                }
+            }
         }
 
         //加载文本字段属性
         private void LoadSegProText(int segid, FrameSegmentText seg, List<SegPro> pros)
         {
-
+            foreach (var pro in pros)
+            {
+                switch (pro.proname)
+                {
+                    case segpropertytype.SEGP_TAIL:
+                        break;
+                }
+            }
         }
 
         //加载整数字段属性
         private void LoadSegProBlock(int segid, FrameSegmentBlock seg, List<SegPro> pros)
         {
-
+            foreach (var pro in pros)
+            {
+                switch (pro.proname)
+                {
+                    case segpropertytype.SEGP_TYPE:
+                        break;
+                }
+            }
         }
 
         private class SegPro
