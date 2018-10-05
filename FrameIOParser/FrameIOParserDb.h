@@ -70,7 +70,7 @@ private:
 	int SaveSysChannelOption(CHANNELOPTION* op, int chid);
 	int SaveSysProperty(SYSPROPERTY* pt, int sysid);
 
-	int Semantics();
-	int RunSqlWithProjectId(const char* sql);
+	/*int Semantics();
+	int RunSqlWithProjectId(const char* sql);*/
 };
 

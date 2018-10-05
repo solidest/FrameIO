@@ -73,8 +73,8 @@ namespace FrameIO.Main
 
         private delegate void ParseErrorHandler(int codeVer, IList<ParseError> errorlist);
 
-        //挂起后台分析线程 如果有分析错误则无法挂起
-        private bool SuspendBackgroundParse()
+        //挂起后台分析线程 
+        private void SuspendBackgroundParse()
         {
             ParseCode();
             Thread.Sleep(1);
@@ -84,14 +84,6 @@ namespace FrameIO.Main
                 _parseMutext.ReleaseMutex();
                 Thread.Sleep(1);
                 _parseMutext.WaitOne();
-            }
-            if (_lastparseok)
-                return true;
-            else
-            {
-                _parseMutext.ReleaseMutex();
-                if (!_isCoding) SwitchView(this, null);
-                return false;
             }
         }
 
@@ -541,7 +533,7 @@ project main
         {
             if(_isCoding)
             {
-                if (!SuspendBackgroundParse()) return;
+                //if (!SuspendBackgroundParse()) return;
                 //TODO 加载数据模型
             }
 
@@ -556,17 +548,12 @@ project main
             {
                 if(_isCoding)
                 {
-                    if(!SuspendBackgroundParse())
-                    {
-                        if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
-                        OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
-                        return;
-                    }
-                    ReLoadProjectToUI();
+                    if(!ReLoadProjectToUI()) return;
+                    SuspendBackgroundParse();
                 }
                 else
                 {
-                    if(e!=null) RecoveryBackgroundParse();//when e==null : code have some error,parse thread is alive
+                    RecoveryBackgroundParse();
                 }
             }
             else
@@ -848,21 +835,42 @@ project main
         #region --BindingData--
 
         //重新加载整个项目到UI
-        private void ReLoadProjectToUI()
+        bool ReLoadProjectToUI()
         {
+            bool ret = true;
             if (_isCoding)
             {
-               if(!SuspendBackgroundParse()) return; //有语法错误无法加载UI
+                SuspendBackgroundParse();
+                ret = _lastparseok; //有语法错误无法加载UI
+                RecoveryBackgroundParse();
             }
             else
             {
                 RecoveryBackgroundParse();
-                if (!SuspendBackgroundParse()) return;
+                SuspendBackgroundParse();
+                ret = _lastparseok;
             }
-            _project = _db.LoadProject(_lastprojectid);
-            //TODO tbPages.RemoveTabItem(tbPages.Items[0]);
-            trProject.Root = new ProjectNode(_project);
-            if (_isCoding) RecoveryBackgroundParse();
+            IOProject p = null;
+            if(ret)
+            {
+                IList<ParseError> errorlist = null;
+                p = _db.LoadProject(_lastprojectid, out errorlist);
+                ret = (p != null);
+            }
+            if(ret)
+            {
+                _project = p;
+                trProject.Root = new ProjectNode(_project);
+            }
+
+            if (!ret)
+            {
+                if (!_isCoding) SwitchView(this, null);
+                if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+                OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
+            }
+
+            return ret;
         }
 
 

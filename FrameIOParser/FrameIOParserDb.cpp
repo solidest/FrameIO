@@ -312,37 +312,37 @@ int FrameIOParserDb::SaveSymbol(const char* symbol, int lineno, int firstcolumn,
 	return (int)sqlite3_last_insert_rowid(m_pDB);
 }
 
-//·ÖÎöÓïÒå´íÎó
-int FrameIOParserDb::Semantics()
-{
-	//×Ö¶ÎÊôĞÔÖØ¸´ÉèÖÃ
-	const char* sql = "INSERT INTO fio_error (projectid, errorcode, firstsyid, lastsyid) SELECT projectid, 1, segnamesyid, segnamesyid \
-		FROM(SELECT pt.projectid, count(*) repet, seg.namesyid segnamesyid FROM fio_frame_segment_property pt LEFT JOIN fio_frame_segment seg ON pt.segmentid = seg.rowid \
-			WHERE pt.projectid = ?1 GROUP BY pt.segmentid, pt.proname) et WHERE et.repet > 1";
-	if (RunSqlWithProjectId(sql) != 0) return -1;
+////·ÖÎöÓïÒå´íÎó
+//int FrameIOParserDb::Semantics()
+//{
+//	//×Ö¶ÎÊôĞÔÖØ¸´ÉèÖÃ
+//	const char* sql = "INSERT INTO fio_error (projectid, errorcode, firstsyid, lastsyid) SELECT projectid, 1, segnamesyid, segnamesyid \
+//		FROM(SELECT pt.projectid, count(*) repet, seg.namesyid segnamesyid FROM fio_frame_segment_property pt LEFT JOIN fio_frame_segment seg ON pt.segmentid = seg.rowid \
+//			WHERE pt.projectid = ?1 GROUP BY pt.segmentid, pt.proname) et WHERE et.repet > 1";
+//	if (RunSqlWithProjectId(sql) != 0) return -1;
+//
+//}
 
-}
-
-int  FrameIOParserDb::RunSqlWithProjectId(const char* sql)
-{
-	int res = sqlite3_prepare_v2(m_pDB, sql, -1, &m_semantics_stmt, NULL);
-	if (res != SQLITE_OK)
-	{
-		m_semantics_stmt = NULL;
-	}
-	sqlite3_bind_int(m_semantics_stmt, 1, m_projectid);
-	int rc = sqlite3_step(m_semantics_stmt);
-	if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW))
-	{
-		return -1;
-	}
-	if (m_semantics_stmt)
-	{
-		sqlite3_finalize(m_semantics_stmt);
-		m_semantics_stmt = NULL;
-	}
-	return 0;
-}
+//int  FrameIOParserDb::RunSqlWithProjectId(const char* sql)
+//{
+//	int res = sqlite3_prepare_v2(m_pDB, sql, -1, &m_semantics_stmt, NULL);
+//	if (res != SQLITE_OK)
+//	{
+//		m_semantics_stmt = NULL;
+//	}
+//	sqlite3_bind_int(m_semantics_stmt, 1, m_projectid);
+//	int rc = sqlite3_step(m_semantics_stmt);
+//	if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW))
+//	{
+//		return -1;
+//	}
+//	if (m_semantics_stmt)
+//	{
+//		sqlite3_finalize(m_semantics_stmt);
+//		m_semantics_stmt = NULL;
+//	}
+//	return 0;
+//}
 
 
 //±£´æÏîÄ¿ast
@@ -361,7 +361,7 @@ int FrameIOParserDb::SaveProject(PROJECT* pj)
 	if (SaveEnumcfg(pj->enumcfglist) != 0) return -1;
 	if (SaveFrame(pj->framelist) != 0) return -1;
 	if (SaveSys(pj->syslist) != 0) return -1;
-	if (Semantics() != 0) return -1;
+	//if (Semantics() != 0) return -1;
 	return 0;
 }
 

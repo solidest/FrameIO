@@ -99,7 +99,7 @@ namespace FrameIO.Main
         }
 
         //加载项目
-        public IOProject LoadProject(int projectid)
+        public IOProject LoadProject(int projectid, out IList<ParseError> errorlist)
         {
             var ret = new IOProject();
 
@@ -110,6 +110,7 @@ namespace FrameIO.Main
             ret.ProjectNotes = LoadNotes(Convert.ToInt32(tb.Rows[0]["namesyid"]));
             ret.EnumdefList = LoadEnumList(projectid);
 
+            errorlist = null;
             return ret;
         }
 
