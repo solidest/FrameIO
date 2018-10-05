@@ -79,7 +79,7 @@ namespace FrameIO.Main
 
         protected override void LoadChildren()
         {
-            foreach(var i in _flist.OrderBy(p=>p.FrameName))
+            foreach(var i in _flist.OrderBy(p=>p.Name))
             {
                 Children.Add(new FrameNode(i));
             }

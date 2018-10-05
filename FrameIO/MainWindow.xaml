@@ -70,30 +70,34 @@
             </Button>
 
             <Separator/>
-            
+            <Button Name="btExpand" ToolTip="展开/收缩项目树" Click="Expand" VerticalAlignment="Bottom">
+                <Button.Content>
+                    <Image Source="img/expand.png" Height="20" Width="20"></Image>
+                </Button.Content>
+            </Button>
             <Button Name="btAddSubsys" ToolTip="添加受控对象" Click="AddSubsys">
                 <Button.Content>
-                    <Image Source="img/subsys1.png" ></Image>
+                    <Image Source="img/subsys1.png"  Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btAddFrame" ToolTip="添加数据帧" Click="AddFrame">
                 <Button.Content>
-                    <Image Source="img/frame1.png"></Image>
+                    <Image Source="img/frame1.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btAddEnum" ToolTip="添加枚举" Click="AddEnum">
                 <Button.Content>
-                    <Image Source="img/enum1.png" ></Image>
+                    <Image Source="img/enum.png" Height="20" Width="20" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btRename" ToolTip="重命名" Click="RenameSelected">
                 <Button.Content>
-                    <Image Source="img/rename.png"></Image>
+                    <Image Source="img/rename.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btDelete" ToolTip="删除选中项" Command="ApplicationCommands.Delete">
                 <Button.Content>
-                    <Image Source="img/del.png"></Image>
+                    <Image Source="img/del.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
 
@@ -104,27 +108,27 @@
             </Button>
             <Button Name="btCopy" ToolTip="复制" Command="ApplicationCommands.Copy" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/copy.png"></Image>
+                    <Image Source="img/copy.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btPaste" ToolTip="粘贴" Command="ApplicationCommands.Paste" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/paste.png"></Image>
+                    <Image Source="img/paste.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btUndo" ToolTip="撤销" Command="ApplicationCommands.Undo" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/undo.png"></Image>
+                    <Image Source="img/undo.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btRedo" ToolTip="重做" Command="ApplicationCommands.Redo" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/redo.png"></Image>
+                    <Image Source="img/redo.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btFindReplace" ToolTip="查找/替换" Command="ApplicationCommands.Find" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/find.png"></Image>
+                    <Image Source="img/find.png" Height="20" Width="20"></Image>
                 </Button.Content>
             </Button>
             <Separator/>
@@ -179,10 +183,14 @@
                                 </MenuItem>
                                 <MenuItem Header="新建枚举" Name="miAddEnum" Click ="AddEnum">
                                     <MenuItem.Icon>
-                                        <Image Source="img/enum1.png"/>
+                                        <Image Source="img/enum.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="展开/收缩" Click="Expand"/>
+                                <MenuItem Header="展开/收缩" Click="Expand">
+                                    <MenuItem.Icon>
+                                        <Image Source="img/expand.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <Separator />
                                 <MenuItem Header="重命名" Name="miRename" Click="RenameSelected">
                                     <MenuItem.Icon>

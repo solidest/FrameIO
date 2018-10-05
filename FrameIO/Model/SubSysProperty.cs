@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    public class EnumdefItem : INotifyPropertyChanged
+    public class SubsysProperty : INotifyPropertyChanged
     {
         public string Name { get; set; }
-        public string ItemValue { get; set; }
         public string Notes { get; set; }
-
+        public syspropertytype PropertyType{ get; set; }
+        public bool IsArray { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

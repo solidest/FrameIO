@@ -18,7 +18,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return _project.ProjectName ;
+                return _project.Name ;
             }
         }
 
@@ -41,7 +41,7 @@ namespace FrameIO.Main
 
         protected override void LoadChildren()
         {
-            Children.Add(new SubsysListNode(_project.SubSysList));
+            Children.Add(new SubsysListNode(_project.SubsysList));
             Children.Add(new FrameListNode(_project.FrameList));
             Children.Add(new EnumdefListNode(_project.EnumdefList));
         }

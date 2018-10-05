@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    public class EnumdefItem : INotifyPropertyChanged
+    public class SubsysActionMap : INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public string ItemValue { get; set; }
         public string Notes { get; set; }
+        public string SysPropertyName { get; set; }
+        public string FrameSegName { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

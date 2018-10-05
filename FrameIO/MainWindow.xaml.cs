@@ -62,7 +62,7 @@ namespace FrameIO.Main
 
         private string _parseCode = "";
         private int _codeVersion = 0;
-        private int _workVersion = 0;
+        private int _workedVersion = 0;
         private int _lastprojectid = -1;
         private bool _lastparseok = false;
         private ParseDb _db = new ParseDb();
@@ -79,7 +79,7 @@ namespace FrameIO.Main
             ParseCode();
             Thread.Sleep(1);
             _parseMutext.WaitOne();
-            while (_workVersion != _codeVersion)
+            while (_workedVersion != _codeVersion)
             {
                 _parseMutext.ReleaseMutex();
                 Thread.Sleep(1);
@@ -108,16 +108,17 @@ namespace FrameIO.Main
         private void Parse()
         {
             string workCode = "";
+            int workVersion = -1;
             int projectid = -1;
             while (true)
             {
                 _parseMutext.WaitOne();
-                if (_workVersion != _codeVersion)
+                if (_workedVersion != _codeVersion)
                 {
                     lock (this)
                     {
-                        _workVersion = _codeVersion;
                         workCode = _parseCode;
+                        workVersion = _codeVersion;
                     }
                     if (projectid != -1) _db.DeleteProject(projectid);
                     UTF8Encoding utf8 = new UTF8Encoding(false);
@@ -128,9 +129,12 @@ namespace FrameIO.Main
                     if (iret>1) throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
                     //加载错误信息
                     var errlist = _db.LoadError(projectid);
-                    _lastparseok = errlist.Count == 0;
-                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseError), _workVersion, errlist);
-                    
+                    lock(this)
+                    {
+                        _lastparseok = (errlist.Count == 0);
+                        _workedVersion = workVersion;
+                    }
+                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseError), _workedVersion, errlist);
                 }
                 _parseMutext.ReleaseMutex();
                 Thread.Sleep(1);
@@ -320,22 +324,7 @@ namespace FrameIO.Main
         private CodeFolding _foldingStrategy;
         private TextMarkerService textMarkerService;
         private ToolTip toolTip;
-        private const string DefaultCode = @"
-//项目:{0}
-project main
-{
-    //受控对象
-    system subsys1
-    {
-
-    }
-    
-    //数据帧
-    frame frame1
-    {
-
-    }
-}";
+        private const string DefaultCode = "//项目:{0}\nproject main\n{\n\t//受控对象\n\tsystem subsys1\n\t{\n\t\n\t}\n\t//数据帧\n\tframe frame1\n\t{\n\t\n\t}\n}";
         
 
         //加载编辑器配置
@@ -385,6 +374,7 @@ project main
                 btAddSubsys.Visibility = Visibility.Collapsed;
                 btDelete.Visibility = Visibility.Collapsed;
                 btRename.Visibility = Visibility.Collapsed;
+                btExpand.Visibility = Visibility.Collapsed;
                 btAddEnum.Visibility = Visibility.Collapsed;
 
                 btCopy.Visibility = Visibility.Visible;
@@ -410,6 +400,7 @@ project main
                 btAddSubsys.Visibility = Visibility.Visible;
                 btDelete.Visibility = Visibility.Visible;
                 btRename.Visibility = Visibility.Visible;
+                btExpand.Visibility = Visibility.Visible;
                 btAddEnum.Visibility = Visibility.Visible;
 
                 btCopy.Visibility = Visibility.Collapsed;
@@ -527,19 +518,12 @@ project main
         private bool checkCode()
         {
             if (FileName.Length == 0) return true;
-            if (!_isCoding) edCode.Text = _project.CreateCode();
+            SaveProject(this, null);
+            //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
             bool isok = true;
-            isok = ReLoadProjectToUI(false);
-            if(isok)
-            {
-                var errlist = _project.CheckSemantics();
-                if(errlist!=null && errlist.Count>0)
-                {
-                    ShowParseError(_workVersion, errlist);
-                }
-            }
+            isok = ReLoadProjectToUI(false, true);
 
-            if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+            if (!isok && HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
             OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
             return isok;
         }
@@ -574,7 +558,7 @@ project main
 
             _isCoding = !_isCoding;
             UpdateEditMode();
-            OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), true);
+            OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), false);
 
             if(e!=null) e.Handled = true;
         }
@@ -639,8 +623,11 @@ project main
             File.WriteAllText(FileName, edCode.Text);
             _isModified = false;
             edCode.IsModified = false;
-            OutText(string.Format("信息：保存文件【{0}】", FileName), false);
-            e.Handled = true;
+            if (e != null)
+            {
+                OutText(string.Format("信息：保存文件【{0}】", FileName), false);
+                e.Handled = true;
+            }
         }
 
         //打开
@@ -849,14 +836,14 @@ project main
 
         #region --BindingData--
 
-        //重新加载整个项目到UI
-        bool ReLoadProjectToUI(bool startUI)
+        //重新加载整个项目到UI startUI是否为了启动可视化界面 checkSemantics是否为了语义检查
+        bool ReLoadProjectToUI(bool startUI, bool checkSemantics = false)
         {
             bool ret = true;
             if (_isCoding)
             {
                 SuspendBackgroundParse();
-                ret = _lastparseok; //有语法错误无法加载UI
+                ret = _lastparseok;
                 RecoveryBackgroundParse();
             }
             else
@@ -869,11 +856,11 @@ project main
             if(ret)
             {
                 IList<ParseError> errorlist = null;
-                p = _db.LoadProject(_lastprojectid, out errorlist);
-                if(p==null)
+                p = _db.LoadProject(_lastprojectid, out errorlist, checkSemantics);
+                if (p == null)
                 {
-                    ShowParseError(_workVersion, errorlist);
                     ret = false;
+                    ShowParseError(_workedVersion, errorlist);
                 }
             }
 
@@ -910,19 +897,6 @@ project main
             //}
             //ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
             //txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
-
-            OutText(_project.ProjectName, true);
-            foreach(var em in _project.EnumdefList)
-            {
-                OutText(em.EnumNote, false);
-                OutText(em.EnumName, false);
-                foreach(var emi in em.ItemsList)
-                {
-                    OutText("\t" + emi.Notes, false);
-                    OutText("\t" + emi.ItemName, false);
-                    OutText("\t" + emi.ItemValue, false);
-                }
-            }
 
         }
 

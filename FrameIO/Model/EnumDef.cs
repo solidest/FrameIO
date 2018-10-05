@@ -12,10 +12,10 @@ namespace FrameIO.Main
     {
         public Enumdef(string name)
         {
-            EnumName = name;
+            Name = name;
         }
-        public string EnumName { get; set; }
-        public string EnumNote { get; set; }
+        public string Name { get; set; }
+        public string Notes { get; set; }
 
         public ObservableCollection<EnumdefItem> ItemsList { get; set; }
 

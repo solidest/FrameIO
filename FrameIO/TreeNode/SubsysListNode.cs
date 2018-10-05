@@ -77,7 +77,7 @@ namespace FrameIO.Main
 
         protected override void LoadChildren()
         {
-            foreach (var i in _sysList.OrderBy(p=>p.SubsysName))
+            foreach (var i in _sysList.OrderBy(p=>p.Name))
             {
                 Children.Add(new SubsysNode(i));
             }

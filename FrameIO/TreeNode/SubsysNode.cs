@@ -18,7 +18,7 @@ namespace FrameIO.Main
 
         public override object Text
         {
-            get => _subsys.SubsysName;
+            get => _subsys.Name;
         }
 
         public Subsys TheValue  { get => _subsys; }
@@ -41,7 +41,7 @@ namespace FrameIO.Main
             var s = Helper.ValidId(value);
             if (s == string.Empty)
             {
-                _subsys.SubsysName = value;
+                _subsys.Name = value;
                 return true;
             }
             return false;

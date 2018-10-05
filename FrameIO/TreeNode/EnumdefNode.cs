@@ -20,7 +20,7 @@ namespace FrameIO.Main
 
         public override object Text
         {
-            get => _en.EnumName;
+            get => _en.Name;
         }
 
         public override bool IsEditable
@@ -41,7 +41,7 @@ namespace FrameIO.Main
             var s = Helper.ValidId(value);
             if (s == string.Empty)
             {
-                _en.EnumName = value;
+                _en.Name = value;
                 return true;
             }
             return false;
@@ -61,7 +61,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("enum.png");
+                return Helper.GetImage("enum1.png");
             }
         }
     }

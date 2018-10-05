@@ -20,7 +20,7 @@ namespace FrameIO.Main
 
         public override object Text
         {
-            get => _f.FrameName;
+            get => _f.Name;
         }
 
         public override bool IsEditable
@@ -41,7 +41,7 @@ namespace FrameIO.Main
             var s = Helper.ValidId(value);
             if (s == string.Empty)
             {
-                _f.FrameName = value;
+                _f.Name = value;
                 return true;
             }
             return false;

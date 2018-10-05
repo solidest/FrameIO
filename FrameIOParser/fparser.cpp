@@ -169,6 +169,7 @@ SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray
 	ret->namesyid = namesyid;
 	ret->protype = protype;
 	ret->notes = notes;
+	ret->isarray = isarray;
 	ret->nextsysproperty = NULL;
 	return ret;
 }

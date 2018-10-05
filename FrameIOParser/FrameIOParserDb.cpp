@@ -5,8 +5,8 @@
 FrameIOParserDb::FrameIOParserDb()
 {
 	sqlite3_config(SQLITE_CONFIG_URI, 1);
-	//int res = sqlite3_open("file::memory:?cache=shared", &m_pDB);
-	int res = sqlite3_open("file:C:/Kiyun/FrameIO/FrameIO/x64/Debug/frameio.db", &m_pDB);
+	int res = sqlite3_open("file::memory:?cache=shared", &m_pDB);
+	//int res = sqlite3_open("file:C:/Kiyun/FrameIO/FrameIO/x64/Debug/frameio.db", &m_pDB);
 	if (res != SQLITE_OK)
 	{
 		sqlite3_close(m_pDB);
@@ -381,6 +381,7 @@ int FrameIOParserDb::SaveSys(SYS* si, int* sysid)
 		if (SaveSysAction(si->actionlist, sid) != 0) return -1;
 		if (SaveSysChannel(si->channellist, sid) != 0) return -1;
 		if (SaveSysProperty(si->propertylist, sid) != 0) return -1;
+		if (SaveNotes(si->notes, si->namesyid) != 0) return -1;
 
 		if (sysid != NULL) *sysid = sid;
 		si = si->nextsys;
@@ -405,6 +406,7 @@ int FrameIOParserDb::SaveSysAction(ACTION* ac, int sysid, int* acid)
 
 		auto aid = (int)sqlite3_last_insert_rowid(m_pDB);
 		if (SaveSysActionMap(ac->maplist, aid) != NULL) return -1;
+		if (SaveNotes(ac->notes, ac->namesyid) != 0) return -1;
 		if (acid != NULL) *acid = aid;
 		ac = ac->nextaction;
 	}
@@ -423,6 +425,8 @@ int FrameIOParserDb::SaveSysActionMap(ACTIONMAP* mp, int acid)
 		int rc = sqlite3_step(m_fio_sys_action_map_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_sys_action_map_stmt);
+
+		if (SaveNotes(mp->notes, mp->segsyid) != 0) return -1;
 
 		mp = mp->nextmap;
 	}
@@ -444,6 +448,7 @@ int FrameIOParserDb::SaveSysChannel(CHANNEL* ch, int sysid, int* chid)
 
 		auto cid = (int)sqlite3_last_insert_rowid(m_pDB);
 		if (SaveSysChannelOption(ch->channeloption, cid) != 0) return -1;
+		if (SaveNotes(ch->notes,ch->namesyid) != 0) return -1;
 		if (chid != NULL) *chid = cid;
 		ch = ch->nextchannel;
 	}
@@ -462,6 +467,8 @@ int FrameIOParserDb::SaveSysChannelOption(CHANNELOPTION* op, int chid)
 		int rc = sqlite3_step(m_fio_sys_channel_option_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_sys_channel_option_stmt);
+
+		if (SaveNotes(op->notes, op->valuesyid) != 0) return -1;
 		op = op->nextoption;
 	}
 	return 0;
@@ -480,6 +487,8 @@ int FrameIOParserDb::SaveSysProperty(SYSPROPERTY* pt, int sysid)
 		int rc = sqlite3_step(m_fio_sys_property_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_sys_property_stmt);
+
+		if (SaveNotes(pt->notes, pt->namesyid) != 0) return -1;
 		pt = pt->nextsysproperty;
 	}
 	return 0;

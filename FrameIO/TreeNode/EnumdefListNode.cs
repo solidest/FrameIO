@@ -79,7 +79,7 @@ namespace FrameIO.Main
 
         protected override void LoadChildren()
         {
-            foreach (var i in _enlist.OrderBy(p => p.EnumName))
+            foreach (var i in _enlist.OrderBy(p => p.Name))
             {
                 Children.Add(new EnumdefNode(i));
             }

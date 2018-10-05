@@ -98,9 +98,16 @@
     </Compile>
     <Compile Include="foobar.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
+    <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
+    <Compile Include="Model\FrameSegmentBase.cs" />
+    <Compile Include="Model\SubSysActionMap.cs" />
+    <Compile Include="Model\SubSysChannel.cs" />
+    <Compile Include="Model\SubSysChannelOption.cs" />
+    <Compile Include="Model\SubSysProperty.cs" />
+    <Compile Include="Model\SubSysAction.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />
     <Compile Include="Parse\SQLLiteWrapper.cs" />
@@ -229,16 +236,19 @@
     <Resource Include="img\rename.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="img\enum.png" />
+    <Resource Include="img\enum.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\input.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\enum1.png" />
+    <EmbeddedResource Include="img\enum1.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\find.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\expand.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    public class EnumdefItem : INotifyPropertyChanged
+    public class SubsysChannelOption : INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public string ItemValue { get; set; }
         public string Notes { get; set; }
+
+        public channeloptiontype OptionType { get; set; }
+        public string OptionValue { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
