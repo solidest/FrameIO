@@ -100,13 +100,7 @@ namespace FrameIO.Main
             lock (this)
             {
                 _parseCode = edCode.Text; //保存代码
-                if (_codeVersion > 0)
-                    _codeVersion += 1; //更新版本
-                else
-                {
-                    _codeVersion = 1;
-                    _workVersion = 0;
-                }
+                _codeVersion += 1; //更新版本
             }
         }
 
@@ -135,7 +129,7 @@ namespace FrameIO.Main
                     //加载错误信息
                     var errlist = _db.LoadError(projectid);
                     _lastparseok = errlist.Count == 0;
-                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseEroor), _workVersion, errlist);
+                    Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseError), _workVersion, errlist);
                     
                 }
                 _parseMutext.ReleaseMutex();
@@ -172,7 +166,7 @@ namespace FrameIO.Main
         #region --Event--
 
         //分析结果信息输出
-        private void ShowParseEroor(int codeVer, IList<ParseError> errorlist)
+        private void ShowParseError(int codeVer, IList<ParseError> errorlist)
         {
             if (codeVer != _codeVersion) return;
             if (errorlist == null || errorlist.Count == 0)
@@ -448,11 +442,12 @@ project main
         {
             _isModified = false;
             edCode.IsModified = false;
+            _project = null;
             lock(this)
             {
-                _codeVersion = -1;
+                _codeVersion += 1;
             }
-            ReLoadProjectToUI();
+            ReLoadProjectToUI(!_isCoding);
         }
 
         //提示保存
@@ -529,16 +524,28 @@ project main
         #region --Command--
 
         //代码检查
-        private void CheckCode(object sender, RoutedEventArgs e)
+        private bool checkCode()
         {
-            if(_isCoding)
+            if (FileName.Length == 0) return true;
+            if (!_isCoding) edCode.Text = _project.CreateCode();
+            bool isok = true;
+            isok = ReLoadProjectToUI(false);
+            if(isok)
             {
-                //if (!SuspendBackgroundParse()) return;
-                //TODO 加载数据模型
+                var errlist = _project.CheckSemantics();
+                if(errlist!=null && errlist.Count>0)
+                {
+                    ShowParseError(_workVersion, errlist);
+                }
             }
 
-            //TODO 执行语义检查
-
+            if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+            OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
+            return isok;
+        }
+        private void CheckCode(object sender, RoutedEventArgs e)
+        {
+            checkCode();
         }
 
         //切换视图
@@ -548,11 +555,12 @@ project main
             {
                 if(_isCoding)
                 {
-                    if(!ReLoadProjectToUI()) return;
+                    if(!ReLoadProjectToUI(true)) return;
                     SuspendBackgroundParse();
                 }
                 else
                 {
+                    //TODO if(_project!=null)edCode.Text = _project.CreateCode();
                     RecoveryBackgroundParse();
                 }
             }
@@ -596,19 +604,26 @@ project main
             e.Handled = true;
         }
 
-
         //是否可以导出
         private void CanSaveAs(object sender, CanExecuteRoutedEventArgs e)
         {
-            //TODO
-            e.CanExecute = false;
+            e.CanExecute = (FileName != "");
             e.Handled = true;
         }
 
         //导出
         private void SaveAs(object sender, ExecutedRoutedEventArgs e)
         {
-            //TODO
+            if (!checkCode())
+            {
+                OutText("信息：无法启动代码输出", false);
+                return;
+            }
+            else
+            {
+                OutText("信息：启动代码输出", false);
+            }
+            
         }
 
         //是否可以保存
@@ -835,7 +850,7 @@ project main
         #region --BindingData--
 
         //重新加载整个项目到UI
-        bool ReLoadProjectToUI()
+        bool ReLoadProjectToUI(bool startUI)
         {
             bool ret = true;
             if (_isCoding)
@@ -855,8 +870,13 @@ project main
             {
                 IList<ParseError> errorlist = null;
                 p = _db.LoadProject(_lastprojectid, out errorlist);
-                ret = (p != null);
+                if(p==null)
+                {
+                    ShowParseError(_workVersion, errorlist);
+                    ret = false;
+                }
             }
+
             if(ret)
             {
                 _project = p;
@@ -867,7 +887,7 @@ project main
             {
                 if (!_isCoding) SwitchView(this, null);
                 if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
-                OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
+                if(startUI) OutText(string.Format("警告：无法启动可视化编辑，请修正代码错误"), false);
             }
 
             return ret;

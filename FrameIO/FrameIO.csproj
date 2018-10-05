@@ -103,7 +103,6 @@
     <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />
-    <Compile Include="Parse\Project.cs" />
     <Compile Include="Parse\SQLLiteWrapper.cs" />
     <Compile Include="TreeNode\EnumdefListNode.cs" />
     <Compile Include="TreeNode\EnumdefNode.cs" />

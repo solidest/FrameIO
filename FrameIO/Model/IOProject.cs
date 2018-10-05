@@ -29,7 +29,17 @@ namespace FrameIO.Main
         {
         }
 
+        //创建代码
+        public string CreateCode()
+        {
+            return "";
+        }
 
+        //语义检查
+        public IList<ParseError> CheckSemantics()
+        {
+            return null;
+        }
 
     }
 }

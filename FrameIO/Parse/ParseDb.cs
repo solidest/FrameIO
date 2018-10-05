@@ -98,7 +98,7 @@ namespace FrameIO.Main
 
         }
 
-        //加载项目
+        //加载项目 失败返回null 并填充低级错误列表
         public IOProject LoadProject(int projectid, out IList<ParseError> errorlist)
         {
             var ret = new IOProject();
