@@ -59,23 +59,27 @@ namespace FrameIO.Main
                     return "字段名称重复";
                 case 11:
                     return "字段属性重复设置";
+                case 12:
+                    return "字段属性与字段类型不匹配";
+                case 13:
+                    return "OneOf选择项名称重复";
 
 
                 case 101:
                     return "协议名称重复";
                 case 102:
                     return "字段名称重复";
-                case 12:
+                case 52:
                     return "当前字段不支持该属性";
-                case 13:
+                case 53:
                     return "字段缺少必要的属性";
-                case 14:
+                case 54:
                     return "属性的错误赋值";
-                case 15:
+                case 55:
                     return "属性赋值类型匹配错误";
-                case 16:
+                case 56:
                     return "赋值类型与字段类型不匹配";
-                case 17:
+                case 57:
                     return "属性赋值与字段类型不匹配";
                 default:
                     return "UNKNOW";

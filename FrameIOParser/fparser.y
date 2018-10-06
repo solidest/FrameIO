@@ -246,7 +246,7 @@ framesegmentproperty:
 	| framesegmentpropertyconst '=' VALUE_REAL											{ $$ = new_segproperty($1, SEGPV_REAL, $3); }
 	| T_BYTEORDER '=' framesegmentpropertyorder											{ $$ = new_segproperty(SEGP_BYTEORDER, $3); }
 	| T_ENCODED '=' framesegmentpropertyencoded											{ $$ = new_segproperty(SEGP_ENCODED, $3); }
-	| T_CHECK '=' framesegmentcheckvalue												{ $$ = new_segproperty(SEGP_ENCODED, $3); }
+	| T_CHECK '=' framesegmentcheckvalue												{ $$ = new_segproperty(SEGP_CHECK, $3); }
 	| T_CHECKRANGE '=' '(' T_ID ',' T_ID ')'											{ $$ = append_segproperty(new_segproperty(SEGP_CHECKRANGE_BEGIN, SEGPV_ID, $4), new_segproperty(SEGP_CHECKRANGE_END, SEGPV_ID, $6)); }
 	| T_TOENUM '=' T_ID																	{ $$ = new_segproperty(SEGP_TOENUM, SEGPV_STRING, $3); }
 	| T_TAIL '=' VALUE_STRING															{ $$ = new_segproperty(SEGP_TAIL, SEGPV_STRING, $3); }

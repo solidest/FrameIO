@@ -32,7 +32,7 @@ int utf8len = 0;
 "//".*\n					{ yycolumn = 1; }
 
 
-\"([^"\\]|\\['"?\\abfnrtv]|\\[0-7]{1,3}|\\[xX][0-9a-fA-F]+|{UCN}|{CHS})*\"	{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return VALUE_STRING; }
+\"([^"\\]|\\['"?\\abfnrtv]|\\[0-7]{1,3}|\\[xX][0-9a-fA-F]+|{UCN}|{CHS})*\"	{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_STRING; }
 
 "+" |
 "-" |

@@ -183,7 +183,7 @@ enum segmenttype
 //◊÷∂Œ Ù–‘
 struct SEGPROPERTY
 {
-	segpropertytype pro;
+	segpropertytype proname;
 	segpropertyvaluetype vtype;
 	int iv;
 	void * pv;

@@ -77,7 +77,7 @@ EXPVALUE* new_exp(exptype valuetype, EXPVALUE * lexp, EXPVALUE * rexp, int value
 SEGPROPERTY* new_segproperty(segpropertytype segprotype, segpropertyvaluetype segprovtype, int iv, void* pv)
 {
 	auto ret = new SEGPROPERTY;
-	ret->pro = segprotype;
+	ret->proname = segprotype;
 	ret->vtype = segprovtype;
 	ret->iv = iv;
 	ret->pv = pv;

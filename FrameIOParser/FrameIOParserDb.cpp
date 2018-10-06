@@ -68,7 +68,7 @@ FrameIOParserDb::FrameIOParserDb()
 		m_fio_frame_segment_stmt = NULL;
 	}
 
-	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_segment_property (projectid, segmentid, proname, protype, ivalue) VALUES(:projectid, :segmentid, :proname, :protype, :ivalue);", -1, &m_fio_frame_segment_property_stmt, NULL);
+	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_segment_property (projectid, segmentid, proname, vtype, ivalue, pvalue) VALUES(:projectid, :segmentid, :proname, :vtype, :ivalue, :pvalue);", -1, &m_fio_frame_segment_property_stmt, NULL);
 	if (res != SQLITE_OK)
 	{
 		m_fio_frame_segment_property_stmt = NULL;
@@ -80,7 +80,7 @@ FrameIOParserDb::FrameIOParserDb()
 		m_fio_frame_oneof_stmt = NULL;
 	}
 
-	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_exp (projectid, propertyid, op, leftsyid, rightsyid, valuesyid) VALUES(:projectid, :propertyid, :op, :leftsyid, :rightsyid, :valuesyid);", -1, &m_fio_frame_exp_stmt, NULL);
+	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_exp (projectid, propertyid, op, leftid, rightid, valuesyid) VALUES(:projectid, :propertyid, :op, :leftid, :rightid, :valuesyid);", -1, &m_fio_frame_exp_stmt, NULL);
 	if (res != SQLITE_OK)
 	{
 		m_fio_frame_exp_stmt = NULL;
@@ -552,17 +552,24 @@ int FrameIOParserDb::SaveFrameSegmentProperty(SEGPROPERTY* pro, int segid)
 	{
 		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 1, m_projectid);
 		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 2, segid);
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 3, pro->pro);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 3, pro->proname);
 		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 4, pro->vtype);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 5, pro->iv);
+
 		if (pro->vtype == SEGPV_NONAMEFRAME)
 		{
 			int id = -1;
-			if (SaveFrame((FRAME*)pro->pv, &id) != 0) return -1;
-			sqlite3_bind_int(m_fio_frame_segment_property_stmt, 5, id);
+			FRAME fr;
+			fr.namesyid = -1;
+			fr.nextframe = NULL;
+			fr.notes = NULL;
+			fr.seglist = (SEGMENT*)pro->pv;
+			if (SaveFrame(&fr, &id) != 0) return -1;
+			sqlite3_bind_int(m_fio_frame_segment_property_stmt, 6, id);
 		}
 		else
-			sqlite3_bind_int(m_fio_frame_segment_property_stmt, 5, pro->iv);
-			
+			sqlite3_bind_int(m_fio_frame_segment_property_stmt, 6, -1);
+
 		int rc = sqlite3_step(m_fio_frame_segment_property_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_frame_segment_property_stmt);

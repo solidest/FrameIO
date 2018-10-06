@@ -2208,7 +2208,7 @@ yyreduce:
 
   case 66:
 #line 249 "fparser.y" /* yacc.c:1651  */
-    { (yyval.segprolist) = new_segproperty(SEGP_ENCODED, (yyvsp[0].segprovtype)); }
+    { (yyval.segprolist) = new_segproperty(SEGP_CHECK, (yyvsp[0].segprovtype)); }
 #line 2213 "fparser.tab.cpp" /* yacc.c:1651  */
     break;
 

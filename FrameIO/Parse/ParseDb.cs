@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace FrameIO.Main
 
         private const string _createDbSqlCmd = @"
 --
--- File generated with SQLiteStudio v3.2.1 on 周五 10月 5 12:03:24 2018
+-- File generated with SQLiteStudio v3.2.1 on 周六 10月 6 09:28:06 2018
 --
 -- Text encoding used: System
 --
@@ -50,7 +51,7 @@ CREATE TABLE fio_error (projectid INTEGER, errorcode INTEGER, firstsyid INTEGER,
 CREATE TABLE fio_frame (projectid INTEGER, namesyid INTEGER);
 
 -- Table: fio_frame_exp
-CREATE TABLE fio_frame_exp (projectid INTEGER, propertyid INTEGER, op INTEGER, leftsyid INTEGER, rightsyid INTEGER, valuesyid INTEGER);
+CREATE TABLE fio_frame_exp (projectid INTEGER, propertyid INTEGER, op INTEGER, leftid INTEGER, rightid INTEGER, valuesyid INTEGER);
 
 -- Table: fio_frame_oneof
 CREATE TABLE fio_frame_oneof (projectid INTEGER, proertyid INTEGER, itemsyid INTEGER, framesyid INTEGER);
@@ -59,7 +60,7 @@ CREATE TABLE fio_frame_oneof (projectid INTEGER, proertyid INTEGER, itemsyid INT
 CREATE TABLE fio_frame_segment (projectid INTEGER, frameid INTEGER, namesyid INTEGER, segmenttype INTEGER);
 
 -- Table: fio_frame_segment_property
-CREATE TABLE fio_frame_segment_property (projectid INTEGER, segmentid INTEGER, proname INTEGER, protype INTEGER, ivalue INTEGER);
+CREATE TABLE fio_frame_segment_property (projectid INTEGER, segmentid INTEGER, proname INTEGER, vtype INTEGER, ivalue INTEGER, pvalue INTEGER);
 
 -- Table: fio_notes
 CREATE TABLE fio_notes (projectid INTEGER, notesyid INTEGER, aftersyid INTEGER);
@@ -90,6 +91,7 @@ CREATE TABLE fio_sys_property (projectid INTEGER, sysid INTEGER, namesyid INTEGE
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
+
 
 ";
 
@@ -127,7 +129,7 @@ PRAGMA foreign_keys = on;
                 var ss = new Subsys(r["symbol"].ToString())
                 {
                     Notes = LoadNotes(syid),
-                    Propertys = LoadProperty(ssid),
+                    Propertys = LoadSubsysProperty(ssid),
                     Channels = LoadChannel(ssid),
                     Actions = LoadAction(ssid)
                 };
@@ -263,7 +265,7 @@ PRAGMA foreign_keys = on;
         }
 
         //加载受控对象属性
-        private ObservableCollection<SubsysProperty>LoadProperty(int ssid)
+        private ObservableCollection<SubsysProperty> LoadSubsysProperty(int ssid)
         {
             var ret = new ObservableCollection<SubsysProperty>();
             var tb = _db.ExecuteQuery("SELECT namesyid, sy.symbol name, propertytype, isarray FROM fio_sys_property pt LEFT JOIN fio_symbol sy ON pt.namesyid=sy.rowid WHERE pt.sysid="
@@ -293,6 +295,50 @@ PRAGMA foreign_keys = on;
             // TODO
         }
 
+        //取exp
+        private string GetExp(int proid, DataRow xr, Dictionary<int, DataRow> explist)
+        {
+            if(explist ==null)
+            {
+                explist = new Dictionary<int, DataRow>();
+                var tb = _db.ExecuteQuery(string.Format("SELECT rowid, op, leftid, rightid, valuesyid FROM fio_frame_exp ep WHERE propertyid={0} ORDER BY ep.rowid DESC",
+                       proid));
+                foreach(DataRow r in tb.Rows)
+                {
+                    explist.Add(Convert.ToInt32(r["rowid"]), r);
+                }
+                return GetExp(-1, tb.Rows[0], explist);
+            }
+
+            var op = (exptype)Convert.ToInt32(xr["op"]);
+            switch(op)
+            {
+                case exptype.EXP_ADD:
+                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "+" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                case exptype.EXP_SUB:
+                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "-" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                case exptype.EXP_MUL:
+                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "*" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                case exptype.EXP_DIV:
+                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "/" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                case exptype.EXP_BYTESIZEOF:
+                    var vsyid = Convert.ToInt32(xr["valuesyid"]);
+                    return "bytesizeof(" + (vsyid>0?GetSymbol(vsyid):"this") + ")";
+                case exptype.EXP_ID:
+                case exptype.EXP_INT:
+                case exptype.EXP_REAL:
+                default:
+                    return GetSymbol(Convert.ToInt32(xr["valuesyid"]));
+            }
+          
+        }
+
+        //取symbol
+        private string GetSymbol(int syid)
+        {
+            return _db.ExecuteQuery("SELECT symbol FROM fio_symbol WHERE rowid=" + syid.ToString()).Rows[0][0].ToString();
+        }
+
         //加载数据帧
         private ObservableCollection<Frame> LoadFrame(int projectid)
         {
@@ -317,7 +363,7 @@ PRAGMA foreign_keys = on;
         }
 
 
-        //加载整数字段属性
+        //加载integer字段属性
         private void LoadSegProInterger(int segid, FrameSegmentInteger seg, List<SegPro> pros)
         {
             foreach(var pro in pros)
@@ -325,12 +371,49 @@ PRAGMA foreign_keys = on;
                 switch(pro.proname)
                 {
                     case segpropertytype.SEGP_SIGNED:
+                        seg.Signed = (pro.vtype == segpropertyvaluetype.SEGPV_TRUE) ? true : false;
+                        break;
+                    case segpropertytype.SEGP_BITCOUNT:
+                        seg.BitCount = Convert.ToInt32(pro.ivalue);
+                        break;
+                    case segpropertytype.SEGP_VALUE:
+                        seg.Value = GetExp(pro.proid, null, null);
+                        break;
+                    case segpropertytype.SEGP_BYTEORDER:
+                        seg.ByteOrder = (ByteOrderType)(Int32)pro.vtype;
+                        break;
+                    case segpropertytype.SEGP_ENCODED:
+                        seg.Encoded = (EncodedType)(Int32)pro.vtype;
+                        break;
+                    case segpropertytype.SEGP_REPEATED:
+                        seg.Repeated = GetExp(pro.proid, null, null);
+                        break;
+                    case segpropertytype.SEGP_MAX:
+                        seg.VMax = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_MIN:
+                        seg.VMin = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_CHECK:
+                        seg.VCheck = (CheckType)Convert.ToInt32(pro.vtype);
+                        break;
+                    case segpropertytype.SEGP_CHECKRANGE_BEGIN:
+                        seg.VCheckRangeBegin = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_CHECKRANGE_END:
+                        seg.VCheckRangeEnd = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_TOENUM:
+                        seg.VToEnum = pro.ivalue;
+                        break;
+                    default:
+                        AddError(pro.ivsyid>0?pro.ivsyid:pro.segsyid, 12);
                         break;
                 }
             }
         }
 
-        //加载浮点数字段属性
+        //加载real字段属性
         private void LoadSegProReal(int segid, FrameSegmentReal seg, List<SegPro> pros)
         {
             foreach (var pro in pros)
@@ -338,12 +421,35 @@ PRAGMA foreign_keys = on;
                 switch (pro.proname)
                 {
                     case segpropertytype.SEGP_ISDOUBLE:
+                        seg.IsDouble = (pro.vtype == segpropertyvaluetype.SEGPV_TRUE) ? true : false;
+                        break;
+                    case segpropertytype.SEGP_VALUE:
+                        seg.Value = GetExp(pro.proid, null, null);
+                        break;
+                    case segpropertytype.SEGP_BYTEORDER:
+                        seg.ByteOrder = (ByteOrderType)(Int32)pro.vtype;
+                        break;
+                    case segpropertytype.SEGP_ENCODED:
+                        seg.Encoded = (EncodedType)(Int32)pro.vtype;
+                        break;
+                    case segpropertytype.SEGP_REPEATED:
+                        seg.Repeated = GetExp(pro.proid, null, null);
+                        break;
+                    case segpropertytype.SEGP_MAX:
+                        seg.VMax = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_MIN:
+                        seg.VMin = pro.ivalue;
+                        break;
+                        
+                    default:
+                        AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;
                 }
             }
         }
 
-        //加载文本字段属性
+        //加载text字段属性
         private void LoadSegProText(int segid, FrameSegmentText seg, List<SegPro> pros)
         {
             foreach (var pro in pros)
@@ -351,12 +457,42 @@ PRAGMA foreign_keys = on;
                 switch (pro.proname)
                 {
                     case segpropertytype.SEGP_TAIL:
+                        seg.Tail = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_ALIGNEDLEN:
+                        seg.AlignedLen = Convert.ToInt32(pro.ivalue);
+                        break;
+                    case segpropertytype.SEGP_REPEATED:
+                        seg.Repeated = GetExp(pro.proid, null, null);
+                        break;
+                    default:
+                        AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;
                 }
             }
         }
+        private ObservableCollection<OneOfMap> LoadOneOfList(int proid)
+        {
+            var ret = new ObservableCollection<OneOfMap>();
+            var tb = _db.ExecuteQuery("SELECT itemsyid, sy1.symbol itname, framesyid, sy2.symbol frname FROM fio_frame_oneof nf LEFT JOIN fio_symbol sy1 ON nf.itemsyid=sy1.rowid LEFT JOIN fio_symbol sy2 ON nf.framesyid=sy2.rowid where nf.proertyid="
+                + proid.ToString());
+            foreach(DataRow r in tb.Rows)
+            {
+                var iof = new OneOfMap()
+                {
+                    EnumItem = r["itname"].ToString(),
+                    FrameName = r["frname"].ToString()
+                };
+                if (_checkSemantics && ret.Where(p => p.EnumItem == iof.EnumItem).Count() > 0)
+                {
+                    AddError(Convert.ToInt32(r["itemsyid"]), 13);
+                }
+                ret.Add(iof);
+            }
+            return ret;
+        }
 
-        //加载整数字段属性
+        //加载block字段属性
         private void LoadSegProBlock(int segid, FrameSegmentBlock seg, List<SegPro> pros)
         {
             foreach (var pro in pros)
@@ -364,6 +500,36 @@ PRAGMA foreign_keys = on;
                 switch (pro.proname)
                 {
                     case segpropertytype.SEGP_TYPE:
+                        switch(pro.vtype)
+                        {
+                            case segpropertyvaluetype.SEGPV_NONAMEFRAME:
+                                seg.DefineSegments = LoadSegments(pro.pvalue);
+                                seg.UsedType = BlockSegType.DefFrame;
+                                break;
+                            case segpropertyvaluetype.SEGPV_ONEOF:
+                                seg.OneOfFromSegment = pro.ivalue;
+                                seg.OneOfCaseList = LoadOneOfList(pro.proid);
+                                seg.UsedType = BlockSegType.OneOf;
+                                break;
+                            case segpropertyvaluetype.SEGPV_ID:
+                                seg.FrameName = pro.ivalue;
+                                seg.UsedType = BlockSegType.RefFrame;
+                               break;
+                            default:
+                                Debug.Assert(false);
+                                break;
+
+                        }
+                        break;
+
+                    case segpropertytype.SEGP_BYTESIZE:
+                        seg.ByteSize = GetExp(pro.proid, null, null);
+                        break;
+                    case segpropertytype.SEGP_REPEATED:
+                        seg.Repeated = GetExp(pro.proid, null, null);
+                        break;
+                    default:
+                        AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;
                 }
             }
@@ -372,8 +538,10 @@ PRAGMA foreign_keys = on;
         private class SegPro
         {
             public Int32 proid { get; set; }
-            public Int32 vsyid { get; set; }
-            public string value { get; set; }
+            public Int32 ivsyid { get; set; }
+            public Int32 segsyid { get; set; }
+            public string ivalue { get; set; }
+            public Int32 pvalue { get; set; }
             public segpropertytype proname { get; set; }
             public segpropertyvaluetype vtype { get; set; }
         }
@@ -392,21 +560,23 @@ PRAGMA foreign_keys = on;
                 FrameSegmentBase seg = null;
                 var pros = new List<SegPro>();
 
-                var tpro = _db.ExecuteQuery("SELECT pr.rowid proid, proname, protype vtype, pr.ivalue, sy.symbol value FROM fio_frame_segment_property pr LEFT JOIN fio_symbol sy ON pr.ivalue=sy.rowid WHERE pr.segmentid="
+                var tpro = _db.ExecuteQuery("SELECT pr.rowid proid, proname, vtype, pr.ivalue, pr.pvalue, sy.symbol FROM fio_frame_segment_property pr LEFT JOIN fio_symbol sy ON pr.ivalue=sy.rowid WHERE pr.segmentid="
                     + segid.ToString());
                 foreach(DataRow rp in tpro.Rows)
                 {
                     var pr = new SegPro()
                     {
                         proid = Convert.ToInt32(rp["proid"]),
-                        vsyid = Convert.ToInt32(rp["ivalue"]),
                         proname = (segpropertytype)Convert.ToInt32(rp["proname"]),
-                        value = rp["value"].ToString(),
-                        vtype = (segpropertyvaluetype)Convert.ToInt32(rp["vtype"])
+                        vtype = (segpropertyvaluetype)Convert.ToInt32(rp["vtype"]),
+                        ivsyid = Convert.ToInt32(rp["ivalue"]),
+                        ivalue = rp["symbol"].ToString(),
+                        pvalue = Convert.ToInt32(rp["pvalue"]),
+                        segsyid = syid
                     };
                     if (pros.Where(p => p.proname == pr.proname).Count() > 0)
                     {
-                        AddError(syid, 11);
+                        AddError(pr.ivsyid>0?pr.ivsyid:syid, 11);
                     }
                     pros.Add(pr);
                 }
@@ -435,7 +605,6 @@ PRAGMA foreign_keys = on;
                 }
                 seg.Name = r["segname"].ToString();
                 seg.Notes = LoadNotes(syid);
-                seg.SegmentType = st;
                 if (_checkSemantics && ret.Where(p => p.Name == seg.Name).Count() > 0)
                 {
                     AddError(syid, 10);

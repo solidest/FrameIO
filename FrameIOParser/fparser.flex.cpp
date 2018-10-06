@@ -1017,7 +1017,7 @@ case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
 #line 35 "fparser.l"
-{ /*yylval.symbol = save_symbol(yytext, yylloc.first_line, yylloc.first_column, yylloc.last_column);*/ return VALUE_STRING; }
+{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_STRING; }
 	YY_BREAK
 case 4:
 #line 38 "fparser.l"

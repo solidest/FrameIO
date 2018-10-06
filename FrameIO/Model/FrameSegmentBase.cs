@@ -12,7 +12,7 @@ namespace FrameIO.Main
     {
         public string Name { get; set; }
         public string Notes { get; set; }
-        public segmenttype SegmentType { get; set; }
+        public string Repeated { get; set; } = "1";
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }
