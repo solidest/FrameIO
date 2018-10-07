@@ -25,6 +25,14 @@ namespace FrameIO.CodeTemplate
             }
         }
 
+        public bool IsNull
+        {
+            get
+            {
+                return Equals(_value, null);
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

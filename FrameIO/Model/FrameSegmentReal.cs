@@ -13,9 +13,10 @@ namespace FrameIO.Main
         public ByteOrderType ByteOrder { get; set; } = ByteOrderType.Small;
         public EncodedType Encoded { get; set; } = EncodedType.Primitive;
 
-        public string Value { get; set; } = "0";
+        public Exp Value { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr = "0" };
 
         public string VMax { get; set; } = null;
         public string VMin { get; set; } = null;
+
     }
 }

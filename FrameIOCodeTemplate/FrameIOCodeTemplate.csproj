@@ -48,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SYS2.cs" />
     <Compile Include="SYS1.cs" />
+    <Compile Include="TFrame.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">

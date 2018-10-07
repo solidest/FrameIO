@@ -13,6 +13,7 @@ namespace FrameIO.Main
         public int FirstCol { get; set; }
         public int LastLine { get; set; }
         public int LastCol { get; set; }
+        public string ErrorInfo { get; set; }
         public string ErrorTip
         {
             get
@@ -20,7 +21,7 @@ namespace FrameIO.Main
                 var str = GetErrorStr();
                 //if (str == "UNKNOW")
                 {
-                    return "Error(" + ErrorCode.ToString() + ") " + str;
+                    return "(ErrorCode" + ErrorCode.ToString() + ") " + str;
                 }
                 //else
                 //  return str;
@@ -64,23 +65,9 @@ namespace FrameIO.Main
                 case 13:
                     return "OneOf选择项名称重复";
 
-
-                case 101:
-                    return "协议名称重复";
-                case 102:
-                    return "字段名称重复";
-                case 52:
-                    return "当前字段不支持该属性";
-                case 53:
-                    return "字段缺少必要的属性";
-                case 54:
-                    return "属性的错误赋值";
-                case 55:
-                    return "属性赋值类型匹配错误";
-                case 56:
-                    return "赋值类型与字段类型不匹配";
-                case 57:
-                    return "属性赋值与字段类型不匹配";
+                case 100:
+                    return ErrorInfo;
+                
                 default:
                     return "UNKNOW";
             }

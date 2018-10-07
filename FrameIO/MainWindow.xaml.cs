@@ -326,6 +326,18 @@ namespace FrameIO.Main
         private ToolTip toolTip;
         private const string DefaultCode = "//项目:{0}\nproject main\n{\n\t//受控对象\n\tsystem subsys1\n\t{\n\t\n\t}\n\t//数据帧\n\tframe frame1\n\t{\n\t\n\t}\n}";
         
+        //输出一条错误信息
+        private void OutOneError(string info, int syid)
+        {
+            //if (_isCoding) SuspendBackgroundParse();
+            var err = _db.GetError(syid, 100);
+            err.ErrorInfo = info;
+            var errl = new List<ParseError>();
+            errl.Add(err);
+            //Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseError), _workedVersion, errl);
+            ShowParseError(_workedVersion, errl);
+            //if (_isCoding) RecoveryBackgroundParse();
+        }
 
         //加载编辑器配置
         private void LoadEditorConfig()
@@ -523,10 +535,22 @@ namespace FrameIO.Main
             bool isok = true;
             isok = ReLoadProjectToUI(false, true);
 
+            if(isok)
+            {
+                var fl = FrameGenerator.Generate(_project);
+                if(FrameGenerator.LastErrorInfo != "")
+                {
+                    isok = false;
+                    OutOneError(FrameGenerator.LastErrorInfo, FrameGenerator.LastErrorSyid);
+                    //ShowParseError(_workedVersion, errl);
+                }
+            }
+
             if ( HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
             OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
             return isok;
         }
+
         private void CheckCode(object sender, RoutedEventArgs e)
         {
             checkCode();

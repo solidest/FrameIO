@@ -312,6 +312,7 @@ int FrameIOParserDb::SaveSymbol(const char* symbol, int lineno, int firstcolumn,
 	return (int)sqlite3_last_insert_rowid(m_pDB);
 }
 
+
 ////·ÖÎöÓïÒå´íÎó
 //int FrameIOParserDb::Semantics()
 //{
@@ -550,12 +551,6 @@ int FrameIOParserDb::SaveFrameSegmentProperty(SEGPROPERTY* pro, int segid)
 {
 	while (pro)
 	{
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 1, m_projectid);
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 2, segid);
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 3, pro->proname);
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 4, pro->vtype);
-		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 5, pro->iv);
-
 		if (pro->vtype == SEGPV_NONAMEFRAME)
 		{
 			int id = -1;
@@ -570,6 +565,11 @@ int FrameIOParserDb::SaveFrameSegmentProperty(SEGPROPERTY* pro, int segid)
 		else
 			sqlite3_bind_int(m_fio_frame_segment_property_stmt, 6, -1);
 
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 1, m_projectid);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 2, segid);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 3, pro->proname);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 4, pro->vtype);
+		sqlite3_bind_int(m_fio_frame_segment_property_stmt, 5, pro->iv);
 		int rc = sqlite3_step(m_fio_frame_segment_property_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_frame_segment_property_stmt);

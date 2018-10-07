@@ -144,12 +144,6 @@ PRAGMA foreign_keys = on;
         }
 
 
-        //检查通道设置是否正确
-        private void CheckChannels()
-        {
-            //TODO
-        }
-
         //加载通道
         private ObservableCollection<SubsysChannel>LoadChannel(int ssid)
         {
@@ -172,7 +166,6 @@ PRAGMA foreign_keys = on;
                 {
                     AddError(syid, 4);
                 }
-                if (_checkSemantics) CheckChannels();
                 ret.Add(ch);
             }
 
@@ -203,12 +196,6 @@ PRAGMA foreign_keys = on;
             return ret;
         }
 
-        //检查IO操作设置是否正确
-        private void CheckActions()
-        {
-            //TODO 
-        }
-
         //加载IO操作
         private ObservableCollection<SubsysAction>LoadAction(int ssid)
         {
@@ -234,7 +221,6 @@ PRAGMA foreign_keys = on;
                 }
                 ret.Add(ac);
             }
-            if (_checkSemantics) CheckActions();
             return ret;
         }
 
@@ -289,14 +275,64 @@ PRAGMA foreign_keys = on;
             return ret;
         }
 
-        //检查数据帧
-        private void CheckFrame()
-        {
-            // TODO
-        }
+
+        ////计算表达式的值
+        //private bool EvalExp(int proid, out double dv, DataRow xr, Dictionary<int, DataRow> explist)
+        //{
+        //    dv = -1;
+        //    if (explist == null)
+        //    {
+        //        explist = new Dictionary<int, DataRow>();
+        //        var tb = _db.ExecuteQuery(string.Format("SELECT rowid, op, leftid, rightid, valuesyid FROM fio_frame_exp ep WHERE propertyid={0} ORDER BY ep.rowid DESC",
+        //               proid));
+        //        foreach (DataRow r in tb.Rows)
+        //        {
+        //            var rop = (exptype)Convert.ToInt32(r["op"]);
+        //            if (rop == exptype.EXP_BYTESIZEOF || rop == exptype.EXP_ID) return false; 
+        //            explist.Add(Convert.ToInt32(r["rowid"]), r);
+        //        }
+        //        return EvalExp(-1,out dv, tb.Rows[0], explist);
+        //    }
+
+        //    var op = (exptype)Convert.ToInt32(xr["op"]);
+        //    double i1 = -1;
+        //    double i2 = -1;
+        //    switch (op)
+        //    {
+        //        case exptype.EXP_ADD:
+        //            EvalExp(-1, out i1, explist[Convert.ToInt32(xr["leftid"])], explist);
+        //            EvalExp(-1, out i2, explist[Convert.ToInt32(xr["rightid"])], explist);
+        //            dv = i1 + i2;
+        //            return true;
+        //        case exptype.EXP_SUB:
+        //            EvalExp(-1, out i1, explist[Convert.ToInt32(xr["leftid"])], explist);
+        //            EvalExp(-1, out i2, explist[Convert.ToInt32(xr["rightid"])], explist);
+        //            dv = i1 - i2;
+        //            return true;
+        //        case exptype.EXP_MUL:
+        //            EvalExp(-1, out i1, explist[Convert.ToInt32(xr["leftid"])], explist);
+        //            EvalExp(-1, out i2, explist[Convert.ToInt32(xr["rightid"])], explist);
+        //            dv = i1 * i2;
+        //            return true;
+        //        case exptype.EXP_DIV:
+        //            EvalExp(-1, out i1, explist[Convert.ToInt32(xr["leftid"])], explist);
+        //            EvalExp(-1, out i2, explist[Convert.ToInt32(xr["rightid"])], explist);
+        //            dv = i1 / i2;
+        //            return true;
+        //        case exptype.EXP_INT:
+        //            dv = Convert.ToInt32(GetSymbol(Convert.ToInt32(xr["valuesyid"])));
+        //            return true;
+        //        case exptype.EXP_REAL:
+        //            dv = Convert.ToDouble(GetSymbol(Convert.ToInt32(xr["valuesyid"])));
+        //            return true;
+        //    }
+        //    Debug.Assert(false);
+        //    return false;
+        //}
+
 
         //取exp
-        private string GetExp(int proid, DataRow xr, Dictionary<int, DataRow> explist)
+        private Exp GetExp(int proid, DataRow xr, Dictionary<int, DataRow> explist)
         {
             if(explist ==null)
             {
@@ -314,21 +350,25 @@ PRAGMA foreign_keys = on;
             switch(op)
             {
                 case exptype.EXP_ADD:
-                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "+" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                    return new Exp() { Op= exptype.EXP_ADD, LeftExp = GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist), RightExp = GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) };
                 case exptype.EXP_SUB:
-                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "-" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                    return new Exp() { Op = exptype.EXP_SUB, LeftExp = GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist), RightExp = GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) };
                 case exptype.EXP_MUL:
-                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "*" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                    return new Exp() { Op = exptype.EXP_MUL, LeftExp = GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist), RightExp = GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) };
                 case exptype.EXP_DIV:
-                    return "(" + GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist) + "/" + GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) + ")";
+                    return new Exp() { Op = exptype.EXP_DIV, LeftExp = GetExp(-1, explist[Convert.ToInt32(xr["leftid"])], explist), RightExp = GetExp(-1, explist[Convert.ToInt32(xr["rightid"])], explist) };
                 case exptype.EXP_BYTESIZEOF:
                     var vsyid = Convert.ToInt32(xr["valuesyid"]);
-                    return "bytesizeof(" + (vsyid>0?GetSymbol(vsyid):"this") + ")";
+                    return new Exp() { Op = exptype.EXP_BYTESIZEOF, ConstStr = (vsyid > 0 ? GetSymbol(vsyid) : "this") };
                 case exptype.EXP_ID:
+                    return new Exp() { Op = exptype.EXP_ID, ConstStr = GetSymbol(Convert.ToInt32(xr["valuesyid"])) };
                 case exptype.EXP_INT:
+                    return new Exp() { Op = exptype.EXP_INT, ConstStr = GetSymbol(Convert.ToInt32(xr["valuesyid"])) };
                 case exptype.EXP_REAL:
+                    return new Exp() { Op = exptype.EXP_REAL, ConstStr = GetSymbol(Convert.ToInt32(xr["valuesyid"])) };
                 default:
-                    return GetSymbol(Convert.ToInt32(xr["valuesyid"]));
+                    Debug.Assert(false);
+                    return null;
             }
           
         }
@@ -347,10 +387,12 @@ PRAGMA foreign_keys = on;
                + projectid.ToString());
             foreach (DataRow r in tb.Rows)
             {
+                var sid = Convert.ToInt32(r["namesyid"]);
                 var fr = new Frame(r["symbol"].ToString())
                 {
-                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                     Segments = LoadSegments(Convert.ToInt32(r["rowid"]))
+                     Notes = LoadNotes(sid),
+                     Segments = LoadSegments(Convert.ToInt32(r["rowid"])),
+                     Syid = sid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == fr.Name).Count() > 0)
                 {
@@ -358,7 +400,6 @@ PRAGMA foreign_keys = on;
                 }
                 ret.Add(fr);
             }
-            if (_checkSemantics) CheckFrame();
             return ret;
         }
 
@@ -465,6 +506,9 @@ PRAGMA foreign_keys = on;
                     case segpropertytype.SEGP_REPEATED:
                         seg.Repeated = GetExp(pro.proid, null, null);
                         break;
+                    case segpropertytype.SEGP_BYTESIZE:
+                        seg.ByteSize = GetExp(pro.proid, null, null);
+                        break;
                     default:
                         AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;
@@ -512,7 +556,7 @@ PRAGMA foreign_keys = on;
                                 seg.UsedType = BlockSegType.OneOf;
                                 break;
                             case segpropertyvaluetype.SEGPV_ID:
-                                seg.FrameName = pro.ivalue;
+                                seg.RefFrameName = pro.ivalue;
                                 seg.UsedType = BlockSegType.RefFrame;
                                break;
                             default:
@@ -605,6 +649,7 @@ PRAGMA foreign_keys = on;
                 }
                 seg.Name = r["segname"].ToString();
                 seg.Notes = LoadNotes(syid);
+                seg.Syid = syid;
                 if (_checkSemantics && ret.Where(p => p.Name == seg.Name).Count() > 0)
                 {
                     AddError(syid, 10);
@@ -716,22 +761,27 @@ PRAGMA foreign_keys = on;
         
         #region --Error--
 
-        //添加错误信息到列表
-        private void AddError(int syid, int errcode)
+        public ParseError GetError(int syid, int errcode)
         {
             var r = _db.ExecuteQuery("SELECT lineno, firstcolumn, lastcolumn FROM fio_symbol WHERE rowid=" + syid.ToString()).Rows[0];
             var il = Convert.ToInt32(r["lineno"]);
             var ifc = Convert.ToInt32(r["firstcolumn"]);
             var ilc = Convert.ToInt32(r["lastcolumn"]);
 
-            _err.Add(new ParseError()
+           return new ParseError()
             {
                 ErrorCode = errcode,
                 FirstLine = il,
                 LastLine = il,
                 FirstCol = ifc,
                 LastCol = ilc
-            });
+            };
+        }
+
+        //添加错误信息到列表
+        private void AddError(int syid, int errcode)
+        {
+            _err.Add(GetError(syid, errcode));
         }
   
         //加载错误信息

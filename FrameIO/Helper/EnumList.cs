@@ -107,7 +107,8 @@ namespace FrameIO.Main
     public enum channeloptiontype
     {
         CHOP_DEVICEID = 1,
-        CHOP_BAUDRATE
+        CHOP_BAUDRATE,
+        CHOP_VENDOR
     };
 
     //IO操作类型

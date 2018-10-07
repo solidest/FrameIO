@@ -7,6 +7,7 @@
 EXP ([Ee][-+]?[0-9]+)
 UCN (\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8})
 CHS (\xE9\xBE[\x80-\xA5]|(\xE4[\xB8-\xBF]|\xE9[\x80-\xBD]|[\xE5-\xE8][\x80-\xBF])[\x80-\xBF])
+ID	([a-zA-Z_][a-zA-Z0-9_]*)
 
 %{
 #define YY_DECL int yyFlexLexer::yylex(YYSTYPE* yylval, YYLTYPE* yylloc, FrameIOParserDb* db)
@@ -89,6 +90,7 @@ int utf8len = 0;
 "do"					{ return T_DO; }
 
 "deviceid"				{ return T_DEVICEID; }
+"vendor"				{ return T_VENDOR; }
 "baudrate"				{ return T_BAUDRATE; }
       
 "signed"				{ return T_SIGNED; }
@@ -161,7 +163,12 @@ int utf8len = 0;
 -?([0-9]*\.[0-9]+|[0-9]+\.){EXP}? |
 [0-9]+{EXP}				{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_REAL; }
 
-[a-zA-Z_][a-zA-Z0-9_]*	{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_ID; }
+{ID}\.{ID}\.{ID}\.{ID}\.{ID}	{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_UNION_ID; }
+{ID}\.{ID}\.{ID}\.{ID}			{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_UNION_ID; }
+{ID}\.{ID}\.{ID}				{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_UNION_ID; }
+{ID}\.{ID}						{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_UNION_ID; }
+{ID}							{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return T_ID; }
+
 
 \r\n					{ yycolumn=1; }
 \n						{ yycolumn=1; }

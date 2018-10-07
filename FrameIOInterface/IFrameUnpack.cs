@@ -14,10 +14,6 @@ namespace FrameIO.Interface
         /// </summary>
         int FirstBlockSize { get; }
 
-        /// <summary>
-        /// 数据帧解包所需要字节流的块数
-        /// </summary>
-        int BlockCount { get; }
 
         /// <summary>
         /// 将读取到的字节流追加到解包缓冲区，返回解包所需下一块字节流大小

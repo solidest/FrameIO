@@ -8,11 +8,16 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    public class FrameSegmentBase : INotifyPropertyChanged
+    public abstract class FrameSegmentBase : INotifyPropertyChanged
     {
         public string Name { get; set; }
         public string Notes { get; set; }
-        public string Repeated { get; set; } = "1";
+        public Exp Repeated { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr="1" };
+  
+        public int Syid { get; set; }     
+
+
         public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

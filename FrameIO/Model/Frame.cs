@@ -15,6 +15,7 @@ namespace FrameIO.Main
             Name = name;
         }
         public string Name { get; set; }
+        public int Syid { get; set; }
         public string Notes { get; set; }
 
         public ObservableCollection<FrameSegmentBase> Segments { get; set; }

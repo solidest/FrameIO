@@ -70,7 +70,8 @@ enum syschanneltype
 enum channeloptiontype
 {
 	CHOP_DEVICEID = 1,
-	CHOP_BAUDRATE
+	CHOP_BAUDRATE,
+	CHOP_VENDOR
 };
 
 //IO²Ù×÷ÀàÐÍ

@@ -9,13 +9,17 @@ namespace FrameIO.Main
 {
     public class FrameSegmentBlock : FrameSegmentBase
     {
-        public string ByteSize { get; set; } = null;
+        public Exp ByteSize { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr = "0" };
+        public int ByteSizeNumber { get; set; } = -1;
         public BlockSegType UsedType { get; set; } = BlockSegType.None;
-        public string FrameName { get; set; } = null;
+        public string RefFrameName { get; set; } = null;
         public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = null;
         public string OneOfFromSegment { get; set; } = null;
         public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = null;
+
     }
+
+   
 
     public class OneOfMap
     {

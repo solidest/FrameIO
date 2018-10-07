@@ -11,7 +11,7 @@ namespace FrameIO.Main
         //signed、bitcount、value、byteorder、encoded、repeated
         public bool Signed { get; set; } = false;
         public int BitCount { get; set; } = 32;
-        public string Value { get; set; } = "0";
+        public Exp Value { get; set; } =  new Exp() { Op = exptype.EXP_INT, ConstStr="0" };
         public ByteOrderType ByteOrder { get; set; } = ByteOrderType.Small;
         public EncodedType Encoded { get; set; } = EncodedType.Primitive;
 

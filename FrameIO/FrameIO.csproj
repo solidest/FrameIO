@@ -97,11 +97,14 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="foobar.cs" />
+    <Compile Include="Generator\FrameGenerator.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
     <Compile Include="Helper\EnumList.cs" />
+    <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
+    <Compile Include="Model\FrameSegmentAuto.cs" />
     <Compile Include="Model\FrameSegmentBase.cs" />
     <Compile Include="Model\FrameSegmentBlock.cs" />
     <Compile Include="Model\FrameSegmentInteger.cs" />
