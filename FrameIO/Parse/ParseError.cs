@@ -21,7 +21,7 @@ namespace FrameIO.Main
                 var str = GetErrorStr();
                 //if (str == "UNKNOW")
                 {
-                    return "(ErrorCode" + ErrorCode.ToString() + ") " + str;
+                    return "---ErrorCode" + ErrorCode.ToString() + "--- " + str;
                 }
                 //else
                 //  return str;
