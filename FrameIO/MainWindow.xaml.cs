@@ -3,6 +3,7 @@ using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
+using FrameIO.Interface;
 
 namespace FrameIO.Main
 {
@@ -537,16 +539,18 @@ namespace FrameIO.Main
 
             if(isok)
             {
-                var fl = FrameGenerator.Generate(_project);
-                if(FrameGenerator.LastErrorInfo != "")
+                isok = FrameGenerator.Generate(_project);
+                if(!isok)
                 {
-                    isok = false;
                     OutOneError(FrameGenerator.LastErrorInfo, FrameGenerator.LastErrorSyid);
-                    //ShowParseError(_workedVersion, errl);
+                }
+                else
+                {
+                    Debug.Assert(FrameGenerator.LastErrorInfo=="");
                 }
             }
 
-            if ( HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
+            if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
             OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
             return isok;
         }
@@ -915,17 +919,9 @@ namespace FrameIO.Main
 
         private void onfoobar(object sender, RoutedEventArgs e)
         {
-            //txtOut.AppendText(foobar.Add(100, 200).ToString() + Environment.NewLine);
 
-            //byte[] buff = new byte[8];
-            //UInt32 x = 0xffff;
-            //var bf = BitConverter.GetBytes(x);
-            //for(int i=0; i<4; i++)
-            //{
-            //    buff[i + 4] = bf[i]; 
-            //}
-            //ulong iresult = Helper.GetUIntxFromByte(buff, 32, 4);
-            //txtOut.AppendText(iresult.ToString("x") + Environment.NewLine);
+            FrameIO.Run.UnpackFactory.InitialFactory("frame.bin");
+            var T = FrameIO.Run.UnpackFactory.GetFrameUnpack("MSG1");
 
         }
 

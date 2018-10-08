@@ -25,31 +25,31 @@ namespace FrameIO.Main
         }
 
         //生成数据帧代码
-        static public List<FrameInfo> Generate(IOProject pj)
+        static public bool Generate(IOProject pj)
         {
             Reset();
             _pj = pj;
 
-            var ret = new List<FrameInfo>();
-            foreach(var fr in pj.FrameList)
+            var frms = new Dictionary<string, FrameBlockInfo>();
+            foreach (var fr in pj.FrameList)
             {
 
                 var rootseginfo = new FrameSegmentInfo();
-                if (!CreateSegTree(fr, rootseginfo)) return null;
+                if (!CreateSegTree(fr, rootseginfo)) return false;
 
                 var rootblockinfo = CreateBlockInfo(rootseginfo, fr);
-                if (rootblockinfo == null) return null;
+                if (rootblockinfo == null) return false;
 
-                var fri = new FrameInfo()
+                var fri = new FrameBlockInfo()
                 {
                     RootSegmentInfo = rootseginfo,
                     RootSegBlockGroupInfo = rootblockinfo,
                     TheFrame = fr
                 };
-                ret.Add(fri);
+                frms.Add(fr.Name, fri);
             }
-            return ret;
-
+            CodeFile.SaveFrameBinFile("frame.bin", frms);
+            return true;
         }
 
 
@@ -197,22 +197,22 @@ namespace FrameIO.Main
         {
             var rootg = new SegBlockInfoGroup();
             var nextg = rootg;
-            foreach(var segi in rootseg.Children)
+            foreach (var segi in rootseg.Children)
             {
                 nextg = AppendSegInfoToBlock(segi, nextg);
-                if (nextg == null) return null; 
+                if (nextg == null) return null;
             }
 
-            if(LastErrorInfo =="" )
+            if (LastErrorInfo == "")
             {
-                if(rootg.SegBlockList.Count==0)
+                if (rootg.SegBlockList.Count == 0)
                 {
                     LastErrorInfo = "未找到可解析的字段;";
                     LastErrorSyid = theframe.Syid;
                     return null;
                 }
 
-                if(!rootg.SegBlockList[0].IsFixed)
+                if (!rootg.SegBlockList[0].IsFixed)
                 {
                     LastErrorInfo = "必须指定数据帧首字段长度";
                     LastErrorSyid = theframe.Syid;
@@ -226,7 +226,7 @@ namespace FrameIO.Main
         static SegBlockInfoGroup AppendSegInfoToBlock(FrameSegmentInfo segi, SegBlockInfoGroup sseggroup)
         {
             var ty = segi.Segment.GetType();
-            var sseg = new SegBlockInfo(sseggroup.SegBlockList.Count)
+            var sseg = new SegBlockInfo(sseggroup.SegBlockList.Count, segi.Segment)
             {
                 FullName = GetSegFullName(segi),
                 ShortName = segi.ID,
@@ -235,22 +235,22 @@ namespace FrameIO.Main
             };
 
             //整数字段
-            if(ty == typeof(FrameSegmentInteger))
+            if (ty == typeof(FrameSegmentInteger))
             {
                 var seg = (FrameSegmentInteger)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst();
-                sseg.SegType = SegBlockInfo.SegBlockType.Integer;
+                sseg.SegType =  SegBlockType.Integer;
                 if (sseg.IsFixed)
                 {
-                    sseg.LenNumber = seg.BitCount * (int)seg.Repeated.GetConstValue();
+                    sseg.BitLenNumber = seg.BitCount * (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
                     var expbitcount = new Exp() { Op = exptype.EXP_INT, ConstStr = seg.BitCount.ToString() };
-                    sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
+                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
+                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
@@ -266,18 +266,18 @@ namespace FrameIO.Main
             {
                 var seg = (FrameSegmentReal)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst();
-                sseg.SegType = SegBlockInfo.SegBlockType.Real;
+                sseg.SegType = SegBlockType.Real;
                 if (sseg.IsFixed)
                 {
-                    sseg.LenNumber = seg.IsDouble?64:32 * (int)seg.Repeated.GetConstValue();
+                    sseg.BitLenNumber = seg.IsDouble ? 64 : 32 * (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
                     var expbitcount = new Exp() { Op = exptype.EXP_INT, ConstStr = (seg.IsDouble ? 64 : 32).ToString() };
-                    sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
+                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
+                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
@@ -292,20 +292,20 @@ namespace FrameIO.Main
             if (ty == typeof(FrameSegmentText))
             {
                 var seg = (FrameSegmentText)segi.Segment;
-                sseg.IsFixed = seg.Repeated.IsConst()&& seg.ByteSize.IsConst();
-                sseg.SegType = SegBlockInfo.SegBlockType.Text;
+                sseg.IsFixed = seg.Repeated.IsConst() && seg.ByteSize.IsConst();
+                sseg.SegType = SegBlockType.Text;
                 if (sseg.IsFixed)
                 {
-                    sseg.LenNumber = (int)(seg.ByteSize.GetConstValue() * 8 *seg.Repeated.GetConstValue());
+                    sseg.BitLenNumber = (int)(seg.ByteSize.GetConstValue() * 8 * seg.Repeated.GetConstValue());
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
-                    var expbyteszie = new Exp() { Op = exptype.EXP_INT, ConstStr ="8" };
+                    var expbyteszie = new Exp() { Op = exptype.EXP_INT, ConstStr = "8" };
                     var expbitcount = new Exp() { Op = exptype.EXP_MUL, LeftExp = seg.ByteSize, RightExp = expbyteszie };
-                    sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
+                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
+                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
@@ -317,6 +317,7 @@ namespace FrameIO.Main
             }
 
             //block字段
+            sseg = null;
             if (ty == typeof(FrameSegmentBlock))
             {
 
@@ -333,8 +334,6 @@ namespace FrameIO.Main
 
                 var seg = (FrameSegmentBlock)segi.Segment;
                 newgroup.Parent = sseggroup.Parent;
-                newgroup.Repeated = seg.Repeated;
-                newgroup.ByteSize = seg.ByteSize;
 
 
                 switch (seg.UsedType)
@@ -354,11 +353,11 @@ namespace FrameIO.Main
                         {
                             newgroup.IsOneOfGroup = true;
                             var grouplist = new Dictionary<string, SegBlockInfoGroup>();
-                            foreach(var segii in segi.Children)
+                            foreach (var segii in segi.Children)
                             {
-                                var rootng = new SegBlockInfoGroup() { Parent = newgroup, ByteSize = newgroup.ByteSize };
+                                var rootng = new SegBlockInfoGroup() { Parent = newgroup };
                                 var ng = rootng;
-                                foreach(var segiii in segii.Children)
+                                foreach (var segiii in segii.Children)
                                 {
                                     ng = AppendSegInfoToBlock(segiii, ng);
                                     if (ng == null) return null;
@@ -369,7 +368,7 @@ namespace FrameIO.Main
                             return newgroup;
                         }
                 }
-         }
+            }
 
             return null;
         }
@@ -377,7 +376,7 @@ namespace FrameIO.Main
         //判断表达式是否可计算
         static private bool CanExp(Exp exp, IList<SegBlockInfo> seglist, bool canThis)
         {
-            var list = seglist.Where(p=>p.SegType == SegBlockInfo.SegBlockType.Integer).Select(p => p.ShortName).ToList();
+            var list = seglist.Where(p => p.SegType == SegBlockType.Integer).Select(p => p.ShortName).ToList();
             if (canThis) list.Add("this");
             return exp.CanEval(list);
         }
@@ -387,7 +386,7 @@ namespace FrameIO.Main
         static private string GetSegFullName(FrameSegmentInfo segi)
         {
             var ret = segi.ID;
-            while(segi.Parent!=null)
+            while (segi.Parent != null)
             {
                 ret = segi.Parent.ID + "." + ret;
                 segi = segi.Parent;
@@ -398,86 +397,5 @@ namespace FrameIO.Main
 
         #endregion
 
-        #region --class--
-
-        //数据帧结构
-        public class FrameInfo
-        {
-            public FrameSegmentInfo RootSegmentInfo { get; set; }
-            public SegBlockInfoGroup RootSegBlockGroupInfo { get; set; }
-            public Frame TheFrame { get; set; }
-            
-        }
-
-        //字段结构群组
-        public class SegBlockInfoGroup
-        {
-            public List<SegBlockInfo> SegBlockList { get; set; } = new List<SegBlockInfo>();
-
-            public Exp Repeated { get; set; } = new Exp { Op = exptype.EXP_INT, ConstStr = "1" };
-            public Exp ByteSize { get; set; } = new Exp { Op = exptype.EXP_INT, ConstStr = "0" };
-            public bool CanUseThis
-            {
-                get
-                {
-                    if (ByteSize.IsConst() && ByteSize.GetConstValue() == 0) return false;
-                    return true;
-                }
-            }
-            public bool IsOneOfGroup { get; set; } = false;
-            public Dictionary<string, SegBlockInfoGroup> OneOfGroupList { get; set; }
-            public SegBlockInfoGroup Next { get; set; }
-            public SegBlockInfoGroup Parent { get; set; }
-        }
-
-        //字段结构
-        public class SegBlockInfo
-        {
-            public enum SegBlockType
-            {
-                Integer,
-                Real,
-                Text
-            }
-            public SegBlockInfo(int idx)
-            {
-                Idx = idx;
-            }
-            public int Idx { get; private set; }
-            public SegBlockType SegType{get; set;}
-            public int LenNumber { get; set; }
-            public Exp LenExp { get; set; }
-            public bool IsFixed { get; set; } = false;
-            public string ShortName { get; set; }
-            public string FullName { get; set; }
-            public int Syid { get; set; }
-            public SegBlockInfoGroup Parent {get; set;}
-        }
-
-        //字段信息
-        public class FrameSegmentInfo
-        {
-            //字段标识
-            public string ID { get; set; } = "";
-
-            //父字段
-            public FrameSegmentInfo Parent { get; set; }
-
-            //子字段
-            public IList<FrameSegmentInfo> Children { get; private set; } = new List<FrameSegmentInfo>();
-
-            //对应的字段
-            public FrameSegmentBase Segment { get; set; }
-
-            //字段所属的frame
-            public Frame SegmentOwnerFrame { get; set; }
-
-            //是否引用了字段所属frame
-            public bool IsRefFrame { get; set; } 
-            
-            //代码位置
-            public int Syid { get; set; }
-        }
     }
-    #endregion
 }

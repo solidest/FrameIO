@@ -4,21 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FrameIO.Interface;
+using FrameIO.Main;
 
 namespace FrameIO.Run
 {
-    public class UnpackFactory:IFrameUnpack
+    //解包类创建工厂
+    public class UnpackFactory
     {
-        public int FirstBlockSize => throw new NotImplementedException();
+        static private Dictionary<string, FrameBlockInfo> _frlist;
 
-        public int AppendBlock(byte[] buffer)
+        //初始化工厂
+        public static void InitialFactory(string binfile)
         {
-            throw new NotImplementedException();
+            _frlist = CodeFile.ReadFrameBinFile(binfile);
         }
 
-        public FrameBase Unpack()
+        //获取数据帧的解析器
+        public static IFrameUnpack GetFrameUnpack(string framname)
         {
-            throw new NotImplementedException();
+            return new FrameUnpack(_frlist[framname].RootSegBlockGroupInfo);
         }
+
     }
 }

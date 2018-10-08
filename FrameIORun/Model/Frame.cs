@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    [Serializable]
     public class Frame:INotifyPropertyChanged
     {
         public Frame(string name)
@@ -19,6 +20,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
 
         public ObservableCollection<FrameSegmentBase> Segments { get; set; }
+        [field: NonSerialized()]
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

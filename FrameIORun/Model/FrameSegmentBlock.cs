@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    [Serializable]
     public class FrameSegmentBlock : FrameSegmentBase
     {
-        public Exp ByteSize { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr = "0" };
-        public int ByteSizeNumber { get; set; } = -1;
         public BlockSegType UsedType { get; set; } = BlockSegType.None;
         public string RefFrameName { get; set; } = null;
         public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = null;
@@ -20,13 +19,14 @@ namespace FrameIO.Main
     }
 
    
-
+    [Serializable]
     public class OneOfMap
     {
         public string EnumItem { get; set; } = "";
         public string FrameName { get; set; } = "";
     }
 
+    [Serializable]
     public enum BlockSegType
     {
         RefFrame,

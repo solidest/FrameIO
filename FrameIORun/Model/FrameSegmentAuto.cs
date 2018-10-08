@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    [Serializable]
     public class FrameSegmentAuto : FrameSegmentBase
     {
         public FrameSegmentAuto(string name)

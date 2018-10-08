@@ -566,12 +566,12 @@ PRAGMA foreign_keys = on;
                         }
                         break;
 
-                    case segpropertytype.SEGP_BYTESIZE:
-                        seg.ByteSize = GetExp(pro.proid, null, null);
-                        break;
-                    case segpropertytype.SEGP_REPEATED:
-                        seg.Repeated = GetExp(pro.proid, null, null);
-                        break;
+                    //case segpropertytype.SEGP_BYTESIZE:
+                    //    seg.ByteSize = GetExp(pro.proid, null, null);
+                    //    break;
+                    //case segpropertytype.SEGP_REPEATED:
+                    //    seg.Repeated = GetExp(pro.proid, null, null);
+                    //    break;
                     default:
                         AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;

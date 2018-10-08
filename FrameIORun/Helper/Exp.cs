@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //计算表达式
+    [Serializable]
     public class Exp
     {
         public exptype Op { get; set; }
@@ -56,6 +57,7 @@ namespace FrameIO.Main
             Debug.Assert(false);
             return false;
         }
+
 
         public double GetConstValue()
         {

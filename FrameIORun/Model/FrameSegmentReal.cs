@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //isdouble、byteorder、value、encoded、repeated
+    [Serializable]
     public class FrameSegmentReal:FrameSegmentBase
     {
         public bool IsDouble { get; set; } = false;
