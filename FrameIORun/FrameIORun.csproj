@@ -46,10 +46,11 @@
     <Compile Include="FrameUnpack.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
+    <Compile Include="Helper\IByteSizeOf.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Model\Frame.cs" />
-    <Compile Include="Model\FrameSegmentAuto.cs" />
+    <Compile Include="Model\FrameSegmentVirtual.cs" />
     <Compile Include="Model\FrameSegmentBase.cs" />
     <Compile Include="Model\FrameSegmentBlock.cs" />
     <Compile Include="Model\FrameSegmentInteger.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Model\SubSysChannel.cs" />
     <Compile Include="Model\SubSysChannelOption.cs" />
     <Compile Include="Model\SubSysProperty.cs" />
-    <Compile Include="SegRuntime.cs" />
+    <Compile Include="SegRun.cs" />
     <Compile Include="UnpackFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

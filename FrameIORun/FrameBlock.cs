@@ -40,14 +40,15 @@ namespace FrameIO.Main
         Real,
         Text
     }
-    
+
     //字段结构
     [Serializable]
     public class SegBlockInfo
     {
+
         [NonSerialized]
-        private SegRuntime _run;
-        public FrameSegmentBase Segment{get; private set;}
+        private SegRun _run;
+        public FrameSegmentBase Segment { get; private set; }
         public SegBlockInfo(int idx, FrameSegmentBase seg)
         {
             Idx = idx;
@@ -64,7 +65,7 @@ namespace FrameIO.Main
         public SegBlockInfoGroup Parent { get; set; }
 
         //动态计算的内容
-        public SegRuntime SegRun { get => _run; }
+        public SegRun SegRun { get=>_run; set { _run = value; } } 
     }
 
 

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     [Serializable]
-    public class FrameSegmentAuto : FrameSegmentBase
+    public class FrameSegmentVirtual : FrameSegmentBase
     {
-        public FrameSegmentAuto(string name)
+        public FrameSegmentVirtual(string name)
         {
             Name = name;
         }

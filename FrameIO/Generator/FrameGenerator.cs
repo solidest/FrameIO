@@ -124,15 +124,20 @@ namespace FrameIO.Main
                     case BlockSegType.OneOf:
                         foreach (var oi in bseg.OneOfCaseList)
                         {
-                            //TODO 检查Enum正确性
-                            var aseg = new FrameSegmentAuto(oi.EnumItem);
+                            //TODO 查找Enum引用 并转整型
+
+                            //生成分支主字段 虚拟字段
+                            var vseg = new FrameSegmentVirtual(oi.EnumItem);
                             var afin = new FrameSegmentInfo()
                             {
-                                Segment = aseg,
+                                Segment = vseg,
                                 Parent = fin,
                                 ID = oi.EnumItem
                             };
+
                             fin.Children.Add(afin);
+
+                            //填充分支子字段
                             var ofr = FindFrame(oi.FrameName);
                             if (ofr == null)
                             {
@@ -234,6 +239,8 @@ namespace FrameIO.Main
                 Parent = sseggroup
             };
 
+            var prestr = GetSegPreName(segi);
+
             //整数字段
             if (ty == typeof(FrameSegmentInteger))
             {
@@ -255,6 +262,10 @@ namespace FrameIO.Main
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
+                    }
+                    else
+                    {
+                        sseg.BitLenExp.SetIDPre(prestr);
                     }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
@@ -283,6 +294,10 @@ namespace FrameIO.Main
                         LastErrorSyid = seg.Syid;
                         return null;
                     }
+                    else
+                    {
+                        sseg.BitLenExp.SetIDPre(prestr);
+                    }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
@@ -310,6 +325,10 @@ namespace FrameIO.Main
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
+                    }
+                    else
+                    {
+                        sseg.BitLenExp.SetIDPre(prestr);
                     }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
@@ -392,6 +411,14 @@ namespace FrameIO.Main
                 segi = segi.Parent;
             }
             return ret;
+        }
+
+        //取字段前缀名
+        static private string GetSegPreName(FrameSegmentInfo segi)
+        {
+            segi = segi.Parent;
+            if (segi == null) return "";
+            return GetSegFullName(segi);
         }
 
 
