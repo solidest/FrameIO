@@ -36,6 +36,27 @@ namespace FrameIO.Main
             return false;
         }
 
+        public bool CanEval(IList<string> varlist)
+        {
+            switch (Op)
+            {
+                case exptype.EXP_INT:
+                    return true;
+                case exptype.EXP_REAL:
+                    return true;
+                case exptype.EXP_ADD:
+                case exptype.EXP_SUB:
+                case exptype.EXP_MUL:
+                case exptype.EXP_DIV:
+                    return LeftExp.CanEval(varlist) && RightExp.CanEval(varlist);
+                case exptype.EXP_BYTESIZEOF:
+                case exptype.EXP_ID:
+                    return varlist.Contains(ConstStr);
+            }
+            Debug.Assert(false);
+            return false;
+        }
+
         public double GetConstValue()
         {
             switch (Op)

@@ -1,6 +1,7 @@
 ﻿using FrameIO.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,45 +18,61 @@ namespace TPoject
         }
     }
 
-    public class TFrameParser : IFrameUnpack
+    public class /*%first_block_size%*/TFrameParser : IFrameUnpack
     {
-        private const int _block_count = 1;
-        private const int _first_block_size = 0;
-
-        private byte[][] _buflist = new byte[_block_count][];
-        private int _pos_block = 0;
-        private int _next_size = 0;
-
-        public int FirstBlockSize => _first_block_size;
-
-
-        private void ResetBuffers()
+        //数据帧解析指令
+        static ulong[] CODE = new ulong[] 
         {
-            _pos_block = 0;
-            for (int i = 0; i < _block_count; i++)
-                _buflist[i] = null;
+            0x0000000000000000,
+            0x42F0E1EBA9EA3693
+        };
+
+        //初始化
+        public TFrameParser()
+        {
+            _getsize_code_pos = /*%first_getsize_pos%*/-1;
         }
 
-        private int GetValue(int idx_block, int idx_bit, int len)
+        //首块内存大小
+        public int FirstBlockSize => /*%first_block_size%*/0;
+
+        private MemoryStream _cach = new MemoryStream();
+
+        //下一内存块大小
+        private int _nextSize = -1;
+
+        //取内存大小的指令
+        private int _getsize_code_pos = -1;
+
+        //运行指令返回下一条指令的位置
+        static private int RunCode(int code_pos)
         {
 
         }
 
+
+        //计算下一块内存块大小
+        private int GetNextBlockSize()
+        {
+            
+            return 0;
+        }
+
+        //添加内存块 返回下一块内存所需大小
         public int AppendBlock(byte[] buffer)
         {
-            _buflist[_pos_block] = buffer;
-            _pos_block += 1;
-            return -1;
+            if (_nextSize <= 0 || buffer.Length!=_nextSize)
+                throw new Exception("AppendBlock的错误调用");
+            _cach.Write(buffer, 0, buffer.Length);
+            _nextSize = GetNextBlockSize();
+            return _nextSize;
         }
 
+
+        //解包全部报文
         public FrameBase Unpack()
         {
-            var ret = new TFrame()
-            {
-                ///
-            };
-            ResetBuffers();
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

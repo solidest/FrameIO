@@ -24,7 +24,7 @@ namespace FrameIO.Main
             _pj = null;
         }
 
-        //生成代码信息
+        //生成数据帧代码
         static public List<FrameInfo> Generate(IOProject pj)
         {
             Reset();
@@ -37,7 +37,7 @@ namespace FrameIO.Main
                 var rootseginfo = new FrameSegmentInfo();
                 if (!CreateSegTree(fr, rootseginfo)) return null;
 
-                var rootblockinfo = CreateUnpackBlockInfo(rootseginfo, fr);
+                var rootblockinfo = CreateBlockInfo(rootseginfo, fr);
                 if (rootblockinfo == null) return null;
 
                 var fri = new FrameInfo()
@@ -190,16 +190,16 @@ namespace FrameIO.Main
 
         #endregion
 
-        #region --Unpack--
+        #region --Block--
 
         //创建解包代码
-        static private SegBlockInfoGroup CreateUnpackBlockInfo(FrameSegmentInfo rootseg, Frame theframe)
+        static private SegBlockInfoGroup CreateBlockInfo(FrameSegmentInfo rootseg, Frame theframe)
         {
             var rootg = new SegBlockInfoGroup();
             var nextg = rootg;
             foreach(var segi in rootseg.Children)
             {
-                nextg = AppendSegmentInfo(segi, nextg);
+                nextg = AppendSegInfoToBlock(segi, nextg);
                 if (nextg == null) return null; 
             }
 
@@ -223,7 +223,7 @@ namespace FrameIO.Main
         }
 
         //添加字段到列表组
-        static SegBlockInfoGroup AppendSegmentInfo(FrameSegmentInfo segi, SegBlockInfoGroup sseggroup)
+        static SegBlockInfoGroup AppendSegInfoToBlock(FrameSegmentInfo segi, SegBlockInfoGroup sseggroup)
         {
             var ty = segi.Segment.GetType();
             var sseg = new SegBlockInfo(sseggroup.SegBlockList.Count)
@@ -239,6 +239,7 @@ namespace FrameIO.Main
             {
                 var seg = (FrameSegmentInteger)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst();
+                sseg.SegType = SegBlockInfo.SegBlockType.Integer;
                 if (sseg.IsFixed)
                 {
                     sseg.LenNumber = seg.BitCount * (int)seg.Repeated.GetConstValue();
@@ -251,7 +252,7 @@ namespace FrameIO.Main
                     sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
                     if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
                     {
-                        LastErrorInfo = "使用了无法解析的表达式";
+                        LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
                     }
@@ -265,6 +266,7 @@ namespace FrameIO.Main
             {
                 var seg = (FrameSegmentReal)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst();
+                sseg.SegType = SegBlockInfo.SegBlockType.Real;
                 if (sseg.IsFixed)
                 {
                     sseg.LenNumber = seg.IsDouble?64:32 * (int)seg.Repeated.GetConstValue();
@@ -277,7 +279,7 @@ namespace FrameIO.Main
                     sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
                     if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
                     {
-                        LastErrorInfo = "使用了无法解析的表达式";
+                        LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
                     }
@@ -291,6 +293,7 @@ namespace FrameIO.Main
             {
                 var seg = (FrameSegmentText)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst()&& seg.ByteSize.IsConst();
+                sseg.SegType = SegBlockInfo.SegBlockType.Text;
                 if (sseg.IsFixed)
                 {
                     sseg.LenNumber = (int)(seg.ByteSize.GetConstValue() * 8 *seg.Repeated.GetConstValue());
@@ -304,7 +307,7 @@ namespace FrameIO.Main
                     sseg.LenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
                     if (!CanExp(sseg.LenExp, sseggroup.SegBlockList, sseggroup.CanUseThis))
                     {
-                        LastErrorInfo = "使用了无法解析的表达式";
+                        LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
                     }
@@ -341,7 +344,7 @@ namespace FrameIO.Main
                         {
                             foreach (var segii in segi.Children)
                             {
-                                newgroup = AppendSegmentInfo(segii, newgroup);
+                                newgroup = AppendSegInfoToBlock(segii, newgroup);
                                 if (newgroup == null) return null;
                             }
                             return newgroup;
@@ -357,7 +360,7 @@ namespace FrameIO.Main
                                 var ng = rootng;
                                 foreach(var segiii in segii.Children)
                                 {
-                                    ng = AppendSegmentInfo(segiii, ng);
+                                    ng = AppendSegInfoToBlock(segiii, ng);
                                     if (ng == null) return null;
                                 }
                                 grouplist.Add(segii.ID, rootng);
@@ -374,8 +377,9 @@ namespace FrameIO.Main
         //判断表达式是否可计算
         static private bool CanExp(Exp exp, IList<SegBlockInfo> seglist, bool canThis)
         {
-            //TODO 
-            return true;
+            var list = seglist.Where(p=>p.SegType == SegBlockInfo.SegBlockType.Integer).Select(p => p.ShortName).ToList();
+            if (canThis) list.Add("this");
+            return exp.CanEval(list);
         }
 
 
@@ -405,7 +409,6 @@ namespace FrameIO.Main
             
         }
 
-
         //字段结构群组
         public class SegBlockInfoGroup
         {
@@ -430,11 +433,18 @@ namespace FrameIO.Main
         //字段结构
         public class SegBlockInfo
         {
+            public enum SegBlockType
+            {
+                Integer,
+                Real,
+                Text
+            }
             public SegBlockInfo(int idx)
             {
                 Idx = idx;
             }
             public int Idx { get; private set; }
+            public SegBlockType SegType{get; set;}
             public int LenNumber { get; set; }
             public Exp LenExp { get; set; }
             public bool IsFixed { get; set; } = false;
