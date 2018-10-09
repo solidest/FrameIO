@@ -920,8 +920,15 @@ namespace FrameIO.Main
         private void onfoobar(object sender, RoutedEventArgs e)
         {
 
-            FrameIO.Run.FrameIOFactory.InitialFactory("FrameIO.bin");
-            var T = FrameIO.Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //FrameIO.Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+            //var T = FrameIO.Run.FrameIOFactory.GetFrameUnpack("MSG1");
+
+            //ulong i = 12345;
+            //double d = 5.000791273786;
+            //float f = -8.354f;
+            //uint ui = BitConverter.ToUInt32(BitConverter.GetBytes(f), 0);
+            //i = ui;
+            //float d2 = BitConverter.ToSingle( BitConverter.GetBytes(ui), 0);
 
         }
 

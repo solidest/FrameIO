@@ -9,7 +9,7 @@ using FrameIO.Main;
 
 namespace FrameIO.Run
 {
-    public class FrameUnpack : IFrameUnpack, ICalcuValue
+    public class FrameUnpack : IFrameUnpack, ISegRun
     {
         //根字段组
         private SegBlockInfoGroup _rootbkgr;
@@ -30,10 +30,7 @@ namespace FrameIO.Run
         private MemoryStream _cach = null;
 
         //缓存区保存的内存总大小
-        private int _totalsize = 0;
-
-        //当前内存缓冲指针位置
-        private int _byte_pos = 0;
+        private int _totalbytesize = 0;
 
         //当前内存缓冲指针位偏移
         private int _bit_offset = 0;
@@ -52,7 +49,7 @@ namespace FrameIO.Run
             {
                 if (nextseg.IsFixed)
                 {
-                    bitlen += nextseg.BitLenNumber;
+                    bitlen += nextseg.BitSizeNumber * nextseg.RepeatedNumber;
                     _seg_pos = nextseg;
                 }
                 else
@@ -72,12 +69,11 @@ namespace FrameIO.Run
         private void Reset()
         {
             _cach = null;
-            _totalsize = 0;
+            _totalbytesize = 0;
             _nextsize = FirstBlockSize;
             _seg_pos = _firstrunseg_pos;
             _seg_needfill = _rootbkgr.SegBlockList[0];
 
-            _byte_pos = 0;
             _bit_offset = 0;
             _runseglist.Clear();
         }
@@ -90,7 +86,7 @@ namespace FrameIO.Run
             var runseg = _seg_needfill.SegRun;
             do
             {
-                runseg.FillValue(buff, ref _byte_pos, ref _bit_offset, this);
+                runseg.ReadValue(buff, ref _bit_offset, this);
                 runseg = runseg.NextRunSeg;
             } while (runseg!=null && runseg.RefSegBlock != _seg_pos);
             _seg_needfill = GetNextSegBlock(_seg_pos, true);
@@ -102,18 +98,18 @@ namespace FrameIO.Run
                 return 0;
             }
 
-            //追加一个字段
+            //至少需要追加一个字段
             var npos = _seg_needfill;
-            int bitlen = (int)npos.BitLenExp.GetRealValue(this);
+            int bitlen = (int)npos.SegRun.GetBitLen(this);
             _seg_pos = npos;
 
-            //继续追加固定大小字段
+            //还需继续追加固定大小字段
             npos = GetNextSegBlock(npos, false);
             while (npos != null)
             {
                 if (npos.IsFixed)
                 {
-                    bitlen += npos.BitLenNumber;
+                    bitlen += npos.BitSizeNumber * npos.RepeatedNumber;
                     _seg_pos = npos;
                 }
                 else
@@ -140,7 +136,7 @@ namespace FrameIO.Run
             if (_cach == null) _cach = new MemoryStream();
             
             _cach.Write(buffer, 0, _nextsize);
-            _totalsize += buffer.Length;
+            _totalbytesize += buffer.Length;
             _nextsize = FillValueAndStep();
             return _nextsize;
         }
@@ -162,7 +158,7 @@ namespace FrameIO.Run
         #region --Helper--
 
         //取给定字段组的下一字段
-        private static SegBlockInfo GetNextSegBlock(SegBlockInfo lastsegb, SegBlockInfoGroup segg, bool intoOneOf)
+        private SegBlockInfo GetNextSegBlock(SegBlockInfo lastsegb, SegBlockInfoGroup segg, bool intoOneOf)
         {
             if (segg == null) return null;
             if (segg.Next == null) return GetNextSegBlock(lastsegb, segg.Parent, intoOneOf);
@@ -170,8 +166,17 @@ namespace FrameIO.Run
             if (nextg.IsOneOfGroup)
             {
                 if (!intoOneOf) return null;
-                //TODO 计算分支跳转
-                return null;
+                var iv =FindSegRun(nextg.OneOfSegFullName).NumberValue;
+                foreach(var gp in nextg.OneOfGroupList)
+                {
+                    if(iv == gp.Key)
+                    {
+                        var ret = gp.Value.SegBlockList.First();
+                        UnionSegRun(lastsegb, ret);
+                        return ret;
+                    }
+                }
+                throw new Exception("进入 oneof 未找到匹配分支");
             }
             else
             {
@@ -182,7 +187,7 @@ namespace FrameIO.Run
         }
 
         //取给定字段的下一字段
-        private static SegBlockInfo GetNextSegBlock(SegBlockInfo segb, bool intoOneOf)
+        private SegBlockInfo GetNextSegBlock(SegBlockInfo segb, bool intoOneOf)
         {
             if (segb.Idx == segb.Parent.SegBlockList.Count - 1)
                 return GetNextSegBlock(segb, segb.Parent, intoOneOf);
@@ -209,7 +214,7 @@ namespace FrameIO.Run
         public int ByteSizeOf(string segname)
         {
             if (_runseglist.ContainsKey(segname))
-                return (int)_runseglist[segname].RefSegBlock.BitLenExp.GetRealValue(this)/8;
+                return (int)_runseglist[segname].RefSegBlock.SegRun.GetBitLen(this)/8;
             throw new Exception("解包过程中意外调用了ByteSizeOf");
         }
 
@@ -221,6 +226,13 @@ namespace FrameIO.Run
         public void AddIdSeg(string idfullname, SegRun seg)
         {
             _runseglist.Add(idfullname, seg);
+        }
+
+        public SegRun FindSegRun(string fullname)
+        {
+            if (_runseglist.ContainsKey(fullname))
+                return _runseglist[fullname];
+            return null;
         }
 
         #endregion

@@ -46,7 +46,8 @@
     <Compile Include="FrameUnpack.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
-    <Compile Include="Helper\IByteSizeOf.cs" />
+    <Compile Include="Helper\ExpRun.cs" />
+    <Compile Include="Helper\ISegRun.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Model\Frame.cs" />

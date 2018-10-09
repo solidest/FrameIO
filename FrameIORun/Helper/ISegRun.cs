@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-    public interface ICalcuValue
+    public interface ISegRun
     {
         int ByteSizeOf(string segname);
         double GetIdValue(string idfullname);
 
         void AddIdSeg(string idfullname, SegRun seg);
+
+        SegRun FindSegRun(string fullname);
     }
 }

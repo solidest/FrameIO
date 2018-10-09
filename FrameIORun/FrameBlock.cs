@@ -12,7 +12,7 @@ namespace FrameIO.Main
     [Serializable]
     public class FrameBlockInfo
     {
-        public FrameSegmentInfo RootSegmentInfo { get; set; }
+        public SegTreeInfo RootSegmentInfo { get; set; }
         public SegBlockInfoGroup RootSegBlockGroupInfo { get; set; }
         public Frame TheFrame { get; set; }
 
@@ -26,6 +26,7 @@ namespace FrameIO.Main
 
 
         public bool IsOneOfGroup { get; set; } = false;
+        public string OneOfSegFullName { get; set; }
         public Dictionary<ulong, SegBlockInfoGroup> OneOfGroupList { get; set; }
         public SegBlockInfoGroup Next { get; set; }
         public SegBlockInfoGroup Parent { get; set; }
@@ -49,15 +50,21 @@ namespace FrameIO.Main
         [NonSerialized]
         private SegRun _run;
         public FrameSegmentBase Segment { get; private set; }
-        public SegBlockInfo(int idx, FrameSegmentBase seg)
+        public SegTreeInfo RefSegTree { get; private set; }
+        public List<String> CheckBeginSegs { get; set; }
+        public List<String> CheckEndSegs { get; set; }
+        public SegBlockInfo(int idx, FrameSegmentBase seg, SegTreeInfo segt)
         {
             Idx = idx;
             Segment = seg;
+            RefSegTree = segt;
         }
         public int Idx { get; private set; }
         public SegBlockType SegType { get; set; }
-        public int BitLenNumber { get; set; }
-        public Exp BitLenExp { get; set; }
+        public int BitSizeNumber { get; set; }
+        public int RepeatedNumber { get; set; }
+        public Exp BitSize { get; set; }
+        public Exp Repeated { get; set; }
         public bool IsFixed { get; set; } = false;
         public string ShortName { get; set; }
         public string FullName { get; set; }
@@ -72,16 +79,16 @@ namespace FrameIO.Main
 
     //字段信息
     [Serializable]
-    public class FrameSegmentInfo
+    public class SegTreeInfo
     {
         //字段标识
-        public string ID { get; set; } = "";
+        public string Name { get; set; } = "";
 
         //父字段
-        public FrameSegmentInfo Parent { get; set; }
+        public SegTreeInfo Parent { get; set; }
 
         //子字段
-        public IList<FrameSegmentInfo> Children { get; private set; } = new List<FrameSegmentInfo>();
+        public IList<SegTreeInfo> Children { get; private set; } = new List<SegTreeInfo>();
 
         //对应的字段
         public FrameSegmentBase Segment { get; set; }
@@ -94,5 +101,6 @@ namespace FrameIO.Main
 
         //代码位置
         public int Syid { get; set; }
+        public bool IsOneOf { get; set; } = false;
     }
 }

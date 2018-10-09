@@ -30,7 +30,7 @@ namespace FrameIO.Run
         public static IChannelBase GetChannel(string sysname, string channelname)
         {
             var ch = _pj.DicSys[sysname].DicChannel[channelname];
-            //TODO
+
             return null;
         }
     }

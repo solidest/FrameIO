@@ -34,7 +34,7 @@ namespace FrameIO.Main
             foreach (var fr in pj.FrameList)
             {
 
-                var rootseginfo = new FrameSegmentInfo();
+                var rootseginfo = new SegTreeInfo();
                 if (!CreateSegTree(fr, rootseginfo)) return false;
 
                 var rootblockinfo = CreateBlockInfo(rootseginfo, fr);
@@ -56,7 +56,7 @@ namespace FrameIO.Main
         #region --Tree--
 
         //生成字段树
-        static private bool CreateSegTree(Frame rootFrame, FrameSegmentInfo rootSegInfo)
+        static private bool CreateSegTree(Frame rootFrame, SegTreeInfo rootSegInfo)
         {
             foreach (var seg in rootFrame.Segments)
             {
@@ -76,16 +76,16 @@ namespace FrameIO.Main
         }
 
         //添加字段到字段树  seg：字段  owner：字段所属数据帧   parentseg：父字段信息   isrefFrame：是否引用的数据帧   syid：解析代码位置标识
-        static private bool AppendSegToTree(FrameSegmentBase seg, Frame owner, FrameSegmentInfo parentseg, bool isrefFrame, int syid)
+        static private bool AppendSegToTree(FrameSegmentBase seg, Frame owner, SegTreeInfo parentseg, bool isrefFrame, int syid)
         {
-            var fin = new FrameSegmentInfo()
+            var fin = new SegTreeInfo()
             {
                 Segment = seg,
                 SegmentOwnerFrame = owner,
                 Parent = parentseg,
                 IsRefFrame = isrefFrame,
                 Syid = syid,
-                ID = seg.Name
+                Name = seg.Name
             };
 
             if (CyclicRef(fin)) return false;
@@ -122,6 +122,7 @@ namespace FrameIO.Main
                         }
                         break;
                     case BlockSegType.OneOf:
+                        fin.IsOneOf = true;
                         //查找Enum引用
                         var refseg = FindSeg(bseg.OneOfFromSegment, parentseg);
                         if (refseg == null || refseg.GetType() != typeof(FrameSegmentInteger))
@@ -139,7 +140,7 @@ namespace FrameIO.Main
                         }
                         foreach (var oi in bseg.OneOfCaseList)
                         {
-                            if(fin.Children.Where(p=>p.ID == oi.EnumItem).Count()!=0)
+                            if(fin.Children.Where(p=>p.Name == oi.EnumItem).Count()!=0)
                             {
                                 LastErrorSyid = bseg.Syid;
                                 LastErrorInfo = string.Format("OneOf 分支出现重复定义");
@@ -155,11 +156,11 @@ namespace FrameIO.Main
                             //生成分支主字段 虚拟字段
                             var vseg = new FrameSegmentVirtual(oi.EnumItem);
                             vseg.IDValue = GetEnumItemValue(refem, oi.EnumItem);
-                            var afin = new FrameSegmentInfo()
+                            var afin = new SegTreeInfo()
                             {
                                 Segment = vseg,
                                 Parent = fin,
-                                ID = oi.EnumItem
+                                Name = oi.EnumItem
                             };
 
                             fin.Children.Add(afin);
@@ -191,7 +192,7 @@ namespace FrameIO.Main
         }
 
         //是否存在字段数据帧的循环引用
-        static private bool CyclicRef(FrameSegmentInfo child)
+        static private bool CyclicRef(SegTreeInfo child)
         {
             if (!child.IsRefFrame) return false;
             var reffr = child.SegmentOwnerFrame;
@@ -250,11 +251,11 @@ namespace FrameIO.Main
 
 
         //查找字段
-        static FrameSegmentBase FindSeg(string segname, FrameSegmentInfo parent)
+        static FrameSegmentBase FindSeg(string segname, SegTreeInfo parent)
         {
             foreach (var seg in parent.Children)
             {
-                if (seg.ID == segname)
+                if (seg.Name == segname)
                     return seg.Segment;
             }
             return null;
@@ -266,7 +267,7 @@ namespace FrameIO.Main
 
 
         //创建解包代码
-        static private SegBlockInfoGroup CreateBlockInfo(FrameSegmentInfo rootseg, Frame theframe)
+        static private SegBlockInfoGroup CreateBlockInfo(SegTreeInfo rootseg, Frame theframe)
         {
             var rootg = new SegBlockInfoGroup();
             var nextg = rootg;
@@ -296,44 +297,48 @@ namespace FrameIO.Main
         }
 
         //添加字段到列表组
-        static SegBlockInfoGroup AppendSegInfoToBlock(FrameSegmentInfo segi, SegBlockInfoGroup sseggroup)
+        static SegBlockInfoGroup AppendSegInfoToBlock(SegTreeInfo segi, SegBlockInfoGroup sseggroup)
         {
             var ty = segi.Segment.GetType();
-            var sseg = new SegBlockInfo(sseggroup.SegBlockList.Count, segi.Segment)
+            var sseg = new SegBlockInfo(sseggroup.SegBlockList.Count, segi.Segment, segi)
             {
                 FullName = GetSegFullName(segi),
-                ShortName = segi.ID,
+                ShortName = segi.Name,
                 Syid = segi.Syid,
                 Parent = sseggroup
             };
 
-            var prestr = GetSegPreName(segi);
-
             //整数字段
             if (ty == typeof(FrameSegmentInteger))
             {
+
                 var seg = (FrameSegmentInteger)segi.Segment;
+
+                //TODO  语法检查 checkrange与check
+
+                sseg.CheckBeginSegs = GetLastOrFirstFullNameList(seg.VCheckRangeBegin, segi, false);
+                sseg.CheckEndSegs = GetLastOrFirstFullNameList(seg.VCheckRangeBegin, segi, true);
+
                 sseg.IsFixed = seg.Repeated.IsConst();
                 sseg.SegType =  SegBlockType.Integer;
+
+
                 if (sseg.IsFixed)
                 {
-                    sseg.BitLenNumber = seg.BitCount * (int)seg.Repeated.GetConstValue();
+                    sseg.BitSizeNumber = seg.BitCount;
+                    sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
-                    var expbitcount = new Exp() { Op = exptype.EXP_INT, ConstStr = seg.BitCount.ToString() };
-                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
+                    sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = seg.BitCount.ToString() };
+                    sseg.Repeated = seg.Repeated;
+                    if (!CanExp(sseg.Repeated, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
-                    }
-                    else
-                    {
-                        sseg.BitLenExp.SetIDPre(prestr);
                     }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
@@ -348,23 +353,20 @@ namespace FrameIO.Main
                 sseg.SegType = SegBlockType.Real;
                 if (sseg.IsFixed)
                 {
-                    sseg.BitLenNumber = seg.IsDouble ? 64 : 32 * (int)seg.Repeated.GetConstValue();
+                    sseg.BitSizeNumber = seg.IsDouble ? 64 : 32;
+                    sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
-                    var expbitcount = new Exp() { Op = exptype.EXP_INT, ConstStr = (seg.IsDouble ? 64 : 32).ToString() };
-                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
+                    sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = (seg.IsDouble ? 64 : 32).ToString() };
+                    sseg.Repeated =  seg.Repeated ;
+                    if (!CanExp(sseg.Repeated, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
-                    }
-                    else
-                    {
-                        sseg.BitLenExp.SetIDPre(prestr);
                     }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
@@ -379,24 +381,21 @@ namespace FrameIO.Main
                 sseg.SegType = SegBlockType.Text;
                 if (sseg.IsFixed)
                 {
-                    sseg.BitLenNumber = (int)(seg.ByteSize.GetConstValue() * 8 * seg.Repeated.GetConstValue());
+                    sseg.BitSizeNumber = (int)seg.ByteSize.GetConstValue() * 8;
+                    sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
                     var expbyteszie = new Exp() { Op = exptype.EXP_INT, ConstStr = "8" };
-                    var expbitcount = new Exp() { Op = exptype.EXP_MUL, LeftExp = seg.ByteSize, RightExp = expbyteszie };
-                    sseg.BitLenExp = new Exp() { Op = exptype.EXP_MUL, LeftExp = expbitcount, RightExp = seg.Repeated };
-                    if (!CanExp(sseg.BitLenExp, sseggroup.SegBlockList, false))
+                    sseg.BitSize = new Exp() { Op = exptype.EXP_MUL, LeftExp = seg.ByteSize, RightExp = expbyteszie };
+                    sseg.Repeated = seg.Repeated ;
+                    if (!CanExp(seg.ByteSize, sseggroup.SegBlockList, false) || !CanExp(seg.Repeated, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
-                    }
-                    else
-                    {
-                        sseg.BitLenExp.SetIDPre(prestr);
                     }
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
@@ -439,6 +438,8 @@ namespace FrameIO.Main
                     case BlockSegType.OneOf:
                         {
                             newgroup.IsOneOfGroup = true;
+                            var prename = GetSegFullName(segi.Parent);
+                            newgroup.OneOfSegFullName = prename == ""? seg.OneOfFromSegment : prename + "." + seg.OneOfFromSegment;
                             var grouplist = new Dictionary<ulong, SegBlockInfoGroup>();
                             foreach (var segii in segi.Children)
                             {
@@ -470,25 +471,80 @@ namespace FrameIO.Main
 
 
         //取字段全名
-        static private string GetSegFullName(FrameSegmentInfo segi)
+        static private string GetSegFullName(SegTreeInfo segi)
         {
-            var ret = segi.ID;
+            if (segi == null) return "";
+            var ret = segi.Name;
             while (segi.Parent != null)
             {
-                ret = segi.Parent.ID + "." + ret;
+                ret = segi.Parent.Name + "." + ret;
                 segi = segi.Parent;
             }
             return ret;
         }
 
-        //取字段前缀名
-        static private string GetSegPreName(FrameSegmentInfo segi)
+        //取首末字段组的全名列表
+        static private List<string> GetLastOrFirstFullNameList(string segname, SegTreeInfo parent, bool islast)
         {
-            segi = segi.Parent;
-            if (segi == null) return "";
-            return GetSegFullName(segi);
+            SegTreeInfo find = null;
+            foreach (var seg in parent.Children)
+            {
+                if (seg.Name == segname)
+                {
+                    find = seg;
+                    break;
+                }
+            }
+            if(find ==null)
+                return null;
+            return GetLastOrFirstFullName(find, islast);
+
         }
 
+        static private List<string> GetLastOrFirstFullName(SegTreeInfo p, bool islast)
+        {
+            if (p.Children.Count > 0)
+            {
+                if (p.IsOneOf)
+                    return GetChildOneOfLastOrFirstFullName(p, islast);
+                else
+                    return GetChildLastOrFirstFullName(p, islast);
+            }
+            else
+            {
+                var ret = new List<string>();
+                ret.Add(GetSegFullName(p));
+                return ret;
+            }
+        }
+
+        static private List<string> GetChildLastOrFirstFullName(SegTreeInfo p, bool islast)
+        {
+            var seg = islast ? p.Children.Last() : p.Children.First();
+            if(seg.Children.Count == 0)
+            {
+                var ret = new List<string>();
+                ret.Add(GetSegFullName(seg));
+                return ret;
+            }
+            else
+            {
+                if (seg.IsOneOf)
+                    return GetChildOneOfLastOrFirstFullName(seg, islast);
+                else
+                    return GetChildLastOrFirstFullName(seg, islast);
+            }
+        }
+
+        static private List<string> GetChildOneOfLastOrFirstFullName(SegTreeInfo p, bool islast)
+        {
+            var ret = new List<string>();
+            foreach(var seg in p.Children)
+            {
+                ret.AddRange(GetLastOrFirstFullName(seg, islast));
+            }
+            return ret;
+        }
 
         #endregion
 
