@@ -539,14 +539,14 @@ namespace FrameIO.Main
 
             if(isok)
             {
-                isok = FrameGenerator.Generate(_project);
+                isok = FrameIOGenerator.Generate(_project);
                 if(!isok)
                 {
-                    OutOneError(FrameGenerator.LastErrorInfo, FrameGenerator.LastErrorSyid);
+                    OutOneError(FrameIOGenerator.LastErrorInfo, FrameIOGenerator.LastErrorSyid);
                 }
                 else
                 {
-                    Debug.Assert(FrameGenerator.LastErrorInfo=="");
+                    Debug.Assert(FrameIOGenerator.LastErrorInfo=="");
                 }
             }
 
@@ -920,8 +920,8 @@ namespace FrameIO.Main
         private void onfoobar(object sender, RoutedEventArgs e)
         {
 
-            FrameIO.Run.UnpackFactory.InitialFactory("frame.bin");
-            var T = FrameIO.Run.UnpackFactory.GetFrameUnpack("MSG1");
+            FrameIO.Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+            var T = FrameIO.Run.FrameIOFactory.GetFrameUnpack("MSG1");
 
         }
 

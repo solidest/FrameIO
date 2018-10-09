@@ -47,7 +47,7 @@ namespace TPoject
         //运行指令返回下一条指令的位置
         static private int RunCode(int code_pos)
         {
-
+            return 0;
         }
 
 

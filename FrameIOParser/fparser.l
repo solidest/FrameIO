@@ -157,7 +157,7 @@ int utf8len = 0;
 
 
 0[0-7]* |
-[1-9][0-9]* |
+-?[1-9][0-9]* |
 0[Xx][0-9a-fA-F]+		{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_INT; }
 
 -?([0-9]*\.[0-9]+|[0-9]+\.){EXP}? |

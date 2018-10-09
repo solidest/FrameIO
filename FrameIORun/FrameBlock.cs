@@ -26,7 +26,7 @@ namespace FrameIO.Main
 
 
         public bool IsOneOfGroup { get; set; } = false;
-        public Dictionary<string, SegBlockInfoGroup> OneOfGroupList { get; set; }
+        public Dictionary<ulong, SegBlockInfoGroup> OneOfGroupList { get; set; }
         public SegBlockInfoGroup Next { get; set; }
         public SegBlockInfoGroup Parent { get; set; }
 

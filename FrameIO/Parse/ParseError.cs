@@ -63,7 +63,9 @@ namespace FrameIO.Main
                 case 12:
                     return "字段属性与字段类型不匹配";
                 case 13:
-                    return "OneOf选择项名称重复";
+                    return "OneOf 选择项名称重复";
+                case 14:
+                    return "未定义的enum引用";
 
                 case 100:
                     return ErrorInfo;

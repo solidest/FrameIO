@@ -13,5 +13,7 @@ namespace FrameIO.Main
         {
             Name = name;
         }
+
+        public ulong IDValue { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //数据帧代码生成器
-    public class FrameGenerator
+    public class FrameIOGenerator
     {
         //static private FrameSegmentInfo _rootseg = null;
         //static private Frame _rootframe = null;
@@ -30,7 +30,7 @@ namespace FrameIO.Main
             Reset();
             _pj = pj;
 
-            var frms = new Dictionary<string, FrameBlockInfo>();
+            var pjinfo = new ProjectInfo();
             foreach (var fr in pj.FrameList)
             {
 
@@ -46,9 +46,9 @@ namespace FrameIO.Main
                     RootSegBlockGroupInfo = rootblockinfo,
                     TheFrame = fr
                 };
-                frms.Add(fr.Name, fri);
+               pjinfo.DicFrame.Add(fr.Name, fri);
             }
-            CodeFile.SaveFrameBinFile("frame.bin", frms);
+            CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
             return true;
         }
 
@@ -122,12 +122,39 @@ namespace FrameIO.Main
                         }
                         break;
                     case BlockSegType.OneOf:
+                        //查找Enum引用
+                        var refseg = FindSeg(bseg.OneOfFromSegment, parentseg);
+                        if (refseg == null || refseg.GetType() != typeof(FrameSegmentInteger))
+                        {
+                            LastErrorSyid = bseg.Syid;
+                            LastErrorInfo = string.Format("错误的字段【{0}】引用", bseg.OneOfFromSegment);
+                            return false;
+                        }
+                        var refem = FindEnum(((FrameSegmentInteger)refseg).VToEnum);
+                        if (refem == null )
+                        {
+                            LastErrorSyid = bseg.Syid;
+                            LastErrorInfo = string.Format("OneOf 引用的字段【{0}】未设置toenum属性", bseg.OneOfFromSegment);
+                            return false;
+                        }
                         foreach (var oi in bseg.OneOfCaseList)
                         {
-                            //TODO 查找Enum引用 并转整型
+                            if(fin.Children.Where(p=>p.ID == oi.EnumItem).Count()!=0)
+                            {
+                                LastErrorSyid = bseg.Syid;
+                                LastErrorInfo = string.Format("OneOf 分支出现重复定义");
+                                return false;
+                            }
+                            if(refem.ItemsList.Where(p=>p.Name == oi.EnumItem).Count()==0)
+                            {
+                                LastErrorSyid = bseg.Syid;
+                                LastErrorInfo = string.Format("OneOf 分支名称设置不正确");
+                                return false;
+                            }
 
                             //生成分支主字段 虚拟字段
                             var vseg = new FrameSegmentVirtual(oi.EnumItem);
+                            vseg.IDValue = GetEnumItemValue(refem, oi.EnumItem);
                             var afin = new FrameSegmentInfo()
                             {
                                 Segment = vseg,
@@ -193,9 +220,50 @@ namespace FrameIO.Main
             return null;
         }
 
+        //查找枚举
+        static private Enumdef FindEnum(string name)
+        {
+            foreach(var em in _pj.EnumdefList)
+            {
+                if (em.Name == name) return em;
+            }
+            return null;
+        }
+
+        //取枚举项的数值
+        static ulong GetEnumItemValue(Enumdef em, string itname)
+        {
+            int i = 0;
+            long ret = -1;
+            var n = "";
+            do
+            {
+                n = em.ItemsList[i].Name;
+                var v = em.ItemsList[i].ItemValue;
+                ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
+                i += 1;
+                if (i == em.ItemsList.Count) break;
+            } while (n != itname);
+            return (ulong)ret;
+
+        }
+
+
+        //查找字段
+        static FrameSegmentBase FindSeg(string segname, FrameSegmentInfo parent)
+        {
+            foreach (var seg in parent.Children)
+            {
+                if (seg.ID == segname)
+                    return seg.Segment;
+            }
+            return null;
+        }
+
         #endregion
 
         #region --Block--
+
 
         //创建解包代码
         static private SegBlockInfoGroup CreateBlockInfo(FrameSegmentInfo rootseg, Frame theframe)
@@ -371,7 +439,7 @@ namespace FrameIO.Main
                     case BlockSegType.OneOf:
                         {
                             newgroup.IsOneOfGroup = true;
-                            var grouplist = new Dictionary<string, SegBlockInfoGroup>();
+                            var grouplist = new Dictionary<ulong, SegBlockInfoGroup>();
                             foreach (var segii in segi.Children)
                             {
                                 var rootng = new SegBlockInfoGroup() { Parent = newgroup };
@@ -381,7 +449,7 @@ namespace FrameIO.Main
                                     ng = AppendSegInfoToBlock(segiii, ng);
                                     if (ng == null) return null;
                                 }
-                                grouplist.Add(segii.ID, rootng);
+                                grouplist.Add(((FrameSegmentVirtual)segii.Segment).IDValue, rootng);
                             }
                             newgroup.OneOfGroupList = grouplist;
                             return newgroup;

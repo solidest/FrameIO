@@ -64,7 +64,7 @@
     <Compile Include="Model\SubSysChannelOption.cs" />
     <Compile Include="Model\SubSysProperty.cs" />
     <Compile Include="SegRun.cs" />
-    <Compile Include="UnpackFactory.cs" />
+    <Compile Include="FrameIOFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

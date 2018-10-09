@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelBase.cs" />
     <Compile Include="FrameBase.cs" />
+    <Compile Include="FrameIOException.cs" />
     <Compile Include="IFramePack.cs" />
     <Compile Include="IFrameReader.cs" />
     <Compile Include="IFrameStream.cs" />

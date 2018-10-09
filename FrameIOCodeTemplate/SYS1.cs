@@ -1,30 +1,27 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using FrameIO.CodeTemplate;
-using PROJECT1.Frame;
-using System.Collections.Generic;
+using FrameIO.Run;
+using FrameIO.Interface;
+using System.Diagnostics;
 
 namespace PROJECT1.SYS1
 {
     public class SYS1
     {
+        private IChannelBase CH1;
+        private IChannelBase CH2;
 
         public void Initialization()
         {
-
-            CH1 = new CANChannel();
-            var _cfg = new Dictionary<string, object>();
-            _cfg.Add("config1", "value1");
-            _cfg.Add("config2", "value2");
-            CH1.Open(_cfg);
-
-            CH2 = new COMChannel();
-            _cfg.Clear();
-            _cfg.Add("configa", "valuea");
-            _cfg.Add("configb", "valueb");
-            CH2.Open(_cfg);
+            CH1 = FrameIOFactory.GetChannel("SYS1", "CH1");
+            CH2 = FrameIOFactory.GetChannel("SYS1", "CH2");
 
         }
+
+        #region -- Property --
+
+
         private Parameter<ushort?> _PROPERTYA = new Parameter<ushort?>();
         private ObservableCollection<Parameter<byte?>> _PROPERTYB =new ObservableCollection<Parameter<byte?>>(new Parameter<byte?>[4]);
         private Parameter<double?> _PROPERTYC = new Parameter<double?>();
@@ -68,19 +65,35 @@ namespace PROJECT1.SYS1
             }
         }
 
-        private CANChannel CH1;
-        private COMChannel CH2;
+        #endregion
 
-        public void send_FRAME1_CH1()
+        //模板中的异常处理接口
+        private void HandleFrameIOError(FrameIOException ex)
         {
-            var data = new MSG1();
-            data.SEGMENTA = _PROPERTYA.Value ?? 0;
-            for(int i=0; i<4; i++)
+            switch(ex.ErrType)
             {
-                data.SEGMENTB[i] = _PROPERTYB[i].Value ?? 0;
+                case FrameIOErrorType.ChannelErr:
+                case FrameIOErrorType.SendErr:
+                case FrameIOErrorType.RecvErr:
+                case FrameIOErrorType.CheckDtaErr:
+                    Debug.WriteLine("位置：{0}    错误：{1}", ex.ErrInfo, ex.ErrInfo);
+                    break;
             }
-            data.SEGMENTC = _PROPERTYC.Value ?? 0;
-            CH1.WriteFrame(data);
+        }
+
+               
+        public void SEND_ACTION_EXCAMPLE()
+        {
+            try
+            {
+                var funpack = FrameIOFactory.GetFrameUnpack("FRAME1");
+                var data = CH1.ReadFrame(funpack);
+                PROPERTYA.Value = data.GetUShort("SEG1");
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

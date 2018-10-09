@@ -39,7 +39,7 @@ namespace FrameIO.Run
         private int _bit_offset = 0;
 
         //运行时字段列表
-        private Dictionary<string, SegRun> _runseglist;
+        private Dictionary<string, SegRun> _runseglist = new Dictionary<string, SegRun>();
 
         public FrameUnpack(SegBlockInfoGroup fri)
         {

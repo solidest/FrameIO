@@ -446,6 +446,11 @@ PRAGMA foreign_keys = on;
                         break;
                     case segpropertytype.SEGP_TOENUM:
                         seg.VToEnum = pro.ivalue;
+                        if(_checkSemantics)
+                        {
+                            if (_pj.EnumdefList.Where(p => p.Name == pro.ivalue).Count() == 0)
+                                AddError(pro.ivsyid, 14);
+                        }
                         break;
                     default:
                         AddError(pro.ivsyid>0?pro.ivsyid:pro.segsyid, 12);
