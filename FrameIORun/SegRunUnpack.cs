@@ -20,7 +20,6 @@ namespace FrameIO.Run
             {
                 _bitsize = RefSegBlock.BitSizeNumber;
                 _repeated = RefSegBlock.RepeatedNumber;
-                IsArray = (_repeated == 1);
                 _isSetSize = true;
             }
             else
@@ -32,7 +31,7 @@ namespace FrameIO.Run
         }
 
         public SegRunUnpack NextRunSeg { get; set; }
-
+        public int BitSizeNumber { get => _bitsize;  }
 
         private int _bitsize;
         private int _repeated;
@@ -100,7 +99,7 @@ namespace FrameIO.Run
                     break;
 
                 case SegBlockType.Real:
-                    var seg2 = (FrameSegmentInteger)RefSegBlock.Segment;
+                    var seg2 = (FrameSegmentReal)RefSegBlock.Segment;
                     var et2 = seg2.Encoded;
                     var or2 = seg2.ByteOrder;
                     if (IsArray) NumberArrayValue = new ulong[_repeated];

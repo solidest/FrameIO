@@ -65,14 +65,16 @@ namespace FrameIO.Run
         }
 
         //转换为有符号数
-        static protected long ConvertToLong(ulong v, int bitsize)
+        static public long ConvertToLong(ulong v, int bitsize)
         {
             if (bitsize == 64 || bitsize == 1)
                 return (long)v;
             else
             {
                 if ((v & ((ulong)1 << (bitsize - 1))) != 0)
-                    return -(long)(~(ulong)0 >> (64 - bitsize + 1) & v);
+                {
+                    return (long)(~(ulong)0 <<bitsize | v);
+                }
                 else
                     return (long)v;
             }

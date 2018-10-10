@@ -84,11 +84,13 @@ namespace FrameIO.Run
             //填充字段：从 _seg_needfill 到 _seg_pos
             var buff = _cach.GetBuffer();
             var runseg = _seg_needfill.SegUnpack;
-            do
+            while (true)
             {
                 runseg.ReadValue(buff, ref _bit_offset, this);
+                if (runseg.RefSegBlock == _seg_pos) break;
                 runseg = runseg.NextRunSeg;
-            } while (runseg!=null && runseg.RefSegBlock != _seg_pos);
+                if (runseg == null) break;
+            } ;
             _seg_needfill = GetNextSegBlock(_seg_pos, true);
 
             //结尾

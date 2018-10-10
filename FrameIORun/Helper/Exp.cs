@@ -21,7 +21,7 @@ namespace FrameIO.Main
         //是否为常量1
         public bool IsIntOne()
         {
-            return (Op == exptype.EXP_ID && ConstStr == "1");
+            return (Op == exptype.EXP_INT && ConstStr == "1");
         }
 
         //是否为常量

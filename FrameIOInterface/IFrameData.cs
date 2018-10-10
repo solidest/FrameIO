@@ -75,6 +75,36 @@ namespace FrameIO.Interface
         ulong GetULong(string segmentname);
 
         /// <summary>
+        /// 获取字段的float值
+        /// </summary>
+        /// <param name="segmentname">字段的全路径名称</param>
+        /// <returns>返回的字段值</returns>
+        float GetFloat(string segmentname);
+
+
+        /// <summary>
+        /// 获取字段的double值
+        /// </summary>
+        /// <param name="segmentname">字段的全路径名称</param>
+        /// <returns>返回的字段值</returns>
+        double GetDouble(string segmentname);
+
+        /// <summary>
+        /// 获取字段的float数组值
+        /// </summary>
+        /// <param name="segmentname">字段的全路径名称</param>
+        /// <returns>返回的字段值</returns>
+        float[] GetFloatArray(string segmentname);
+
+
+        /// <summary>
+        /// 获取字段的double数组值
+        /// </summary>
+        /// <param name="segmentname">字段的全路径名称</param>
+        /// <returns>返回的字段值</returns>
+        double[] GetDoubleArray(string segmentname);
+
+        /// <summary>
         /// 获取字段的bool数组值
         /// </summary>
         /// <param name="segmentname">字段的全路径名称</param>

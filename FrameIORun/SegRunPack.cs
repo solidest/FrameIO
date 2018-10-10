@@ -16,18 +16,17 @@ namespace FrameIO.Run
             IsArray = !segbi.Segment.Repeated.IsIntOne();
             RefSegBlock = segbi;
 
-            if (segbi.BitSize.IsConst())
-                _bitsize = (int)segbi.BitSize.GetConstValue();
-            else
-                BitSize = ExpRun.CreateExpRun(segbi.BitSize, GetSegPreName(segbi.RefSegTree));
+            _bitsize = segbi.BitSizeNumber;
 
-            if (IsArray) Repeated = ExpRun.CreateExpRun(segbi.Repeated, GetSegPreName(segbi.RefSegTree));
+            var pre = GetSegPreName(segbi.RefSegTree);
+            BitSize = ExpRun.CreateExpRun(segbi.BitSize, pre);
+            Repeated = ExpRun.CreateExpRun(segbi.Repeated, pre);
+
         }
 
-        public bool IsSetValue { get ; private set; } //是否设置了本字段的值
+        public bool IsSetValue { get ; private set; }   //是否设置了本字段的值
 
-        private int _bitsize;           //固定的字段位长
-        private int _repeated;          //数组长度
+        private int _bitsize;                           //固定的字段位长
 
 
         //重置
@@ -65,15 +64,32 @@ namespace FrameIO.Run
             switch (ValueType)
             {
                 case SegBlockType.Integer:
-                case SegBlockType.Real:
-                    if(IsArray)
                     {
-                        for (int i = 0; i < NumberArrayValue.Length; i++)
-                            commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberArrayValue[i], _bitsize);
+                        var seg = (FrameSegmentInteger)RefSegBlock.Segment;
+                        if (IsArray)
+                        {
+                            for (int i = 0; i < NumberArrayValue.Length; i++)
+                                commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberArrayValue[i], _bitsize, seg.Encoded, seg.ByteOrder);
+                        }
+                        else
+                            commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberValue, _bitsize, seg.Encoded, seg.ByteOrder);
+                        break;
                     }
-                    else
-                        commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberValue, _bitsize);
-                    break;
+
+
+                case SegBlockType.Real:
+                    {
+                        var seg = (FrameSegmentReal)RefSegBlock.Segment;
+                        if (IsArray)
+                        {
+                            for (int i = 0; i < NumberArrayValue.Length; i++)
+                                commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberArrayValue[i], _bitsize, seg.Encoded, seg.ByteOrder);
+                        }
+                        else
+                            commit_b += WriteValue(commit, ref cach, ref cach_pos, NumberValue, _bitsize, seg.Encoded, seg.ByteOrder);
+                        break;
+                    }
+
                 case SegBlockType.Text:
                     //HACK 
                     break;
@@ -83,18 +99,21 @@ namespace FrameIO.Run
         }
 
         //写入一个指定长度的值，返回提交的整字节数
-        private int WriteValue(MemoryStream commit, ref ulong cach, ref int cach_pos, ulong value,  int size)
+        private int WriteValue(MemoryStream commit, ref ulong cach, ref int cach_pos, ulong value,  int size, EncodedType encode, ByteOrderType byor)
         {
+            //TODO 处理端序与编码
+
             int newpos = cach_pos + size;
             if(newpos<64)
             {
-                cach &= (value << cach_pos);
+                cach |= (value << cach_pos);
+                cach &= (~(ulong)0) >> (64- newpos);
                 cach_pos += size;
                 return 0;
             }
             else
             {
-                ulong cv = cach & (value << cach_pos);
+                ulong cv = cach | (value << cach_pos);
                 commit.Write(BitConverter.GetBytes(cv), 0, 8);
                 cach = value >> (64-cach_pos);
                 cach_pos = newpos - 64;
@@ -133,7 +152,7 @@ namespace FrameIO.Run
                     else
                     {
                         var dv = ExpRun.CreateExpRun(seg2.Value, GetSegPreName(RefSegBlock.RefSegTree)).GetRealValue(ir);
-                        var vl = _bitsize == 32 ? (ulong)BitConverter.ToUInt32(BitConverter.GetBytes((float)dv), 0) : BitConverter.ToUInt64(BitConverter.GetBytes(dv), 0);
+                        var vl = _bitsize == 32 ? BitConverter.ToUInt32(BitConverter.GetBytes((float)dv), 0) : BitConverter.ToUInt64(BitConverter.GetBytes(dv), 0);
                         SetNumberValue(vl);
                     }
                     break;
@@ -204,7 +223,7 @@ namespace FrameIO.Run
                     {
                         case SegBlockType.Integer:
                         case SegBlockType.Real:
-                            return _bitsize * _repeated;
+                            return _bitsize * NumberArrayValue.Length;
                         case SegBlockType.Text:
                             var ret = 0;
                             foreach(var t in TextArrayValue)
@@ -241,7 +260,6 @@ namespace FrameIO.Run
         public void SetNumberValue(ulong b)
         {
             if (ValueType == SegBlockType.Text || IsArray) throw new Exception("设置字段值类型不匹配");
-            _repeated = 1;
             IsSetValue = true;
             NumberValue = b;
         }
@@ -255,7 +273,6 @@ namespace FrameIO.Run
                 var rep = (int)Repeated.GetConstValue();
                 if(rep != size) throw new Exception("设置字段数组值长度不匹配");
             }
-            _repeated = size;
             IsSetValue = true;
             NumberArrayValue = new ulong[size];
         }
@@ -269,7 +286,6 @@ namespace FrameIO.Run
         //设置text的值
         public void SetTextValue(byte[] value)
         {
-            _repeated = 1;
             TextValue = value;
             IsSetValue = true;
         }
@@ -277,7 +293,6 @@ namespace FrameIO.Run
         //设置text数组的值
         public void SetTextArraySize(int size)
         {
-            _repeated = size;
             TextArrayValue = new byte[size][];
             IsSetValue = true;
        }

@@ -52,8 +52,34 @@ namespace FrameIO.Main
             //TODO 检查分系统类的属性映射关系
 
             //pj.SubsysList = ....
+            foreach(var sy in pj.SubsysList)
+            {
+                var syi = new SysInfo()
+                {
+                    Name = sy.Name
+                };
+                foreach(var ch in sy.Channels)
+                {
+                    var chi = new Channel() { Name = ch.Name };
+                    foreach(var op in ch.Options)
+                    {
+                        chi.DicOption.Add(GetString(op.OptionType), op.OptionValue);
+                    }
+                    syi.DicChannel.Add(ch.Name, chi);
+                }
+                pjinfo.DicSys.Add(sy.Name, syi);
+            }
+            
 
             //pj.EnumdefList = ....
+            foreach(var em in pj.EnumdefList)
+            {
+                var emi = new EnumInfo() { Name = em.Name };
+                foreach(var eit in em.ItemsList)
+                {
+                    emi.EnumItems.Add(eit.Name, GetEnumItemValue(em, eit.Name));
+                }
+            }
 
             CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
             return true;
@@ -328,19 +354,18 @@ namespace FrameIO.Main
 
                 sseg.IsFixed = seg.Repeated.IsConst();
                 sseg.SegType =  SegBlockType.Integer;
-
-
+                sseg.Repeated = seg.Repeated;
+                sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = seg.BitCount.ToString() };
+                sseg.BitSizeNumber = seg.BitCount;
+                
                 if (sseg.IsFixed)
                 {
-                    sseg.BitSizeNumber = seg.BitCount;
                     sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
-                    sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = seg.BitCount.ToString() };
-                    sseg.Repeated = seg.Repeated;
                     if (!CanExp(sseg.Repeated, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
@@ -358,16 +383,17 @@ namespace FrameIO.Main
                 var seg = (FrameSegmentReal)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst();
                 sseg.SegType = SegBlockType.Real;
+                sseg.Repeated = seg.Repeated;
+                sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = (seg.IsDouble ? 64 : 32).ToString() };
+                sseg.BitSizeNumber = seg.IsDouble ? 64 : 32;
                 if (sseg.IsFixed)
                 {
-                    sseg.BitSizeNumber = seg.IsDouble ? 64 : 32;
                     sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
                     sseggroup.SegBlockList.Add(sseg);
                     return sseggroup;
                 }
                 else
                 {
-                    sseg.BitSize = new Exp() { Op = exptype.EXP_INT, ConstStr = (seg.IsDouble ? 64 : 32).ToString() };
                     sseg.Repeated =  seg.Repeated ;
                     if (!CanExp(sseg.Repeated, sseggroup.SegBlockList, false))
                     {
@@ -386,27 +412,23 @@ namespace FrameIO.Main
                 var seg = (FrameSegmentText)segi.Segment;
                 sseg.IsFixed = seg.Repeated.IsConst() && seg.ByteSize.IsConst();
                 sseg.SegType = SegBlockType.Text;
-                if (sseg.IsFixed)
+                var expbyteszie = new Exp() { Op = exptype.EXP_INT, ConstStr = "8" };
+                sseg.BitSize = new Exp() { Op = exptype.EXP_MUL, LeftExp = seg.ByteSize, RightExp = expbyteszie };
+                sseg.Repeated = seg.Repeated;
+
+                if(seg.ByteSize.IsConst()) sseg.BitSizeNumber = (int)seg.ByteSize.GetConstValue() * 8;
+                if (seg.Repeated.IsConst()) sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
+                if (!sseg.IsFixed)
                 {
-                    sseg.BitSizeNumber = (int)seg.ByteSize.GetConstValue() * 8;
-                    sseg.RepeatedNumber = (int)seg.Repeated.GetConstValue();
-                    sseggroup.SegBlockList.Add(sseg);
-                    return sseggroup;
-                }
-                else
-                {
-                    var expbyteszie = new Exp() { Op = exptype.EXP_INT, ConstStr = "8" };
-                    sseg.BitSize = new Exp() { Op = exptype.EXP_MUL, LeftExp = seg.ByteSize, RightExp = expbyteszie };
-                    sseg.Repeated = seg.Repeated ;
                     if (!CanExp(seg.ByteSize, sseggroup.SegBlockList, false) || !CanExp(seg.Repeated, sseggroup.SegBlockList, false))
                     {
                         LastErrorInfo = "数据帧解析时使用了无法计算的表达式";
                         LastErrorSyid = seg.Syid;
                         return null;
                     }
-                    sseggroup.SegBlockList.Add(sseg);
-                    return sseggroup;
                 }
+                sseggroup.SegBlockList.Add(sseg);
+                return sseggroup;
             }
 
             //block字段
@@ -484,7 +506,7 @@ namespace FrameIO.Main
             var ret = segi.Name;
             while (segi.Parent != null)
             {
-                ret = segi.Parent.Name + "." + ret;
+                ret = ((segi.Parent.Name == "") ? "" : (segi.Parent.Name + ".")) + ret;
                 segi = segi.Parent;
             }
             return ret;
@@ -551,6 +573,16 @@ namespace FrameIO.Main
                 ret.AddRange(GetLastOrFirstFullName(seg, islast));
             }
             return ret;
+        }
+
+        #endregion
+
+
+        #region --helper--
+
+        static private string GetString(channeloptiontype t)
+        {
+            return "";
         }
 
         #endregion

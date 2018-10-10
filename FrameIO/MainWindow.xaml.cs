@@ -920,16 +920,57 @@ namespace FrameIO.Main
         private void onfoobar(object sender, RoutedEventArgs e)
         {
 
-            //FrameIO.Run.FrameIOFactory.InitialFactory("FrameIO.bin");
-            //var T = FrameIO.Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+
+            //integer a bitcount = 4 signed = true;
+            //integer b bitcount = 4 signed = false;
+            //integer c bitcount = 32 signed = false;
+            //real d isdouble = true;
+            //integer e bitcount = 1 repeated = 8;
+
+            sbyte a = -8;
+            byte b = 8;
+            int c = -99876;
+            double d = -7.5633484450000007;
+            bool?[] earr = new bool?[8];
+            earr[5] = true;
+
+            var p = Run.FrameIOFactory.GetFramePack("MSG1");
+            p.SetSegmentValue("a", a);
+            p.SetSegmentValue("b", b);
+            p.SetSegmentValue("c", c);
+            p.SetSegmentValue("d", d);
+            p.SetSegmentValue("e", earr);
+            var buf = p.Pack();
+
+            var u = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            Debug.Assert(u.FirstBlockSize == buf.Length-1);
+
+            var buf1 = new byte[buf.Length - 1];
+            for (int i = 0; i < buf1.Length; i++)
+                buf1[i] = buf[i];
+
+            var buf2 = new byte[1];
+            buf2[0] = buf[buf.Length - 1];
 
 
-            //ulong i = 12345;
-            //double d = 5.000791273786;
-            //float f = -8.354f;
-            //uint ui = BitConverter.ToUInt32(BitConverter.GetBytes(f), 0);
-            //i = ui;
-            //float d2 = BitConverter.ToSingle( BitConverter.GetBytes(ui), 0);
+            int ii = u.AppendBlock(buf1);
+            Debug.Assert(ii == 1);
+            ii = u.AppendBlock(buf2);
+            Debug.Assert(ii == 0);
+            var data = u.Unpack();
+
+            var a1 = data.GetSByte("a");
+            var b1 = data.GetByte("b");
+            var c1 = data.GetInt("c");
+            var d1 = data.GetDouble("d");
+            var earr1 = data.GetBoolArray("e");
+
+            Debug.Assert(a == a1);
+            Debug.Assert(earr1[5]);
+
+            OutText("测试通过", false);
+      
 
         }
 

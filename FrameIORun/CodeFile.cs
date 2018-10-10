@@ -12,7 +12,6 @@ namespace FrameIO.Main
     public class CodeFile
     {
 
-
         //保存二进制数据帧文件
         static public void SaveFrameBinFile(string filename, ProjectInfo pj)
         {
@@ -23,7 +22,6 @@ namespace FrameIO.Main
                 formatter.Serialize(fs, pj);
             }
         }
-
 
         //读取数据帧文件
         static public ProjectInfo ReadFrameBinFile(string filename)
@@ -42,7 +40,7 @@ namespace FrameIO.Main
     {
         public Dictionary<string, SysInfo> DicSys { get; set; } = new Dictionary<string, SysInfo>();
         public Dictionary<string, FrameBlockInfo> DicFrame { get; set; } = new Dictionary<string, FrameBlockInfo>();
-        public Dictionary<string, Enumdef> DicEnum { get; set; } = new Dictionary<string, Enumdef>();
+        public Dictionary<string, EnumInfo> DicEnum { get; set; } = new Dictionary<string, EnumInfo>();
     }
 
     //分系统信息
@@ -61,4 +59,13 @@ namespace FrameIO.Main
         public syschanneltype ChType { get; set; }
         public Dictionary<string, string> DicOption { get; set; } = new Dictionary<string, string>();
     }
+
+    //枚举定义信息
+    [Serializable]
+    public class EnumInfo
+    {
+        public string Name { get; set; }
+        public Dictionary<string, ulong> EnumItems { get; set; } = new Dictionary<string, ulong>();
+    }
+
 }

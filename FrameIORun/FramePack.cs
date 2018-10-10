@@ -61,7 +61,8 @@ namespace FrameIO.Run
         //打包函数
         public byte[] Pack()
         {
-            using (var commit = new MemoryStream())
+            var commit = new MemoryStream();
+            using (commit)
             {
                 ulong cach = 0;
                 int cach_pos = 0;
@@ -70,12 +71,16 @@ namespace FrameIO.Run
                 var seg = _rootseggp.SegBlockList[0];
                 while(seg != null)
                 {
-                    seg.SegPack.WriteValue(commit,ref commitbytelen, ref cach, ref cach_pos, this);
+                    seg.SegPack.WriteValue(commit, ref commitbytelen, ref cach, ref cach_pos, this);
                     seg = GetNextSegBlock(seg);
                 }
-                Debug.Assert(cach_pos == 0);
-                return commit.ToArray();
+                if(cach_pos!=0)
+                {
+                    if (cach_pos % 8 != 0) throw new Exception("打包完成时出现非整字节");
+                    commit.Write(BitConverter.GetBytes(cach), 0, cach_pos / 8);
+                }
             }
+            return commit.ToArray();
         }
 
         #region --Next Step--
@@ -168,7 +173,7 @@ namespace FrameIO.Run
             if (value == null)
                 _runseglist[segmentname].SetNumberValue(0);
             else
-                _runseglist[segmentname].SetNumberValue((ulong)(sbyte)value);
+                _runseglist[segmentname].SetNumberValue(BitConverter.GetBytes((sbyte)value)[0]);
         }
 
         public void SetSegmentValue(string segmentname, ushort? value)
@@ -184,7 +189,7 @@ namespace FrameIO.Run
             if (value == null)
                 _runseglist[segmentname].SetNumberValue(0);
             else
-                _runseglist[segmentname].SetNumberValue((ulong)(short)value);
+                _runseglist[segmentname].SetNumberValue(BitConverter.ToUInt16(BitConverter.GetBytes((short)value), 0));
         }
 
         public void SetSegmentValue(string segmentname, uint? value)
@@ -200,7 +205,7 @@ namespace FrameIO.Run
             if (value == null)
                 _runseglist[segmentname].SetNumberValue(0);
             else
-                _runseglist[segmentname].SetNumberValue((ulong)(int)value);
+                _runseglist[segmentname].SetNumberValue(BitConverter.ToUInt32(BitConverter.GetBytes((int)value), 0));
         }
 
         public void SetSegmentValue(string segmentname, ulong? value)
@@ -216,7 +221,7 @@ namespace FrameIO.Run
             if (value == null)
                 _runseglist[segmentname].SetNumberValue(0);
             else
-                _runseglist[segmentname].SetNumberValue((ulong)(long)value);
+                _runseglist[segmentname].SetNumberValue(BitConverter.ToUInt64(BitConverter.GetBytes((long)value), 0));
         }
 
         public void SetSegmentValue(string segmentname, float? value)
@@ -224,7 +229,7 @@ namespace FrameIO.Run
             if (value == null)
                 _runseglist[segmentname].SetNumberValue(0);
             else
-                _runseglist[segmentname].SetNumberValue(BitConverter.ToUInt32( BitConverter.GetBytes((float)value), 0));
+                _runseglist[segmentname].SetNumberValue(BitConverter.ToUInt32(BitConverter.GetBytes((float)value), 0));
         }
 
         public void SetSegmentValue(string segmentname, double? value)
@@ -278,7 +283,7 @@ namespace FrameIO.Run
                     segrun.SetNumberArrayAt(i, 0);
                 else
                 {
-                    segrun.SetNumberArrayAt(i, (ulong)(sbyte)value[i]);
+                    segrun.SetNumberArrayAt(i, BitConverter.GetBytes((sbyte)value[i])[0]);
                 }
             }
         }
@@ -308,7 +313,7 @@ namespace FrameIO.Run
                     segrun.SetNumberArrayAt(i, 0);
                 else
                 {
-                    segrun.SetNumberArrayAt(i, (ulong)(short)value[i]);
+                    segrun.SetNumberArrayAt(i, BitConverter.ToUInt16(BitConverter.GetBytes((short)value[i]), 0));
                 }
             }
         }
@@ -338,7 +343,7 @@ namespace FrameIO.Run
                     segrun.SetNumberArrayAt(i, 0);
                 else
                 {
-                    segrun.SetNumberArrayAt(i, (ulong)(int)value[i]);
+                    segrun.SetNumberArrayAt(i, BitConverter.ToUInt32(BitConverter.GetBytes((int)value[i]), 0));
                 }
             }
         }
@@ -368,7 +373,7 @@ namespace FrameIO.Run
                     segrun.SetNumberArrayAt(i, 0);
                 else
                 {
-                    segrun.SetNumberArrayAt(i, (ulong)(long)value[i]);
+                    segrun.SetNumberArrayAt(i, BitConverter.ToUInt64(BitConverter.GetBytes((long)value[i]), 0));
                 }
             }
         }
