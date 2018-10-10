@@ -8,10 +8,10 @@ using FrameIO.Main;
 
 namespace FrameIO.Run
 {
-    //运行时字段信息
-    public class SegRun
+    //解包时字段
+    public class SegUnpack
     {
-        public SegRun(SegBlockInfo segbi)
+        public SegUnpack(SegBlockInfo segbi)
         {
             ValueType = segbi.SegType;
             IsArray = !segbi.Segment.Repeated.IsIntOne();
@@ -37,18 +37,37 @@ namespace FrameIO.Run
         public ulong[] NumberArrayValue { get; private set; }
         public byte[][] TextArrayValue { get; private set; }
         public SegBlockInfo RefSegBlock { get; set; }
-        public SegRun NextRunSeg { get; set; }
+        public SegUnpack NextRunSeg { get; set; }
         public ExpRun BitSize { get; private set; }
         public ExpRun Repeated { get; private set; }
-        public int BitStart { get => _bitstart; }
+        public int BitStart { get; private set; } = -1; //内存中的开始比特位置
 
         private int _bitsize;
         private int _repeated;
-        private int _bitstart;          //内存总的开始比特位置
         private bool _isSetSize;
 
+        public void Reset()
+        {
+            _isSetSize = false;
+            if (RefSegBlock.IsFixed)
+            {
+                _bitsize = RefSegBlock.BitSizeNumber;
+                _repeated = RefSegBlock.RepeatedNumber;
+                _isSetSize = true;
+            }
+            else
+            {
+                _isSetSize = false;
+            }
+            NumberValue = 0;
+            TextValue = null;
+            NumberArrayValue = null;
+            TextArrayValue = null;
+            BitStart = -1;
+        }
+
         //取本字段的总长度
-        public int GetBitLen(ISegRun ic)
+        public int GetBitLen(IFrameRun ic)
         {
             if (!_isSetSize)
             {
@@ -60,36 +79,39 @@ namespace FrameIO.Run
         }
 
         //从内存中读取本字段的值
-        public void ReadValue(byte[] buff, ref int startBit, ISegRun ib)
+        public void ReadValue(byte[] buff, ref int startBit, IUnpackFrameRun ib)
         {
-            _bitstart = startBit;
+            BitStart = startBit;
 
             int len = GetBitLen(ib);
 
             switch (ValueType)
             {
                 case SegBlockType.Integer:
-                    var seg = (FrameSegmentInteger)RefSegBlock.Segment;
-                    var et1 = seg.Encoded;
+                    var seg1 = (FrameSegmentInteger)RefSegBlock.Segment;
+                    var et1 = seg1.Encoded;
+                    var or1 = seg1.ByteOrder;
                     if (IsArray) NumberArrayValue = new ulong[_repeated];
                     for (int i = 0; i < _repeated; i++)
                     {
-                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et1); 
+                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et1, or1); 
                         startBit += _bitsize;
                         if (IsArray)
                             NumberArrayValue[i] = vl;
                         else
                             NumberValue = vl;
                     }
-                    if (seg.VCheck != CheckType.None) HandleCheckSeg(buff, startBit, ib);
+                    if (seg1.VCheck != CheckType.None) HandleCheckSeg(buff, startBit, ib);
                     break;
 
                 case SegBlockType.Real:
-                    var et2 = ((FrameSegmentInteger)RefSegBlock.Segment).Encoded;
+                    var seg2 = (FrameSegmentInteger)RefSegBlock.Segment;
+                    var et2 = seg2.Encoded;
+                    var or2 = seg2.ByteOrder;
                     if (IsArray) NumberArrayValue = new ulong[_repeated];
                     for (int i = 0; i < _repeated; i++)
                     {
-                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et2);
+                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et2, or2);
                         startBit += _bitsize;
                         if (IsArray)
                             NumberArrayValue[i] = vl;
@@ -118,12 +140,12 @@ namespace FrameIO.Run
                     startBit += istart * 8;
                     break;
             }
-            ib.AddIdSeg(RefSegBlock.FullName, this);
-            Debug.Assert(startBit == (_bitstart + GetBitLen(ib)));
+            ib.AddUnpackSeg(RefSegBlock.FullName, this);
+            Debug.Assert(startBit == (BitStart + GetBitLen(ib)));
         }
 
         //验证校验字段是否正确
-        public void HandleCheckSeg(byte[] buff, int endBit, ISegRun ib)
+        public void HandleCheckSeg(byte[] buff, int endBit, IUnpackFrameRun ib)
         {
             int byteStart = 0;
             int byteEnd = endBit/8;
@@ -133,7 +155,7 @@ namespace FrameIO.Run
             {
                 foreach(var n in RefSegBlock.CheckBeginSegs)
                 {
-                    var segr = ib.FindSegRun(n);
+                    var segr = ib.FindUnpackSegRun(n);
                     if (segr!=null)
                     {
                         byteStart = segr.BitStart/8;
@@ -146,7 +168,7 @@ namespace FrameIO.Run
             {
                 foreach (var n in RefSegBlock.CheckEndSegs)
                 {
-                    var segr = ib.FindSegRun(n);
+                    var segr = ib.FindUnpackSegRun(n);
                     if (segr != null)
                     {
                         byteStart = (segr.BitStart + segr.GetBitLen(ib)) / 8;
@@ -162,13 +184,16 @@ namespace FrameIO.Run
         }
 
 
-        //取本字段的计算值
+        //取本字段用于公式计算时的值
         public double GetEvalValue()
         {
             switch(ValueType)
             {
                 case SegBlockType.Integer:
-                    return NumberValue;
+                    if (((FrameSegmentInteger)RefSegBlock.Segment).Signed)
+                        return (long)NumberValue;  //TODO 处理有符号数
+                    else
+                        return NumberValue;
                 case SegBlockType.Real:
                     return _bitsize==32?(BitConverter.ToSingle(BitConverter.GetBytes((uint)NumberValue), 0)):(BitConverter.ToDouble(BitConverter.GetBytes(NumberValue), 0));
             }
@@ -193,10 +218,10 @@ namespace FrameIO.Run
         }
 
         //取任意位的指定长度字节
-        static public ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x, EncodedType et)
+        static public ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x, EncodedType et, ByteOrderType ot)
         {
             return GetUInt64FromByte(buff, bitStart) & ((x != 0) ? (~(ulong)0 >> (sizeof(ulong) * 8 - x)) : (ulong)0);
-            //TODO 处理反码与补码
+            //TODO 处理反码与补码及大小端序
         }
 
 

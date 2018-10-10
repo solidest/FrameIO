@@ -48,11 +48,11 @@ namespace FrameIO.Main
     {
 
         [NonSerialized]
-        private SegRun _run;
+        private SegUnpack _run;
         public FrameSegmentBase Segment { get; private set; }
         public SegTreeInfo RefSegTree { get; private set; }
-        public List<String> CheckBeginSegs { get; set; }
-        public List<String> CheckEndSegs { get; set; }
+        public List<string> CheckBeginSegs { get; set; }
+        public List<string> CheckEndSegs { get; set; }
         public SegBlockInfo(int idx, FrameSegmentBase seg, SegTreeInfo segt)
         {
             Idx = idx;
@@ -72,7 +72,7 @@ namespace FrameIO.Main
         public SegBlockInfoGroup Parent { get; set; }
 
         //动态计算的内容
-        public SegRun SegRun { get=>_run; set { _run = value; } } 
+        public SegUnpack SegRun { get=>_run; set { _run = value; } } 
     }
 
 

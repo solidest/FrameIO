@@ -48,6 +48,10 @@ namespace FrameIO.Main
                 };
                pjinfo.DicFrame.Add(fr.Name, fri);
             }
+
+            //TODO 检查分系统类的属性映射关系
+
+
             CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
             return true;
         }

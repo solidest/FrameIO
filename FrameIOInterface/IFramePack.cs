@@ -9,10 +9,6 @@ namespace FrameIO.Interface
     /// </summary>
     public interface IFramePack
     {
-        /// <summary>
-        /// 数据帧打包后的字节大小
-        /// </summary>
-        int ByteSize { get; }
 
         /// <summary>
         /// 将数据帧打包成字节流
@@ -20,5 +16,14 @@ namespace FrameIO.Interface
         /// <returns>返回数据帧打包后的字节流</returns>
         byte[] Pack();
 
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, ushort? value);
+
+        void SetSegmentValue(string segmentname, ushort?[] value);
+        void SetSegmentValue(string segmentname, bool? value);
     }
 }

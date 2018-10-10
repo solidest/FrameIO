@@ -46,7 +46,7 @@ namespace FrameIO.Run
 
 
         //计算数值
-        public double GetRealValue(ISegRun ib)
+        public double GetRealValue(IFrameRun ib)
         {
             switch (Op)
             {

@@ -9,7 +9,7 @@ using FrameIO.Main;
 
 namespace FrameIO.Run
 {
-    public class FrameUnpack : IFrameUnpack, ISegRun
+    public class FrameUnpack : IFrameUnpack, IUnpackFrameRun
     {
         //根字段组
         private SegBlockInfoGroup _rootbkgr;
@@ -36,7 +36,7 @@ namespace FrameIO.Run
         private int _bit_offset = 0;
 
         //运行时字段列表
-        private Dictionary<string, SegRun> _runseglist = new Dictionary<string, SegRun>();
+        private Dictionary<string, SegUnpack> _runseglist = new Dictionary<string, SegUnpack>();
 
         public FrameUnpack(SegBlockInfoGroup fri)
         {
@@ -166,7 +166,7 @@ namespace FrameIO.Run
             if (nextg.IsOneOfGroup)
             {
                 if (!intoOneOf) return null;
-                var iv =FindSegRun(nextg.OneOfSegFullName).NumberValue;
+                var iv =FindUnpackSegRun(nextg.OneOfSegFullName).NumberValue;
                 foreach(var gp in nextg.OneOfGroupList)
                 {
                     if(iv == gp.Key)
@@ -202,8 +202,15 @@ namespace FrameIO.Run
         //连接两个字段的运行时
         private static void UnionSegRun(SegBlockInfo l, SegBlockInfo r)
         {
-            if (r.SegRun == null) r.SegRun = new SegRun(r);
-            if (l.SegRun == null) l.SegRun = new SegRun(l);
+            if (r.SegRun == null)
+                r.SegRun = new SegUnpack(r);
+            else
+                r.SegRun.Reset();
+
+            if (l.SegRun == null)
+                l.SegRun = new SegUnpack(l);
+            else
+                l.SegRun.Reset();
             l.SegRun.NextRunSeg = r.SegRun;
         }
 
@@ -223,12 +230,12 @@ namespace FrameIO.Run
             return _runseglist[idfullname].GetEvalValue();
         }
 
-        public void AddIdSeg(string idfullname, SegRun seg)
+        public void AddUnpackSeg(string idfullname, SegUnpack seg)
         {
             _runseglist.Add(idfullname, seg);
         }
 
-        public SegRun FindSegRun(string fullname)
+        public SegUnpack FindUnpackSegRun(string fullname)
         {
             if (_runseglist.ContainsKey(fullname))
                 return _runseglist[fullname];

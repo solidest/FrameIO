@@ -82,13 +82,27 @@ namespace PROJECT1.SYS1
         }
 
                
-        public void SEND_ACTION_EXCAMPLE()
+        public void Recv_ACTION_EXAMPLE()
         {
             try
             {
                 var funpack = FrameIOFactory.GetFrameUnpack("FRAME1");
                 var data = CH1.ReadFrame(funpack);
-                PROPERTYA.Value = data.GetUShort("SEG1");
+                PROPERTYA.Value = data.GetUInt16("SEG1");
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
+        }
+
+        public void Send_ACTION_EXAMPLE()
+        {
+            try
+            {
+                var fpack = FrameIOFactory.GetFramePack("FRAME1");
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                CH1.WriteFrame(fpack);
             }
             catch (FrameIOException ex)
             {

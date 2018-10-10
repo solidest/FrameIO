@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="CodeFile.cs" />
     <Compile Include="FrameBlock.cs" />
+    <Compile Include="FramePack.cs" />
     <Compile Include="FrameUnpack.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
@@ -64,7 +65,8 @@
     <Compile Include="Model\SubSysChannel.cs" />
     <Compile Include="Model\SubSysChannelOption.cs" />
     <Compile Include="Model\SubSysProperty.cs" />
-    <Compile Include="SegRun.cs" />
+    <Compile Include="SegPack.cs" />
+    <Compile Include="SegUnpack.cs" />
     <Compile Include="FrameIOFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

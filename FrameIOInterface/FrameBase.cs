@@ -10,14 +10,15 @@ namespace FrameIO.Interface
     public class FrameBase
     {
         /// <summary>
-        /// 获取一个ushort类型值
+        /// 获取一个ushort类型字段的值
         /// </summary>
         /// <param name="segname">指定字段名称</param>
         /// <returns>返回字段的值</returns>
-        public ushort GetUShort(string segname)
+        public ushort GetUInt16(string segname)
         {
             return 0;
         }
+
 
     }
 }

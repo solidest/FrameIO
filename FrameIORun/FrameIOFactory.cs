@@ -25,6 +25,12 @@ namespace FrameIO.Run
             return new FrameUnpack(_pj.DicFrame[framename].RootSegBlockGroupInfo);
         }
 
+        //获取数据帧的打包接口
+        public static IFramePack GetFramePack(string framename)
+        {
+            return new FramePack(_pj.DicFrame[framename].RootSegBlockGroupInfo);
+        }
+
         //获取通道的接口
         
         public static IChannelBase GetChannel(string sysname, string channelname)

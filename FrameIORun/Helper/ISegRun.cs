@@ -6,13 +6,19 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-    public interface ISegRun
+    public interface IFrameRun
     {
         int ByteSizeOf(string segname);
         double GetIdValue(string idfullname);
 
-        void AddIdSeg(string idfullname, SegRun seg);
-
-        SegRun FindSegRun(string fullname);
     }
+
+    public interface IUnpackFrameRun:IFrameRun
+    {
+
+        void AddUnpackSeg(string idfullname, SegUnpack seg);
+
+        SegUnpack FindUnpackSegRun(string fullname);
+    }
+
 }
