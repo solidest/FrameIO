@@ -40,10 +40,11 @@ namespace FrameIO.Run
         public void Reset()
         {
             _isSetSize = false;
+            _bitsize = RefSegBlock.BitSizeNumber;
+            _repeated = RefSegBlock.RepeatedNumber;
+
             if (RefSegBlock.IsFixed)
             {
-                _bitsize = RefSegBlock.BitSizeNumber;
-                _repeated = RefSegBlock.RepeatedNumber;
                 _isSetSize = true;
             }
             else
@@ -82,16 +83,23 @@ namespace FrameIO.Run
                     var seg1 = (FrameSegmentInteger)RefSegBlock.Segment;
                     var et1 = seg1.Encoded;
                     var or1 = seg1.ByteOrder;
-                    if (IsArray) NumberArrayValue = new ulong[_repeated];
-                    for (int i = 0; i < _repeated; i++)
+                    if (IsArray)
                     {
-                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et1, or1); 
-                        startBit += _bitsize;
-                        if (IsArray)
+                        NumberArrayValue = new ulong[_repeated];
+                        for (int i = 0; i < _repeated; i++)
+                        {
+                            var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et1, or1); 
+                            startBit += _bitsize;
                             NumberArrayValue[i] = vl;
-                        else
-                            NumberValue = vl;
+                        }
                     }
+                    else
+                    {
+                        var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et1, or1);
+                        startBit += _bitsize;
+                        NumberValue = vl;
+                    }
+                    
                     if (seg1.VCheck != CheckType.None) ValidateCheckSeg(buff, startBit, ib);
                     if (seg1.VMax != null || seg1.VMax != "") CheckMax(seg1.VMax);
                     if (seg1.VMin != null || seg1.VMin != "") CheckMin(seg1.VMin);
@@ -102,25 +110,45 @@ namespace FrameIO.Run
                     var seg2 = (FrameSegmentReal)RefSegBlock.Segment;
                     var et2 = seg2.Encoded;
                     var or2 = seg2.ByteOrder;
-                    if (IsArray) NumberArrayValue = new ulong[_repeated];
-                    for (int i = 0; i < _repeated; i++)
+                    if (IsArray)
+                    {
+                        NumberArrayValue = new ulong[_repeated];
+                        for (int i = 0; i < _repeated; i++)
+                        {
+                            var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et2, or2);
+                            startBit += _bitsize;
+                            NumberArrayValue[i] = vl;
+                        }
+                    }
+                    else
                     {
                         var vl = GetUIntxFromByte(buff, (uint)startBit, _bitsize, et2, or2);
                         startBit += _bitsize;
-                        if (IsArray)
-                            NumberArrayValue[i] = vl;
-                        else
-                            NumberValue = vl;
+                        NumberValue = vl;
                     }
+
                     if (seg2.VMax != null || seg2.VMax != "") CheckMax(seg2.VMax);
                     if (seg2.VMin != null || seg2.VMin != "") CheckMin(seg2.VMin);
                     break;
 
                 case SegBlockType.Text:
                     if (startBit % 8 != 0) throw new Exception("数据解析时出现非整字节");
-                    if (IsArray) TextArrayValue = new byte[_repeated][];
                     int istart = startBit / 8;
-                    for(int i=0; i<_repeated; i++)
+                    if (IsArray)
+                    {
+                        TextArrayValue = new byte[_repeated][];
+                        for(int i=0; i<_repeated; i++)
+                        {
+                            var vbs = new byte[_bitsize / 8];
+                            for(int ii=0; ii<_bitsize/8; ii++)
+                            {
+                                vbs[ii] = buff[istart];
+                                istart += 1;
+                            }
+                            TextArrayValue[i] = vbs;
+                        }
+                    }
+                    else
                     {
                         var vbs = new byte[_bitsize / 8];
                         for(int ii=0; ii<_bitsize/8; ii++)
@@ -128,11 +156,9 @@ namespace FrameIO.Run
                             vbs[ii] = buff[istart];
                             istart += 1;
                         }
-                        if (IsArray)
-                            TextArrayValue[i] = vbs;
-                        else
-                            TextValue = vbs;
+                        TextValue = vbs;
                     }
+                   
                     startBit += istart * 8;
                     break;
             }

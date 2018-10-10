@@ -75,7 +75,11 @@ namespace FrameIO.Run
             _seg_needfill = _rootbkgr.SegBlockList[0];
 
             _bit_offset = 0;
-            _runseglist = new Dictionary<string, SegRunUnpack>(); 
+            foreach(var s in _runseglist.Values)
+            {
+                s.Reset();
+            }
+            _runseglist.Clear(); 
         }
         
         //填充一组字段的值 并返回下一组内存大小
@@ -149,7 +153,6 @@ namespace FrameIO.Run
             if(_cach == null || _nextsize !=0)
                 throw new Exception("AppendBlock调用出错");
             var ret = new FrameData(_runseglist);
-            _runseglist = null;
             Reset();
             return ret;
         }
@@ -202,15 +205,9 @@ namespace FrameIO.Run
         //连接两个字段的运行时
         private static void UnionSegRun(SegBlockInfo l, SegBlockInfo r)
         {
-            if (r.SegUnpack == null)
-                r.SegUnpack = new SegRunUnpack(r);
-            else
-                r.SegUnpack.Reset();
+            if (r.SegUnpack == null) r.SegUnpack = new SegRunUnpack(r);
+            if (l.SegUnpack == null) l.SegUnpack = new SegRunUnpack(l);
 
-            if (l.SegUnpack == null)
-                l.SegUnpack = new SegRunUnpack(l);
-            else
-                l.SegUnpack.Reset();
             l.SegUnpack.NextRunSeg = r.SegUnpack;
             r.SegUnpack.NextRunSeg = null;
         }
