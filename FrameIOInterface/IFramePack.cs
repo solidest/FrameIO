@@ -21,9 +21,175 @@ namespace FrameIO.Interface
         /// </summary>
         /// <param name="segmentname">字段名称</param>
         /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, bool? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, byte? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, sbyte? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
         void SetSegmentValue(string segmentname, ushort? value);
 
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, short? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, uint? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, int? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, ulong? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, long? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, float? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, double? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, bool?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, byte?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, sbyte?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
         void SetSegmentValue(string segmentname, ushort?[] value);
-        void SetSegmentValue(string segmentname, bool? value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, short?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, uint?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, int?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, ulong?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, long?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, float?[] value);
+
+
+        /// <summary>
+        /// 设置数据帧字段的值
+        /// </summary>
+        /// <param name="segmentname">字段名称</param>
+        /// <param name="value">字段值</param>
+        void SetSegmentValue(string segmentname, double?[] value);
+
     }
 }

@@ -51,6 +51,9 @@ namespace FrameIO.Main
 
             //TODO 检查分系统类的属性映射关系
 
+            //pj.SubsysList = ....
+
+            //pj.EnumdefList = ....
 
             CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
             return true;

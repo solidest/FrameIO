@@ -36,7 +36,7 @@ namespace FrameIO.Run
         private int _bit_offset = 0;
 
         //运行时字段列表
-        private Dictionary<string, SegUnpack> _runseglist = new Dictionary<string, SegUnpack>();
+        private Dictionary<string, SegRunUnpack> _runseglist = new Dictionary<string, SegRunUnpack>();
 
         public FrameUnpack(SegBlockInfoGroup fri)
         {
@@ -75,7 +75,7 @@ namespace FrameIO.Run
             _seg_needfill = _rootbkgr.SegBlockList[0];
 
             _bit_offset = 0;
-            _runseglist.Clear();
+            _runseglist = new Dictionary<string, SegRunUnpack>(); 
         }
         
         //填充一组字段的值 并返回下一组内存大小
@@ -83,7 +83,7 @@ namespace FrameIO.Run
         {
             //填充字段：从 _seg_needfill 到 _seg_pos
             var buff = _cach.GetBuffer();
-            var runseg = _seg_needfill.SegRun;
+            var runseg = _seg_needfill.SegUnpack;
             do
             {
                 runseg.ReadValue(buff, ref _bit_offset, this);
@@ -100,7 +100,7 @@ namespace FrameIO.Run
 
             //至少需要追加一个字段
             var npos = _seg_needfill;
-            int bitlen = (int)npos.SegRun.GetBitLen(this);
+            int bitlen = (int)npos.SegUnpack.GetBitLen(this);
             _seg_pos = npos;
 
             //还需继续追加固定大小字段
@@ -142,16 +142,14 @@ namespace FrameIO.Run
         }
 
         //解包函数
-        public FrameBase Unpack()
+        public IFrameData Unpack()
         {
             if(_cach == null || _nextsize !=0)
                 throw new Exception("AppendBlock调用出错");
-
-
-            //检查数值准确性
-
+            var ret = new FrameData(_runseglist);
+            _runseglist = null;
             Reset();
-            return null;
+            return ret;
         }
 
 
@@ -166,7 +164,7 @@ namespace FrameIO.Run
             if (nextg.IsOneOfGroup)
             {
                 if (!intoOneOf) return null;
-                var iv =FindUnpackSegRun(nextg.OneOfSegFullName).NumberValue;
+                var iv = FindUnpackSegRun(nextg.OneOfSegFullName).NumberValue;
                 foreach(var gp in nextg.OneOfGroupList)
                 {
                     if(iv == gp.Key)
@@ -202,16 +200,17 @@ namespace FrameIO.Run
         //连接两个字段的运行时
         private static void UnionSegRun(SegBlockInfo l, SegBlockInfo r)
         {
-            if (r.SegRun == null)
-                r.SegRun = new SegUnpack(r);
+            if (r.SegUnpack == null)
+                r.SegUnpack = new SegRunUnpack(r);
             else
-                r.SegRun.Reset();
+                r.SegUnpack.Reset();
 
-            if (l.SegRun == null)
-                l.SegRun = new SegUnpack(l);
+            if (l.SegUnpack == null)
+                l.SegUnpack = new SegRunUnpack(l);
             else
-                l.SegRun.Reset();
-            l.SegRun.NextRunSeg = r.SegRun;
+                l.SegUnpack.Reset();
+            l.SegUnpack.NextRunSeg = r.SegUnpack;
+            r.SegUnpack.NextRunSeg = null;
         }
 
         #endregion
@@ -221,21 +220,21 @@ namespace FrameIO.Run
         public int ByteSizeOf(string segname)
         {
             if (_runseglist.ContainsKey(segname))
-                return (int)_runseglist[segname].RefSegBlock.SegRun.GetBitLen(this)/8;
+                return  _runseglist[segname].RefSegBlock.SegUnpack.GetBitLen(this)/8;
             throw new Exception("解包过程中意外调用了ByteSizeOf");
         }
 
-        public double GetIdValue(string idfullname)
+        public double GetSegValue(string idfullname)
         {
             return _runseglist[idfullname].GetEvalValue();
         }
 
-        public void AddUnpackSeg(string idfullname, SegUnpack seg)
+        public void AddUnpackSeg(string idfullname, SegRunUnpack seg)
         {
             _runseglist.Add(idfullname, seg);
         }
 
-        public SegUnpack FindUnpackSegRun(string fullname)
+        public SegRunUnpack FindUnpackSegRun(string fullname)
         {
             if (_runseglist.ContainsKey(fullname))
                 return _runseglist[fullname];
@@ -243,5 +242,7 @@ namespace FrameIO.Run
         }
 
         #endregion
+
+
     }
 }

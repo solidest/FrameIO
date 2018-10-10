@@ -26,7 +26,7 @@ namespace FrameIO.Interface
         /// 执行解包操作，返回解包后得到的对象
         /// </summary>
         /// <returns>解包后的数据帧对象</returns>
-        FrameBase Unpack();
+        IFrameData Unpack();
 
     }
 }

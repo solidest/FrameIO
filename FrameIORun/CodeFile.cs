@@ -42,6 +42,7 @@ namespace FrameIO.Main
     {
         public Dictionary<string, SysInfo> DicSys { get; set; } = new Dictionary<string, SysInfo>();
         public Dictionary<string, FrameBlockInfo> DicFrame { get; set; } = new Dictionary<string, FrameBlockInfo>();
+        public Dictionary<string, Enumdef> DicEnum { get; set; } = new Dictionary<string, Enumdef>();
     }
 
     //分系统信息

@@ -9,9 +9,9 @@ using FrameIO.Main;
 namespace FrameIO.Run
 {
     //解包时字段
-    public class SegUnpack
+    public class SegRunUnpack : SegRun
     {
-        public SegUnpack(SegBlockInfo segbi)
+        public SegRunUnpack(SegBlockInfo segbi)
         {
             ValueType = segbi.SegType;
             IsArray = !segbi.Segment.Repeated.IsIntOne();
@@ -30,17 +30,9 @@ namespace FrameIO.Run
                 Repeated = ExpRun.CreateExpRun(segbi.Repeated, GetSegPreName(segbi.RefSegTree));
             }
         }
-        public SegBlockType ValueType { get; set; }
-        public bool IsArray { get; set; }
-        public ulong NumberValue { get; private set; }
-        public byte[] TextValue { get; private set; }
-        public ulong[] NumberArrayValue { get; private set; }
-        public byte[][] TextArrayValue { get; private set; }
-        public SegBlockInfo RefSegBlock { get; set; }
-        public SegUnpack NextRunSeg { get; set; }
-        public ExpRun BitSize { get; private set; }
-        public ExpRun Repeated { get; private set; }
-        public int BitStart { get; private set; } = -1; //内存中的开始比特位置
+
+        public SegRunUnpack NextRunSeg { get; set; }
+
 
         private int _bitsize;
         private int _repeated;
@@ -67,7 +59,7 @@ namespace FrameIO.Run
         }
 
         //取本字段的总长度
-        public int GetBitLen(IFrameRun ic)
+        public int GetBitLen(IUnpackFrameRun ic)
         {
             if (!_isSetSize)
             {
@@ -101,7 +93,10 @@ namespace FrameIO.Run
                         else
                             NumberValue = vl;
                     }
-                    if (seg1.VCheck != CheckType.None) HandleCheckSeg(buff, startBit, ib);
+                    if (seg1.VCheck != CheckType.None) ValidateCheckSeg(buff, startBit, ib);
+                    if (seg1.VMax != null || seg1.VMax != "") CheckMax(seg1.VMax);
+                    if (seg1.VMin != null || seg1.VMin != "") CheckMin(seg1.VMin);
+                    if (seg1.VToEnum != null || seg1.VToEnum != "") CheckToEnum(seg1.VToEnum);
                     break;
 
                 case SegBlockType.Real:
@@ -118,6 +113,8 @@ namespace FrameIO.Run
                         else
                             NumberValue = vl;
                     }
+                    if (seg2.VMax != null || seg2.VMax != "") CheckMax(seg2.VMax);
+                    if (seg2.VMin != null || seg2.VMin != "") CheckMin(seg2.VMin);
                     break;
 
                 case SegBlockType.Text:
@@ -144,8 +141,28 @@ namespace FrameIO.Run
             Debug.Assert(startBit == (BitStart + GetBitLen(ib)));
         }
 
+        //TODO 验证最大、最小、校验位、枚举等
+
+        //检验最大值
+        private void CheckMax(string max)
+        {
+
+        }
+
+        //检验最小值
+        private void CheckMin(string min)
+        {
+
+        }
+
+        //检验toenum
+        private void CheckToEnum(string toenum)
+        {
+
+        }
+
         //验证校验字段是否正确
-        public void HandleCheckSeg(byte[] buff, int endBit, IUnpackFrameRun ib)
+        public void ValidateCheckSeg(byte[] buff, int endBit, IUnpackFrameRun ib)
         {
             int byteStart = 0;
             int byteEnd = endBit/8;
@@ -159,11 +176,12 @@ namespace FrameIO.Run
                     if (segr!=null)
                     {
                         byteStart = segr.BitStart/8;
+                        break;
                     }
                 }
             }
             if (RefSegBlock.CheckEndSegs == null || RefSegBlock.CheckEndSegs.Count == 0)
-                byteStart = 0;
+                byteEnd = 0;
             else
             {
                 foreach (var n in RefSegBlock.CheckEndSegs)
@@ -171,12 +189,14 @@ namespace FrameIO.Run
                     var segr = ib.FindUnpackSegRun(n);
                     if (segr != null)
                     {
-                        byteStart = (segr.BitStart + segr.GetBitLen(ib)) / 8;
+                        byteEnd = (segr.BitStart + segr.GetBitLen(ib)) / 8;
+                        break;
                     }
                 }
             }
 
-            //TODO 调用校验API
+            //调用校验API
+
             ulong checkresult = 1;
 
             if (checkresult != NumberValue) throw new Exception("校验位验证失败");
@@ -191,61 +211,15 @@ namespace FrameIO.Run
             {
                 case SegBlockType.Integer:
                     if (((FrameSegmentInteger)RefSegBlock.Segment).Signed)
-                        return (long)NumberValue;  //TODO 处理有符号数
+                        return ConvertToLong(NumberValue, _bitsize);
                     else
                         return NumberValue;
                 case SegBlockType.Real:
                     return _bitsize==32?(BitConverter.ToSingle(BitConverter.GetBytes((uint)NumberValue), 0)):(BitConverter.ToDouble(BitConverter.GetBytes(NumberValue), 0));
             }
-            Debug.Assert(false);
-            return 0;
+            throw new Exception("错误的计算表达式");
         }
 
-        #region --Helper-
-
-        //取任意位的字节
-        static public ulong GetUInt64FromByte(byte[] buff, uint bitStart)
-        {
-            uint word_index = bitStart >> 6;
-            uint word_offset = bitStart & 63;
-            ulong result = BitConverter.ToUInt64(buff, (int)word_index * 8) >> (UInt16)word_offset;
-            uint bits_taken = 64 - word_offset;
-            if (word_offset > 0 && bitStart + bits_taken < (uint)(8 * buff.Length))
-            {
-                result |= BitConverter.ToUInt64(buff, (int)(word_index + 1) * 8) << (UInt16)(64 - word_offset);
-            }
-            return result;
-        }
-
-        //取任意位的指定长度字节
-        static public ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x, EncodedType et, ByteOrderType ot)
-        {
-            return GetUInt64FromByte(buff, bitStart) & ((x != 0) ? (~(ulong)0 >> (sizeof(ulong) * 8 - x)) : (ulong)0);
-            //TODO 处理反码与补码及大小端序
-        }
-
-
-        //取字段前缀名
-        static private string GetSegPreName(SegTreeInfo segi)
-        {
-            segi = segi.Parent;
-            if (segi == null) return "";
-            return GetSegFullName(segi);
-        }
-
-        //取字段全名
-        static private string GetSegFullName(SegTreeInfo segi)
-        {
-            var ret = segi.Name;
-            while (segi.Parent != null)
-            {
-                ret = segi.Parent.Name + "." + ret;
-                segi = segi.Parent;
-            }
-            return ret;
-        }
-
-        #endregion
 
     }
 

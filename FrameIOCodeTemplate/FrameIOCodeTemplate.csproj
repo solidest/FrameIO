@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SYS1.cs" />
+    <Compile Include="Example.cs" />
     <Compile Include="TFrame.cs" />
   </ItemGroup>
   <ItemGroup>

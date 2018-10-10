@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TPoject
 {
-    public class TFrame : FrameBase, IFramePack
+    public class TFrame : IFrameData, IFramePack
     {
         public int ByteSize => throw new NotImplementedException();
 
@@ -70,7 +70,7 @@ namespace TPoject
 
 
         //解包全部报文
-        public FrameBase Unpack()
+        public IFrameData Unpack()
         {
             throw new NotImplementedException();
         }

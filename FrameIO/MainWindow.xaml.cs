@@ -923,12 +923,6 @@ namespace FrameIO.Main
             //FrameIO.Run.FrameIOFactory.InitialFactory("FrameIO.bin");
             //var T = FrameIO.Run.FrameIOFactory.GetFrameUnpack("MSG1");
 
-            int i = -9875;
-            uint ui = (uint)i;
-            ulong ul= ui;
-            long l = (long)ul;
-
-
 
             //ulong i = 12345;
             //double d = 5.000791273786;

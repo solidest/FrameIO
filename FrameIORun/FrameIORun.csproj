@@ -43,12 +43,13 @@
   <ItemGroup>
     <Compile Include="CodeFile.cs" />
     <Compile Include="FrameBlock.cs" />
+    <Compile Include="FrameData.cs" />
     <Compile Include="FramePack.cs" />
     <Compile Include="FrameUnpack.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\ExpRun.cs" />
-    <Compile Include="Helper\ISegRun.cs" />
+    <Compile Include="Helper\IFrameRun.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />
     <Compile Include="Model\Frame.cs" />
@@ -65,8 +66,9 @@
     <Compile Include="Model\SubSysChannel.cs" />
     <Compile Include="Model\SubSysChannelOption.cs" />
     <Compile Include="Model\SubSysProperty.cs" />
-    <Compile Include="SegPack.cs" />
-    <Compile Include="SegUnpack.cs" />
+    <Compile Include="SegRun.cs" />
+    <Compile Include="SegRunPack.cs" />
+    <Compile Include="SegRunUnpack.cs" />
     <Compile Include="FrameIOFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

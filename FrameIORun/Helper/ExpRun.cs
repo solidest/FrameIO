@@ -23,6 +23,7 @@ namespace FrameIO.Run
 
         public static ExpRun CreateExpRun(Exp ep, string preid)
         {
+            if (ep == null) return null;
             var ret = new ExpRun();
             ret.Op = ep.Op;
             ret.ConstStr = ep.ConstStr;
@@ -63,7 +64,7 @@ namespace FrameIO.Run
                 case exptype.EXP_DIV:
                     return LeftExpRun.GetRealValue(ib) / RightExpRun.GetRealValue(ib);
                 case exptype.EXP_ID:
-                    return ib.GetIdValue(FullId);
+                    return ib.GetSegValue(FullId);
                 case exptype.EXP_BYTESIZEOF:
                     return ib.ByteSizeOf(FullId);
 
