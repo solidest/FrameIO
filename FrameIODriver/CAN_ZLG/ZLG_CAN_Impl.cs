@@ -22,12 +22,10 @@ namespace FrameIO.Driver
             if (m_bOpen == 1)
                 Wrapor.VCI_CloseDevice(m_devtype, m_devind);
         }
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
             if (m_bOpen == 1)
                 return false;
-
-            InitConfig(config);
 
             VCI_INIT_CONFIG Init_Config = new VCI_INIT_CONFIG();
 
@@ -43,6 +41,26 @@ namespace FrameIO.Driver
 
             return true;
         }
+
+        void IFrameStream.InitConfig(Dictionary<string, object> config)
+        {
+            m_devtype = (uint)config["DevType"];
+            m_devind = (UInt32)config["DevInd"];
+            m_canind = (UInt32)config["ChannelInd"];
+            m_waittime = (int)config["WaitTime"];
+
+            AccCode = System.Convert.ToUInt32("0x" + config["AccCode"], 16);
+            AccMask = System.Convert.ToUInt32("0x" + config["AccMask"], 16);
+
+            Baudrate = System.Convert.ToUInt32(config["Baudrate"]);
+            CANBaudrate canBaudrate = new CANBaudrate(Baudrate);
+            Timing0 = System.Convert.ToByte("" + canBaudrate.BTR0, 16);
+            Timing1 = System.Convert.ToByte("" + canBaudrate.BTR1, 16);
+
+            Filter = (Byte)config["Filter"];
+            Mode = (Byte)config["Mode"];
+        }
+
         #endregion
 
         #region IFrameReader
@@ -142,6 +160,8 @@ namespace FrameIO.Driver
             BeginWriteFrameListImpl(p, len, callback, AsyncState);
 
         }
+
+
 
         #endregion
     }

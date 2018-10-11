@@ -11,14 +11,18 @@ namespace FrameIO.Driver
     {
         ComHelper Com = null;
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
+        {
+            if (!Com.Open())
+                return false;
+            return true;
+        }
+
+        public void InitConfig(Dictionary<string, object> config)
         {
             Com = new ComHelper();
             //Com.InitPort();
             Com.InitPort(config);
-            if (!Com.Open())
-                return false;
-            return true;
         }
 
         public void Close()
@@ -104,6 +108,8 @@ namespace FrameIO.Driver
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
         }
+
+
         #endregion
 
     }

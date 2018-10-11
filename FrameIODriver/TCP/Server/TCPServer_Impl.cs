@@ -11,17 +11,21 @@ namespace FrameIO.Driver
     partial class TCPServer_Impl : IFrameStream, IFrameReader, IFrameWriter
     {
         TCPServerHelper TCPServer = null;
-        
+
 
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
-            TCPServer = new TCPServerHelper();
-            TCPServer.InitServer();
             if (TCPServer.server != null)
                 return true;
 
             return false;
+        }
+
+        public void InitConfig(Dictionary<string, object> config)
+        {
+            TCPServer = new TCPServerHelper();
+            TCPServer.InitServer();
         }
 
         public void Close()
@@ -119,6 +123,8 @@ namespace FrameIO.Driver
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
         }
+
+
         #endregion
 
     }

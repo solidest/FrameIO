@@ -12,14 +12,18 @@ namespace FrameIO.Driver
     {
         TCPClientHelper TCPClient;
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
-            TCPClient = new TCPClientHelper();
-            TCPClient.InitClient();
             if (TCPClient.client != null)
                 return true;
 
             return false;
+        }
+
+        public void InitConfig(Dictionary<string, object> config)
+        {
+            TCPClient = new TCPClientHelper();
+            TCPClient.InitClient();
         }
 
         public void Close()
@@ -114,6 +118,8 @@ namespace FrameIO.Driver
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
         }
+
+
 
         #endregion
 
