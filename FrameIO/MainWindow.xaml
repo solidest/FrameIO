@@ -133,7 +133,7 @@
             </Button>
             <Separator/>
 
-            <Button ToolTip="代码检查" Click="CheckCode">
+            <Button ToolTip="代码检查" Name="btCheckCode" Click="CheckCode">
                 <Button.Content>
                     <Image Source="img/check.png"></Image>
                 </Button.Content>

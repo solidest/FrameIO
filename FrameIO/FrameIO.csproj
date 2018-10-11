@@ -97,8 +97,10 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="foobar.cs" />
-    <Compile Include="Generator\FrameIOGenerator.cs" />
+    <Compile Include="Generator\FrameIOCodeGenerator.cs" />
+    <Compile Include="Generator\FrameIOCodeCheck.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
+    <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="test_channel.cs" />
     <Compile Include="test_frame.cs" />

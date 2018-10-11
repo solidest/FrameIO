@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    //数据帧代码生成器
-    public class FrameIOGenerator
+    //代码检查
+    public class FrameIOCodeCheck
     {
-        //static private FrameSegmentInfo _rootseg = null;
-        //static private Frame _rootframe = null;
         static private IOProject _pj = null;
 
         static public string LastErrorInfo { get; private set; }
@@ -24,8 +22,8 @@ namespace FrameIO.Main
             _pj = null;
         }
 
-        //生成数据帧代码
-        static public bool Generate(IOProject pj)
+        //生成代码前的检查工作
+        static public ProjectInfo GenerateCheck(IOProject pj)
         {
             Reset();
             _pj = pj;
@@ -35,10 +33,10 @@ namespace FrameIO.Main
             {
 
                 var rootseginfo = new SegTreeInfo();
-                if (!CreateSegTree(fr, rootseginfo)) return false;
+                if (!CreateSegTree(fr, rootseginfo)) return null;
 
                 var rootblockinfo = CreateBlockInfo(rootseginfo, fr);
-                if (rootblockinfo == null) return false;
+                if (rootblockinfo == null) return null;
 
                 var fri = new FrameBlockInfo()
                 {
@@ -88,14 +86,13 @@ namespace FrameIO.Main
                 {
                     LastErrorSyid = em.Syid;
                     LastErrorInfo = string.Format("【{0}】枚举名称与分系统名称重复", emi.Name);
-                    return false;
+                    return null;
                 }
                 pjinfo.DicEnum.Add(emi.Name, emi);
             }
            
 
-            CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
-            return true;
+            return pjinfo;
         }
 
 

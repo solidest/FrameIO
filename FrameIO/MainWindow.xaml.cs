@@ -22,7 +22,7 @@ namespace FrameIO.Main
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IOutText
     {
         public MainWindow()
         {
@@ -55,7 +55,7 @@ namespace FrameIO.Main
             }
             set
             {
-                Title = "FrameIO - " + System.IO.Path.GetFileNameWithoutExtension(value);
+                Title = "FrameIO - " +  Path.GetFileNameWithoutExtension(value);
                 __file = value;
             }
         }
@@ -529,35 +529,31 @@ namespace FrameIO.Main
         #region --Command--
 
         //代码检查
-        private bool checkCode()
+        private ProjectInfo DoCheckCode()
         {
-            if (FileName.Length == 0) return true;
+             //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
             SaveProject(this, null);
-            //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
-            bool isok = true;
-            isok = ReLoadProjectToUI(false, true);
 
-            if(isok)
+            ProjectInfo ret = null;
+
+            if(ReLoadProjectToUI(false, true))
             {
-                isok = FrameIOGenerator.Generate(_project);
-                if(!isok)
+                ret = FrameIOCodeCheck.GenerateCheck(_project);
+                if (ret == null)
                 {
-                    OutOneError(FrameIOGenerator.LastErrorInfo, FrameIOGenerator.LastErrorSyid);
-                }
-                else
-                {
-                    Debug.Assert(FrameIOGenerator.LastErrorInfo=="");
+                    OutOneError(FrameIOCodeCheck.LastErrorInfo, FrameIOCodeCheck.LastErrorSyid);
                 }
             }
 
             if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
-            OutText(string.Format("信息：代码检查{0}", isok?"成功":"失败"), false);
-            return isok;
+            OutText(string.Format("信息：代码检查{0}", (ret!=null)?"成功":"失败"), false);
+            return ret;
         }
 
         private void CheckCode(object sender, RoutedEventArgs e)
         {
-            checkCode();
+            if (FileName.Length == 0) return;
+            DoCheckCode();
         }
 
         //切换视图
@@ -620,20 +616,23 @@ namespace FrameIO.Main
         private void CanSaveAs(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (FileName != "");
+            btCheckCode.IsEnabled = e.CanExecute;
             e.Handled = true;
         }
 
         //导出
         private void SaveAs(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!checkCode())
+            if (FileName.Length == 0) return;
+            var pji = DoCheckCode();
+            if (pji == null)
             {
                 OutText("信息：无法启动代码输出", false);
                 return;
             }
             else
             {
-                OutText("信息：启动代码输出", false);
+                FrameIOCodeGenerator.GenerateCodeFile(_project, pji, this);
             }
             
         }
@@ -849,19 +848,6 @@ namespace FrameIO.Main
 
         #endregion
 
-        #region --Output--
-
-        public void OutText(string info, bool clear)
-        {
-            if (clear) txtOut.Clear();
-            if (info == "") return;
-            txtOut.AppendText(info);
-            if(!info.EndsWith(Environment.NewLine)) txtOut.AppendText(Environment.NewLine);
-            txtOut.ScrollToEnd();
-        }
-
-        #endregion
-
         #region --BindingData--
 
         //重新加载整个项目到UI startUI是否为了启动可视化界面 checkSemantics是否为了语义检查
@@ -913,6 +899,26 @@ namespace FrameIO.Main
             return ret;
         }
 
+
+
+        #endregion
+
+        #region --Output--
+
+        public void OutText(string info, bool clear)
+        {
+            if (clear) txtOut.Clear();
+            if (info == "") return;
+            txtOut.AppendText(info);
+            if (!info.EndsWith(Environment.NewLine)) txtOut.AppendText(Environment.NewLine);
+            txtOut.ScrollToEnd();
+        }
+
+
+        public string GetMainOutPath()
+        {
+            return Path.GetDirectoryName(__file);
+        }
 
 
         #endregion

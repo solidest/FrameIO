@@ -7,67 +7,34 @@ using System.Diagnostics;
 
 namespace PROJECT1.SYS1
 {
-    public class SYS1
+    public partial class SYS1
     {
         private IChannelBase CH1;
         private IChannelBase CH2;
 
+        public Parameter<ushort?> PROPERTYA { get; set; }
+        public ObservableCollection<Parameter<byte?>> PROPERTYB { get; set; }
+        public Parameter<double?> PROPERTYC { get; set; }
+
         public void Initialization()
         {
-            CH1 = FrameIOFactory.GetChannel("SYS1", "CH1");
-            CH2 = FrameIOFactory.GetChannel("SYS1", "CH2");
+            try
+            {
+                CH1 = FrameIOFactory.GetChannel("SYS1", "CH1");
+                CH1.Open();
+                CH2 = FrameIOFactory.GetChannel("SYS1", "CH2");
+                CH2.Open();
+            }
+            catch(FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
 
         }
 
-        #region -- Property --
 
 
-        private Parameter<ushort?> _PROPERTYA = new Parameter<ushort?>();
-        private ObservableCollection<Parameter<byte?>> _PROPERTYB =new ObservableCollection<Parameter<byte?>>(new Parameter<byte?>[4]);
-        private Parameter<double?> _PROPERTYC = new Parameter<double?>();
-        public Parameter<ushort?> PROPERTYA
-        {
-            get
-            {
-                return _PROPERTYA;
-            }
-            set
-            {
-                if(_PROPERTYA!=value)
-                {
-                    _PROPERTYA = value;
-                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.PROPERTYA)));
-                }
-            }
-        }
-
-        public ObservableCollection<Parameter<byte?>> PROPERTYB
-        {
-            get
-            {
-                return _PROPERTYB;
-            }
-        }
-
-        public Parameter<double?> PROPERTYC
-        {
-            get
-            {
-                return _PROPERTYC;
-            }
-            set
-            {
-                if (_PROPERTYC != value)
-                {
-                    _PROPERTYC = value;
-                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(this.PROPERTYA)));
-                }
-            }
-        }
-
-        #endregion
-
-        //模板中的异常处理接口
+        //异常处理接口
         private void HandleFrameIOError(FrameIOException ex)
         {
             switch(ex.ErrType)
@@ -76,19 +43,19 @@ namespace PROJECT1.SYS1
                 case FrameIOErrorType.SendErr:
                 case FrameIOErrorType.RecvErr:
                 case FrameIOErrorType.CheckDtaErr:
-                    Debug.WriteLine("位置：{0}    错误：{1}", ex.ErrInfo, ex.ErrInfo);
+                    Debug.WriteLine("位置：{0}    错误：{1}", ex.Position, ex.ErrInfo);
                     break;
             }
         }
 
                
-        public void Recv_ACTION_EXAMPLE()
+        public void Recv_()
         {
             try
             {
                 var funpack = FrameIOFactory.GetFrameUnpack("FRAME1");
                 var data = CH1.ReadFrame(funpack);
-                PROPERTYA.Value = data.GetUInt16("SEG1");
+                PROPERTYA.Value = data.GetUShort("SEG1");
             }
             catch (FrameIOException ex)
             {
@@ -96,20 +63,13 @@ namespace PROJECT1.SYS1
             }
         }
 
-        public void Send_ACTION_EXAMPLE()
+        public void Send_()
         {
             try
             {
-                var fpack = FrameIOFactory.GetFramePack("FRAME1");
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
-                CH1.WriteFrame(fpack);
+                var pack = FrameIOFactory.GetFramePack("FRAME1");
+                pack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                CH1.WriteFrame(pack);
             }
             catch (FrameIOException ex)
             {
