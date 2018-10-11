@@ -102,6 +102,13 @@ namespace PROJECT1.SYS1
             {
                 var fpack = FrameIOFactory.GetFramePack("FRAME1");
                 fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                fpack.SetSegmentValue("SEG1", PROPERTYA.Value);
                 CH1.WriteFrame(fpack);
             }
             catch (FrameIOException ex)

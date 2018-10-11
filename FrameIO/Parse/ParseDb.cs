@@ -177,17 +177,17 @@ PRAGMA foreign_keys = on;
         private ObservableCollection<SubsysChannelOption>  LoadChannelOptions(int chid)
         {
             var ret = new ObservableCollection<SubsysChannelOption>();
-            var tb = _db.ExecuteQuery("SELECT nameid, valuesyid, symbol FROM fio_sys_channel_option op LEFT JOIN fio_symbol sy ON op.valuesyid=sy.rowid WHERE op.channelid="
+            var tb = _db.ExecuteQuery("SELECT sy2.symbol name, valuesyid, sy.symbol option FROM fio_sys_channel_option op LEFT JOIN fio_symbol sy ON op.valuesyid=sy.rowid LEFT JOIN fio_symbol sy2 ON op.nameid=sy2.rowid WHERE op.channelid ="
                 + chid.ToString());
             foreach(DataRow r in tb.Rows)
             {
                 var op = new SubsysChannelOption()
                 {
                     Notes = LoadNotes(Convert.ToInt32(r["valuesyid"])),
-                    OptionType = (channeloptiontype)Convert.ToInt32(r["nameid"]),
-                    OptionValue = r["symbol"].ToString()
+                    Name = r["name"].ToString(),
+                    OptionValue = r["option"].ToString()
                 };
-                if (ret.Where(p => p.OptionType == op.OptionType).Count() > 0)
+                if (ret.Where(p => p.Name == op.Name).Count() > 0)
                 {
                     AddError(Convert.ToInt32(r["valuesyid"]), 5);
                 }

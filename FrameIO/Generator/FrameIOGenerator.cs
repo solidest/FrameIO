@@ -60,10 +60,14 @@ namespace FrameIO.Main
                 };
                 foreach(var ch in sy.Channels)
                 {
-                    var chi = new Channel() { Name = ch.Name };
+                    var chi = new Channel() { Name = ch.Name, ChType = ch.ChannelType };
                     foreach(var op in ch.Options)
                     {
-                        chi.DicOption.Add(GetString(op.OptionType), op.OptionValue);
+                        if(op.OptionValue.ToString().StartsWith("\""))
+                            chi.DicOption.Add(op.Name, op.OptionValue.ToString().Trim('\"'));
+                        else
+                            chi.DicOption.Add(op.Name, Convert.ToInt64(op.OptionValue));
+
                     }
                     syi.DicChannel.Add(ch.Name, chi);
                 }
@@ -75,6 +79,7 @@ namespace FrameIO.Main
             foreach(var em in pj.EnumdefList)
             {
                 var emi = new EnumInfo() { Name = em.Name };
+
                 foreach(var eit in em.ItemsList)
                 {
                     emi.EnumItems.Add(eit.Name, GetEnumItemValue(em, eit.Name));
@@ -577,15 +582,6 @@ namespace FrameIO.Main
 
         #endregion
 
-
-        #region --helper--
-
-        static private string GetString(channeloptiontype t)
-        {
-            return "";
-        }
-
-        #endregion
 
     }
 }

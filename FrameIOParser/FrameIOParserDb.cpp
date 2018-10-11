@@ -463,7 +463,7 @@ int FrameIOParserDb::SaveSysChannelOption(CHANNELOPTION* op, int chid)
 	{
 		sqlite3_bind_int(m_fio_sys_channel_option_stmt, 1, m_projectid);
 		sqlite3_bind_int(m_fio_sys_channel_option_stmt, 2, chid);
-		sqlite3_bind_int(m_fio_sys_channel_option_stmt, 3, op->optiontype);
+		sqlite3_bind_int(m_fio_sys_channel_option_stmt, 3, op->namesyid);
 		sqlite3_bind_int(m_fio_sys_channel_option_stmt, 4, op->valuesyid);
 		int rc = sqlite3_step(m_fio_sys_channel_option_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;

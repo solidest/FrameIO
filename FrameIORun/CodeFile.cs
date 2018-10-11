@@ -57,7 +57,7 @@ namespace FrameIO.Main
     {
         public string Name { get; set; }
         public syschanneltype ChType { get; set; }
-        public Dictionary<string, string> DicOption { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, object> DicOption { get; set; } = new Dictionary<string, object>();
     }
 
     //枚举定义信息

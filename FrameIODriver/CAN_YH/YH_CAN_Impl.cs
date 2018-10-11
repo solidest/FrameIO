@@ -5,7 +5,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Driver
 {
-    partial class YH_CAN_Impl : PhysicalChannel,IFrameStream, IFrameReader, IFrameWriter
+    public partial class YH_CAN_Impl : PhysicalChannel, IChannelBase
     {
         #region IFrameStream
         public bool Open(Dictionary<string, object> config)

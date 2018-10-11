@@ -63,10 +63,6 @@
 
 
     <Keywords foreground="SaddleBrown">
-      <Word>deviceid</Word>
-      <Word>baudrate</Word>
-      <Word>vendor</Word>
-      
       <Word>value</Word>
       <Word>signed</Word>
       <Word>bitcount</Word>

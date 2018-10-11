@@ -88,10 +88,6 @@ int utf8len = 0;
 "udp"					{ return T_UDP; }
 "di"					{ return T_DI; }
 "do"					{ return T_DO; }
-
-"deviceid"				{ return T_DEVICEID; }
-"vendor"				{ return T_VENDOR; }
-"baudrate"				{ return T_BAUDRATE; }
       
 "signed"				{ return T_SIGNED; }
 "bitcount"				{ return T_BITCOUNT; }

@@ -100,6 +100,7 @@
     <Compile Include="Generator\FrameIOGenerator.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
+    <Compile Include="test_channel.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />
     <Compile Include="Parse\SQLLiteWrapper.cs" />

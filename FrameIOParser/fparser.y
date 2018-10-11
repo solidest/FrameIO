@@ -34,7 +34,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 	segpropertyvaluetype segprovtype;
 	segmenttype segtype;
 	syspropertytype sysptype;
-	channeloptiontype choptype;
 	syschanneltype syschtype;
 	actioniotype iotype;
 
@@ -62,7 +61,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %token T_BOOL T_BYTE T_SBYTE T_USHORT T_SHORT T_UINT T_INT T_ULONG T_LONG T_FLOAT T_DOUBLE T_STRING
 %token T_SEND T_ON T_RECV T_RECVLOOP
 %token T_COM T_CAN T_TCPSERVER T_TCPCLIENT T_UDP T_DI T_DO
-%token T_VENDOR T_DEVICEID T_BAUDRATE
 %token T_SIGNED T_BITCOUNT T_VALUE T_REPEATED T_BYTEORDER T_ENCODED T_REPEATED T_ISDOUBLE T_TAIL T_ALIGNEDLEN T_TYPE T_BYTESIZE 
 %token T_BYTESIZEOF T_TOENUM T_ONEOF T_MAX T_MIN T_CHECK T_CHECKRANGE
 %token T_TRUE T_FALSE T_SMALL T_BIG T_PRIMITIVE T_INVERSION T_COMPLEMENT
@@ -80,7 +78,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %type <sysitem> systemitem sysproperty channel action
 %type <sysptype> sysprotype
 %type <choplist> channeloptionlist channeloption
-%type <choptype> channeloptionname
 %type <syschtype> channeltype
 %type <optionvalue> channeloptionvalue
 %type <amaplist> actionmaplist actionmap
@@ -184,14 +181,9 @@ channeloptionlist:																{ $$ = NULL; }
 ;
 
 channeloption:
-	notelist channeloptionname '=' channeloptionvalue ';'						{ $$ = new_channeloption($2, $4, $1); }
+	notelist T_ID '=' channeloptionvalue ';'						{ $$ = new_channeloption($2, $4, $1); }
 ;
 
-channeloptionname:
-	T_DEVICEID																	{ $$ = CHOP_DEVICEID; }
-	| T_BAUDRATE																{ $$ = CHOP_BAUDRATE; }
-	| T_VENDOR																	{ $$ = CHOP_VENDOR; }
-;
 
 channeloptionvalue:
 	VALUE_INT																	{ $$ = $1; }

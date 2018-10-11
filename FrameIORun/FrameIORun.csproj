@@ -73,6 +73,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FrameIODriver\FrameIODriver.csproj">
+      <Project>{dccc8f67-9865-47d7-9deb-ec2c2509a793}</Project>
+      <Name>FrameIODriver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>

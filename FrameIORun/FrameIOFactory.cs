@@ -36,7 +36,29 @@ namespace FrameIO.Run
         public static IChannelBase GetChannel(string sysname, string channelname)
         {
             var ch = _pj.DicSys[sysname].DicChannel[channelname];
+            switch(ch.ChType)
+            {
+                case syschanneltype.SCHT_CAN:
+                    if(ch.DicOption["vendor"].ToString() == "yh")
+                    {
+                        var chcan =new FrameIO.Driver.YH_CAN_Impl();
+                        chcan.Open(ch.DicOption);
+                        return chcan;
+                    }
+                    else if(ch.DicOption["vendor"].ToString() == "zlg")
+                    {
+                        
+                    }
+                    break;
 
+                case syschanneltype.SCHT_COM:
+
+
+                    break;
+
+                   //TODO 添加其它类型的驱动调用
+
+            }
             return null;
         }
     }

@@ -185,12 +185,12 @@ CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* opli
 	return ret;
 }
 
-CHANNELOPTION* new_channeloption(channeloptiontype optype, int valuesyid, NOTE* notes)
+CHANNELOPTION* new_channeloption(int namesyid, int valuesyid, NOTE* notes)
 {
 	auto ret = new CHANNELOPTION;
 	ret->nextoption = NULL;
 	ret->notes = notes;
-	ret->optiontype = optype;
+	ret->namesyid = namesyid;
 	ret->valuesyid = valuesyid;
 	return ret;
 }

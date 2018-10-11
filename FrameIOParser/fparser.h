@@ -66,13 +66,6 @@ enum syschanneltype
 	SCHT_DO
 };
 
-//通道选项
-enum channeloptiontype
-{
-	CHOP_DEVICEID = 1,
-	CHOP_BAUDRATE,
-	CHOP_VENDOR
-};
 
 //IO操作类型
 enum actioniotype
@@ -233,7 +226,7 @@ struct FRAME
 struct CHANNELOPTION
 {
 	NOTE  * notes;
-	channeloptiontype optiontype;
+	int namesyid;
 	int valuesyid;
 	struct CHANNELOPTION * nextoption;
 } ;
@@ -371,7 +364,7 @@ FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes);
 
 SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray, NOTE* notes);
 CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* oplist, NOTE* notes);
-CHANNELOPTION* new_channeloption(channeloptiontype optype, int valuesyid, NOTE* notes);
+CHANNELOPTION* new_channeloption(int namesyid, int valuesyid, NOTE* notes);
 CHANNELOPTION* append_channeloption(CHANNELOPTION* list, CHANNELOPTION* lastitem);
 ACTIONMAP* new_actionmap(int segsyid, int prosyid, NOTE* notes);
 ACTIONMAP* append_actionmap(ACTIONMAP* list, ACTIONMAP* lastitem);

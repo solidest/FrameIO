@@ -103,13 +103,6 @@ namespace FrameIO.Main
         SCHT_DO
     };
 
-    //通道选项
-    public enum channeloptiontype
-    {
-        CHOP_DEVICEID = 1,
-        CHOP_BAUDRATE,
-        CHOP_VENDOR
-    };
 
     //IO操作类型
     public enum actioniotype
