@@ -42,7 +42,7 @@ namespace FrameIO.Run
                     if(ch.DicOption["vendor"].ToString() == "yh")
                     {
                         var chcan =new FrameIO.Driver.YH_CAN_Impl();
-                        chcan.InitConfig(ch.DicOption);
+                        //chcan.InitConfig(ch.DicOption);
                         return chcan;
                     }
                     else if(ch.DicOption["vendor"].ToString() == "zy")

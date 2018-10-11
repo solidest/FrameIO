@@ -84,7 +84,15 @@ namespace FrameIO.Main
                 {
                     emi.EnumItems.Add(eit.Name, GetEnumItemValue(em, eit.Name));
                 }
+                if(pjinfo.DicSys.Keys.Contains(emi.Name))
+                {
+                    LastErrorSyid = em.Syid;
+                    LastErrorInfo = string.Format("【{0}】枚举名称与分系统名称重复", emi.Name);
+                    return false;
+                }
+                pjinfo.DicEnum.Add(emi.Name, emi);
             }
+           
 
             CodeFile.SaveFrameBinFile("FrameIO.bin", pjinfo);
             return true;

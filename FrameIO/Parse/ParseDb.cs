@@ -676,6 +676,7 @@ PRAGMA foreign_keys = on;
             {
                 var syid = Convert.ToInt32(r["namesyid"]);
                 var ed = new Enumdef(r["ename"].ToString());
+                ed.Syid = syid;
                 ed.Notes = LoadNotes(syid);
                 ed.ItemsList = LoadEnumItemList(Convert.ToInt32(r["rowid"]));
                 if(_checkSemantics && ret.Where(p=>p.Name==ed.Name).Count()>0)
