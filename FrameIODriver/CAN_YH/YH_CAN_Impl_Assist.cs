@@ -49,7 +49,7 @@ namespace FrameIO.Driver
         }
 
         #region 辅助函数 Init_Config()
-        private void InitConfig(Dictionary<string, object> config)
+        public void InitConfig(Dictionary<string, object> config)
         {
             PortName = config["ChannelInd"].ToString();
             

@@ -8,9 +8,9 @@ namespace FrameIO.Driver
     public partial class YH_CAN_Impl : PhysicalChannel, IChannelBase
     {
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
-            InitConfig(config);
+            //InitConfig(config);
 
             if (!OpenCan()) return false;
             if (!EnterResetMode()) return false;

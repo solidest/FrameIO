@@ -13,9 +13,14 @@ namespace FrameIO.Interface
         /// <summary>
         /// 打开设备，准备读写数据
         /// </summary>
-        /// <param name="config">配置项字典</param>
         /// <returns>打开成功返回true，失败返回false</returns>
-        bool Open(Dictionary<string, object> config);
+        bool Open();
+
+        /// <summary>
+        /// 初始化设备参数
+        /// </summary>
+        /// <param name="config">配置项字典</param>
+        void InitConfig(Dictionary<string, object> config);
 
         /// <summary>
         /// 关闭设备，释放相关资源

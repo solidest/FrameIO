@@ -78,6 +78,7 @@ namespace FrameIO.Driver
         {
             BeginReadFrameListImpl(up, framecount, isloop, callback, AsyncState);
         }
+
         #endregion
 
         #region IFrameWriter

@@ -209,7 +209,6 @@ namespace FrameIO.Run
             if (l.SegUnpack == null) l.SegUnpack = new SegRunUnpack(l);
 
             l.SegUnpack.NextRunSeg = r.SegUnpack;
-            r.SegUnpack.NextRunSeg = null;
         }
 
         #endregion

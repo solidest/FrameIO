@@ -13,17 +13,16 @@ namespace FrameIO.Main
     {
 
 
-        static private int test = 6;
+        static private int test2 = 6;
 
-        private void testchannel(object sender, RoutedEventArgs e)
+        private void testframe(object sender, RoutedEventArgs e)
         {
 
             Run.FrameIOFactory.InitialFactory("FrameIO.bin");
 
-
             #region --配置文件内容--
 
-           //配置文件内容
+            //配置文件内容
             /*
             //项目:test
             project main
@@ -69,12 +68,12 @@ namespace FrameIO.Main
 
             DateTime beforDT = System.DateTime.Now;
 
-            test += 6;
+            test2 += 6;
 
             //准备测试数据
             sbyte a = -8;
             byte b = 8;
-            int c = -99876 + test;
+            int c = -99876 + test2;
             double d = -7.5633484450000007;
             bool?[] bool_arr = new bool?[8];
             bool_arr[5] = true;
@@ -89,35 +88,35 @@ namespace FrameIO.Main
 
             #endregion
 
-            var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
-            CH1.Open();
-            CH1.WriteFrame(pack);
-            //var buf = pack.Pack();
+            //var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
+            //CH1.Open();
+            //CH1.WriteFrame(pack);
+            var buf = pack.Pack();
 
-            var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
-            CH2.Open();
-            var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            var data = CH2.ReadFrame(unpack);
+            //var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
+            //CH2.Open();
+            var u = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //var data = CH2.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
             //模拟驱动接收的数据
-            //var buf1 = new byte[buf.Length - 1];
-            //for (int i = 0; i < buf1.Length; i++)
-            //    buf1[i] = buf[i];
-            //var buf2 = new byte[1];
-            //buf2[0] = buf[buf.Length - 1];
+            var buf1 = new byte[buf.Length - 1];
+            for (int i = 0; i < buf1.Length; i++)
+                buf1[i] = buf[i];
+            var buf2 = new byte[1];
+            buf2[0] = buf[buf.Length - 1];
 
             //获取解包接口
 
 
             //模拟驱动调用解包接口
-            //Debug.Assert(u.FirstBlockSize == buf.Length - 1);
-            //int ii = u.AppendBlock(buf1);
-            //Debug.Assert(ii == 1);
-            //ii = u.AppendBlock(buf2);
-            //Debug.Assert(ii == 0);
-            //var data = u.Unpack();
+            Debug.Assert(u.FirstBlockSize == buf.Length - 1);
+            int ii = u.AppendBlock(buf1);
+            Debug.Assert(ii == 1);
+            ii = u.AppendBlock(buf2);
+            Debug.Assert(ii == 0);
+            var data = u.Unpack();
 
             //读取数值
             var a1 = data.GetSByte("a");

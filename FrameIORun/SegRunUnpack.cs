@@ -56,6 +56,7 @@ namespace FrameIO.Run
             NumberArrayValue = null;
             TextArrayValue = null;
             BitStart = -1;
+            NextRunSeg = null;
         }
 
         //取本字段的总长度
