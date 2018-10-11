@@ -10,15 +10,20 @@ namespace FrameIO.Driver
     partial class DIO_Impl : IFrameStream, IFrameReader, IFrameWriter
     {
         DIHelper CardDIO = null;
-
+        bool isOpen = false;
 
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
-            CardDIO = new DIHelper();
-            return CardDIO.OpenDIO(config);
+            return isOpen;
         }
 
+        public void InitConfig(Dictionary<string, object> config)
+        {
+            CardDIO = new DIHelper();
+            isOpen=CardDIO.OpenDIO(config);
+        }
+        
         public void Close()
         {
             throw new NotImplementedException();
@@ -76,6 +81,7 @@ namespace FrameIO.Driver
         {
             throw new NotImplementedException();
         }
+
 
 
         #endregion

@@ -12,15 +12,20 @@ namespace FrameIO.Driver
         UDPHelper UDPClient = null;
 
         #region IFrameStream
-        public bool Open(Dictionary<string, object> config)
+        public bool Open()
         {
-            UDPClient = new UDPHelper();
-            UDPClient.InitClient();
             if (UDPClient.client != null)
                 return true;
 
             return false;
         }
+
+        public void InitConfig(Dictionary<string, object> config)
+        {
+            UDPClient = new UDPHelper();
+            UDPClient.InitClient();
+        }
+
         public void Close()
         {
             UDPClient.CloseUDPClient();
@@ -120,6 +125,8 @@ namespace FrameIO.Driver
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
         }
+
+
         #endregion
 
 
