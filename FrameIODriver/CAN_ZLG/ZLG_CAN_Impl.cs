@@ -44,21 +44,21 @@ namespace FrameIO.Driver
 
         void IFrameStream.InitConfig(Dictionary<string, object> config)
         {
-            m_devtype = (uint)config["DevType"];
-            m_devind = (UInt32)config["DevInd"];
-            m_canind = (UInt32)config["ChannelInd"];
-            m_waittime = (int)config["WaitTime"];
+            m_devtype = (uint)config["devtype"];
+            m_devind = (UInt32)config["devInd"];
+            m_canind = (UInt32)config["channelind"];
+            m_waittime = (int)config["waittime"];
 
-            AccCode = System.Convert.ToUInt32("0x" + config["AccCode"], 16);
-            AccMask = System.Convert.ToUInt32("0x" + config["AccMask"], 16);
+            AccCode = System.Convert.ToUInt32("0x" + config["accCode"], 16);
+            AccMask = System.Convert.ToUInt32("0x" + config["accMask"], 16);
 
-            Baudrate = System.Convert.ToUInt32(config["Baudrate"]);
+            Baudrate = System.Convert.ToUInt32(config["baudrate"]);
             CANBaudrate canBaudrate = new CANBaudrate(Baudrate);
             Timing0 = System.Convert.ToByte("" + canBaudrate.BTR0, 16);
             Timing1 = System.Convert.ToByte("" + canBaudrate.BTR1, 16);
 
-            Filter = (Byte)config["Filter"];
-            Mode = (Byte)config["Mode"];
+            Filter = (Byte)config["filter"];
+            Mode = (Byte)config["mode"];
         }
 
         #endregion

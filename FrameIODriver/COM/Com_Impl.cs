@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace FrameIO.Driver
 {
-    partial class Com_Impl : IFrameStream, IFrameReader, IFrameWriter
+    public partial class Com_Impl : IChannelBase
     {
         ComHelper Com = null;
         #region IFrameStream
@@ -21,7 +21,6 @@ namespace FrameIO.Driver
         public void InitConfig(Dictionary<string, object> config)
         {
             Com = new ComHelper();
-            //Com.InitPort();
             Com.InitPort(config);
         }
 

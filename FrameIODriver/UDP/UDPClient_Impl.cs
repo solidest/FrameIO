@@ -23,7 +23,7 @@ namespace FrameIO.Driver
         public void InitConfig(Dictionary<string, object> config)
         {
             UDPClient = new UDPHelper();
-            UDPClient.InitClient();
+            UDPClient.InitClient(config);
         }
 
         public void Close()

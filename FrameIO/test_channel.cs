@@ -20,10 +20,14 @@ namespace FrameIO.Main
 
             Run.FrameIOFactory.InitialFactory("FrameIO.bin");
 
+            test_Com();
 
+        }
+        private void test_Com()
+        {
             #region --配置文件内容--
 
-           //配置文件内容
+            //配置文件内容
             /*
             //项目:test
             project main
@@ -34,18 +38,11 @@ namespace FrameIO.Main
 	            {
 		            channel CH1:com
 		            {
-			            op1=12;
-			            op2="abc";
-		            }
-	            }
-
-            	//分系统
-	            system SYS2
-	            {
-		            channel CHA:com
-		            {
-			            op1=12;
-			            op2="abc";
+			            portname="COM2";
+                        baudrate = 9600;
+                        databits = 8;
+                        stopbits = 1;
+                        parity = 0;
 		            }
 	            }
 
@@ -94,10 +91,13 @@ namespace FrameIO.Main
             CH1.WriteFrame(pack);
             //var buf = pack.Pack();
 
-            var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
-            CH2.Open();
+            //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
+            //             CH2.Open();
+            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //             var data = CH2.ReadFrame(unpack);
+
             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            var data = CH2.ReadFrame(unpack);
+            var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
@@ -139,8 +139,6 @@ namespace FrameIO.Main
             OutText(string.Format("测试通过，用时{0}毫秒", ts.TotalMilliseconds), false);
 
             #endregion
-
-
 
         }
     }

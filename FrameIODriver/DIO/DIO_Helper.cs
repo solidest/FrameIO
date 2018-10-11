@@ -28,8 +28,8 @@ namespace FrameIO.Driver
         }
         public System.Boolean OpenDIO(Dictionary<string,object> config)
         {
-            CardNO = (UInt32)config["DeviceNo"];
-            ChNo = (UInt32)config["ChannelNo"];
+            CardNO = (UInt32)config["deviceno"];
+            ChNo = (UInt32)config["channelno"];
 
             return OpenDIO();
         }

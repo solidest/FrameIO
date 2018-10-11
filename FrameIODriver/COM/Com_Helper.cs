@@ -55,11 +55,12 @@ namespace FrameIO.Driver
         }
         public void InitPort(Dictionary<string, object> config)
         {
-            rs232.PortName = ""+config["PortName"];
-            rs232.BaudRate=(int)config["BaudRate"];
-            rs232.DataBits = (int)config["DataBits"];
-            rs232.StopBits = (System.IO.Ports.StopBits)config["StopBits"];
-            rs232.Parity = (System.IO.Ports.Parity)config["Parity"];
+            rs232.PortName = ""+config["portname"];
+            rs232.BaudRate=Convert.ToInt32(config["baudrate"]);
+            rs232.DataBits = Convert.ToInt32(config["databits"]);
+            rs232.StopBits = (System.IO.Ports.StopBits)Convert.ToInt32(config["stopbits"]);
+            rs232.Parity = (System.IO.Ports.Parity)Convert.ToInt32(config["parity"]);
+
 
         }
 

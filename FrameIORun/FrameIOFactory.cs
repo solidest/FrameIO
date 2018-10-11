@@ -52,6 +52,12 @@ namespace FrameIO.Run
                     break;
 
                 case syschanneltype.SCHT_COM:
+                    {
+                        var chcom = new FrameIO.Driver.Com_Impl();
+                        chcom.InitConfig(ch.DicOption);
+                        return chcom;
+                    }
+
 
 
                     break;

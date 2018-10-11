@@ -23,7 +23,7 @@ namespace FrameIO.Driver
         public void InitConfig(Dictionary<string, object> config)
         {
             TCPClient = new TCPClientHelper();
-            TCPClient.InitClient();
+            TCPClient.InitClient(config);
         }
 
         public void Close()

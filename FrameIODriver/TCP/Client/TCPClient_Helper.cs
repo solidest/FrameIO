@@ -32,8 +32,8 @@ namespace FrameIO.Driver
         {
             if (client == null)
             {
-                string host = "" + config["Host"];
-                int port = (int)config["Port"];
+                string host = "" + config["serverip"];
+                int port = (int)config["port"];
                 IPAddress ip = IPAddress.Parse(host);
                 IPEndPoint ipe = new IPEndPoint(ip, port);
 
