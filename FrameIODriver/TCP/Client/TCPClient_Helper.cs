@@ -13,7 +13,7 @@ namespace FrameIO.Driver
          public Socket client = null;
          string localIP = String.Empty;
          EndPoint point = new IPEndPoint(IPAddress.Any, 0);
-        public IPEndPoint ipe = null;
+         public IPEndPoint ipe = null;
 
         public  Socket InitClient()
         {
