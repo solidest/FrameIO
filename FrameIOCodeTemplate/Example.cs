@@ -84,7 +84,7 @@ namespace PROJECT1.SYS1
             }
         }
 
-       
+        public bool IsStopRecvLoop { get; set; }
         public void recvloop()
         {
             var unpack = FrameIOFactory.GetFrameUnpack("FRAME1");
@@ -93,7 +93,7 @@ namespace PROJECT1.SYS1
 
         public delegate void recvloopHandle();
         public event recvloopHandle Onrecvloop;
-        private void recvloopCallback(IFrameData data, object AsyncState)
+        private void recvloopCallback(IFrameData data, out bool isstop, object AsyncState)
         {
             try
             {
@@ -101,7 +101,8 @@ namespace PROJECT1.SYS1
                 PROPERTYB.Clear();
                 var __PROPERTYB = data.GetByteArray("SEG2");
                 if(__PROPERTYB != null) foreach (var v in __PROPERTYB) PROPERTYB.Add(new Parameter<byte?>(v));
-                if(Onrecvloop != null) foreach (recvloopHandle deleg in Onrecvloop.GetInvocationList()) deleg.BeginInvoke(null, null); 
+                if(Onrecvloop != null) foreach (recvloopHandle deleg in Onrecvloop.GetInvocationList()) deleg.BeginInvoke(null, null);
+                isstop = IsStopRecvLoop;
             }
             catch (FrameIOException ex)
             {

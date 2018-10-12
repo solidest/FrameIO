@@ -18,7 +18,7 @@ namespace FrameIO.Main
         private void testframe(object sender, RoutedEventArgs e)
         {
 
-            Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+            //Run.FrameIOFactory.InitialFactory("FrameIO.bin");
 
             #region --配置文件内容--
 
