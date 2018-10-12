@@ -23,7 +23,8 @@ namespace FrameIO.Main
             //test_Com();//测试串口
             //test_tcpclient();//测试TCPClient
             //test_tcpserver();//测试服务器
-            test_tcp();//即包括服务器也包括客户端
+            //test_tcp();//即包括服务器也包括客户端
+            test_udp();
 
         }
 

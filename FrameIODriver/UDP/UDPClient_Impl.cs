@@ -57,7 +57,7 @@ namespace FrameIO.Driver
             int start = 0;
             while (dataLeft > 0)
             {
-                int recv = UDPClient.client.ReceiveFrom(recvBuf, ref UDPClient.remoteEp);
+                int recv = UDPClient.client.ReceiveFrom(recvBuf, ref UDPClient.point);
 
                 if (recv > len - start)
                     Array.Copy(recvBuf, 0, buff, start, len - start);

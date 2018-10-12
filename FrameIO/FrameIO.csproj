@@ -105,6 +105,7 @@
     <Compile Include="test_channel.cs" />
     <Compile Include="test_channel_com.cs" />
     <Compile Include="test_channel_tcp.cs" />
+    <Compile Include="test_channel_udp.cs" />
     <Compile Include="test_channel_tcpserver.cs" />
     <Compile Include="test_channel_tcpclient.cs" />
     <Compile Include="test_frame.cs" />

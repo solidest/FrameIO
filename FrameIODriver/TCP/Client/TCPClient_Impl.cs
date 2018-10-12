@@ -15,7 +15,11 @@ namespace FrameIO.Driver
         public bool Open()
         {
             if (TCPClient.client != null)
+            {
+                TCPClient.client.Connect(TCPClient.ipe);
                 return true;
+            }
+                
 
             return false;
         }

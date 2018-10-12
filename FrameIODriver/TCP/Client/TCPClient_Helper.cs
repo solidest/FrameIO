@@ -13,6 +13,7 @@ namespace FrameIO.Driver
          public Socket client = null;
          string localIP = String.Empty;
          EndPoint point = new IPEndPoint(IPAddress.Any, 0);
+        public IPEndPoint ipe = null;
 
         public  Socket InitClient()
         {
@@ -21,10 +22,10 @@ namespace FrameIO.Driver
                 string host = "127.0.0.1";
                 int port = 8009;
                 IPAddress ip = IPAddress.Parse(host);
-                IPEndPoint ipe = new IPEndPoint(ip, port);
+                ipe = new IPEndPoint(ip, port);
 
                 client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                client.Connect(ipe);
+                //client.Connect(ipe);
             }
             return client;
         }

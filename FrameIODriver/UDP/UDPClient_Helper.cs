@@ -12,8 +12,7 @@ namespace FrameIO.Driver
     {
         public Socket client = null;
         string localIP = String.Empty;
-        EndPoint point = new IPEndPoint(IPAddress.Any, 0);
-        public EndPoint remoteEp = null;
+        public EndPoint point = null;// new IPEndPoint(IPAddress.Any, 0);
 
         public  Socket InitClient()
         {
@@ -24,7 +23,7 @@ namespace FrameIO.Driver
                 client.ExclusiveAddressUse = false;
                 client.Bind(ipep);
 
-                remoteEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8007);
+                //remoteEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8007);
 
             }
             return client;
@@ -33,12 +32,17 @@ namespace FrameIO.Driver
         {
             if (client == null)
             {
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), Convert.ToInt32(config["localport"]));
+                //                 IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), Convert.ToInt32(config["localport"]));
+                //                 client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+                //                 client.ExclusiveAddressUse = false;
+                //                 client.Bind(ipep);
+                // 
+                //                 remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
+                point = new IPEndPoint(IPAddress.Any, 0);
+                IPEndPoint ipep = new IPEndPoint(IPAddress.Any, Convert.ToInt32(config["remoteport"]));
                 client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
                 client.ExclusiveAddressUse = false;
                 client.Bind(ipep);
-
-                remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
 
             }
             return client;
@@ -66,7 +70,7 @@ namespace FrameIO.Driver
             int start = 0;
             while (dataLeft > 0)
             {
-                int recv = client.ReceiveFrom(recvBuf, ref remoteEp);
+                int recv = client.ReceiveFrom(recvBuf, ref point);
 
                 if (recv > len - start)
                     Array.Copy(recvBuf, 0, buff, start, len - start);
