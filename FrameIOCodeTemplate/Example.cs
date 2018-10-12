@@ -10,29 +10,12 @@ namespace PROJECT1.SYS1
 {
     public partial class SYS1
     {
-        private IChannelBase CH1;
-        private IChannelBase CH2;
+        public IChannelBase CH1 { get; private set; }= FrameIOFactory.GetChannel("SYS1", "CH1");
+        public IChannelBase CH2 { get; private set; }= FrameIOFactory.GetChannel("SYS1", "CH2");
 
         public Parameter<ushort?> PROPERTYA { get; set; } = new Parameter<ushort?>();
         public ObservableCollection<Parameter<byte?>> PROPERTYB { get; set; } = new ObservableCollection<Parameter<byte?>>();
         public Parameter<double?> PROPERTYC { get; set; }
-
-        public void Initialization()
-        {
-            try
-            {
-                CH1 = FrameIOFactory.GetChannel("SYS1", "CH1");
-                CH1.Open();
-                CH2 = FrameIOFactory.GetChannel("SYS1", "CH2");
-                CH2.Open();
-            }
-            catch(FrameIOException ex)
-            {
-                HandleFrameIOError(ex);
-            }
-
-        }
-
 
 
         //异常处理接口
@@ -84,13 +67,19 @@ namespace PROJECT1.SYS1
             }
         }
 
-        public bool IsStopRecvLoop { get; set; }
         public void recvloop()
         {
             var unpack = FrameIOFactory.GetFrameUnpack("FRAME1");
             CH1.BeginReadFrame(unpack, recvloopCallback, null);
+            _IsStopRecvLoop = false;
         }
 
+        public void stoprecvloop()
+        {
+            _IsStopRecvLoop = true;
+        }
+
+        private bool _IsStopRecvLoop;
         public delegate void recvloopHandle();
         public event recvloopHandle Onrecvloop;
         private void recvloopCallback(IFrameData data, out bool isstop, object AsyncState)
@@ -102,11 +91,14 @@ namespace PROJECT1.SYS1
                 var __PROPERTYB = data.GetByteArray("SEG2");
                 if(__PROPERTYB != null) foreach (var v in __PROPERTYB) PROPERTYB.Add(new Parameter<byte?>(v));
                 if(Onrecvloop != null) foreach (recvloopHandle deleg in Onrecvloop.GetInvocationList()) deleg.BeginInvoke(null, null);
-                isstop = IsStopRecvLoop;
             }
             catch (FrameIOException ex)
             {
                 HandleFrameIOError(ex);
+            }
+            finally
+            {
+                isstop = _IsStopRecvLoop;
             }
         }
 

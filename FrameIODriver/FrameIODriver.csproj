@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DCCC8F67-9865-47D7-9DEB-EC2C2509A793}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FrameIO.IO</RootNamespace>
-    <AssemblyName>FrameIO.IO</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <RootNamespace>FrameIODriver</RootNamespace>
+    <AssemblyName>FrameIODriver</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
