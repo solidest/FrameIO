@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FrameIO.Driver
@@ -11,7 +12,6 @@ namespace FrameIO.Driver
     public partial class TCPServer_Impl : IChannelBase
     {
         TCPServerHelper TCPServer = null;
-
 
         #region IFrameStream
         public bool Open()
@@ -49,21 +49,46 @@ namespace FrameIO.Driver
 
             return up.Unpack();
         }
+        private int AsyncReceive(IAsyncResult ar)
+        {
+            return TCPServer.server.EndReceive(ar); 
+        }
+        private static int recvlen = 0;
+        private static bool running = true;
         private Byte[] ReadBlock(int len)
         {
-            Byte[] buff = new byte[len];
+            Byte[] data = new byte[len];
             
             int dataleft = len;
-            int start = 0;
-            NetworkStream netStream = new NetworkStream(TCPServer.server);
 
-            while (dataleft>0)
+            recvlen = 0;
+
+            try
             {
-                int recv = netStream.Read(buff, start, dataleft);
-                start += recv;
-                dataleft -= recv;
+                while (recvlen < len)
+                {
+                    running = true;
+                    TCPServer.server.BeginReceive(data, recvlen, data.Length, SocketFlags.None,
+                    asyncResult =>
+                    {
+                        lock (this)
+                        {
+                            recvlen += TCPServer.server.EndReceive(asyncResult);
+                            running = false;
+                        }
+                    }, null);
+
+                    while (running)
+                        Thread.Sleep(10);
+                }
+
+                return data;
             }
-            return buff;
+            catch(Exception )
+            {
+                throw new Exception("接收数据异常:");
+            }
+
         }
 
         public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)

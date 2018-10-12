@@ -8,8 +8,9 @@ namespace FrameIO.Interface
     /// 异步读取一帧数据时使用的回调函数
     /// </summary>
     /// <param name="data">读取到的数据帧</param>
+    /// <param name="isCompleted">循环读取过程中，由用户指定读取操作是否结束</param>
     /// <param name="AsyncState">发起异步操作时用户提供的对象，它将该特定的异步读取请求与其他请求区别开来</param>
-    public delegate void AsyncReadCallback(IFrameData data, object AsyncState);
+    public delegate void AsyncReadCallback(IFrameData data, out bool isCompleted, object AsyncState);
 
     /// <summary>
     /// 异步读多帧数据时使用的回调函数

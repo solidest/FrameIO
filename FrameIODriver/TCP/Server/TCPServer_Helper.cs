@@ -44,11 +44,35 @@ namespace FrameIO.Driver
                 serverTemp.Bind(ipe);
                 serverTemp.Listen(0);
 
-                server = serverTemp.Accept();
+                //server = serverTemp.Accept();
+                serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
             }
             return server;
         }
+        private  void AcceptConnection(IAsyncResult ar)
+        {
+            Socket mySserver = (Socket)ar.AsyncState;
+            server = mySserver.EndAccept(ar);
 
+        }
+        private  void SendData(IAsyncResult ar)
+        {
+            Socket client = (Socket)ar.AsyncState;
+            try
+            {
+                server.EndSend(ar);
+            }
+            catch
+            {
+                client.Close();
+                serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
+            }
+        }
+        public  void Send(byte[] msg)
+        {
+            server.BeginSend(msg, 0, msg.Length, SocketFlags.None, new AsyncCallback(SendData), server);
+
+        }
         public void CloseServer()
         {
             serverTemp.Shutdown(SocketShutdown.Both);

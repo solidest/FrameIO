@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrameIO.Interface;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +10,15 @@ namespace FrameIO.Main
 {
     public partial class MainWindow
     {
+        int loop = 100;
+        void AsyncResult(IFrameData data, out bool isCompleted, object AsyncState)
+        {
+            loop = loop - 1;
+            isCompleted = loop == 0;
+            Debug.WriteLine(loop.ToString());
+            //OutText(string.Format("AsyncResult {0}", loop), false);
+        }
+
         private void test_tcp()
         {
             #region --配置文件内容--
@@ -47,6 +57,8 @@ namespace FrameIO.Main
              }
             */
 
+
+
             #endregion
 
             #region --准备测试数据--
@@ -63,13 +75,7 @@ namespace FrameIO.Main
             bool?[] bool_arr = new bool?[8];
             bool_arr[5] = true;
 
-            //获取打包接口
-            var pack = Run.FrameIOFactory.GetFramePack("MSG1");
-            pack.SetSegmentValue("a", a);
-            pack.SetSegmentValue("b", b);
-            pack.SetSegmentValue("c", c);
-            pack.SetSegmentValue("d", d);
-            pack.SetSegmentValue("e", bool_arr);
+           
 
             #endregion
 
@@ -83,10 +89,27 @@ namespace FrameIO.Main
 
 
 
-            CHS.WriteFrame(pack);
+            
 
             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            var data = CHC.ReadFrame(unpack);
+            //var data = CHS.ReadFrame(unpack);
+            
+
+            CHS.BeginReadFrame(unpack, AsyncResult,null);
+
+            for(int i=0;i<100;i++)
+            {
+                //获取打包接口
+                var pack = Run.FrameIOFactory.GetFramePack("MSG1");
+                pack.SetSegmentValue("a", a);
+                pack.SetSegmentValue("b", b);
+                pack.SetSegmentValue("c", c);
+                pack.SetSegmentValue("d", d);
+                pack.SetSegmentValue("e", bool_arr);
+
+                CHC.WriteFrame(pack);
+            }
+
 
             //var buf = pack.Pack();
 
@@ -119,17 +142,17 @@ namespace FrameIO.Main
             //var data = u.Unpack();
 
             //读取数值
-            var a1 = data.GetSByte("a");
-            var b1 = data.GetByte("b");
-            var c1 = data.GetInt("c");
-            var d1 = data.GetDouble("d");
-            var bool_arr1 = data.GetBoolArray("e");
-
-            Debug.Assert(a == a1);
-            Debug.Assert(b == b1);
-            Debug.Assert(c == c1);
-            Debug.Assert(d == d1);
-            Debug.Assert(bool_arr1[5]);
+            //             var a1 = data.GetSByte("a");
+            //             var b1 = data.GetByte("b");
+            //             var c1 = data.GetInt("c");
+            //             var d1 = data.GetDouble("d");
+            //             var bool_arr1 = data.GetBoolArray("e");
+            // 
+            //             Debug.Assert(a == a1);
+            //             Debug.Assert(b == b1);
+            //             Debug.Assert(c == c1);
+            //             Debug.Assert(d == d1);
+            //             Debug.Assert(bool_arr1[5]);
 
 
             DateTime afterDT = System.DateTime.Now;

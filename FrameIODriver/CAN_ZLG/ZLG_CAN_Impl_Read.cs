@@ -11,11 +11,13 @@ namespace FrameIO.Driver
     {
         private void DoAsyncRead(object wr)
         {
-            lock (this)
+            bool completed = false;
+
+            while (!completed)
             {
                 var p = (AsyncReadInfo)wr;
                 IFrameData frameBase = ReadFrame(p.packer);
-                p.callback.Invoke(frameBase, p.AsyncState);
+                p.callback.Invoke(frameBase, out completed, p.AsyncState);
             }
         }
 
