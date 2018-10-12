@@ -104,15 +104,11 @@ namespace FrameIO.Main
 
             //channel
             var decl = new List<string>();
-            var init = new List<string>();
             foreach(var ch in sys.Channels)
             {
-                decl.Add(string.Format("private IChannelBase {0};", ch.Name));
-                init.Add(string.Format("{0} = FrameIOFactory.GetChannel(\"{1}\", \"{0}\");", ch.Name, sys.Name));
-                init.Add(string.Format("{0}.Open();", ch.Name));
+                decl.Add(string.Format("public IChannelBase {0} {{ get; private set; }} = FrameIOFactory.GetChannel(\"{1}\", \"{0}\");", ch.Name, sys.Name));
             }
             ReplaceText(code, "channeldeclare", decl, 2);
-            ReplaceText(code, "channelinit", init, 4);
 
             SetPropertyDeclare(sys, code);
 
