@@ -35,14 +35,15 @@ namespace FrameIO.Driver
         {
             if(server==null)
             {
-                string host = "" + config["Host"];
-                int port = (int)config["Port"];
+                string host = "" + config["serverip"];
+                int port = Convert.ToInt32(config["port"]);
                 IPAddress ip = IPAddress.Parse(host);
                 IPEndPoint ipe = new IPEndPoint(ip, port);
                 
                 serverTemp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 serverTemp.Bind(ipe);
                 serverTemp.Listen(0);
+
                 server = serverTemp.Accept();
             }
             return server;

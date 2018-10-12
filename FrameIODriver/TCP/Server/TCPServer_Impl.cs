@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Driver
 {
-    partial class TCPServer_Impl : IFrameStream, IFrameReader, IFrameWriter
+    public partial class TCPServer_Impl : IChannelBase
     {
         TCPServerHelper TCPServer = null;
 
@@ -25,7 +25,7 @@ namespace FrameIO.Driver
         public void InitConfig(Dictionary<string, object> config)
         {
             TCPServer = new TCPServerHelper();
-            TCPServer.InitServer();
+            TCPServer.InitServer(config);
         }
 
         public void Close()

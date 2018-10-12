@@ -7,7 +7,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Driver
 {
-    partial class UDPClient_Impl : IFrameStream, IFrameReader, IFrameWriter
+    public partial class UDPClient_Impl : IChannelBase
     {
         UDPHelper UDPClient = null;
 

@@ -8,7 +8,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Driver
 {
-    partial class TCPClient_Impl : IFrameStream, IFrameReader, IFrameWriter
+    public partial class TCPClient_Impl : IChannelBase
     {
         TCPClientHelper TCPClient;
         #region IFrameStream
