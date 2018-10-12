@@ -18,7 +18,7 @@ namespace FrameIO.Main
         private void testchannel(object sender, RoutedEventArgs e)
         {
 
-            Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+            //Run.FrameIOFactory.InitialFactory("FrameIO.bin");
 
             test_Com();
 

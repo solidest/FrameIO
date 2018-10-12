@@ -176,7 +176,7 @@ namespace FrameIO.Main
                 if (ProIsArray(sys, setor.SysPropertyName))
                 {
                     getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
-                    getlist.Add(string.Format("var __{0} = data.GetByteArray(\"{1}\");", setor.SysPropertyName, setor.FrameSegName));
+                    getlist.Add(string.Format("var __{0} = data.{1}Array(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
                     getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));", setor.SysPropertyName, GetPropertyTypeName(GetProType(sys, setor.SysPropertyName))));
                 }
                 else
@@ -221,7 +221,7 @@ namespace FrameIO.Main
                 if(ProIsArray(sys, setor.SysPropertyName))
                 {
                     getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
-                    getlist.Add(string.Format("var __{0} = data.GetByteArray(\"{1}\");", setor.SysPropertyName, setor.FrameSegName));
+                    getlist.Add(string.Format("var __{0} = data.{1}Array(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
                     getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));",setor.SysPropertyName, GetPropertyTypeName(GetProType(sys,setor.SysPropertyName))));
                 }
                 else
@@ -275,7 +275,7 @@ namespace FrameIO.Main
                 case syspropertytype.SYSPT_BOOL:
                     return "GetBool";
                 case syspropertytype.SYSPT_BYTE:
-                    return "BetByte";
+                    return "GetByte";
                 case syspropertytype.SYSPT_SBYTE:
                     return "GetSByte";
                 case syspropertytype.SYSPT_SHORT:
