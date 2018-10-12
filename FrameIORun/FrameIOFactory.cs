@@ -13,11 +13,13 @@ namespace FrameIO.Run
     {
         static private ProjectInfo _pj;
 
-        //初始化工厂
-        public static void InitialFactory(string binfile)
+        //静态构造函数
+        static FrameIOFactory()
         {
-            _pj = CodeFile.ReadFrameBinFile(binfile);
+            _pj = CodeFile.ReadFrameBinFile("FrameIO.bin");
+
         }
+            
 
         //获取数据帧的解析器
         public static IFrameUnpack GetFrameUnpack(string framename)
