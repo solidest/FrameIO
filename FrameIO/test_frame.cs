@@ -31,7 +31,12 @@ namespace FrameIO.Main
             	//分系统
 	            system SYS1
 	            {
-		            channel CH1:com
+                    byte PROPERTYa;
+                    byte PROPERTYb;
+                    uint PROPERTYc;
+                    double PROPERTYd;
+                    bool[] PROPERTYe;
+		            channel CHa:com
 		            {
 			            op1=12;
 			            op2="abc";
@@ -41,7 +46,7 @@ namespace FrameIO.Main
             	//分系统
 	            system SYS2
 	            {
-		            channel CHA:com
+		            channel CHa:com
 		            {
 			            op1=12;
 			            op2="abc";
@@ -52,11 +57,11 @@ namespace FrameIO.Main
 	            //数据帧
 	            frame MSG1
 	            {
-		            integer a bitcount=4 signed=true;
-		            integer b bitcount=4 signed=false;
-		            integer c bitcount=32 signed=false;
-		            real d isdouble=true;
-		            integer e bitcount=1 repeated=b;
+		            integer SEGMENTa bitcount=4 signed=true;
+		            integer SEGMENTb bitcount=4 signed=false;
+		            integer SEGMENTc bitcount=32 signed=false;
+		            real SEGMENTd isdouble=true;
+		            integer SEGMENTe bitcount=1 repeated=b;
 	            }
 
             }

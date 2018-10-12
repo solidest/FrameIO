@@ -30,6 +30,10 @@ namespace FrameIO.Main
                 CodeFile.SaveFrameBinFile(fn, pji);
                 tout.OutText(string.Format("信息：生成文件{0}",fn) , true);
 
+                var code = new StringBuilder(GetTemplate("TParameter"));
+                ReplaceText(code, "projectname", _pj.Name);
+                CreateFile("Parameter", code);
+
                 GenerateEnumFile(pj.EnumdefList);
                 GenerateSysFile(pj.SubsysList);
                 tout.OutText("信息：代码文件输出完成", false);
@@ -129,11 +133,11 @@ namespace FrameIO.Main
             {
                 if(pro.IsArray)
                 {
-                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }}", GetPropertyTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetPropertyTypeName(pro.PropertyType), pro.Name));
                 }
                 else
                 {
-                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}}", GetPropertyTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetPropertyTypeName(pro.PropertyType), pro.Name));
                 }
             }
             ReplaceText(code, "propertydeclare", decl, 2);
@@ -145,7 +149,7 @@ namespace FrameIO.Main
             switch(ac.IOType)
             {
                 case actioniotype.AIO_SEND:
-                    ReplaceText(code, "sendactionlist", GetSendActionCode(ac));
+                    ReplaceText(code, "sendactionlist", GetSendActionCode(sys, ac));
                     break;
 
                 case actioniotype.AIO_RECV:
@@ -153,14 +157,38 @@ namespace FrameIO.Main
                     break;
 
                 case actioniotype.AIO_RECVLOOP:
-                    //循环接收
+                    ReplaceText(code, "recvloopactionlist", GetRecvLoopActionCode(sys, ac));
                     break;
             }
 
         }
 
+        //获取recvloopaction代码
+        static private string GetRecvLoopActionCode(Subsys sys,SubsysAction ac)
+        {
+            var code = new StringBuilder(GetTemplate("TRecvLoopAction"));
+            ReplaceText(code, "recvloopname", ac.Name);
+            ReplaceText(code, "framename", ac.FrameName);
+            ReplaceText(code, "channelname", ac.ChannelName);
+            var getlist = new List<string>();
+            foreach (var setor in ac.Maps)
+            {
+                if (ProIsArray(sys, setor.SysPropertyName))
+                {
+                    getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
+                    getlist.Add(string.Format("var __{0} = data.GetByteArray(\"{1}\");", setor.SysPropertyName, setor.FrameSegName));
+                    getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));", setor.SysPropertyName, GetPropertyTypeName(GetProType(sys, setor.SysPropertyName))));
+                }
+                else
+                    getlist.Add(string.Format("{0}.Value = data.{1}(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
+
+            }
+            ReplaceText(code, "getvaluelist", getlist, 4);
+            return code.ToString();
+        }
+
         //获取sendaction代码
-        static private string GetSendActionCode(SubsysAction ac)
+        static private string GetSendActionCode(Subsys sys,SubsysAction ac)
         {
             var code = new StringBuilder(GetTemplate("TSendAction"));
             ReplaceText(code, "sendaction", ac.Name);
@@ -169,8 +197,12 @@ namespace FrameIO.Main
             var setlist = new List<string>();
             foreach(var setor in ac.Maps)
             {
-                setlist.Add(string.Format("pack.SetSegmentValue(\"{0}\", {1}.Value);", setor.FrameSegName, setor.SysPropertyName));
-                //TODO 数组类型赋值
+                if(ProIsArray(sys, setor.SysPropertyName))
+                {
+                    setlist.Add(string.Format("pack.SetSegmentValue(\"{0}\", {1}.Select(p => p.Value).ToArray());", setor.FrameSegName, setor.SysPropertyName));
+                }
+                else
+                    setlist.Add(string.Format("pack.SetSegmentValue(\"{0}\", {1}.Value);", setor.FrameSegName, setor.SysPropertyName));
             }
             ReplaceText(code, "setvaluelist", setlist, 4);
             return code.ToString();
@@ -186,8 +218,15 @@ namespace FrameIO.Main
             var getlist = new List<string>();
             foreach(var setor in ac.Maps)
             {
-                getlist.Add(string.Format("{0}.Value = data.{1}(\"{2}\");", setor.SysPropertyName,GetGetorName(sys,setor.SysPropertyName), setor.FrameSegName));
-                //TODO 数组类型赋值
+                if(ProIsArray(sys, setor.SysPropertyName))
+                {
+                    getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
+                    getlist.Add(string.Format("var __{0} = data.GetByteArray(\"{1}\");", setor.SysPropertyName, setor.FrameSegName));
+                    getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));",setor.SysPropertyName, GetPropertyTypeName(GetProType(sys,setor.SysPropertyName))));
+                }
+                else
+                    getlist.Add(string.Format("{0}.Value = data.{1}(\"{2}\");", setor.SysPropertyName,GetGetorName(sys,setor.SysPropertyName), setor.FrameSegName));
+                
             }
             ReplaceText(code, "getvaluelist", getlist, 4);
             return code.ToString();
@@ -198,6 +237,16 @@ namespace FrameIO.Main
 
         #region --Helper--
 
+        static private bool ProIsArray(Subsys sys, string proname)
+        {
+            foreach (var p in sys.Propertys)
+            {
+                if (p.Name == proname)
+                    return p.IsArray;
+            }
+            return false;
+        }
+
         static private string GetGetorName(Subsys sys, string proname)
         {
             foreach(var p in sys.Propertys)
@@ -206,6 +255,16 @@ namespace FrameIO.Main
                     return GetGetorName(p.PropertyType);
             }
             return "Get_";
+        }
+
+        static private syspropertytype GetProType(Subsys sys, string proname)
+        {
+            foreach(var p in sys.Propertys)
+            {
+                if (p.Name == proname)
+                    return p.PropertyType;
+            }
+            return 0;
         }
 
         //取值函数名称

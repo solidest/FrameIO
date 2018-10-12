@@ -7,9 +7,19 @@ using System.Threading.Tasks;
 
 namespace FrameIO.CodeTemplate
 {
-    public class Parameter<T>:INotifyPropertyChanged
+    public class Parameter<T> : INotifyPropertyChanged
     {
         private T _value;
+
+        public Parameter(T value)
+        {
+            _value = value;
+        }
+
+        public Parameter()
+        {
+            
+        }
 
         public string Name { get; set; }
         public T Value
