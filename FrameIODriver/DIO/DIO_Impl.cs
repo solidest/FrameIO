@@ -7,7 +7,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Driver
 {
-    partial class DIO_Impl : IFrameStream, IFrameReader, IFrameWriter
+    public partial class DIO_Impl : IChannelBase
     {
         DIHelper CardDIO = null;
         bool isOpen = false;

@@ -57,9 +57,27 @@ namespace FrameIO.Run
                         chcom.InitConfig(ch.DicOption);
                         return chcom;
                     }
-
-
-
+                    break;
+                case syschanneltype.SCHT_TCPCLIENT:
+                    {
+                        var chtcpclient = new FrameIO.Driver.TCPClient_Impl();
+                        chtcpclient.InitConfig(ch.DicOption);
+                        return chtcpclient;
+                    }
+                    break;
+                case syschanneltype.SCHT_TCPSERVER:
+                    {
+                        var chtcpserver = new FrameIO.Driver.TCPServer_Impl();
+                        chtcpserver.InitConfig(ch.DicOption);
+                        return chtcpserver;
+                    }
+                    break;
+                case syschanneltype.SCHT_UDP:
+                    {
+                        var chtudp = new FrameIO.Driver.UDPClient_Impl();
+                        chtudp.InitConfig(ch.DicOption);
+                        return chtudp;
+                    }
                     break;
 
                    //TODO 添加其它类型的驱动调用

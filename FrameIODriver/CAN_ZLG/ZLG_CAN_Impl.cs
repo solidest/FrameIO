@@ -8,7 +8,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Driver
 {
-    partial class CAN_ZLG_Impl : PhysicalChannel,IFrameStream, IFrameReader, IFrameWriter
+    public partial class CAN_ZLG_Impl : PhysicalChannel,IFrameStream, IFrameReader, IFrameWriter
     {
         #region IFrameStream
         public void ClearChannel()

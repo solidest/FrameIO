@@ -103,6 +103,10 @@
     <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="test_channel.cs" />
+    <Compile Include="test_channel_com.cs" />
+    <Compile Include="test_channel_tcp.cs" />
+    <Compile Include="test_channel_tcpserver.cs" />
+    <Compile Include="test_channel_tcpclient.cs" />
     <Compile Include="test_frame.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />

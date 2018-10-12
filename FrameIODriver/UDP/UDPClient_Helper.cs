@@ -33,12 +33,12 @@ namespace FrameIO.Driver
         {
             if (client == null)
             {
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), (int)config["localport"]);
+                IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), Convert.ToInt32(config["localport"]));
                 client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
                 client.ExclusiveAddressUse = false;
                 client.Bind(ipep);
 
-                remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), (int)config["remoteport"]);
+                remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
 
             }
             return client;
