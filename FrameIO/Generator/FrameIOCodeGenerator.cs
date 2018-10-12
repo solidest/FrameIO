@@ -30,6 +30,10 @@ namespace FrameIO.Main
                 CodeFile.SaveFrameBinFile(fn, pji);
                 tout.OutText(string.Format("信息：生成文件{0}",fn) , true);
 
+                var code = new StringBuilder(GetTemplate("TParameter"));
+                ReplaceText(code, "projectname", _pj.Name);
+                CreateFile("Parameter", code);
+
                 GenerateEnumFile(pj.EnumdefList);
                 GenerateSysFile(pj.SubsysList);
                 tout.OutText("信息：代码文件输出完成", false);

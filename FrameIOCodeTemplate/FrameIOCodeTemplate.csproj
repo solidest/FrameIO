@@ -47,6 +47,9 @@
     <None Include="..\FrameIO\x64\Debug\Template\TEnum.cst">
       <Link>TEnum.cst</Link>
     </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TParameter.cst">
+      <Link>TParameter.cst</Link>
+    </None>
     <None Include="..\FrameIO\x64\Debug\Template\TRecvAction.cst">
       <Link>TRecvAction.cst</Link>
     </None>
