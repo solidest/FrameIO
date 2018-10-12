@@ -58,12 +58,12 @@ namespace FrameIO.Main
             bool_arr[5] = true;
 
             //获取打包接口
-//             var pack = Run.FrameIOFactory.GetFramePack("MSG1");
-//             pack.SetSegmentValue("a", a);
-//             pack.SetSegmentValue("b", b);
-//             pack.SetSegmentValue("c", c);
-//             pack.SetSegmentValue("d", d);
-//             pack.SetSegmentValue("e", bool_arr);
+            var pack = Run.FrameIOFactory.GetFramePack("MSG1");
+            pack.SetSegmentValue("a", a);
+            pack.SetSegmentValue("b", b);
+            pack.SetSegmentValue("c", c);
+            pack.SetSegmentValue("d", d);
+            pack.SetSegmentValue("e", bool_arr);
 
             #endregion
 

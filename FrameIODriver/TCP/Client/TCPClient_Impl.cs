@@ -19,7 +19,6 @@ namespace FrameIO.Driver
                 TCPClient.client.Connect(TCPClient.ipe);
                 return true;
             }
-                
 
             return false;
         }

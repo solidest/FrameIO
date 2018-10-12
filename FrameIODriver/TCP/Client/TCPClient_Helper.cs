@@ -36,10 +36,10 @@ namespace FrameIO.Driver
                 string host = "" + config["serverip"];
                 int port = Convert.ToInt32(config["port"]);
                 IPAddress ip = IPAddress.Parse(host);
-                IPEndPoint ipe = new IPEndPoint(ip, port);
+                ipe = new IPEndPoint(ip, port);
 
                 client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                client.Connect(ipe);
+                //client.Connect(ipe);
             }
             return client;
         }
