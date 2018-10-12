@@ -4,6 +4,7 @@ using FrameIO.CodeTemplate;
 using FrameIO.Run;
 using FrameIO.Interface;
 using System.Diagnostics;
+using System.Linq;
 
 namespace PROJECT1.SYS1
 {
@@ -12,8 +13,8 @@ namespace PROJECT1.SYS1
         private IChannelBase CH1;
         private IChannelBase CH2;
 
-        public Parameter<ushort?> PROPERTYA { get; set; }
-        public ObservableCollection<Parameter<byte?>> PROPERTYB { get; set; }
+        public Parameter<ushort?> PROPERTYA { get; set; } = new Parameter<ushort?>();
+        public ObservableCollection<Parameter<byte?>> PROPERTYB { get; set; } = new ObservableCollection<Parameter<byte?>>();
         public Parameter<double?> PROPERTYC { get; set; }
 
         public void Initialization()
@@ -56,6 +57,11 @@ namespace PROJECT1.SYS1
                 var funpack = FrameIOFactory.GetFrameUnpack("FRAME1");
                 var data = CH1.ReadFrame(funpack);
                 PROPERTYA.Value = data.GetUShort("SEG1");
+                PROPERTYB.Clear();
+                var __PROPERTYB = data.GetByteArray("SEG2");
+                if (__PROPERTYB != null) foreach (var v in __PROPERTYB) PROPERTYB.Add(new Parameter<byte?>(v));
+
+
             }
             catch (FrameIOException ex)
             {
@@ -69,7 +75,33 @@ namespace PROJECT1.SYS1
             {
                 var pack = FrameIOFactory.GetFramePack("FRAME1");
                 pack.SetSegmentValue("SEG1", PROPERTYA.Value);
+                pack.SetSegmentValue("SEG2", PROPERTYB.Select(p => p.Value).ToArray());
                 CH1.WriteFrame(pack);
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
+        }
+
+       
+        public void recvloop()
+        {
+            var unpack = FrameIOFactory.GetFrameUnpack("FRAME1");
+            CH1.BeginReadFrame(unpack, recvloopCallback, null);
+        }
+
+        public delegate void recvloopHandle();
+        public event recvloopHandle Onrecvloop;
+        private void recvloopCallback(IFrameData data, object AsyncState)
+        {
+            try
+            {
+                PROPERTYA.Value = data.GetUShort("SEG1");
+                PROPERTYB.Clear();
+                var __PROPERTYB = data.GetByteArray("SEG2");
+                if(__PROPERTYB != null) foreach (var v in __PROPERTYB) PROPERTYB.Add(new Parameter<byte?>(v));
+                if(Onrecvloop != null) foreach (recvloopHandle deleg in Onrecvloop.GetInvocationList()) deleg.BeginInvoke(null, null); 
             }
             catch (FrameIOException ex)
             {

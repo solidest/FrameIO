@@ -51,6 +51,9 @@
     <None Include="..\FrameIO\x64\Debug\Template\TRecvAction.cst">
       <Link>TRecvAction.cst</Link>
     </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TRecvLoopAction.cst">
+      <Link>TRecvLoopAction.cst</Link>
+    </None>
     <None Include="..\FrameIO\x64\Debug\Template\TSendAction.cst">
       <Link>TSendAction.cst</Link>
     </None>
