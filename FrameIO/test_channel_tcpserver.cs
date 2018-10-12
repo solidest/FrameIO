@@ -69,7 +69,7 @@ namespace FrameIO.Main
 
             var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
             CH1.Open();
-            CH1.WriteFrame(pack);
+            //CH1.WriteFrame(pack);
             //var buf = pack.Pack();
 
             //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
@@ -77,8 +77,8 @@ namespace FrameIO.Main
             //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
             //             var data = CH2.ReadFrame(unpack);
 
-            var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            var data = CH1.ReadFrame(unpack);
+            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //             var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
@@ -101,19 +101,20 @@ namespace FrameIO.Main
             //var data = u.Unpack();
 
             //读取数值
-            var a1 = data.GetSByte("a");
-            var b1 = data.GetByte("b");
-            var c1 = data.GetInt("c");
-            var d1 = data.GetDouble("d");
-            var bool_arr1 = data.GetBoolArray("e");
-
-            Debug.Assert(a == a1);
-            Debug.Assert(b == b1);
-            Debug.Assert(c == c1);
-            Debug.Assert(d == d1);
-            Debug.Assert(bool_arr1[5]);
-
-
+            //             var a1 = data.GetSByte("a");
+            //             var b1 = data.GetByte("b");
+            //             var c1 = data.GetInt("c");
+            //             var d1 = data.GetDouble("d");
+            //             var bool_arr1 = data.GetBoolArray("e");
+            // 
+            //             Debug.Assert(a == a1);
+            //             Debug.Assert(b == b1);
+            //             Debug.Assert(c == c1);
+            //             Debug.Assert(d == d1);
+            //             Debug.Assert(bool_arr1[5]);
+            // 
+            // 
+            CH1.Close();
             DateTime afterDT = System.DateTime.Now;
             TimeSpan ts = afterDT.Subtract(beforDT);
 

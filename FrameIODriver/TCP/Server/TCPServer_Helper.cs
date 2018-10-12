@@ -75,13 +75,17 @@ namespace FrameIO.Driver
         }
         public void CloseServer()
         {
-            serverTemp.Shutdown(SocketShutdown.Both);
-            serverTemp.Close();
+            //serverTemp.Shutdown(SocketShutdown.Both);
+            //serverTemp.Close();
 
-            if(server.Connected)
+            if(server!=null)
             {
-                server.Close();
+                if (server.Connected)
+                {
+                    server.Close();
+                }
             }
+
         }
 
     }
