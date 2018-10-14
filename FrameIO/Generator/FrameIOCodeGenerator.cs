@@ -20,6 +20,7 @@ namespace FrameIO.Main
         {
             try
             {
+                var frdic = FrameConfigFile.Compile(pj.FrameList, pj);
                 _tout = tout;
                 _pj = pj;
                 _newpath = tout.GetMainOutPath() + "\\" + pj.Name;
@@ -30,6 +31,7 @@ namespace FrameIO.Main
                 CodeFile.SaveFrameBinFile(fn, pji);
                 tout.OutText(string.Format("信息：生成文件{0}",fn) , true);
 
+                
                 var code = new StringBuilder(GetTemplate("TParameter"));
                 ReplaceText(code, "projectname", _pj.Name);
                 CreateFile("Parameter", code);
