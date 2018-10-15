@@ -58,7 +58,7 @@ namespace FrameIO.Main
 
         private static void GenerateFrameFile()
         {
-            var fms = FrameConfigFile.Compile(_pj.FrameList, _pj);
+            var fms = FrameCompileFile.Compile(_pj.FrameList, _pj);
             foreach (var fm in fms)
             {
                 var code = new StringBuilder(GetTemplate("TFrame"));

@@ -44,13 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IChannelBase.cs" />
-    <Compile Include="IFrameData.cs" />
+    <Compile Include="ISegmentGettor.cs" />
     <Compile Include="FrameIOException.cs" />
     <Compile Include="IFramePack.cs" />
     <Compile Include="IFrameReader.cs" />
     <Compile Include="IFrameStream.cs" />
     <Compile Include="IFrameUnpack.cs" />
     <Compile Include="IFrameWriter.cs" />
+    <Compile Include="ISegmentSettor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readme.cs" />
   </ItemGroup>

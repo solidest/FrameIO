@@ -11,7 +11,7 @@ namespace FrameIO.Main
     public partial class MainWindow
     {
         int loop = 100;
-        void AsyncResult(IFrameData data, out bool isCompleted, object AsyncState)
+        void AsyncResult(ISegmentGettor data, out bool isCompleted, object AsyncState)
         {
             loop = loop - 1;
             isCompleted = loop == 0;

@@ -7,166 +7,166 @@ namespace FrameIO.Interface
     /// <summary>
     /// 数据帧的字段内容读取接口
     /// </summary>
-    public interface IFrameData
+    public interface ISegmentGettor
     {
 
         /// <summary>
         /// 获取字段的bool值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        bool GetBool(string segmentname);
+        bool GetBool(ushort segidx);
 
         /// <summary>
         /// 获取字段的byte值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        byte GetByte(string segmentname);
+        byte GetByte(ushort segidx);
 
 
         /// <summary>
         /// 获取字段的sbyte值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        sbyte GetSByte(string segmentname);
+        sbyte GetSByte(ushort segidx);
 
         /// <summary>
         /// 获取字段的short值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        short GetShort(string segmentname);
+        short GetShort(ushort segidx);
 
         /// <summary>
         /// 获取字段的ushort值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        ushort GetUShort(string segmentname);
+        ushort GetUShort(ushort segidx);
 
         /// <summary>
         /// 获取字段的int值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        int GetInt(string segmentname);
+        int GetInt(ushort segidx);
 
         /// <summary>
         /// 获取字段的uint值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        uint GetUInt(string segmentname);
+        uint GetUInt(ushort segidx);
 
         /// <summary>
         /// 获取字段的long值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        long GetLong(string segmentname);
+        long GetLong(ushort segidx);
 
         /// <summary>
         /// 获取字段的ulong值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        ulong GetULong(string segmentname);
+        ulong GetULong(ushort segidx);
 
         /// <summary>
         /// 获取字段的float值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        float GetFloat(string segmentname);
+        float GetFloat(ushort segidx);
 
 
         /// <summary>
         /// 获取字段的double值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        double GetDouble(string segmentname);
+        double GetDouble(ushort segidx);
 
         /// <summary>
         /// 获取字段的float数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        float[] GetFloatArray(string segmentname);
+        float[] GetFloatArray(ushort segidx);
 
 
         /// <summary>
         /// 获取字段的double数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        double[] GetDoubleArray(string segmentname);
+        double[] GetDoubleArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的bool数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        bool[] GetBoolArray(string segmentname);
+        bool[] GetBoolArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的byte数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        byte[] GetByteArray(string segmentname);
+        byte[] GetByteArray(ushort segidx);
 
 
         /// <summary>
         /// 获取字段的sbyte数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        sbyte[] GetSByteArray(string segmentname);
+        sbyte[] GetSByteArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的short数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        short[] GetShortArray(string segmentname);
+        short[] GetShortArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的ushort数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        ushort[] GetUShortArray(string segmentname);
+        ushort[] GetUShortArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的int数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        int[] GetIntArray(string segmentname);
+        int[] GetIntArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的uint数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        uint[] GetUIntArray(string segmentname);
+        uint[] GetUIntArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的long数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        long[] GetLongArray(string segmentname);
+        long[] GetLongArray(ushort segidx);
 
         /// <summary>
         /// 获取字段的ulong数组值
         /// </summary>
-        /// <param name="segmentname">字段的全路径名称</param>
+        /// <param name="segidx">字段的号</param>
         /// <returns>返回的字段值</returns>
-        ulong[] GetULongArray(string segmentname);
+        ulong[] GetULongArray(ushort segidx);
     }
 
 }

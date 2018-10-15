@@ -24,6 +24,12 @@ namespace FrameIO.Main
             return (Op == exptype.EXP_INT && ConstStr == "1");
         }
 
+        //是否位常量0
+        public bool IsIntZero()
+        {
+            return (Op == exptype.EXP_INT && ConstStr == "0");
+        }
+
         //是否为常量
         public bool IsConst()
         {

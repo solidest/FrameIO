@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //数据帧配置文件编译
-    public class FrameConfigFile
+    public class FrameCompileFile
     {
         public static Dictionary<string, CompiledFrame>  Compile(IList<Frame> fms, IOProject pj)
         {
@@ -35,12 +35,15 @@ namespace FrameIO.Main
         const byte CO_SEGINTEGER = 1;
         const byte CO_SEGREAL = 2;
         const byte CO_SEGTEXT = 3;
-        const byte CO_SEGBLOCK_IN = 4;
-        const byte CO_SEGBLOCK_OUT = 5;
-        const byte CO_SEGONEOF_IN = 6;
-        const byte CO_SEGONEOF_OUT = 7;
-        const byte CO_SEGONEOFITEM_IN = 8;
-        const byte CO_SEGONEOFITEM_OUT = 9;
+        const byte CO_SEGINTEGER_ARRAY = 4;
+        const byte CO_SEGREAL_ARRAY = 5;
+        const byte CO_SEGTEXT_ARRAY = 6;
+        const byte CO_SEGBLOCK_IN = 7;
+        const byte CO_SEGBLOCK_OUT = 8;
+        const byte CO_SEGONEOF_IN = 9;
+        const byte CO_SEGONEOF_OUT = 10;
+        const byte CO_SEGONEOFITEM_IN = 11;
+        const byte CO_SEGONEOFITEM_OUT = 12;
 
         const byte CO_VALIDATOR_MAX = 1;
         const byte CO_VALIDATOR_MIN = 2;
@@ -54,19 +57,17 @@ namespace FrameIO.Main
         const byte ENCO_INVERSION = 2;
         const byte ENCO_COMPLEMENT = 3;
 
-        const byte EXP_CONST_ULONG = 1;
-        const byte EXP_CONST_SLONG = 2;
-        const byte EXP_CONST_DOUBLE = 3;
-        const byte EXP_ADD = 4;
-        const byte EXP_SUB = 5;
-        const byte EXP_MUL = 6;
-        const byte EXP_DIV = 7;
-        const byte EXP_REF_SEGMENT = 8;
-        const byte EXP_FUN_BYTESIZEOF = 9;
+        const byte EXP_NUMBER = 1;
+        const byte EXP_ADD = 2;
+        const byte EXP_SUB = 3;
+        const byte EXP_MUL = 4;
+        const byte EXP_DIV = 5;
+        const byte EXP_REF_SEGMENT = 6;
+        const byte EXP_FUN_BYTESIZEOF = 7;
 
 
         private List<ulong> _segmentlist = new List<ulong>();
-        private List<ConstValue> _constlist = new List<ConstValue>();
+        private List<ulong> _constlist = new List<ulong>();
         private List<ulong> _expression = new List<ulong>();
         private List<ulong> _validatorlist = new List<ulong>();
 
@@ -75,7 +76,7 @@ namespace FrameIO.Main
         public FrameCompiler()
         {
             _segmentlist.Add(0);
-            _constlist.Add(new ConstValue() { Value=0, NumberType=0 });
+            _constlist.Add(0);
             _validatorlist.Add(0);
             _expression.Add(0);
             OutSymbols.Add("", 0);
@@ -95,6 +96,7 @@ namespace FrameIO.Main
             _fms = null;
             _pj = null;
 
+            //const byte pos_segment = 0;
             const byte pos_const = 16;
             const byte pos_expression = 32;
             const byte pos_validator = 48;
@@ -109,25 +111,16 @@ namespace FrameIO.Main
             using (var mst = new MemoryStream())
             {
                 mst.Write(BitConverter.GetBytes(token), 0, 8);
-                WriteMemory(mst, _segmentlist);
                 WriteMemory(mst, _constlist);
                 WriteMemory(mst, _expression);
                 WriteMemory(mst, _validatorlist);
+                WriteMemory(mst, _segmentlist);
                 mst.Close();
                 return mst.ToArray();
             }
         }
 
         //写入内存
-        private void WriteMemory(MemoryStream mst, List<ConstValue> data)
-        {
-            for (int i = 0; i < data.Count; i++)
-            {
-                mst.WriteByte(data[i].NumberType);
-                mst.Write(BitConverter.GetBytes(data[i].Value), 0, 8);
-            }
-        }
-
         private void WriteMemory(MemoryStream mst, List<ulong> data)
         {
             for (int i = 0; i < data.Count; i++)
@@ -171,6 +164,7 @@ namespace FrameIO.Main
             const byte pos_oneof_inseg = 48;
             const byte pos_oneof_outseg = 48;
 
+            var need_update_end = new List<ushort>();
             var pre = parent_pre + "." + parent.Name;
             ulong token1 = CO_SEGONEOF_IN;
             var reftoken1 = AddSegment(token1, pre);
@@ -178,11 +172,11 @@ namespace FrameIO.Main
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
             var intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var firstitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[0].FrameName, pre + "." +  parent.OneOfCaseList[0].EnumItem, reftoken1);
+            var firstitem = CompileSegment(LookUpExp(intovalue), byseg, parent.OneOfCaseList[0].FrameName, pre + "." +  parent.OneOfCaseList[0].EnumItem, true, false, need_update_end);
             var lastitem = firstitem;
             for(int i=1; i<parent.OneOfCaseList.Count; i++)
             {
-                lastitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, reftoken1);
+                lastitem = CompileSegment(LookUpExp(intovalue), byseg, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem,false, i==parent.OneOfCaseList.Count-1, need_update_end);
             }
             ulong token2 = CO_SEGONEOF_OUT;
             var reftoken2 = AddSegment(token2, pre + "$");
@@ -197,19 +191,33 @@ namespace FrameIO.Main
             SetTokenValue(ref token1, reftoken2, pos_oneof_outseg, LEN_USHORT);
             UpdateSegmentToken(reftoken1, token1);
 
+            const byte pos2_parent_outseg = 48;
+            for (int i=0; i<need_update_end.Count-1; i++)
+            {
+                UpdateSegmentToken(need_update_end[i], reftoken2, pos2_parent_outseg);
+            }
+
             return reftoken1;
         }
 
         //编译OneOf分支
-        private ushort CompileSegment(ushort intovalue, string framename, string parent_pre, ushort ref_parent_into)
+        private ushort CompileSegment(ushort intovalue, ushort bysegment, string framename, string parent_pre, bool isLast, bool isFirst, IList<ushort> need_update_end)
         {
+            const byte pos_isLast = 6;
+            const byte pos_isFirst = 7;
             //const biyte pos_fiotype = 0;
-            //const byte pos_not_used = 6;
-            const byte pos_into_value = 16;
-            const byte pos_firstseg = 32;
-            const byte pos_lastseg = 32;
-            const byte pos_parent_intoseg = 48;
-            const byte pos_outseg = 48;
+            //const byte pos_not_used = 8;
+
+            //into segment
+            const byte pos1_my_outseg = 16;
+            const byte pos1_into_value = 32;
+            const byte pos1_by_segv = 48;
+
+
+            //out
+            const byte pos2_my_intoseg = 16;
+            //const byte pos2_notused = 32;
+            //const byte pos2_parent_outseg = 48;
 
             ulong token1 = CO_SEGONEOFITEM_IN;
             var reftoken1 = AddSegment(token1, parent_pre);
@@ -221,14 +229,17 @@ namespace FrameIO.Main
 
 
             ulong token2 = CO_SEGONEOFITEM_OUT;
-            SetTokenValue(ref token2, intovalue, pos_into_value, LEN_USHORT);
-            SetTokenValue(ref token2, reflast, pos_lastseg, LEN_USHORT);
-            SetTokenValue(ref token2, ref_parent_into, pos_parent_intoseg, LEN_USHORT);
+            if (isFirst) SetTokenValue(ref token2, 1, pos_isFirst, 1);
+            if (isLast) SetTokenValue(ref token2, 1, pos_isLast, 1);
+            SetTokenValue(ref token2, reftoken1, pos2_my_intoseg, LEN_USHORT);
             var reftoken2 = AddSegment(token2, parent_pre + "$");
+            need_update_end.Add(reftoken2);
 
-            SetTokenValue(ref token1, intovalue, pos_into_value, LEN_USHORT);
-            SetTokenValue(ref token1, reffirst, pos_firstseg, LEN_USHORT);
-            SetTokenValue(ref token1, reftoken2, pos_outseg, LEN_USHORT);
+            if (isFirst) SetTokenValue(ref token1, 1, pos_isFirst, 1);
+            if (isLast) SetTokenValue(ref token1, 1, pos_isLast, 1);
+            SetTokenValue(ref token1, reftoken2, pos1_my_outseg, LEN_USHORT);
+            SetTokenValue(ref token1, intovalue, pos1_into_value, LEN_USHORT);
+            SetTokenValue(ref token1, bysegment, pos1_by_segv, LEN_USHORT);
             UpdateSegmentToken(reftoken1, token1);
 
             return reftoken1;
@@ -294,7 +305,8 @@ namespace FrameIO.Main
 
             const byte len_bitcount = 6;
 
-            ulong token = CO_SEGINTEGER;
+            bool isarray = !seg.Repeated.IsIntOne();
+            ulong token = isarray ? CO_SEGINTEGER_ARRAY : CO_SEGINTEGER;
 
             byte encoded = 0;
             switch (seg.Encoded)
@@ -313,7 +325,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big?1:0), pos_byteorder, 1);
             SetTokenValue(ref token, (byte)(seg.Signed ? 1:0), pos_issigned, 1);
             SetTokenValue(ref token, (byte)(seg.BitCount), pos_bitcount, len_bitcount);
-            SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             if(seg.VCheck!= CheckType.None)
             {
@@ -347,7 +359,8 @@ namespace FrameIO.Main
             const byte pos_value = 32;
             const byte pos_validate = 48;
 
-            ulong token = CO_SEGREAL;
+            var isarray = seg.Repeated.IsIntOne();
+            ulong token = isarray ?  CO_SEGREAL_ARRAY : CO_SEGREAL;
             byte encoded = 0;
             switch (seg.Encoded)
             {
@@ -364,8 +377,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token, encoded, pos_encoded, 2);
             SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big ? 1 : 0), pos_byteorder, 1);
             SetTokenValue(ref token, (byte)(seg.IsDouble ? 1 : 0), pos_isdouble, 1);
-
-            SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             SetTokenValue(ref token, LookUpValidator(seg.VMax, seg.VMin, pre), pos_validate, LEN_USHORT);
 
@@ -383,10 +395,10 @@ namespace FrameIO.Main
             //ushort RefRepeated;
             const byte pos_repeated = 32;
             const byte pos_bytesize = 48;
+            var isarray = seg.Repeated.IsIntOne();
             
-
-            ulong token = CO_SEGREAL;
-            SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            ulong token = isarray ? CO_SEGREAL_ARRAY : CO_SEGREAL;
+            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.ByteSize, pre), pos_bytesize, LEN_USHORT);
             //HACK TEXTSEGMENT
             return AddSegment(token, pre + "." + seg.Name);
@@ -457,18 +469,14 @@ namespace FrameIO.Main
             return OutSymbols[pre + "." +name];
         }
 
-        private ushort LookUpExp(ulong l, byte numbertype)
+        private ushort LookUpExp(ulong v)
         {
-            for(ushort i=0; i<_constlist.Count; i++)
-            {
-                if (_constlist[i].Value == l && _constlist[i].NumberType == numbertype ) return i;
-            }
-            _constlist.Add(new ConstValue() { NumberType=numbertype, Value = l });
-            return (ushort)(_constlist.Count - 1);
+            return LookUpExp((double)v);
         }
 
         private ushort LookUpExp(Exp ep, string pre)
         {
+            if (ep == null || ep.IsIntZero()) return 0;
             ulong token = 0;
             const byte pos_left = 32;
             const byte pos_right = 48;
@@ -495,11 +503,8 @@ namespace FrameIO.Main
                     token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << pos_right);
                     break;
                 case exptype.EXP_REAL:
-                    token = EXP_CONST_DOUBLE;
-                    token |= ((ulong)(LookUpExp(ep.ConstStr)) << pos_left);
-                    break;
                 case exptype.EXP_INT:
-                    token = EXP_CONST_ULONG;
+                    token = EXP_NUMBER;
                     token |= ((ulong)(LookUpExp(ep.ConstStr)) << pos_left);
                     break;
                 case exptype.EXP_ID:
@@ -519,12 +524,19 @@ namespace FrameIO.Main
 
         private ushort LookUpExp(double d)
         {
-            return LookUpExp(BitConverter.ToUInt64(BitConverter.GetBytes(d), 0), EXP_CONST_DOUBLE);
+            var v = BitConverter.ToUInt64(BitConverter.GetBytes(d), 0);
+            for (ushort i = 0; i < _constlist.Count; i++)
+            {
+                if (_constlist[i] == v) return i;
+            }
+            _constlist.Add(v);
+            return (ushort)(_constlist.Count - 1);
+    
         }
 
-        private ushort LookUpExp(long l)
+        private ushort LookUpExp(long v)
         {
-            return LookUpExp(BitConverter.ToUInt64(BitConverter.GetBytes(l), 0), EXP_CONST_SLONG);
+            return LookUpExp((double)v);
         }
 
         private ushort LookUpExp(string constv)
@@ -538,7 +550,7 @@ namespace FrameIO.Main
                 if (constv.StartsWith("-"))
                     return LookUpExp(Convert.ToInt64(constv));
                 else
-                    return LookUpExp(Convert.ToUInt64(constv), EXP_CONST_ULONG);
+                    return LookUpExp(Convert.ToUInt64(constv));
             }
             throw new Exception("unknow");
         }
@@ -562,6 +574,11 @@ namespace FrameIO.Main
         private void UpdateSegmentToken(ushort idx, ulong newtoken)
         {
             _segmentlist[idx] = newtoken;
+        }
+
+        private void UpdateSegmentToken(ushort idx, ushort value, byte pos)
+        {
+            _segmentlist[idx] |= ((ulong)value << pos);
         }
 
         //取枚举项的数值
@@ -625,13 +642,6 @@ namespace FrameIO.Main
             throw new Exception("nukonw");
         }
 
-    }
-
-
-    public struct ConstValue
-    {
-        public byte NumberType;
-        public ulong Value;
     }
 
     public class CompiledFrame

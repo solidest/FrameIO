@@ -86,12 +86,12 @@ namespace FrameIO.Runtime
             return _nextsize;
         }
 
-        public IFrameData Unpack()
+        public ISegmentGettor Unpack()
         {
             _buff.Close();
 
             Reset();
-            return null; 
+            return new SegmentGettor(); 
         }
 
     }

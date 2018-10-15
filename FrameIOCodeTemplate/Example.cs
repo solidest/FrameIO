@@ -102,7 +102,7 @@ namespace PROJECT1.SYS1
         private bool _IsStopRecvLoop;
         public delegate void recvloopHandle();
         public event recvloopHandle Onrecvloop;
-        private void recvloopCallback(IFrameData data, out bool isstop, object AsyncState)
+        private void recvloopCallback(ISegmentGettor data, out bool isstop, object AsyncState)
         {
             try
             {

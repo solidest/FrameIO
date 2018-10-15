@@ -7,7 +7,7 @@ using FrameIO.Interface;
 
 namespace FrameIO.Run
 {
-    public class FrameData : IFrameData
+    public class FrameData : ISegmentGettor
     {
         private Dictionary<string, InnerData> _data;
 

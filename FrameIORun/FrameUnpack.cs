@@ -148,7 +148,7 @@ namespace FrameIO.Run
         }
 
         //解包函数
-        public IFrameData Unpack()
+        public ISegmentGettor Unpack()
         {
             if(_cach == null || _nextsize !=0)
                 throw new Exception("AppendBlock调用出错");
