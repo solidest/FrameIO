@@ -8,6 +8,26 @@ using System.Linq;
 
 namespace PROJECT1.SYS1
 {
+
+    public partial class FrameRun
+    {
+
+        public static FrameRun  CreateTFrameRun()
+        {
+            return new FrameRun(string.Concat(
+                        "Cgp0ZXN0LnByb3RvIjUKBFRlc3QSCwoDY21kGAEgASgJEg8KB2ludW1iZXIY",
+                        "AiABKAUSDwoHZm51bWJlchgDIAMoAmIGcHJvdG8z"));
+        }
+
+        private FrameRun(string content)
+        {
+            Content = System.Convert.FromBase64String(content);
+        }
+        
+        public byte[] Content { get; private set; }
+    }
+
+
     public partial class SYS1
     {
         public IChannelBase CH1 { get; private set; }= FrameIOFactory.GetChannel("SYS1", "CH1");

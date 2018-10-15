@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,17 +30,17 @@ namespace FrameIO.Main
     {
         const byte LEN_USHORT = 16;
         const byte LEN_BYTE = 8;
+        const byte LEN_CODE = 6;
 
-        const byte CO_SEGGROUP = 1;
-        const byte CO_SEGINTEGER = 2;
-        const byte CO_SEGREAL = 3;
-        const byte CO_SEGTEXT = 4;
-        const byte CO_SEGBLOCK_IN = 5;
-        const byte CO_SEGBLOCK_OUT = 6;
-        const byte CO_SEGONEOF_IN = 7;
-        const byte CO_SEGONEOF_OUT = 8;
-        const byte CO_SEGONEOFITEM_IN = 9;
-        const byte CO_SEGONEOFITEM_OUT = 10;
+        const byte CO_SEGINTEGER = 1;
+        const byte CO_SEGREAL = 2;
+        const byte CO_SEGTEXT = 3;
+        const byte CO_SEGBLOCK_IN = 4;
+        const byte CO_SEGBLOCK_OUT = 5;
+        const byte CO_SEGONEOF_IN = 6;
+        const byte CO_SEGONEOF_OUT = 7;
+        const byte CO_SEGONEOFITEM_IN = 8;
+        const byte CO_SEGONEOFITEM_OUT = 9;
 
         const byte CO_VALIDATOR_MAX = 1;
         const byte CO_VALIDATOR_MIN = 2;
@@ -104,6 +105,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token, (ushort)_expression.Count, pos_expression, LEN_USHORT);
             SetTokenValue(ref token, (ushort)_validatorlist.Count, pos_validator, LEN_USHORT);
 
+            ;
             using (var mst = new MemoryStream())
             {
                 mst.Write(BitConverter.GetBytes(token), 0, 8);
@@ -111,6 +113,7 @@ namespace FrameIO.Main
                 WriteMemory(mst, _constlist);
                 WriteMemory(mst, _expression);
                 WriteMemory(mst, _validatorlist);
+                mst.Close();
                 return mst.ToArray();
             }
         }
@@ -175,11 +178,11 @@ namespace FrameIO.Main
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
             var intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var firstitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[0].FrameName, pre + "." +  parent.OneOfCaseList[0].EnumItem);
+            var firstitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[0].FrameName, pre + "." +  parent.OneOfCaseList[0].EnumItem, reftoken1);
             var lastitem = firstitem;
             for(int i=1; i<parent.OneOfCaseList.Count; i++)
             {
-                lastitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem);
+                lastitem = CompileSegment(LookUpExp(intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, reftoken1);
             }
             ulong token2 = CO_SEGONEOF_OUT;
             var reftoken2 = AddSegment(token2, pre + "$");
@@ -198,14 +201,14 @@ namespace FrameIO.Main
         }
 
         //编译OneOf分支
-        private ushort CompileSegment(ushort intovalue, string framename, string parent_pre)
+        private ushort CompileSegment(ushort intovalue, string framename, string parent_pre, ushort ref_parent_into)
         {
             //const biyte pos_fiotype = 0;
             //const byte pos_not_used = 6;
             const byte pos_into_value = 16;
             const byte pos_firstseg = 32;
             const byte pos_lastseg = 32;
-            const byte pos_inseg = 48;
+            const byte pos_parent_intoseg = 48;
             const byte pos_outseg = 48;
 
             ulong token1 = CO_SEGONEOFITEM_IN;
@@ -220,7 +223,7 @@ namespace FrameIO.Main
             ulong token2 = CO_SEGONEOFITEM_OUT;
             SetTokenValue(ref token2, intovalue, pos_into_value, LEN_USHORT);
             SetTokenValue(ref token2, reflast, pos_lastseg, LEN_USHORT);
-            SetTokenValue(ref token2, reftoken1, pos_inseg, LEN_USHORT);
+            SetTokenValue(ref token2, ref_parent_into, pos_parent_intoseg, LEN_USHORT);
             var reftoken2 = AddSegment(token2, parent_pre + "$");
 
             SetTokenValue(ref token1, intovalue, pos_into_value, LEN_USHORT);
@@ -467,43 +470,45 @@ namespace FrameIO.Main
         private ushort LookUpExp(Exp ep, string pre)
         {
             ulong token = 0;
+            const byte pos_left = 32;
+            const byte pos_right = 48;
             switch(ep.Op)
             {
                 case exptype.EXP_ADD:
                     token = EXP_ADD;
-                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << 32);
-                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << 48);
+                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << pos_left);
+                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << pos_right);
                     break;
                 case exptype.EXP_DIV:
                     token = EXP_DIV;
-                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << 32);
-                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << 48);
+                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << pos_left);
+                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << pos_right);
                     break;
                 case exptype.EXP_MUL:
                     token = EXP_MUL;
-                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << 32);
-                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << 48);
+                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << pos_left);
+                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << pos_right);
                     break;
                 case exptype.EXP_SUB:
                     token = EXP_SUB;
-                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << 32);
-                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << 48);
+                    token |= ((ulong)(LookUpExp(ep.LeftExp, pre)) << pos_left);
+                    token |= ((ulong)(LookUpExp(ep.RightExp, pre)) << pos_right);
                     break;
                 case exptype.EXP_REAL:
                     token = EXP_CONST_DOUBLE;
-                    token |= ((ulong)(LookUpExp(ep.ConstStr)) <<32);
+                    token |= ((ulong)(LookUpExp(ep.ConstStr)) << pos_left);
                     break;
                 case exptype.EXP_INT:
                     token = EXP_CONST_ULONG;
-                    token |= ((ulong)(LookUpExp(ep.ConstStr)) << 32);
+                    token |= ((ulong)(LookUpExp(ep.ConstStr)) << pos_left);
                     break;
                 case exptype.EXP_ID:
                     token = EXP_REF_SEGMENT;
-                    token |= ((ulong)(LookUpSegment(ep.ConstStr, pre)) << 32);
+                    token |= ((ulong)(LookUpSegment(ep.ConstStr, pre)) << pos_left);
                     break;
                 case exptype.EXP_BYTESIZEOF:
                     token = EXP_FUN_BYTESIZEOF;
-                    token |= ((ulong)LookUpSegment(ep.ConstStr, pre) << 32);
+                    token |= ((ulong)LookUpSegment(ep.ConstStr, pre) << pos_left);
                     break;
                 default:
                     throw new Exception("Unknow");
