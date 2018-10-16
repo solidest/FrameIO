@@ -18,7 +18,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public abstract ushort Pack(IList<ulong> value_buff, Stream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir);
+        public abstract ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir);
 
         //取字段值
         public virtual double GetValue(IList<ulong> value_buff, SegmentValueInfo info)

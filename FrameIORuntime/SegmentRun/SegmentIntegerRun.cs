@@ -14,8 +14,11 @@ namespace FrameIO.Runtime
         public bool IsSigned { get; private set; }
         public byte BitCount { get; private set; }
 
+        private SegmentMaxValidator _vlidmax;
+        private SegmentMinValidator _vlidmin;
+        private SegmentCheckValidator _vlidcheck;
+
         private ushort _value;
-        private ushort _validator;
 
         public SegmentIntegerRun(ulong token, IRunInitial ir) : base(token, ir)
         {
@@ -32,28 +35,22 @@ namespace FrameIO.Runtime
             IsSigned = GetTokenBool(token, pos_issigned);
             BitCount = GetTokenByte(token, pos_bitcount, len_bitcount);
             _value = GetTokenUShort(token, pos_value);
-            _validator = GetTokenUShort(token, pos_validate);
+            var validator = GetTokenUShort(token, pos_validate);
+            _vlidmax = (SegmentMaxValidator)ir.GetValidator(validator, ValidateType.Max);
+            _vlidmin = (SegmentMinValidator)ir.GetValidator(validator, ValidateType.Min);
+            _vlidcheck = (SegmentCheckValidator)ir.GetValidator(validator, ValidateType.Check);
         }
 
         #region --Pack--
 
-        public override ushort Pack(IList<ulong> value_buff, Stream pack, ref ulong cach, ref int cach_pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int cach_pos, SegmentValueInfo info, IRunExp ir)
         {
             if(!info.IsSetValue)
             {
-                if (_value == 0)
-                    SetSegmentValue(value_buff, (ulong)0, info);
-                else if (IsSigned)
-                {
-                    long v = (long)ir.GetExpValue(_value);
-                    SetSegmentValue(value_buff, v, info);
-                }
+                if (_vlidcheck != null)
+                    SetSegmentValue(value_buff, _vlidcheck.GetCheckValue(pack.GetBuffer(), ir));
                 else
-                {
-                    ulong v = (ulong)ir.GetExpValue(_value);
-                    SetSegmentValue(value_buff, v, info);
-                }
-               
+                    SetAutoValue(value_buff, info, ir);
             }
             
             CommitValue(value_buff[info.StartPos], pack, ref cach, ref cach_pos, BitCount);
@@ -73,20 +70,13 @@ namespace FrameIO.Runtime
             }
         }
 
-
-        #endregion
-
-        #region --Run--
-
         public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
         {
             bitlen += BitCount;
             return 0;
         }
 
-
         #endregion
-
 
         #region --Unpack--
 
@@ -103,8 +93,23 @@ namespace FrameIO.Runtime
 
         #endregion
 
-
         #region --SetValue--
+
+        private void SetAutoValue(IList<ulong> value_buff, SegmentValueInfo info, IRunExp ir)
+        {
+            if (_value == 0)
+                SetSegmentValue(value_buff, (ulong)0, info);
+            else if (IsSigned)
+            {
+                long v = (long)ir.GetExpValue(_value);
+                SetSegmentValue(value_buff, v, info);
+            }
+            else
+            {
+                ulong v = (ulong)ir.GetExpValue(_value);
+                SetSegmentValue(value_buff, v, info);
+            }
+        }
 
         public void SetSegmentValue(IList<ulong> value_buff, ulong? value)
         {

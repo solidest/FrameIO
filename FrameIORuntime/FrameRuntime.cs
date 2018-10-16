@@ -35,7 +35,7 @@ namespace FrameIO.Runtime
         private SegmentBaseRun[] _segs;
         private double[] _consts;
         private ExpRun[] _explist;
-        private Validator[] _validats;
+        private SegmentValidator[] _validats;
 
         public FrameInfo(byte[] content)
         {
@@ -75,11 +75,11 @@ namespace FrameIO.Runtime
                 pos += 8;
             }
 
-            _validats = new Validator[validatorcount];
+            _validats = new SegmentValidator[validatorcount];
             pos += 8;
             for(int i=1; i< validatorcount; i++)
             {
-                _validats[i] = new Validator(BitConverter.ToUInt64(content, pos));
+                _validats[i] = SegmentValidator.GetSegmentValidator(BitConverter.ToUInt64(content, pos), this);
                 pos += 8;
             }
 
@@ -109,28 +109,19 @@ namespace FrameIO.Runtime
 
         private static CreateSegment[] SegmentFactory = new CreateSegment[]
         {
-            //const byte CO_SEGINTEGER = 1;
-            //const byte CO_SEGREAL = 2;
-            //const byte CO_SEGTEXT = 3;
-            //const byte CO_SEGINTEGER_ARRAY = 4;
-            //const byte CO_SEGREAL_ARRAY = 5;
-            //const byte CO_SEGTEXT_ARRAY = 6;
-            //const byte CO_SEGBLOCK_IN = 7;
-            //const byte CO_SEGBLOCK_OUT = 8;
-            //const byte CO_SEGONEOF_IN = 9;
-            //const byte CO_SEGONEOF_OUT = 10;
-            //const byte CO_SEGONEOFITEM_IN = 11;
-            //const byte CO_SEGONEOFITEM_OUT = 12;
             CreateSegmentNullRun, 
-            CreateSegmentIntegerRun,
-            CreateSegmentRealRun,
-            CreateSegmentTextRun,
-            CreateSegmentIntegerArrayRun,
-            CreateSegmentRealArrayRun,
-            CreateSegmentTextArrayRun,
-            CreateSegmentNullRun,
-            CreateSegmentNullRun,
-            CreateSegmentNullRun 
+            CreateSegmentIntegerRun,//const byte CO_SEGINTEGER = 1;
+            CreateSegmentRealRun,//const byte CO_SEGREAL = 2;
+            CreateSegmentTextRun,//const byte CO_SEGTEXT = 3;
+            CreateSegmentIntegerArrayRun,//const byte CO_SEGINTEGER_ARRAY = 4;
+            CreateSegmentRealArrayRun,//const byte CO_SEGREAL_ARRAY = 5;
+            CreateSegmentTextArrayRun,//const byte CO_SEGTEXT_ARRAY = 6;
+            CreateSegmentBlockIn,//const byte CO_SEGBLOCK_IN = 7;
+            CreateSegmentBlockOut,//const byte CO_SEGBLOCK_OUT = 8;
+            CreateSegmentNullRun,//const byte CO_SEGONEOF_IN = 9;
+            CreateSegmentNullRun,//const byte CO_SEGONEOF_OUT = 10;
+            CreateSegmentNullRun,//const byte CO_SEGONEOFITEM_IN = 11;
+            CreateSegmentNullRun//const byte CO_SEGONEOFITEM_OUT = 12;
         };
 
         private static SegmentBaseRun CreateSegmentNullRun(ulong data, IRunInitial ir)
@@ -168,6 +159,16 @@ namespace FrameIO.Runtime
             return new SegmentTextArrayRun(data, ir);
         }
 
+        private static SegmentBaseRun CreateSegmentBlockIn(ulong data, IRunInitial ir)
+        {
+            return new SegmentBlockIn(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentBlockOut(ulong data, IRunInitial ir)
+        {
+            return new SegmentBlockOut(data, ir);
+        }
+
 
         #endregion
 
@@ -193,26 +194,42 @@ namespace FrameIO.Runtime
             return _explist[idx].IsConstOne(this);
         }
 
+        public SegmentValidator GetValidator(ushort idx, ValidateType type)
+        {
+            var vlid = _validats[idx];
+            while (vlid.NextIdx != 0)
+            {
+                vlid = _validats[vlid.NextIdx];
+                if (vlid.ValidType == type) return vlid;
+            }
+            return null;
+        }
+
+
         #endregion
 
     }
 
 
-
-    public class Validator
+    //初始化接口
+    public interface IRunInitial
     {
-        public Validator(ulong token)
-        {
+        double GetConst(ushort idx);
 
-        }
+        bool IsConst(ushort idx);
+
+        bool IsConstOne(ushort idx);
+        SegmentValidator GetValidator(ushort idx, ValidateType type);
     }
-    
 
 
+    //编码类型
     public enum EncodedType
     {
         Primitive = 1,
         Inversion,
         Complement
     }
+
+
 }

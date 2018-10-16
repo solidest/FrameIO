@@ -218,6 +218,11 @@ namespace FrameIO.Runtime
             return _fi.GetExp(idx).IsConstOne(this);
         }
 
+        public SegmentValidator GetValidator(ushort idx, ValidateType type)
+        {
+            return _fi.GetValidator(idx,type);
+        }
+
         #endregion
 
     }

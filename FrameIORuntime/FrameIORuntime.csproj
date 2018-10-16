@@ -49,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmentRun\SegmentBaseRun.cs" />
     <Compile Include="SegmentGettor.cs" />
+    <Compile Include="SegmentValidator.cs" />
     <Compile Include="SegmentVirtual\SegmentBlockIn.cs" />
     <Compile Include="SegmentRun\SegmentIntegerArrayRun.cs" />
     <Compile Include="SegmentRun\SegmentIntegerRun.cs" />

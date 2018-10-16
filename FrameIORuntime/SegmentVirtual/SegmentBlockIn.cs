@@ -38,7 +38,7 @@ namespace FrameIO.Runtime
             return 0;
         }
 
-        public override ushort Pack(IList<ulong> value_buff, Stream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
         {
             return 0;
         }

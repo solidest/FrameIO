@@ -102,15 +102,6 @@ namespace FrameIO.Runtime
 
     }
 
-    public interface IRunInitial
-    {
-        double GetConst(ushort idx);
-
-        bool IsConst(ushort idx);
-  
-        bool IsConstOne(ushort idx);
-    }
-
 
     public interface IRunExp:IRunInitial
     {
