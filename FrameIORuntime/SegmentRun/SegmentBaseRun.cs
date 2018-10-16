@@ -18,7 +18,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public abstract ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir);
+        public abstract ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir);
 
         //取字段值
         public virtual double GetValue(IList<ulong> value_buff, SegmentValueInfo info)
@@ -26,20 +26,25 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        //取字段的字节大小
-        public abstract ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir);
+        //取字段的位大小
+        public abstract ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir);
 
         #endregion
-
 
         #region --Unpack
 
-        public abstract ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info);
+        public abstract ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir);
 
-        public abstract ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info);
+        //尝试取字段值
+        public virtual bool TryGetValue(ref double value, byte[] buff,  SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        //尝试取字段的位大小
+        public abstract bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir);
 
         #endregion
-
 
         #region --SetSegmentValue--
 
@@ -156,25 +161,141 @@ namespace FrameIO.Runtime
 
         #endregion
 
-        #region --helper--
+        #region --GetSegmentValue--
 
-        //将数值写入打包cach
-        protected static void CommitValue(ulong value, Stream pack, ref ulong cach, ref int cach_pos, byte bitcount)
+
+        public virtual bool? GetBool(byte[] buff, SegmentUnpackInfo info)
         {
-            int newpos = cach_pos + bitcount;
-            if (newpos < 64)
+            throw new Exception("runtime");
+        }
+
+        public virtual bool?[] GetBoolArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual byte? GetByte(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual byte?[] GetByteArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual double? GetDouble(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual double?[] GetDoubleArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual float? GetFloat(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual float?[] GetFloatArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual int? GetInt(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual int?[] GetIntArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual long? GetLong(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual long?[] GetLongArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual sbyte? GetSByte(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual sbyte?[] GetSByteArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual short? GetShort(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual short?[] GetShortArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual uint? GetUInt(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual uint?[] GetUIntArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual ulong? GetULong(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual ulong?[] GetULongArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual ushort? GetUShort(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        public virtual ushort?[] GetUShortArray(byte[] buff, SegmentUnpackInfo info)
+        {
+            throw new Exception("runtime");
+        }
+
+        #endregion
+
+        #region --Helper--
+
+        //取任意位的字节
+        static public ulong GetUInt64FromByte(byte[] buff, uint bitStart)
+        {
+            uint word_index = bitStart >> 6;
+            uint word_offset = bitStart & 63;
+            ulong result = BitConverter.ToUInt64(buff, (int)word_index * 8) >> (UInt16)word_offset;
+            uint bits_taken = 64 - word_offset;
+            if (word_offset > 0 && bitStart + bits_taken < (uint)(8 * buff.Length))
             {
-                cach |= (value << cach_pos);
-                cach &= (~(ulong)0) >> (64 - newpos);
-                cach_pos = newpos;
+                result |= BitConverter.ToUInt64(buff, (int)(word_index + 1) * 8) << (UInt16)(64 - word_offset);
             }
-            else
-            {
-                ulong cv = cach | (value << cach_pos);
-                pack.Write(BitConverter.GetBytes(cv), 0, 8);
-                cach = value >> (64 - cach_pos);
-                cach_pos = newpos - 64;
-            }
+            return result;
+        }
+
+        //取任意位的指定长度字节
+        static public ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x)
+        {
+            return GetUInt64FromByte(buff, bitStart) & ((x != 0) ? (~(ulong)0 >> (sizeof(ulong) * 8 - x)) : (ulong)0);
         }
 
         //解包一个long数值
@@ -224,6 +345,27 @@ namespace FrameIO.Runtime
             }
             throw new Exception("runtime");
         }
+
+
+        //将数值写入打包cach
+        protected static void CommitValue(ulong value, Stream pack, ref ulong cach, ref int cach_pos, byte bitcount)
+        {
+            int newpos = cach_pos + bitcount;
+            if (newpos < 64)
+            {
+                cach |= (value << cach_pos);
+                cach &= (~(ulong)0) >> (64 - newpos);
+                cach_pos = newpos;
+            }
+            else
+            {
+                ulong cv = cach | (value << cach_pos);
+                pack.Write(BitConverter.GetBytes(cv), 0, 8);
+                cach = value >> (64 - cach_pos);
+                cach_pos = newpos - 64;
+            }
+        }
+
 
         //打包一个long数值
         protected static ulong PackToULong(long v, byte bitlen, EncodedType et, bool isbigorder)

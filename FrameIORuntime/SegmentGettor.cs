@@ -9,121 +9,130 @@ namespace FrameIO.Runtime
 {
     public class SegmentGettor : ISegmentGettor
     {
+        private FrameInfo _fi;
+        private SegmentUnpackInfo[] _segi;
+        private byte[] _data;
 
-
+        public SegmentGettor(FrameInfo fi,byte[] data, SegmentUnpackInfo[] segi)
+        {
+            _fi = fi;
+            _segi = segi;
+            _data = data;
+        }
 
         #region --GetValue--
 
-        public bool GetBool(ushort segidx)
+        public bool? GetBool(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetBool(_data, _segi[segidx]);
         }
 
-        public bool[] GetBoolArray(ushort segidx)
+        public bool?[] GetBoolArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetBoolArray(_data, _segi[segidx]);
         }
 
-        public byte GetByte(ushort segidx)
+        public byte? GetByte(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetByte(_data, _segi[segidx]);
         }
 
-        public byte[] GetByteArray(ushort segidx)
+        public byte?[] GetByteArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetByteArray(_data, _segi[segidx]);
         }
 
-        public double GetDouble(ushort segidx)
+        public double? GetDouble(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetDouble(_data, _segi[segidx]);
         }
 
-        public double[] GetDoubleArray(ushort segidx)
+        public double?[] GetDoubleArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetDoubleArray(_data, _segi[segidx]);
         }
 
-        public float GetFloat(ushort segidx)
+        public float? GetFloat(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetFloat(_data, _segi[segidx]);
         }
 
-        public float[] GetFloatArray(ushort segidx)
+        public float?[] GetFloatArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetFloatArray(_data, _segi[segidx]);
         }
 
-        public int GetInt(ushort segidx)
+        public int? GetInt(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetInt(_data, _segi[segidx]);
         }
 
-        public int[] GetIntArray(ushort segidx)
+        public int?[] GetIntArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetIntArray(_data, _segi[segidx]);
         }
 
-        public long GetLong(ushort segidx)
+        public long? GetLong(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetLong(_data, _segi[segidx]);
         }
 
-        public long[] GetLongArray(ushort segidx)
+        public long?[] GetLongArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetLongArray(_data, _segi[segidx]);
         }
 
-        public sbyte GetSByte(ushort segidx)
+        public sbyte? GetSByte(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetSByte(_data, _segi[segidx]);
         }
 
-        public sbyte[] GetSByteArray(ushort segidx)
+        public sbyte?[] GetSByteArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetSByteArray(_data, _segi[segidx]);
         }
 
-        public short GetShort(ushort segidx)
+        public short? GetShort(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetShort(_data, _segi[segidx]);
         }
 
-        public short[] GetShortArray(ushort segidx)
+        public short?[] GetShortArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetShortArray(_data, _segi[segidx]);
         }
 
-        public uint GetUInt(ushort segidx)
+        public uint? GetUInt(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetUInt(_data, _segi[segidx]);
         }
 
-        public uint[] GetUIntArray(ushort segidx)
+        public uint?[] GetUIntArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetUIntArray(_data, _segi[segidx]);
         }
 
-        public ulong GetULong(ushort segidx)
+        public ulong? GetULong(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetULong(_data, _segi[segidx]);
         }
 
-        public ulong[] GetULongArray(ushort segidx)
+        public ulong?[] GetULongArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetULongArray(_data, _segi[segidx]);
         }
 
-        public ushort GetUShort(ushort segidx)
+        public ushort? GetUShort(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetUShort(_data, _segi[segidx]);
         }
 
-        public ushort[] GetUShortArray(ushort segidx)
+        public ushort?[] GetUShortArray(ushort segidx)
         {
-            throw new NotImplementedException();
+            return _fi[segidx].GetUShortArray(_data, _segi[segidx]);
         }
 
         #endregion
+
     }
 }

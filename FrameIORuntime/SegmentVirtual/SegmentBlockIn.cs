@@ -24,7 +24,9 @@ namespace FrameIO.Runtime
             _out_seg_idx = GetTokenUShort(token, pos_out_seg);
         }
 
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        #region --Pack--
+
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             var pos = _first_childseg_idx;
             while(pos!= _out_seg_idx)
@@ -38,19 +40,42 @@ namespace FrameIO.Runtime
             return 0;
         }
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
         {
             return 0;
         }
 
-        public override ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info)
+        #endregion
+
+        #region --Unpack--
+
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            var pos = _first_childseg_idx;
+            while (pos != _out_seg_idx)
+            {
+                ushort resl = 0;
+                if (ir.TryGetBitLen(ref bitlen, ref resl, pos))
+                {
+                    nextseg = pos;
+                    if (resl == 0)
+                        pos += 1;
+                    else
+                        pos = resl;
+                }
+                else
+                    return false;
+            }
+
+            return true;
         }
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info)
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            return 0; 
         }
+
+        #endregion
+
     }
 }

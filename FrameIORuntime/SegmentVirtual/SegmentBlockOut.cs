@@ -24,24 +24,25 @@ namespace FrameIO.Runtime
             _in_seg_idx = GetTokenUShort(token, pos_in_seg);
         }
 
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             return 0;
         }
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
         {
             return 0;
         }
 
-        public override ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info)
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            nextseg = 0;
+            return true;
         }
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info)
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            return 0;
         }
     }
 }

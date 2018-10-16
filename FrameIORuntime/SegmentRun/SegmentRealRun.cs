@@ -32,7 +32,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
         {
             if (!info.IsSetValue)
             {
@@ -59,7 +59,7 @@ namespace FrameIO.Runtime
 
 
         //取字段的字节大小
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             bitlen += ( IsDouble ? 64 : 32);
             return 0;
@@ -69,15 +69,43 @@ namespace FrameIO.Runtime
 
         #region --Unpack
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info)
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
+            info.IsUnpack = true;
+            info.BitStart = pos_bit;
+            info.BitLen = IsDouble?64:32;
+
+            //HACK 验证规则处理
+
+            pos_bit += IsDouble ? 64 : 32;
             return 0;
         }
 
-        public override ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info)
+
+        //尝试取字段值
+        public override bool TryGetValue(ref double value, byte[] buff, SegmentUnpackInfo info)
         {
-            return 0;
+            if (info.IsUnpack)
+            {
+                var vv = GetUIntxFromByte(buff, (uint)info.BitStart, IsDouble?64:32);
+                if (IsDouble)
+                    value = UnpackToDouble(vv, Encoded, IsBigOrder);
+                else
+                    value = UnpackToFloat(vv, Encoded, IsBigOrder);
+                return true;
+            }
+            else
+                return false;
         }
+
+        //尝试取字段的位大小
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
+        {
+            bitlen += IsDouble ? 64 : 32;
+            return true;
+        }
+
+
 
         #endregion
 
@@ -163,7 +191,6 @@ namespace FrameIO.Runtime
         {
             SetSegmentValue(value_buff, (float)value, info);
         }
-
 
 
         #endregion

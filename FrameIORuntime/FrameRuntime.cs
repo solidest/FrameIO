@@ -222,6 +222,24 @@ namespace FrameIO.Runtime
         SegmentValidator GetValidator(ushort idx, ValidateType type);
     }
 
+    //打包动态执行接口
+    public interface IPackRunExp : IRunInitial
+    {
+        double GetSegmentValue(ushort idx);
+        int GetSegmentByteSize(ushort idx);
+        ushort GetBitLen(ref int bitlen, ushort idx);
+        double GetExpValue(ushort idx);
+    }
+
+    //解包动态执行接口
+    public interface IUnpackRunExp:IRunInitial
+    {
+        bool TryGetSegmentValue(ref double value, ushort idx);
+        bool TryGetSegmentByteSize(ref double size, ushort idx);
+        bool TryGetBitLen(ref int bitlen, ref ushort nextseg, ushort idx);
+        bool TryGetExpValue(ref double value, ushort idx);
+    }
+
 
     //编码类型
     public enum EncodedType

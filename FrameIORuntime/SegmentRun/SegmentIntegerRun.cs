@@ -43,7 +43,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int cach_pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int cach_pos, SegmentValueInfo info, IPackRunExp ir)
         {
             if(!info.IsSetValue)
             {
@@ -70,7 +70,7 @@ namespace FrameIO.Runtime
             }
         }
 
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             bitlen += BitCount;
             return 0;
@@ -80,14 +80,45 @@ namespace FrameIO.Runtime
 
         #region --Unpack--
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info)
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            info.IsUnpack = true;
+            info.BitStart = pos_bit;
+            info.BitLen = BitCount;
+
+            //HACK 验证规则处理
+
+            pos_bit += BitCount;
+            return 0;
         }
 
-        public override ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info)
+
+        //尝试取字段值
+        public override bool TryGetValue(ref double value, byte[] buff, SegmentUnpackInfo info)
         {
-            throw new NotImplementedException();
+            if (info.IsUnpack)
+            {
+                var vv = GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
+                if (IsSigned)
+                    value = UnpackToLong(vv, BitCount, Encoded, IsBigOrder);
+                else
+                {
+                    if (IsBigOrder)
+                        value = GetBigOrder(vv, BitCount);
+                    else
+                        value = vv;
+                }
+                return true;
+            }
+            else
+                return false;
+        }
+
+        //尝试取字段的位大小
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
+        {
+            bitlen += BitCount;
+            return true;
         }
 
 
@@ -95,7 +126,7 @@ namespace FrameIO.Runtime
 
         #region --SetValue--
 
-        private void SetAutoValue(IList<ulong> value_buff, SegmentValueInfo info, IRunExp ir)
+        private void SetAutoValue(IList<ulong> value_buff, SegmentValueInfo info, IPackRunExp ir)
         {
             if (_value == 0)
                 SetSegmentValue(value_buff, (ulong)0, info);
@@ -204,8 +235,85 @@ namespace FrameIO.Runtime
                 SetSegmentValue(value_buff, (ulong?)value, info);
         }
 
+
+
         #endregion
 
+        #region --GetValue--
+
+
+        public override bool? GetBool(byte[] buff, SegmentUnpackInfo info)
+        {
+            if (!info.IsUnpack) return null;
+            var v = GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
+            return (v != 0);
+        }
+
+
+        public override byte? GetByte(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (byte?)GetULong(buff, info);
+        }
+
+
+        public override double? GetDouble(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (double?)GetLong(buff, info);
+        }
+
+        public override float? GetFloat(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (float?)GetLong(buff, info);
+        }
+
+
+        public override int? GetInt(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (int?)GetLong(buff, info);
+        }
+
+        public override long? GetLong(byte[] buff, SegmentUnpackInfo info)
+        {
+            if (!info.IsUnpack) return null;
+            var vv = GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
+            if (IsSigned)
+                return UnpackToLong(vv, BitCount, Encoded, IsBigOrder);
+            else
+                return (long)vv;
+        }
+
+        public override sbyte? GetSByte(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (sbyte?)GetLong(buff, info);
+        }
+
+        public override short? GetShort(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (short?)GetLong(buff, info);
+        }
+
+        public override uint? GetUInt(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (uint?)GetULong(buff, info);
+        }
+
+        public override ulong? GetULong(byte[] buff, SegmentUnpackInfo info)
+        {
+            if (!info.IsUnpack) return null;
+            var vv = GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
+            if (IsSigned)
+                return (ulong)UnpackToLong(vv, BitCount, Encoded, IsBigOrder);
+            else
+                return vv;
+        }
+
+
+        public override ushort? GetUShort(byte[] buff, SegmentUnpackInfo info)
+        {
+            return (ushort?)GetULong(buff, info);
+        }
+
+        #endregion
 
     }
 }

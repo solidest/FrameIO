@@ -60,24 +60,73 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        public double GetExpValue(IRunExp ir)
+        public double GetExpValue(IPackRunExp ir)
         {
             switch (_optype)
             {
                 case ExpType.EXP_NUMBER:
                     return ir.GetConst(_left);
                 case ExpType.EXP_ADD:
-                    return ir.GetConst(_left) + ir.GetConst(_right);
+                    return ir.GetExpValue(_left) + ir.GetExpValue(_right);
                 case ExpType.EXP_SUB:
-                    return ir.GetConst(_left) - ir.GetConst(_right);
+                    return ir.GetExpValue(_left) - ir.GetExpValue(_right);
                 case ExpType.EXP_MUL:
-                    return ir.GetConst(_left) * ir.GetConst(_right);
+                    return ir.GetExpValue(_left) * ir.GetExpValue(_right);
                 case ExpType.EXP_DIV:
-                    return ir.GetConst(_left) / ir.GetConst(_right);
+                    return ir.GetExpValue(_left) / ir.GetExpValue(_right);
                 case ExpType.EXP_REF_SEGMENT:
                     return ir.GetSegmentValue(_left);
                 case ExpType.EXP_FUN_BYTESIZEOF:
                     return ir.GetSegmentByteSize(_left);
+            }
+            throw new Exception("runtime");
+        }
+
+        public bool TryGetExpValue(ref double value, IUnpackRunExp ir)
+        {
+            double d1=0, d2=0;
+
+            switch (_optype)
+            {
+                case ExpType.EXP_NUMBER:
+                    value = ir.GetConst(_left);
+                    return true;
+                case ExpType.EXP_ADD:
+                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    {
+                        value = d1 + d2;
+                        return true;
+                    }
+                    else
+                        return false;
+                case ExpType.EXP_SUB:
+                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    {
+                        value = d1 - d2;
+                        return true;
+                    }
+                    else
+                        return false;
+                case ExpType.EXP_MUL:
+                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    {
+                        value = d1 * d2;
+                        return true;
+                    }
+                    else
+                        return false;
+                case ExpType.EXP_DIV:
+                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    {
+                        value = d1 / d2;
+                        return true;
+                    }
+                    else
+                        return false;
+                case ExpType.EXP_REF_SEGMENT:
+                    return ir.TryGetSegmentValue(ref value, _left);
+                case ExpType.EXP_FUN_BYTESIZEOF:
+                    return ir.TryGetSegmentByteSize(ref value, _left);
             }
             throw new Exception("runtime");
         }
@@ -102,17 +151,6 @@ namespace FrameIO.Runtime
 
     }
 
-
-    public interface IRunExp:IRunInitial
-    {
-        double GetSegmentValue(ushort idx);
-        int GetSegmentByteSize(ushort idx);
-        ushort GetBitLen(ref int bitlen, ushort idx);
-
-        double GetExpValue(ushort idx);
-
-
-    }
 
 
 

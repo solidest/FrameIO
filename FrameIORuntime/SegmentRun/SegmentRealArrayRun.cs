@@ -21,10 +21,70 @@ namespace FrameIO.Runtime
 
         }
 
+        #region --Unpack--
+
+
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
+        {
+            info.IsUnpack = true;
+            info.BitStart = pos_bit;
+            int count = 0;
+            if (TryGetRepeated(ref count, ir))
+            {
+                info.BitLen = count *(IsDouble?64:32);
+                pos_bit += info.BitLen;
+                return 0;
+            }
+            else
+                throw new Exception("unkonw");
+
+
+        }
+
+        //尝试取字段的位大小
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
+        {
+            int count = 0;
+            if(info.IsUnpack)
+            {
+                bitlen += info.BitLen;
+                return true;
+            }
+
+            if (TryGetRepeated(ref count, ir))
+            {
+                bitlen += ((IsDouble ? 64 : 32) * count);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool TryGetRepeated(ref int count, IUnpackRunExp ir)
+        {
+            if (_repeated_const > 0)
+            {
+                count = _repeated_const;
+                return true;
+            }
+            else
+            {
+                double dres = 0;
+                if (ir.TryGetExpValue(ref dres, _repeated_idx))
+                {
+                    count = (int)dres;
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+
+        #endregion
 
         #region --Pack--
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream  pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
         {
             if (!info.IsSetValue)
             {
@@ -46,7 +106,7 @@ namespace FrameIO.Runtime
 
 
         //取字段的字节大小
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             if (_repeated_const > 0)
             { 

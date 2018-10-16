@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FramePacker : ISegmentSettor, IRunExp
+    public class FramePacker : ISegmentSettor, IPackRunExp
     {
         private FrameInfo _fi;
         private SegmentValueInfo[] _segpi;
@@ -192,30 +192,25 @@ namespace FrameIO.Runtime
             return _fi[idx].GetValue(_data, _segpi[idx]);
         }
 
-        public double GetConst(ushort idx)
-        {
-            return _fi.GetConst(idx);
-        }
-
-        public ExpRun GetExp(ushort idx)
-        {
-            return _fi.GetExp(idx);
-        }
-
         public double GetExpValue(ushort idx)
         {
             return _fi.GetExp(idx).GetExpValue(this);
         }
 
 
+        public double GetConst(ushort idx)
+        {
+            return _fi.GetConst(idx);
+        }
+
         public bool IsConst(ushort idx)
         {
-            return _fi.GetExp(idx).IsConst(this);
+            return _fi.IsConst(idx);
         }
 
         public bool IsConstOne(ushort idx)
         {
-            return _fi.GetExp(idx).IsConstOne(this);
+            return _fi.IsConstOne(idx);
         }
 
         public SegmentValidator GetValidator(ushort idx, ValidateType type)

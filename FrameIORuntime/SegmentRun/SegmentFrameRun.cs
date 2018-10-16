@@ -5,18 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrameIO.Runtime
+namespace FrameIO.Runtime.SegmentRun
 {
-
-
-    public class SegmentTextRun : SegmentBaseRun
+    class SegmentFrameRun : SegmentBaseRun
     {
-        private ushort _bytesize;
-        public SegmentTextRun(ulong token, IRunInitial ir) : base(token, ir)
+        public SegmentFrameRun(ulong token, IRunInitial ir) : base(token, ir)
         {
-            const byte pos_bytesize = 48;
-
-            _bytesize = GetTokenUShort(token, pos_bytesize);
         }
 
         public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
@@ -38,6 +32,5 @@ namespace FrameIO.Runtime
         {
             throw new NotImplementedException();
         }
-
     }
 }

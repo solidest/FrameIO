@@ -22,7 +22,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IRunExp ir)
+        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
         {
             if(!info.IsSetValue)
             {
@@ -43,7 +43,7 @@ namespace FrameIO.Runtime
         }
 
         //取字段的字节大小
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IRunExp ir)
+        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
         {
             if (_repeated_const > 0)
             {
@@ -53,7 +53,7 @@ namespace FrameIO.Runtime
 
             if (info.IsSetValue)
             {
-                bitlen += info.Count * info.Count;
+                bitlen += BitCount * info.Count;
                 return 0;
             }
             return 0;
@@ -63,19 +63,65 @@ namespace FrameIO.Runtime
 
         #region --Unpack--
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info)
+        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            info.IsUnpack = true;
+            info.BitStart = pos_bit;
+            int count = 0;
+            if (TryGetRepeated(ref count, ir))
+            {
+                info.BitLen = BitCount * count;
+                pos_bit += info.BitLen;
+                return 0;
+            }
+            else
+                throw new Exception("unkonw");
         }
 
-        public override ushort TryUnpack(ushort next_fill_seg, SegmentUnpackInfo info)
+        //尝试取字段的位大小
+        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
         {
-            throw new NotImplementedException();
+            int count = 0;
+            if(info.IsUnpack)
+            {
+                bitlen += info.BitLen;
+                return true;
+            }
+            else
+            {
+                if (TryGetRepeated(ref count, ir))
+                {
+                    bitlen += (BitCount * count);
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+        }
+
+        private bool TryGetRepeated(ref int count, IUnpackRunExp ir)
+        {
+            if (_repeated_const > 0)
+            {
+                count = _repeated_const;
+                return true;
+            }
+            else
+            {
+                double dres = 0;
+                if (ir.TryGetExpValue(ref dres, _repeated_idx))
+                {
+                    count = (int)dres;
+                    return true;
+                }
+                else
+                    return false;
+            }
         }
 
         #endregion
 
-  
         #region --SetValue--
 
 

@@ -97,7 +97,7 @@ namespace FrameIO.Runtime
             _checkend = checkend;
         }
 
-        public ulong GetCheckValue(byte[] buff, IRunExp ir)
+        public ulong GetCheckValue(byte[] buff, IPackRunExp ir)
         {
             return 0;
         }
