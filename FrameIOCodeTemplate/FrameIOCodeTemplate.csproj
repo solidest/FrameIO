@@ -72,10 +72,6 @@
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
-      <Project>{e265cc24-9349-491b-8cac-4da74d6bc0f8}</Project>
-      <Name>FrameIORun</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

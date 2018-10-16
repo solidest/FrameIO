@@ -88,6 +88,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CodeFile.cs" />
     <Compile Include="Dlg\AboutDlg.xaml.cs">
       <DependentUpon>AboutDlg.xaml</DependentUpon>
     </Compile>
@@ -98,19 +99,31 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="foobar.cs" />
+    <Compile Include="FrameBlock.cs" />
     <Compile Include="Generator\FrameCompileFile.cs" />
     <Compile Include="Generator\FrameIOCodeGenerator.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
+    <Compile Include="Helper\EnumList.cs" />
+    <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
-    <Compile Include="test_channel.cs" />
-    <Compile Include="test_channel_com.cs" />
-    <Compile Include="test_channel_tcp.cs" />
-    <Compile Include="test_channel_udp.cs" />
-    <Compile Include="test_channel_tcpserver.cs" />
-    <Compile Include="test_channel_tcpclient.cs" />
-    <Compile Include="test_frame.cs" />
+    <Compile Include="Model\Enumdef.cs" />
+    <Compile Include="Model\EnumdefItem.cs" />
+    <Compile Include="Model\Frame.cs" />
+    <Compile Include="Model\FrameSegmentBase.cs" />
+    <Compile Include="Model\FrameSegmentBlock.cs" />
+    <Compile Include="Model\FrameSegmentInteger.cs" />
+    <Compile Include="Model\FrameSegmentReal.cs" />
+    <Compile Include="Model\FrameSegmentText.cs" />
+    <Compile Include="Model\FrameSegmentVirtual.cs" />
+    <Compile Include="Model\IOProject.cs" />
+    <Compile Include="Model\SubSys.cs" />
+    <Compile Include="Model\SubSysAction.cs" />
+    <Compile Include="Model\SubSysActionMap.cs" />
+    <Compile Include="Model\SubSysChannel.cs" />
+    <Compile Include="Model\SubSysChannelOption.cs" />
+    <Compile Include="Model\SubSysProperty.cs" />
     <Compile Include="Parse\ParseDb.cs" />
     <Compile Include="Parse\ParseError.cs" />
     <Compile Include="Parse\SQLLiteWrapper.cs" />
@@ -254,10 +267,6 @@
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
-      <Project>{e265cc24-9349-491b-8cac-4da74d6bc0f8}</Project>
-      <Name>FrameIORun</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

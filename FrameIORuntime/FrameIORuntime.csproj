@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="DataPacker.cs" />
     <Compile Include="ExpRun.cs" />
+    <Compile Include="FrameIOFactory.cs" />
     <Compile Include="FramePacker.cs" />
     <Compile Include="FrameRuntime.cs" />
     <Compile Include="FrameUnpacker.cs" />

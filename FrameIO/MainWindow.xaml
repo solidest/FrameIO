@@ -148,16 +148,6 @@
                     <Image Source="img/help.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="testchannel" Click="testchannel">
-                <Button.Content>
-                    <Image Source="img/foobar.png"></Image>
-                </Button.Content>
-            </Button>
-            <Button ToolTip="testframe" Click="testframe">
-                <Button.Content>
-                    <Image Source="img/foobar.png"></Image>
-                </Button.Content>
-            </Button>
         </ToolBar>
 
         <ed:TextEditor IsEnabled="False" Name="edCode" Grid.Row="1" Grid.ColumnSpan="3" 
