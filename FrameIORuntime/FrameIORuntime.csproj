@@ -45,6 +45,7 @@
     <Compile Include="ExpRun.cs" />
     <Compile Include="FrameIOFactory.cs" />
     <Compile Include="FramePacker.cs" />
+    <Compile Include="FramePackerInfo.cs" />
     <Compile Include="FrameRuntime.cs" />
     <Compile Include="FrameUnpacker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

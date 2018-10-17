@@ -8,153 +8,152 @@ using System.Threading.Tasks;
 namespace FrameIO.Runtime
 {
 
-    public abstract class SegmentBaseRun
+    internal abstract class SegmentBaseRun
     {
-        protected FrameInfo Parent { get; private set; }
-        public SegmentBaseRun(ulong token, IRunInitial ir)
+        internal SegmentBaseRun(ulong token, IRunInitial ir)
         {
 
         }
 
         #region --Pack--
 
-        public abstract ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir);
+        internal abstract ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir);
 
         //取字段值
-        public virtual double GetValue(IList<ulong> value_buff, SegmentValueInfo info)
+        internal virtual double GetValue(MemoryStream value_buff, SetValueInfo info, IPackRunExp ir)
         {
             throw new Exception("runtime");
         }
 
         //取字段的位大小
-        public abstract ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir);
+        internal abstract ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir);
 
         #endregion
 
         #region --Unpack
 
-        public abstract ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir);
+        internal abstract ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir);
 
         //尝试取字段值
-        public virtual bool TryGetValue(ref double value, byte[] buff,  SegmentUnpackInfo info)
+        internal virtual bool TryGetValue(ref double value, byte[] buff,  UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
         //尝试取字段的位大小
-        public abstract bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir);
+        internal abstract bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir);
 
         #endregion
 
         #region --SetSegmentValue--
 
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, bool? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, bool? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, byte? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, byte? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, sbyte? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, sbyte? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, ushort? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, ushort? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, short? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, short? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, uint? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, uint? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, int? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, int? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, ulong? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, ulong? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, long? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, long? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, float? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, float? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, double? value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, double? value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, bool?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, bool?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, byte?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, byte?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, sbyte?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, sbyte?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, ushort?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, ushort?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, short?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, short?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, uint?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, uint?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, int?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, int?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, ulong?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, ulong?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, long?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, long?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, float?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, float?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual void SetSegmentValue(IList<ulong> value_buff, double?[] value, SegmentValueInfo info)
+        internal virtual void SetSegmentValue(MemoryStream value_buff, double?[] value, SetValueInfo info)
         {
             throw new Exception("runtime");
         }
@@ -164,112 +163,112 @@ namespace FrameIO.Runtime
         #region --GetSegmentValue--
 
 
-        public virtual bool? GetBool(byte[] buff, SegmentUnpackInfo info)
+        internal virtual bool? GetBool(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual bool?[] GetBoolArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual bool?[] GetBoolArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual byte? GetByte(byte[] buff, SegmentUnpackInfo info)
+        internal virtual byte? GetByte(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual byte?[] GetByteArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual byte?[] GetByteArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual double? GetDouble(byte[] buff, SegmentUnpackInfo info)
+        internal virtual double? GetDouble(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual double?[] GetDoubleArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual double?[] GetDoubleArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual float? GetFloat(byte[] buff, SegmentUnpackInfo info)
+        internal virtual float? GetFloat(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual float?[] GetFloatArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual float?[] GetFloatArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual int? GetInt(byte[] buff, SegmentUnpackInfo info)
+        internal virtual int? GetInt(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual int?[] GetIntArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual int?[] GetIntArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual long? GetLong(byte[] buff, SegmentUnpackInfo info)
+        internal virtual long? GetLong(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual long?[] GetLongArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual long?[] GetLongArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual sbyte? GetSByte(byte[] buff, SegmentUnpackInfo info)
+        internal virtual sbyte? GetSByte(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual sbyte?[] GetSByteArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual sbyte?[] GetSByteArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual short? GetShort(byte[] buff, SegmentUnpackInfo info)
+        internal virtual short? GetShort(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual short?[] GetShortArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual short?[] GetShortArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual uint? GetUInt(byte[] buff, SegmentUnpackInfo info)
+        internal virtual uint? GetUInt(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual uint?[] GetUIntArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual uint?[] GetUIntArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual ulong? GetULong(byte[] buff, SegmentUnpackInfo info)
+        internal virtual ulong? GetULong(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual ulong?[] GetULongArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual ulong?[] GetULongArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual ushort? GetUShort(byte[] buff, SegmentUnpackInfo info)
+        internal virtual ushort? GetUShort(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
 
-        public virtual ushort?[] GetUShortArray(byte[] buff, SegmentUnpackInfo info)
+        internal virtual ushort?[] GetUShortArray(byte[] buff, UnpackInfo info)
         {
             throw new Exception("runtime");
         }
@@ -279,7 +278,7 @@ namespace FrameIO.Runtime
         #region --Helper--
 
         //取任意位的字节
-        static public ulong GetUInt64FromByte(byte[] buff, uint bitStart)
+        static internal ulong GetUInt64FromByte(byte[] buff, uint bitStart)
         {
             uint word_index = bitStart >> 6;
             uint word_offset = bitStart & 63;
@@ -293,15 +292,16 @@ namespace FrameIO.Runtime
         }
 
         //取任意位的指定长度字节
-        static public ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x)
+        static internal ulong GetUIntxFromByte(byte[] buff, uint bitStart, int x)
         {
             return GetUInt64FromByte(buff, bitStart) & ((x != 0) ? (~(ulong)0 >> (sizeof(ulong) * 8 - x)) : (ulong)0);
         }
 
         //解包一个long数值
-        protected static long UnpackToLong(ulong v, byte bitlen, EncodedType et, bool isbigorder)
+        protected static long UnpackToLong(byte[] buff, uint bit_start, byte bitlen, EncodedType et, bool isbigorder)
         {
-            ulong nv = isbigorder ? GetBigOrder(v, bitlen) : v;
+            ulong nv = GetUIntxFromByte(buff, bit_start, bitlen);
+            if (isbigorder) nv = GetBigOrder(nv, bitlen);
             switch (et)
             {
                 case EncodedType.Primitive:
@@ -314,10 +314,19 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        //解包一个double数值
-        protected static double UnpackToDouble(ulong v, EncodedType et, bool isbigorder)
+        //解包一个ulong值
+        protected static ulong UnpackToULong(byte[] buff, uint bitstart, byte bitlen, bool isbigorder)
         {
-            ulong nv = isbigorder ? GetBigOrder(v, 64) : v;
+            ulong nv = GetUIntxFromByte(buff, bitstart, bitlen);
+            if (isbigorder) nv = GetBigOrder(nv, bitlen);
+            return nv;
+        }
+
+        //解包一个double数值
+        protected static double UnpackToDouble(byte[] buff, uint bit_start,  EncodedType et, bool isbigorder)
+        {
+            ulong nv = GetUIntxFromByte(buff, bit_start, 64);
+            if (isbigorder) nv = GetBigOrder(nv, 64);
             switch (et)
             {
                 case EncodedType.Primitive:
@@ -331,9 +340,10 @@ namespace FrameIO.Runtime
         }
 
         //解包一个float数值
-        protected static float UnpackToFloat(ulong v, EncodedType et, bool isbigorder)
+        protected static float UnpackToFloat(byte[] buff, uint bit_start, EncodedType et, bool isbigorder)
         {
-            ulong nv = isbigorder ? GetBigOrder(v, 32) : v;
+            ulong nv = GetUIntxFromByte(buff, bit_start, 32);
+            if (isbigorder) nv = GetBigOrder(nv, 32);
             switch (et)
             {
                 case EncodedType.Primitive:
@@ -348,21 +358,41 @@ namespace FrameIO.Runtime
 
 
         //将数值写入打包cach
-        protected static void CommitValue(ulong value, Stream pack, ref ulong cach, ref int cach_pos, byte bitcount)
+        protected static void CommitValue(MemoryStream cach, int start, int bitlen, Stream pack, ref byte odd, ref byte odd_pos)
         {
-            int newpos = cach_pos + bitcount;
-            if (newpos < 64)
+            
+            var _cach = cach.GetBuffer();
+            int count = bitlen / 8;
+            if(odd_pos==0)
             {
-                cach |= (value << cach_pos);
-                cach &= (~(ulong)0) >> (64 - newpos);
-                cach_pos = newpos;
+                if (count > 0) pack.Write(_cach, start, count);
+                odd_pos = (byte)(bitlen % 8);
+                if (odd_pos!= 0)  odd = _cach[start + count];
             }
             else
             {
-                ulong cv = cach | (value << cach_pos);
-                pack.Write(BitConverter.GetBytes(cv), 0, 8);
-                cach = value >> (64 - cach_pos);
-                cach_pos = newpos - 64;
+                for(int i=0; i<count; i++)
+                {
+                    pack.WriteByte((byte)((_cach[start + i] << odd_pos) | odd));
+                    odd = (byte)(_cach[start + i] >> (8 - odd_pos));
+                }
+                byte new_odd_pos = (byte)(bitlen % 8);
+                if(new_odd_pos!=0)
+                {
+                    var v = _cach[start + count];
+                    if(new_odd_pos+odd_pos<8)
+                    {
+                        odd |= (byte)(v << odd_pos);
+                        odd_pos = (byte)(new_odd_pos + odd_pos);
+                    }
+                    else
+                    {
+                        pack.WriteByte((byte)((v << odd_pos) | odd));
+                        odd = (byte)(v >> (8 - odd_pos));
+                        odd_pos = (byte)(new_odd_pos + odd_pos - 8);
+                    }
+
+                }
             }
         }
 
@@ -457,25 +487,42 @@ namespace FrameIO.Runtime
             int bcount = bitlen / 8;
             if (bitlen % 8 != 0) bcount += 1;
             var oldi = bcount;
-            for (int i=0; i< bcount; i++)
+            for (int i = 0; i < bcount; i++)
             {
-                newv[i] = oldv[oldi-1];
+                newv[i] = oldv[oldi - 1];
                 oldi -= 1;
             }
-            return BitConverter.ToUInt64(newv,0);
+            return BitConverter.ToUInt64(newv, 0);
         }
 
-        public static byte GetTokenByte(ulong token, byte pos_tart, byte len)
+        protected static byte[] GetBigOrder(byte[] oldv, byte bitlen)
+        {
+            var newv = new byte[8];
+
+            int bcount = bitlen / 8;
+            if (bitlen % 8 != 0) bcount += 1;
+            var oldi = bcount;
+            for (int i = 0; i < bcount; i++)
+            {
+                newv[i] = oldv[oldi - 1];
+                oldi -= 1;
+            }
+            return newv;
+        }
+
+
+
+        internal static byte GetTokenByte(ulong token, byte pos_tart, byte len)
         {
             return (byte)((token & (((~(ulong)0) << (64 - len)) >> (64 - len - pos_tart))) >> pos_tart);
         }
 
-        public static ushort GetTokenUShort(ulong token, byte pos_tart)
+        internal static ushort GetTokenUShort(ulong token, byte pos_tart)
         {
             return (ushort)((token & (((~(ulong)0) << (64 - 16)) >> (64 - 16 - pos_tart))) >> pos_tart);
         }
 
-        public static bool GetTokenBool(ulong token, byte pos_tart)
+        internal static bool GetTokenBool(ulong token, byte pos_tart)
         {
             return (token & ((ulong)1 << pos_tart)) != 0;
         }

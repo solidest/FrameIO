@@ -6,27 +6,9 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FrameRuntime
-    {
-        private static Dictionary<string, FrameInfo> __frames = new Dictionary<string, FrameInfo>();
 
-        //注册一类数据帧
-        public static void RegisterFrame(string framename, byte[] content)
-        {
-            if (__frames.ContainsKey(framename)) return;
-            var frm = new FrameInfo(content);
-            __frames.Add(framename, frm);
-        }
-
-        //获取数据帧
-        public static FrameInfo GetFrame(string framename)
-        {
-            return __frames[framename];
-        }
-
-    }
-
-    public class FrameInfo : IRunInitial
+    //数据帧运行时信息
+    internal class FrameRuntime : IRunInitial
     {
         const byte LEN_USHORT = 16;
         const byte LEN_BYTE = 8;
@@ -36,8 +18,16 @@ namespace FrameIO.Runtime
         private double[] _consts;
         private ExpRun[] _explist;
         private SegmentValidator[] _validats;
+        private ushort _endall;
 
-        public FrameInfo(byte[] content)
+        internal static void Initial(byte[] content)
+        {
+            Info = new FrameRuntime(content);
+        }
+
+        internal static FrameRuntime Info { get; private set; }
+
+        private FrameRuntime(byte[] content)
         {
             //const byte pos_segment = 0;
             //const byte pos_const = 16;
@@ -49,7 +39,7 @@ namespace FrameIO.Runtime
             ushort expressioncount = BitConverter.ToUInt16(content, 4);
             ushort validatorcount = BitConverter.ToUInt16(content, 6);
 
-            if (content.Length != segmentcount*8 + constcount*8 + expressioncount*8 + validatorcount*8 + 8)
+            if (content.Length != (segmentcount + constcount + expressioncount  + validatorcount +1) * 8)
                 throw new Exception("runtime");
 
             int pos = 8;
@@ -60,7 +50,6 @@ namespace FrameIO.Runtime
             //WriteMemory(mst, _segmentlist);
 
             _consts = new double[constcount];
-            pos += 8;
             for (int i = 0; i < constcount; i++)
             {
                 _consts[i] = BitConverter.ToDouble(content, pos);
@@ -68,7 +57,6 @@ namespace FrameIO.Runtime
             }
  
             _explist = new ExpRun[expressioncount];
-            pos += 8;
             for(int i=1; i< expressioncount; i++)
             {
                 _explist[i] = new ExpRun(BitConverter.ToUInt64(content, pos));
@@ -76,7 +64,6 @@ namespace FrameIO.Runtime
             }
 
             _validats = new SegmentValidator[validatorcount];
-            pos += 8;
             for(int i=1; i< validatorcount; i++)
             {
                 _validats[i] = SegmentValidator.GetSegmentValidator(BitConverter.ToUInt64(content, pos), this);
@@ -84,15 +71,15 @@ namespace FrameIO.Runtime
             }
 
             _segs = new SegmentBaseRun[segmentcount];
-            pos += 8;
             for (int i = 1; i < segmentcount; i++)
             {
                 _segs[i] = SegmentFactory[content[pos]&(~0<<LEN_CODE)].Invoke(BitConverter.ToUInt64(content, pos), this);
                 pos += 8;
             }
+            _endall = (ushort)(_segs.Length - 1);
         }
 
-        public SegmentBaseRun this[int index]
+        internal SegmentBaseRun this[int index]
         {
             get
             {
@@ -100,7 +87,11 @@ namespace FrameIO.Runtime
             }
         }
 
-        public int SegmentsCount { get => _segs.Length; }
+        internal int SegmentsCount { get => _segs.Length; }
+        internal bool IsEnd(ushort idx)
+        {
+            return (idx == _endall);
+        }
 
 
         #region --SegmentFactory--
@@ -212,7 +203,7 @@ namespace FrameIO.Runtime
 
 
     //初始化接口
-    public interface IRunInitial
+    internal interface IRunInitial
     {
         double GetConst(ushort idx);
 
@@ -223,7 +214,7 @@ namespace FrameIO.Runtime
     }
 
     //打包动态执行接口
-    public interface IPackRunExp : IRunInitial
+    internal interface IPackRunExp : IRunInitial
     {
         double GetSegmentValue(ushort idx);
         int GetSegmentByteSize(ushort idx);
@@ -232,7 +223,7 @@ namespace FrameIO.Runtime
     }
 
     //解包动态执行接口
-    public interface IUnpackRunExp:IRunInitial
+    internal interface IUnpackRunExp:IRunInitial
     {
         bool TryGetSegmentValue(ref double value, ushort idx);
         bool TryGetSegmentByteSize(ref double size, ushort idx);
@@ -242,7 +233,7 @@ namespace FrameIO.Runtime
 
 
     //编码类型
-    public enum EncodedType
+    internal enum EncodedType
     {
         Primitive = 1,
         Inversion,

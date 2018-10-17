@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FramePacker : ISegmentSettor, IPackRunExp
+    internal class FramePacker : ISegmentSettor, IPackRunExp
     {
-        private FrameInfo _fi;
-        private SegmentValueInfo[] _segpi;
-        private List<ulong> _data;
-        public FramePacker(FrameInfo fi)
+        private static FrameRuntime _fi;
+        static FramePacker()
         {
-            _fi = fi;
-            _segpi = new SegmentValueInfo[fi.SegmentsCount];
-            for(int i=0; i<_segpi.Length; i++) _segpi[i] = new SegmentValueInfo();
-            _data = new List<ulong>();
+            _fi = FrameRuntime.Info;
         }
+
+        internal FramePacker(ushort startidx, ushort endidxi)
+        {
+            Info = new FramePackerInfo(startidx, endidxi);
+        }
+
+        internal FramePackerInfo Info { get; private set; }
 
 
         public IFramePack GetPack()
@@ -29,12 +31,12 @@ namespace FrameIO.Runtime
             {
                 using (var pdata = new MemoryStream())
                 {
-                    int pos = 1;
-                    ulong buff = 0;
-                    int oddlen = 0;
-                    while(pos != _fi.SegmentsCount)
+                    ushort pos = Info.StartIdx;
+                    byte buff = 0;
+                    byte oddlen = 0;
+                    while (pos != Info.EndIdx)
                     {
-                        var result = _fi[pos].Pack(_data, pdata, ref buff, ref oddlen, _segpi[pos], this);
+                        var result = _fi[pos].Pack(Info.Cach, pdata, ref buff, ref oddlen, Info[pos], this);
                         if (result == 0)
                             pos += 1;
                         else
@@ -46,11 +48,15 @@ namespace FrameIO.Runtime
             }
             finally
             {
-                _data.Clear();
-                for (int i = 0; i < _segpi.Length; i++) _segpi[i].Reset();
+                Info.Reset();
             }
 
             return ret;
+        }
+
+        public ISegmentSettor GetSubFrame(ushort idx)
+        {
+            return ((SegmentFrameRun)_fi[idx]).GetSegmentSettor(Info.Cach, Info[idx]);
         }
 
         #region --SegSegmentValue--
@@ -59,112 +65,112 @@ namespace FrameIO.Runtime
 
         public void SetSegmentValue(ushort idx, bool? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+            _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, byte? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+            _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, sbyte? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, ushort? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, short? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, uint? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, int? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, ulong? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, long? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, float? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, double? value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, bool?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, byte?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, sbyte?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, ushort?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, short?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, uint?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, int?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, ulong?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, long?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, float?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
         public void SetSegmentValue(ushort idx, double?[] value)
         {
-            _fi[idx].SetSegmentValue(_data, value, _segpi[idx]);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
 
@@ -175,7 +181,7 @@ namespace FrameIO.Runtime
         public int GetSegmentByteSize(ushort idx)
         {
             int len = 0;
-            _fi[idx].GetBitLen(ref len, _segpi[idx], this);
+            _fi[idx].GetBitLen(ref len, Info[idx], this);
             if (len % 8 != 0)
                 throw new Exception("runtime");
             else
@@ -184,19 +190,18 @@ namespace FrameIO.Runtime
 
         public ushort GetBitLen(ref int bitlen, ushort idx)
         {
-            return _fi[idx].GetBitLen(ref bitlen, _segpi[idx], this);
+            return _fi[idx].GetBitLen(ref bitlen, Info[idx], this);
         }
 
         public double GetSegmentValue(ushort idx)
         {
-            return _fi[idx].GetValue(_data, _segpi[idx]);
+            return _fi[idx].GetValue(Info.Cach, Info[idx], this);
         }
 
         public double GetExpValue(ushort idx)
         {
             return _fi.GetExp(idx).GetExpValue(this);
         }
-
 
         public double GetConst(ushort idx)
         {
@@ -222,18 +227,4 @@ namespace FrameIO.Runtime
 
     }
 
-    public struct SegmentValueInfo
-    {
-        public bool IsSetValue;
-        public int StartPos;
-        public int Count;
-        public object Tag;
-        public void Reset()
-        {
-            IsSetValue = false;
-            StartPos = 0;
-            Count = 0;
-            Tag = null;
-        }
-    }
 }

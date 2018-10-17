@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    class SegmentBlockIn : SegmentBaseRun
+    internal class SegmentBlockIn : SegmentBaseRun
     {
         private ushort _out_seg_idx;
         private ushort _first_childseg_idx;
@@ -26,7 +26,7 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
+        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
             var pos = _first_childseg_idx;
             while(pos!= _out_seg_idx)
@@ -40,7 +40,7 @@ namespace FrameIO.Runtime
             return 0;
         }
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
+        internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
         {
             return 0;
         }
@@ -49,7 +49,7 @@ namespace FrameIO.Runtime
 
         #region --Unpack--
 
-        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             var pos = _first_childseg_idx;
             while (pos != _out_seg_idx)
@@ -70,7 +70,7 @@ namespace FrameIO.Runtime
             return true;
         }
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir)
         {
             return 0; 
         }

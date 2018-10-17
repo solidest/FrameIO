@@ -7,13 +7,13 @@ using FrameIO.Interface;
 
 namespace FrameIO.Runtime
 {
-    public class SegmentGettor : ISegmentGettor
+    internal class SegmentGettor : ISegmentGettor
     {
-        private FrameInfo _fi;
-        private SegmentUnpackInfo[] _segi;
+        private FrameRuntime _fi;
+        private UnpackInfo[] _segi;
         private byte[] _data;
 
-        public SegmentGettor(FrameInfo fi,byte[] data, SegmentUnpackInfo[] segi)
+        internal SegmentGettor(FrameRuntime fi,byte[] data, UnpackInfo[] segi)
         {
             _fi = fi;
             _segi = segi;

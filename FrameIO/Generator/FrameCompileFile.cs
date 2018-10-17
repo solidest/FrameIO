@@ -146,7 +146,7 @@ namespace FrameIO.Main
         private void CompileFrame(Frame fm, Dictionary<ushort, string> need_udpate)
         {
             //cosnt byte not_used = 6;
-            const byte pos_refBegin = 32;
+            const byte pos_refBegin = 16;
             const byte pos_refEnd = 32;
             //const byte pos_endall = 48;
 
@@ -161,6 +161,8 @@ namespace FrameIO.Main
             SetTokenValue(ref token_end, refbegin, pos_refBegin, LEN_USHORT);
             ushort refend = AddSegment(token_end, fm.Name + "$");
             UpdateSegmentToken(refbegin, refend, pos_refEnd);
+            UpdateSegmentToken(refend, refend, pos_refEnd);
+            UpdateSegmentToken(refbegin, refbegin, pos_refBegin);
             need_udpate.Add(refend, "$");
             need_udpate.Add(refbegin, "$");
         }

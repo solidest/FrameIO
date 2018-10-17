@@ -18,6 +18,13 @@ namespace FrameIO.Interface
         IFramePack GetPack();
 
         /// <summary>
+        /// 获取子数据帧的字段值设置接口
+        /// </summary>
+        /// <param name="idx">字段编号</param>
+        /// <returns></returns>
+        ISegmentSettor GetSubFrame(ushort idx);
+
+        /// <summary>
         /// 设置数据帧字段的值
         /// </summary>
         /// <param name="segidx">字段编号</param>

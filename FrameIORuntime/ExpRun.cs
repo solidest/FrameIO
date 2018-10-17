@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class ExpRun
+    internal class ExpRun
     {
         const byte pos_left = 32;
         const byte pos_right = 48;
@@ -15,19 +15,19 @@ namespace FrameIO.Runtime
         private ushort _right;
 
 
-        public ExpRun(ulong token)
+        internal ExpRun(ulong token)
         {
             _optype = (ExpType)SegmentBaseRun.GetTokenByte(token, 0, 8);
             _left = SegmentBaseRun.GetTokenUShort(token, pos_left);
             _right = SegmentBaseRun.GetTokenUShort(token, pos_right);
         }
 
-        public bool IsConstOne(IRunInitial ir)
+        internal bool IsConstOne(IRunInitial ir)
         {
             return (_optype == ExpType.EXP_NUMBER && ir.GetConst(_left) ==1);
         }
 
-        public bool IsConst(IRunInitial ir)
+        internal bool IsConst(IRunInitial ir)
         {
             switch (_optype)
             {
@@ -42,7 +42,7 @@ namespace FrameIO.Runtime
             return false;
         }
 
-        public double GetConstValue(IRunInitial ir)
+        internal double GetConstValue(IRunInitial ir)
         {
             switch (_optype)
             {
@@ -60,7 +60,7 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        public double GetExpValue(IPackRunExp ir)
+        internal double GetExpValue(IPackRunExp ir)
         {
             switch (_optype)
             {
@@ -82,7 +82,7 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        public bool TryGetExpValue(ref double value, IUnpackRunExp ir)
+        internal bool TryGetExpValue(ref double value, IUnpackRunExp ir)
         {
             double d1=0, d2=0;
 
@@ -138,7 +138,7 @@ namespace FrameIO.Runtime
         //const byte EXP_DIV = 5;
         //const byte EXP_REF_SEGMENT = 6;
         //const byte EXP_FUN_BYTESIZEOF = 7;
-        public enum ExpType
+        internal enum ExpType
         {
             EXP_NUMBER = 1,
             EXP_ADD = 2,

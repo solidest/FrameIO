@@ -8,10 +8,10 @@ namespace FrameIO.Runtime
 {
 
     //字段验证
-    public class SegmentValidator
+    internal class SegmentValidator
     {
 
-        public static SegmentValidator GetSegmentValidator(ulong token, IRunInitial ir)
+        internal static SegmentValidator GetSegmentValidator(ulong token, IRunInitial ir)
         {
             const byte CO_VALIDATOR_MAX = 1;
             const byte CO_VALIDATOR_MIN = 2;
@@ -42,42 +42,42 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        public SegmentValidator(ushort next_idx, ValidateType type)
+        internal SegmentValidator(ushort next_idx, ValidateType type)
         {
             NextIdx = next_idx;
             ValidType = type;
         }
 
-        public ValidateType ValidType { get; private set; }
-        public ushort NextIdx { get; private set; }
+        internal ValidateType ValidType { get; private set; }
+        internal ushort NextIdx { get; private set; }
     }
 
 
     //最大值验证
-    public class SegmentMaxValidator: SegmentValidator
+    internal class SegmentMaxValidator: SegmentValidator
     {
         private double _max;
-        public SegmentMaxValidator(double maxv, ushort next_idx):base(next_idx, ValidateType.Max)
+        internal SegmentMaxValidator(double maxv, ushort next_idx):base(next_idx, ValidateType.Max)
         {
             _max = maxv;
         }
     }
 
     //最小值验证
-    public class SegmentMinValidator : SegmentValidator
+    internal class SegmentMinValidator : SegmentValidator
     {
         private double _min;
-        public SegmentMinValidator(double minv, ushort next_idx) : base(next_idx, ValidateType.Min)
+        internal SegmentMinValidator(double minv, ushort next_idx) : base(next_idx, ValidateType.Min)
         {
             _min = minv;
         }
     }
 
     //相等值验值
-    public class SegmentEqualValidator : SegmentValidator
+    internal class SegmentEqualValidator : SegmentValidator
     {
         private double _value;
-        public SegmentEqualValidator(double value, ushort next_idx) : base(next_idx, ValidateType.ToEnum)
+        internal SegmentEqualValidator(double value, ushort next_idx) : base(next_idx, ValidateType.ToEnum)
         {
             _value = value;
         }
@@ -85,7 +85,7 @@ namespace FrameIO.Runtime
 
 
     //校验值验值
-    public class SegmentCheckValidator : SegmentValidator
+    internal class SegmentCheckValidator : SegmentValidator
     {
         private byte _checktype;
         private ushort _checkbegin;
@@ -97,14 +97,14 @@ namespace FrameIO.Runtime
             _checkend = checkend;
         }
 
-        public ulong GetCheckValue(byte[] buff, IPackRunExp ir)
+        internal ulong GetCheckValue(byte[] buff, IPackRunExp ir)
         {
             return 0;
         }
     }
 
     //字段验证规则类型
-    public enum ValidateType
+    internal enum ValidateType
     {
         Check = 1,
         Max = 2,

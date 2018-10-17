@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FrameUnpacker : IFrameUnpack, IUnpackRunExp
+    internal class FrameUnpacker : IFrameUnpack, IUnpackRunExp
     {
-        FrameInfo _fi;
+        FrameRuntime _fi;
         private MemoryStream _buff;
 
-        SegmentUnpackInfo[] _segis;
+        UnpackInfo[] _segis;
         private ushort _seg_pos;            //当前字段位置
         private int _nextsize;              //下一块内存大小
 
-        public FrameUnpacker(FrameInfo fi)
+        internal FrameUnpacker(FrameRuntime fi)
         {
             _fi = fi;
             _buff = new MemoryStream();
@@ -77,10 +77,10 @@ namespace FrameIO.Runtime
             _seg_pos = 1;                       //当前字段位置
             _nextsize = FirstBlockSize;         //下一块需要的内存大小
 
-            _segis = new SegmentUnpackInfo[_fi.SegmentsCount];
+            _segis = new UnpackInfo[_fi.SegmentsCount];
             for (int i = 0; i < _segis.Length; i++)
             {
-                _segis[i] = new SegmentUnpackInfo();
+                _segis[i] = new UnpackInfo();
             }
             _buff.Seek(0, SeekOrigin.Begin);
 
@@ -169,7 +169,7 @@ namespace FrameIO.Runtime
 
     }
 
-    public struct SegmentUnpackInfo
+    public struct UnpackInfo
     {
         public bool IsUnpack;
         public int BitStart;

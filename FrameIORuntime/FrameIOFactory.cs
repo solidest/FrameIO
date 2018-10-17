@@ -14,8 +14,7 @@ namespace FrameIO.Runtime
         //初始化
         public static void Initial(byte[] config)
         {
-           
-
+            FrameRuntime.Initial(config);
         }
 
         //获取数据帧的解析器

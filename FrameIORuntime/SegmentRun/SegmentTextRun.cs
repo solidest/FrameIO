@@ -9,35 +9,34 @@ namespace FrameIO.Runtime
 {
 
 
-    public class SegmentTextRun : SegmentBaseRun
+    internal class SegmentTextRun : SegmentBaseRun
     {
         private ushort _bytesize;
-        public SegmentTextRun(ulong token, IRunInitial ir) : base(token, ir)
+        internal SegmentTextRun(ulong token, IRunInitial ir) : base(token, ir)
         {
             const byte pos_bytesize = 48;
 
             _bytesize = GetTokenUShort(token, pos_bytesize);
         }
 
-        public override ushort GetBitLen(ref int bitlen, SegmentValueInfo info, IPackRunExp ir)
+        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
             throw new NotImplementedException();
         }
 
-        public override ushort Pack(IList<ulong> value_buff, MemoryStream pack, ref ulong cach, ref int pos, SegmentValueInfo info, IPackRunExp ir)
+        internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
         {
             throw new NotImplementedException();
         }
 
-        public override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, SegmentUnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             throw new NotImplementedException();
         }
 
-        public override ushort Unpack(byte[] buff, ref int pos_bit, SegmentUnpackInfo info, IUnpackRunExp ir)
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir)
         {
             throw new NotImplementedException();
         }
-
     }
 }
