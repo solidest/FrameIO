@@ -11,8 +11,8 @@ namespace FrameIO.Runtime
     //解包类创建工厂
     public class FrameIOFactory
     {
-        //静态构造函数
-        static FrameIOFactory()
+        //初始化
+        public static void Initial(byte[] config)
         {
            
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -53,21 +54,19 @@ namespace FrameIO.Main
 
         private static void GenerateFrameFile()
         {
-            var fms = FrameCompileFile.Compile(_pj.FrameList, _pj);
-            foreach (var fm in fms)
-            {
-                var code = new StringBuilder(GetTemplate("TFrame"));
-                ReplaceText(code, "project", _pj.Name);
-                ReplaceText(code, "framename", fm.Key);
-                ReplaceText(code, "contentlist", ToStringList(fm.Value.Content), 4);
-                CreateFile("frame_" + fm.Key, code);
-            }
+            var cpframe = FrameCompiledFile.Compile(_pj);
+
+            var code = new StringBuilder(GetTemplate("TFrame"));
+            ReplaceText(code, "project", _pj.Name);
+            ReplaceText(code, "contentlist", ToStringList(cpframe.GetBytes()), 4);
+            CreateFile("frame", code);
+
         }
 
         private static IList<string> ToStringList(byte[] data)
         {
             var ret = new List<string>();
-            var str = Convert.ToBase64String(data);
+            var str = Convert.ToBase64String(CompressBytes(data));
             for (int i=0; i<str.Length; i+=60)
             {
                 if ((i + 60) >= str.Length)
@@ -82,6 +81,21 @@ namespace FrameIO.Main
             }
             return ret;
         }
+
+        //压缩内存
+        public static byte[] CompressBytes(byte[] bytes)
+        {
+            using (MemoryStream compressStream = new MemoryStream())
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Compress))
+                {
+                    zipStream.Write(bytes, 0, bytes.Length);
+                    zipStream.Close();
+                    return compressStream.ToArray();
+                }
+            }
+        }
+
 
         #endregion
 

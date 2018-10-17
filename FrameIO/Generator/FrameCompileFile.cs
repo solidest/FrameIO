@@ -9,25 +9,11 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //数据帧配置文件编译
-    public class FrameCompileFile
+    public class FrameCompiledFile
     {
-        public static Dictionary<string, CompiledFrame>  Compile(IList<Frame> fms, IOProject pj)
-        {
-            var ret = new Dictionary<string, CompiledFrame>();
-            for (int i=0; i<fms.Count; i++)
-            {
-                var cp = new FrameCompiler();
-                var cped = new CompiledFrame();
-                cped.Content = cp.Compile(pj, fms[i], fms);
-                cped.SymbolDic = cp.OutSymbols;
-                ret.Add(fms[i].Name, cped);
-            }
-            return ret;
-        }
-    }
 
-    public class FrameCompiler
-    {
+        #region --Const--
+
         const byte LEN_USHORT = 16;
         const byte LEN_BYTE = 8;
         const byte LEN_CODE = 6;
@@ -42,16 +28,21 @@ namespace FrameIO.Main
         const byte CO_SEGBLOCK_OUT = 8;
         const byte CO_SEGONEOF_IN = 9;
         const byte CO_SEGONEOF_OUT = 10;
-        const byte CO_SEGONEOFITEM_IN = 11;
-        const byte CO_SEGONEOFITEM_OUT = 12;
+        const byte CO_SEGONEOFITEM = 11;
+        const byte CO_FRAME_BEGIN = 12;
+        const byte CO_FRAME_END = 13;
+        const byte CO_REF_FRAME = 14;
+        const byte CO_REF_END_ALL = 64;
 
         const byte CO_VALIDATOR_MAX = 1;
         const byte CO_VALIDATOR_MIN = 2;
-        const byte CO_VALIDATOR_EQUAL= 3;
+        const byte CO_VALIDATOR_EQUAL = 3;
         const byte CO_VALIDATOR_CHECK = 4;
 
         const byte POS_VALIDATOR_VALUE = 32;
         const byte POS_VALIDATOR_NEXT = 48;
+        const byte POS_NEED_UPDATE = 48;
+
 
         const byte ENCO_PRIMITIVE = 1;
         const byte ENCO_INVERSION = 2;
@@ -65,49 +56,69 @@ namespace FrameIO.Main
         const byte EXP_REF_SEGMENT = 6;
         const byte EXP_FUN_BYTESIZEOF = 7;
 
+        #endregion
 
-        private List<ulong> _segmentlist = new List<ulong>();
-        private List<ulong> _constlist = new List<ulong>();
-        private List<ulong> _expression = new List<ulong>();
-        private List<ulong> _validatorlist = new List<ulong>();
+        private List<ulong> _segmentlist = new List<ulong>();   //字段
+        private List<ulong> _constlist = new List<ulong>();     //常量
+        private List<ulong> _expression = new List<ulong>();    //表达式
+        private List<ulong> _validatorlist = new List<ulong>(); //验证规则
+        private Dictionary<string, ushort> _symbols = new Dictionary<string, ushort>();     //符号表
 
-        public Dictionary<string, ushort> OutSymbols { get; set; } = new Dictionary<string, ushort>();
+        static IOProject _pj;
 
-        public FrameCompiler()
+        #region --Public--
+
+        //编译配置文件
+        public static FrameCompiledFile Compile(IOProject pj)
         {
-            _segmentlist.Add(0);
-            _constlist.Add(0);
-            _validatorlist.Add(0);
-            _expression.Add(0);
-            OutSymbols.Add("", 0);
-        }
+            const byte pos_ref_frame = 48;  //引用数据帧位
 
-        //编译数据帧
-        private ICollection<Frame> _fms = null;
-        private IOProject _pj = null;
-        public byte[] Compile(IOProject pj, Frame fm, ICollection<Frame> fms)
-        {
-            _fms = fms;
             _pj = pj;
-            for (int i = 0; i < fm.Segments.Count; i++)
+            var ret = new FrameCompiledFile();
+            var need_update = new Dictionary<ushort, string>(); //需要更新数据帧引用的位置
+
+            for (int i=0; i<pj.FrameList.Count; i++)
             {
-                CompileSegment(fm.Segments[i], "", fm.Segments);
+                ret.CompileFrame(pj.FrameList[i], need_update);
             }
-            _fms = null;
+
+            //追加结束字段
+            ret.AddSegment(CO_REF_END_ALL, "$");
+
+            //更新数据帧引用
+            foreach(var d in need_update)
+            {
+                ret.UpdateSegmentToken(d.Key, ret._symbols[d.Value], pos_ref_frame);
+            }
+
             _pj = null;
 
+            return ret;
+        }
+
+        //取字段索引
+        public ushort this[string index]
+        {
+            get
+            {
+                return _symbols[index];
+            }
+        }
+
+        //转换为数组
+        public byte[] GetBytes()
+        {
             //const byte pos_segment = 0;
             const byte pos_const = 16;
             const byte pos_expression = 32;
             const byte pos_validator = 48;
             if (_segmentlist.Count >= ushort.MaxValue || _constlist.Count >= ushort.MaxValue || _expression.Count >= ushort.MaxValue || _validatorlist.Count >= ushort.MaxValue)
                 throw new Exception("outrange");
-            ulong token= (ushort)_segmentlist.Count;
+            ulong token = (ushort)_segmentlist.Count;
             SetTokenValue(ref token, (ushort)_constlist.Count, pos_const, LEN_USHORT);
             SetTokenValue(ref token, (ushort)_expression.Count, pos_expression, LEN_USHORT);
             SetTokenValue(ref token, (ushort)_validatorlist.Count, pos_validator, LEN_USHORT);
 
-            ;
             using (var mst = new MemoryStream())
             {
                 mst.Write(BitConverter.GetBytes(token), 0, 8);
@@ -127,8 +138,39 @@ namespace FrameIO.Main
                 mst.Write(BitConverter.GetBytes(data[i]), 0, 8);
         }
 
+        #endregion
+        
+        #region --编译数据帧--
+
+        //编译一个数据帧
+        private void CompileFrame(Frame fm, Dictionary<ushort, string> need_udpate)
+        {
+            //cosnt byte not_used = 6;
+            const byte pos_refBegin = 32;
+            const byte pos_refEnd = 32;
+            //const byte pos_endall = 48;
+
+            ulong token_begin = CO_FRAME_BEGIN;
+            ulong token_end = CO_FRAME_END;
+
+            ushort refbegin = AddSegment(token_begin, fm.Name);
+            for (int i = 0; i < fm.Segments.Count; i++)
+            {
+                CompileSegment(fm.Segments[i], fm.Name, fm.Segments, need_udpate);
+            }
+            SetTokenValue(ref token_end, refbegin, pos_refBegin, LEN_USHORT);
+            ushort refend = AddSegment(token_end, fm.Name + "$");
+            UpdateSegmentToken(refbegin, refend, pos_refEnd);
+            need_udpate.Add(refend, "$");
+            need_udpate.Add(refbegin, "$");
+        }
+
+        #endregion       
+
+        #region --编译字段--
+
         //编译字段
-        private ushort CompileSegment(FrameSegmentBase seg, string pre, IList<FrameSegmentBase> brotherlist)
+        private ushort CompileSegment(FrameSegmentBase seg, string pre, IList<FrameSegmentBase> brotherlist, Dictionary<ushort, string> need_udpate_refframe)
         {
             var ty = seg.GetType();
             if (ty == typeof(FrameSegmentInteger))
@@ -143,139 +185,118 @@ namespace FrameIO.Main
                 switch (bseg.UsedType)
                 {
                     case BlockSegType.RefFrame:
-                        return CompileSegment(bseg.RefFrameName, bseg, pre);
+                        return CompileSegment(bseg.RefFrameName, pre,seg.Name, need_udpate_refframe);
                     case BlockSegType.DefFrame:
-                        return CompileSegment(bseg.DefineSegments, bseg, pre);
+                        return CompileSegment(bseg.DefineSegments, bseg, pre, need_udpate_refframe);
                     case BlockSegType.OneOf:
-                        return CompileSegment(bseg.OneOfFromSegment, (ushort)bseg.OneOfCaseList.Count, bseg, pre,brotherlist);
+                        return CompileSegment(bseg.OneOfFromSegment, (ushort)bseg.OneOfCaseList.Count, bseg, pre, brotherlist, need_udpate_refframe);
                 }
             }
             throw new Exception("unknow");
         }
 
-        //编译OneOf字段
-        private ushort CompileSegment(string bysegname, ushort caseitemcount, FrameSegmentBlock parent, string parent_pre, IList<FrameSegmentBase> brotherlist)
+        //编译引用数据帧字段
+        private ushort CompileSegment(string framename, string parent_pre, string segname, Dictionary<ushort, string> need_udpate)
+        {
+            ulong token = CO_REF_FRAME;
+            var idx = AddSegment(token, parent_pre + "." + segname);
+            need_udpate.Add(idx, framename);
+            return idx;
+        }
+
+        //编译OneOf字段组
+        private ushort CompileSegment(string bysegname, ushort caseitemcount, FrameSegmentBlock parent, string parent_pre, IList<FrameSegmentBase> brotherlist, Dictionary<ushort, string> need_udpate_refframe)
         {
             //const biyte pos_fiotype = 0;
             //const byte pos_not_used = 6;
             const byte pos_by_segment = 16;
             const byte pos_first_caseitem = 32;
-            const byte pos_last_caseitem = 32;
+            //const byte pos_last_caseitem = 32;
             const byte pos_oneof_inseg = 48;
             const byte pos_oneof_outseg = 48;
 
             var need_update_end = new List<ushort>();
             var pre = parent_pre + "." + parent.Name;
-            ulong token1 = CO_SEGONEOF_IN;
-            var reftoken1 = AddSegment(token1, pre);
+            ulong token_begin_oneof = CO_SEGONEOF_IN;
+            var reftoken_begin_oneof = AddSegment(token_begin_oneof, pre);
 
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
-            var intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var firstitem = CompileSegment(LookUpExp(intovalue), byseg, parent.OneOfCaseList[0].FrameName, pre + "." +  parent.OneOfCaseList[0].EnumItem, true, false, need_update_end);
-            var lastitem = firstitem;
-            for(int i=1; i<parent.OneOfCaseList.Count; i++)
+            var ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
+            var ref_firstcase = CompileSegment(LookUpExp(ref_intovalue), byseg, parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, true, false, need_update_end, need_udpate_refframe);
+            var ref_lastcase = ref_firstcase;
+            for (int i = 1; i < parent.OneOfCaseList.Count; i++)
             {
-                lastitem = CompileSegment(LookUpExp(intovalue), byseg, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem,false, i==parent.OneOfCaseList.Count-1, need_update_end);
-            }
-            ulong token2 = CO_SEGONEOF_OUT;
-            var reftoken2 = AddSegment(token2, pre + "$");
-
-            SetTokenValue(ref token2, byseg, pos_by_segment, LEN_USHORT);
-            SetTokenValue(ref token2, lastitem, pos_last_caseitem, LEN_USHORT);
-            SetTokenValue(ref token2, reftoken1, pos_oneof_inseg, LEN_USHORT);
-            UpdateSegmentToken(reftoken2, token2);
-
-            SetTokenValue(ref token1, byseg, pos_by_segment, LEN_USHORT);
-            SetTokenValue(ref token1, firstitem, pos_first_caseitem, LEN_USHORT);
-            SetTokenValue(ref token1, reftoken2, pos_oneof_outseg, LEN_USHORT);
-            UpdateSegmentToken(reftoken1, token1);
-
-            const byte pos2_parent_outseg = 48;
-            for (int i=0; i<need_update_end.Count-1; i++)
-            {
-                UpdateSegmentToken(need_update_end[i], reftoken2, pos2_parent_outseg);
+                ref_lastcase = CompileSegment(LookUpExp(ref_intovalue), byseg, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, false, i == parent.OneOfCaseList.Count - 1, need_update_end, need_udpate_refframe);
             }
 
-            return reftoken1;
+            ulong token_end_oneof = CO_SEGONEOF_OUT;
+            //SetTokenValue(ref token_end_oneof, byseg, pos_by_segment, LEN_USHORT);
+            //SetTokenValue(ref token_end_oneof, ref_lastcase, pos_last_caseitem, LEN_USHORT);
+            SetTokenValue(ref token_end_oneof, reftoken_begin_oneof, pos_oneof_inseg, LEN_USHORT);
+            var ref_end_oneof = AddSegment(token_end_oneof, pre + "$");
+
+            SetTokenValue(ref token_begin_oneof, byseg, pos_by_segment, LEN_USHORT);
+            SetTokenValue(ref token_begin_oneof, ref_firstcase, pos_first_caseitem, LEN_USHORT);
+            SetTokenValue(ref token_begin_oneof, ref_end_oneof, pos_oneof_outseg, LEN_USHORT);
+            UpdateSegmentToken(reftoken_begin_oneof, token_begin_oneof);
+
+            const byte pos_ref_outoneof = 32;
+            for (int i = 0; i < need_update_end.Count - 1; i++)
+            {
+                UpdateSegmentToken(need_update_end[i], ref_end_oneof, pos_ref_outoneof);
+            }
+
+            return reftoken_begin_oneof;
         }
 
-        //编译OneOf分支
-        private ushort CompileSegment(ushort intovalue, ushort bysegment, string framename, string parent_pre, bool isLast, bool isFirst, IList<ushort> need_update_end)
+        //编译OneOf分支字段
+        private ushort CompileSegment(ushort intovalue, ushort bysegment, string framename, string parent_pre, bool isLast, bool isFirst, IList<ushort> need_update_end, Dictionary<ushort, string> need_udpate_refframe)
         {
             const byte pos_isLast = 6;
             const byte pos_isFirst = 7;
             //const biyte pos_fiotype = 0;
-            //const byte pos_not_used = 8;
+            const byte pos_bysegment = 8;
+             const byte pos_into_value = 16;
+            //const byte pos_ref_outoneof = 32;
+            //const byte pos_ref_frame = 48;
 
-            //into segment
-            const byte pos1_my_outseg = 16;
-            const byte pos1_into_value = 32;
-            const byte pos1_by_segv = 48;
-
-
-            //out
-            const byte pos2_my_intoseg = 16;
-            //const byte pos2_notused = 32;
-            //const byte pos2_parent_outseg = 48;
-
-            ulong token1 = CO_SEGONEOFITEM_IN;
-            var reftoken1 = AddSegment(token1, parent_pre);
-            var fm = FindFrame(framename);
-            var reffirst = CompileSegment(fm.Segments[0], parent_pre, fm.Segments);
-            var reflast = reffirst;
-            for (int i = 1; i < fm.Segments.Count; i++)
-                reflast = CompileSegment(fm.Segments[i], parent_pre, fm.Segments);
-
-
-            ulong token2 = CO_SEGONEOFITEM_OUT;
-            if (isFirst) SetTokenValue(ref token2, 1, pos_isFirst, 1);
-            if (isLast) SetTokenValue(ref token2, 1, pos_isLast, 1);
-            SetTokenValue(ref token2, reftoken1, pos2_my_intoseg, LEN_USHORT);
-            var reftoken2 = AddSegment(token2, parent_pre + "$");
-            need_update_end.Add(reftoken2);
-
-            if (isFirst) SetTokenValue(ref token1, 1, pos_isFirst, 1);
-            if (isLast) SetTokenValue(ref token1, 1, pos_isLast, 1);
-            SetTokenValue(ref token1, reftoken2, pos1_my_outseg, LEN_USHORT);
-            SetTokenValue(ref token1, intovalue, pos1_into_value, LEN_USHORT);
-            SetTokenValue(ref token1, bysegment, pos1_by_segv, LEN_USHORT);
-            UpdateSegmentToken(reftoken1, token1);
-
-            return reftoken1;
+            ulong token = CO_SEGONEOFITEM;
+            SetTokenValue(ref token, bysegment, pos_bysegment, LEN_USHORT);
+            SetTokenValue(ref token, intovalue, pos_into_value, LEN_USHORT);
+            if (isLast) SetTokenValue(ref token, 1, pos_isLast, 1);
+            if (isFirst) SetTokenValue(ref token, 1, pos_isFirst, 1);
+            var ret = AddSegment(token, parent_pre);
+            need_update_end.Add(ret);
+            need_udpate_refframe.Add(ret, framename);
+            return ret;
         }
 
-        //编译引用数据帧字段
-        private ushort CompileSegment(string framename, FrameSegmentBlock parent, string parent_pre)
-        {
-            var f = FindFrame(framename);
-            return CompileSegment(f.Segments, parent, parent_pre);
-        }
 
         //编译内联定义字段
-        private ushort CompileSegment(IList<FrameSegmentBase> children, FrameSegmentBlock parent, string parent_pre)
+        private ushort CompileSegment(IList<FrameSegmentBase> children, FrameSegmentBlock parent, string parent_pre, Dictionary<ushort, string> need_udpate)
         {
             //const char pos_fiotype = 0;
             const byte pos_first_childseg = 6;
             const byte pos_last_childseg = 22;
-            const byte pos_in_seg =  38;
+            const byte pos_in_seg = 38;
             const byte pos_out_seg = 38;
 
             ulong token1 = CO_SEGBLOCK_IN;
             var pre = parent_pre + "." + parent.Name;
             var pid_in = AddSegment(token1, pre);
-            var first_seg_id = CompileSegment(children[0], pre, children);
+            var first_seg_id = CompileSegment(children[0], pre, children, need_udpate);
             ushort last_seg_id = first_seg_id;
-            for (int i=1; i<children.Count; i++)
+            for (int i = 1; i < children.Count; i++)
             {
-                last_seg_id = CompileSegment(children[i], pre, children);
+                last_seg_id = CompileSegment(children[i], pre, children, need_udpate);
             }
 
             ulong token2 = CO_SEGBLOCK_OUT;
             token2 |= (ulong)first_seg_id << pos_first_childseg;
             token2 |= (ulong)last_seg_id << pos_last_childseg;
             token2 |= (ulong)pid_in << pos_in_seg;
-            var pid_out = AddSegment(token2, pre+"$");
+            var pid_out = AddSegment(token2, pre + "$");
 
             token1 |= (ulong)first_seg_id << pos_first_childseg;
             token1 |= (ulong)last_seg_id << pos_last_childseg;
@@ -322,19 +343,19 @@ namespace FrameIO.Main
                     break;
             }
             SetTokenValue(ref token, encoded, pos_encoded, 2);
-            SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big?1:0), pos_byteorder, 1);
-            SetTokenValue(ref token, (byte)(seg.Signed ? 1:0), pos_issigned, 1);
+            SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big ? 1 : 0), pos_byteorder, 1);
+            SetTokenValue(ref token, (byte)(seg.Signed ? 1 : 0), pos_issigned, 1);
             SetTokenValue(ref token, (byte)(seg.BitCount), pos_bitcount, len_bitcount);
-            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
-            if(seg.VCheck!= CheckType.None)
+            if (seg.VCheck != CheckType.None)
             {
                 if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
                     seg.VCheckRangeBegin = brotherlist[0].Name;
                 if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
                     seg.VCheckRangeEnd = FindPreiousSegment(seg, brotherlist);
             }
-            var refvalid =LookUpValidator(seg.VMax, seg.VMin, seg.VCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
+            var refvalid = LookUpValidator(seg.VMax, seg.VMin, seg.VCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
 
             return AddSegment(token, pre + "." + seg.Name);
@@ -360,12 +381,12 @@ namespace FrameIO.Main
             const byte pos_validate = 48;
 
             var isarray = seg.Repeated.IsIntOne();
-            ulong token = isarray ?  CO_SEGREAL_ARRAY : CO_SEGREAL;
+            ulong token = isarray ? CO_SEGREAL_ARRAY : CO_SEGREAL;
             byte encoded = 0;
             switch (seg.Encoded)
             {
                 case EncodedType.Primitive:
-                    encoded  = ENCO_PRIMITIVE;
+                    encoded = ENCO_PRIMITIVE;
                     break;
                 case EncodedType.Complement:
                     encoded = ENCO_COMPLEMENT;
@@ -377,7 +398,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token, encoded, pos_encoded, 2);
             SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big ? 1 : 0), pos_byteorder, 1);
             SetTokenValue(ref token, (byte)(seg.IsDouble ? 1 : 0), pos_isdouble, 1);
-            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             SetTokenValue(ref token, LookUpValidator(seg.VMax, seg.VMin, pre), pos_validate, LEN_USHORT);
 
@@ -396,21 +417,27 @@ namespace FrameIO.Main
             const byte pos_repeated = 32;
             const byte pos_bytesize = 48;
             var isarray = seg.Repeated.IsIntOne();
-            
+
             ulong token = isarray ? CO_SEGREAL_ARRAY : CO_SEGREAL;
-            if(isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
+            if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.ByteSize, pre), pos_bytesize, LEN_USHORT);
             //HACK TEXTSEGMENT
             return AddSegment(token, pre + "." + seg.Name);
 
         }
 
+
+        #endregion
+
+        #region --验证规则--
+
+
         //验证规则
         private ushort AddValidator(ulong token, ushort refprevious)
         {
             _validatorlist.Add(token);
             var refnew = (ushort)(_validatorlist.Count - 1);
-            if(refprevious!=0)
+            if (refprevious != 0)
             {
                 var pre_token = _validatorlist[refprevious];
                 SetTokenValue(ref pre_token, refnew, POS_VALIDATOR_NEXT, LEN_USHORT);
@@ -418,6 +445,7 @@ namespace FrameIO.Main
             }
             return refnew;
         }
+
 
         private ushort LookUpValidator(byte validortype, string value, ushort refprevious)
         {
@@ -448,7 +476,7 @@ namespace FrameIO.Main
         {
             var firstvalid = LookUpValidator(CO_VALIDATOR_MAX, vmax, 0);
             var lastvalid = firstvalid;
-            if(firstvalid ==0)
+            if (firstvalid == 0)
                 firstvalid = LookUpValidator(CO_VALIDATOR_MIN, vmin, 0);
             else
                 lastvalid = LookUpValidator(CO_VALIDATOR_MIN, vmin, lastvalid);
@@ -459,14 +487,18 @@ namespace FrameIO.Main
             return firstvalid;
         }
 
+        #endregion
+
+        #region --计算式--
+
         //计算式
         private ushort LookUpSegment(string name, string pre)
         {
-            if(name=="this")
+            if (name == "this")
             {
-                return OutSymbols[pre];
+                return _symbols[pre];
             }
-            return OutSymbols[pre + "." +name];
+            return _symbols[pre + "." + name];
         }
 
         private ushort LookUpExp(ulong v)
@@ -480,7 +512,7 @@ namespace FrameIO.Main
             ulong token = 0;
             const byte pos_left = 32;
             const byte pos_right = 48;
-            switch(ep.Op)
+            switch (ep.Op)
             {
                 case exptype.EXP_ADD:
                     token = EXP_ADD;
@@ -531,7 +563,7 @@ namespace FrameIO.Main
             }
             _constlist.Add(v);
             return (ushort)(_constlist.Count - 1);
-    
+
         }
 
         private ushort LookUpExp(long v)
@@ -543,9 +575,9 @@ namespace FrameIO.Main
         {
             if (constv == null || constv.Length == 0) return 0;
 
-            if(Helper.ValidateIsReal(constv))
+            if (Helper.ValidateIsReal(constv))
                 return LookUpExp(Convert.ToDouble(constv));
-            else if(Helper.ValidateIsInt(constv))
+            else if (Helper.ValidateIsInt(constv))
             {
                 if (constv.StartsWith("-"))
                     return LookUpExp(Convert.ToInt64(constv));
@@ -554,6 +586,11 @@ namespace FrameIO.Main
             }
             throw new Exception("unknow");
         }
+
+
+        #endregion
+
+        #region --Helper--
 
         //设置ulong某位置的值
         private void SetTokenValue(ref ulong token, ushort value, byte pos_start, byte len)
@@ -566,7 +603,7 @@ namespace FrameIO.Main
         {
             _segmentlist.Add(token);
             ushort id = (ushort)(_segmentlist.Count - 1);
-            OutSymbols.Add(segfullname, id);
+            _symbols.Add(segfullname, id);
             return id;
         }
 
@@ -592,61 +629,60 @@ namespace FrameIO.Main
             throw new Exception("unknow");
         }
 
-        private long GetEnumItemValue(Enumdef em, string itname)
-        {
-            int i = 0;
-            long ret = -1;
-            var n = "";
-            do
+            private static long GetEnumItemValue(Enumdef em, string itname)
             {
-                n = em.ItemsList[i].Name;
-                var v = em.ItemsList[i].ItemValue;
-                ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
-                i += 1;
-                if (i == em.ItemsList.Count) break;
-            } while (n != itname);
-            return ret;
+                int i = 0;
+                long ret = -1;
+                var n = "";
+                do
+                {
+                    n = em.ItemsList[i].Name;
+                    var v = em.ItemsList[i].ItemValue;
+                    ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
+                    i += 1;
+                    if (i == em.ItemsList.Count) break;
+                } while (n != itname);
+                return ret;
 
-        }
-
-        //查找字段
-        private string FindPreiousSegment(FrameSegmentBase who, IList<FrameSegmentBase> brother)
-        {
-            var ret = "";
-            for(int i=0; i<brother.Count-1; i++)
-            {
-                if (brother[i] == who)
-                    return ret;
-                else
-                    ret = brother[i].Name;
             }
-            throw new Exception("unknow");
-        }
 
-        //查找引用的数据帧
-        private Frame FindFrame(string fname)
-        {
-            foreach (var fn in _fms)
-                if (fn.Name == fname) return fn;
-            throw new Exception("unknow");
-        }
-
-        //查找toenum属性
-        private string FindToEnum(string segname, IList<FrameSegmentBase> brotherlist)
-        {
-            foreach(var seg in brotherlist)
+            //查找字段
+            private static string FindPreiousSegment(FrameSegmentBase who, IList<FrameSegmentBase> brother)
             {
-                if (seg.Name == segname)
-                    return ((FrameSegmentInteger)seg).VToEnum;
+                var ret = "";
+                for (int i = 0; i < brother.Count - 1; i++)
+                {
+                    if (brother[i] == who)
+                        return ret;
+                    else
+                        ret = brother[i].Name;
+                }
+                throw new Exception("unknow");
             }
-            throw new Exception("nukonw");
+
+            //查找引用的数据帧
+            private static Frame FindFrame(string fname)
+            {
+                foreach (var fn in _pj.FrameList)
+                    if (fn.Name == fname) return fn;
+                throw new Exception("unknow");
+            }
+
+            //查找toenum属性
+            private static string FindToEnum(string segname, IList<FrameSegmentBase> brotherlist)
+            {
+                foreach (var seg in brotherlist)
+                {
+                    if (seg.Name == segname)
+                        return ((FrameSegmentInteger)seg).VToEnum;
+                }
+                throw new Exception("nukonw");
+            }
+
+
+        #endregion
+
+
         }
-
-    }
-
-    public class CompiledFrame
-    {
-        public Dictionary<string, ushort> SymbolDic { get; set; }
-        public byte[] Content { get; set; }
-    }
+    
 }
