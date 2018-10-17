@@ -632,7 +632,7 @@ namespace FrameIO.Main
             }
             else
             {
-                FrameIOCodeGenerator.GenerateCodeFile(_project, pji, this);
+                FrameIOCodeGenerator.GenerateCodeFile(_project, this);
             }
             
         }

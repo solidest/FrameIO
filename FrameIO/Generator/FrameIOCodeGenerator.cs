@@ -16,7 +16,7 @@ namespace FrameIO.Main
         static private string _newpath = "";
         static private IOProject _pj;
 
-        static public void GenerateCodeFile(IOProject pj, ProjectInfo pji, IOutText tout)
+        static public void GenerateCodeFile(IOProject pj, IOutText tout)
         {
             try
             {
@@ -25,11 +25,6 @@ namespace FrameIO.Main
                 _newpath = tout.GetMainOutPath() + "\\" + pj.Name;
 
                 PrepareDir();
-
-
-                var fn = _newpath + "\\FrameIO.bin";
-                CodeFile.SaveFrameBinFile(fn, pji);
-                tout.OutText(string.Format("信息：生成文件{0}",fn) , true);
 
                 GenerateFrameFile();
                 

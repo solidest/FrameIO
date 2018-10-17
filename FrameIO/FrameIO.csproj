@@ -98,7 +98,6 @@
     <Compile Include="Dlg\InputDlg.xaml.cs">
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="foobar.cs" />
     <Compile Include="FrameBlock.cs" />
     <Compile Include="Generator\FrameCompileFile.cs" />
     <Compile Include="Generator\FrameIOCodeGenerator.cs" />
