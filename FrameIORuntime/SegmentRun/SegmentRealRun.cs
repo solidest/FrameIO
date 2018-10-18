@@ -50,7 +50,7 @@ namespace FrameIO.Runtime
 
 
         //取字段的字节大小
-        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
+        internal override ushort GetBitLen(MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
             bitlen += ( IsDouble ? 64 : 32);
             return 0;
@@ -89,7 +89,7 @@ namespace FrameIO.Runtime
         }
 
         //尝试取字段的位大小
-        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             bitlen += IsDouble ? 64 : 32;
             return true;

@@ -26,7 +26,7 @@ namespace FrameIO.Runtime
         }
 
         //取字段的位大小
-        internal abstract ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir);
+        internal abstract ushort GetBitLen(MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir);
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace FrameIO.Runtime
         }
 
         //尝试取字段的位大小
-        internal abstract bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir);
+        internal abstract bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir);
 
         #endregion
 

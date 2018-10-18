@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    [Serializable]
     public abstract class FrameSegmentBase : INotifyPropertyChanged
     {
         public string Name { get; set; }

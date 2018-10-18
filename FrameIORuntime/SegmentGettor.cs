@@ -15,12 +15,17 @@ namespace FrameIO.Runtime
 
         static SegmentGettor()
         {
-            _fi = FrameRuntime.Info;
+            _fi = FrameRuntime.Run;
         }
         internal SegmentGettor(byte[] data, FrameUnpackerInfo upi)
         {
             _segupi = upi;
             _data = data;
+        }
+
+        public ISegmentGettor GetSubFrame(ushort idx)
+        {
+            return new SegmentGettor(_data, ((FrameUnpacker)_segupi[idx].Tag).Info);
         }
 
         #region --GetValue--

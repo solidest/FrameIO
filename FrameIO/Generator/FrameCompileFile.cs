@@ -200,9 +200,9 @@ namespace FrameIO.Main
         private ushort CompileSegment(string framename, string parent_pre, string segname, Dictionary<ushort, string> need_udpate)
         {
             ulong token = CO_REF_FRAME;
-            const byte pos_myself = 16;
+            //const byte pos_myself = 16;
             var idx = AddSegment(token, parent_pre + "." + segname);
-            UpdateSegmentToken(idx, idx, pos_myself);
+            //UpdateSegmentToken(idx, idx, pos_myself);
             need_udpate.Add(idx, framename);
             return idx;
         }
@@ -214,9 +214,8 @@ namespace FrameIO.Main
             //const byte pos_not_used = 6;
             const byte pos_by_segment = 16;
             const byte pos_first_caseitem = 32;
-            //const byte pos_last_caseitem = 32;
-            const byte pos_oneof_inseg = 48;
-            const byte pos_oneof_outseg = 48;
+            const byte pos_last_caseitem = 48;
+            const byte pos_ref_outoneof = 32;
 
             var need_update_end = new List<ushort>();
             var pre = parent_pre + "." + parent.Name;
@@ -226,25 +225,21 @@ namespace FrameIO.Main
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
             var ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var ref_firstcase = CompileSegment(LookUpExp(ref_intovalue), byseg, parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, true, false, need_update_end, need_udpate_refframe);
+            var ref_firstcase = CompileSegment(LookUpExp(ref_intovalue), parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, parent.OneOfCaseList[0].IsDefault, need_update_end, need_udpate_refframe);
             var ref_lastcase = ref_firstcase;
             for (int i = 1; i < parent.OneOfCaseList.Count; i++)
             {
-                ref_lastcase = CompileSegment(LookUpExp(ref_intovalue), byseg, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, false, i == parent.OneOfCaseList.Count - 1, need_update_end, need_udpate_refframe);
+                ref_lastcase = CompileSegment(LookUpExp(ref_intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].IsDefault, need_update_end, need_udpate_refframe);
             }
 
             ulong token_end_oneof = CO_SEGONEOF_OUT;
-            //SetTokenValue(ref token_end_oneof, byseg, pos_by_segment, LEN_USHORT);
-            //SetTokenValue(ref token_end_oneof, ref_lastcase, pos_last_caseitem, LEN_USHORT);
-            SetTokenValue(ref token_end_oneof, reftoken_begin_oneof, pos_oneof_inseg, LEN_USHORT);
             var ref_end_oneof = AddSegment(token_end_oneof, pre + "$");
 
             SetTokenValue(ref token_begin_oneof, byseg, pos_by_segment, LEN_USHORT);
             SetTokenValue(ref token_begin_oneof, ref_firstcase, pos_first_caseitem, LEN_USHORT);
-            SetTokenValue(ref token_begin_oneof, ref_end_oneof, pos_oneof_outseg, LEN_USHORT);
+            SetTokenValue(ref token_begin_oneof, ref_lastcase, pos_last_caseitem, LEN_USHORT);
             UpdateSegmentToken(reftoken_begin_oneof, token_begin_oneof);
 
-            const byte pos_ref_outoneof = 32;
             for (int i = 0; i < need_update_end.Count - 1; i++)
             {
                 UpdateSegmentToken(need_update_end[i], ref_end_oneof, pos_ref_outoneof);
@@ -254,21 +249,21 @@ namespace FrameIO.Main
         }
 
         //编译OneOf分支字段
-        private ushort CompileSegment(ushort intovalue, ushort bysegment, string framename, string parent_pre, bool isLast, bool isFirst, IList<ushort> need_update_end, Dictionary<ushort, string> need_udpate_refframe)
+        private ushort CompileSegment(ushort intovalue, string framename, string parent_pre, bool isDefault, IList<ushort> need_update_end, Dictionary<ushort, string> need_udpate_refframe)
         {
-            const byte pos_isLast = 6;
-            const byte pos_isFirst = 7;
+            const byte pos_isDefault = 6;
             //const biyte pos_fiotype = 0;
-            const byte pos_bysegment = 8;
-             const byte pos_into_value = 16;
+            //const byte pos_bysegment = 8;
+            const byte pos_into_value = 16;
             //const byte pos_ref_outoneof = 32;
-            //const byte pos_ref_frame = 48;
+            //const byte POS_REF_FRAME = 48;
 
             ulong token = CO_SEGONEOFITEM;
-            SetTokenValue(ref token, bysegment, pos_bysegment, LEN_USHORT);
-            SetTokenValue(ref token, intovalue, pos_into_value, LEN_USHORT);
-            if (isLast) SetTokenValue(ref token, 1, pos_isLast, 1);
-            if (isFirst) SetTokenValue(ref token, 1, pos_isFirst, 1);
+            if (isDefault)
+                SetTokenValue(ref token, 1, pos_isDefault, 1);
+            else
+                SetTokenValue(ref token, intovalue, pos_into_value, LEN_USHORT);
+
             var ret = AddSegment(token, parent_pre);
             need_update_end.Add(ret);
             need_udpate_refframe.Add(ret, framename);

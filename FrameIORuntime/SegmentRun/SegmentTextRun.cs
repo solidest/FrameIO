@@ -19,7 +19,7 @@ namespace FrameIO.Runtime
             _bytesize = GetTokenUShort(token, pos_bytesize);
         }
 
-        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
+        internal override ushort GetBitLen(MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
             throw new NotImplementedException();
         }
@@ -29,7 +29,7 @@ namespace FrameIO.Runtime
             throw new NotImplementedException();
         }
 
-        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             throw new NotImplementedException();
         }

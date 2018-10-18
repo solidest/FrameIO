@@ -13,7 +13,7 @@ namespace FrameIO.Runtime
         private static FrameRuntime _fi;
         static FramePacker()
         {
-            _fi = FrameRuntime.Info;
+            _fi = FrameRuntime.Run;
         }
 
         internal FramePacker(ushort startidx, ushort endidxi)
@@ -56,7 +56,7 @@ namespace FrameIO.Runtime
 
         public ISegmentSettor GetSubFrame(ushort idx)
         {
-            return ((SegmentFrameRef)_fi[idx]).GetSegmentSettor(Info.Cach, Info[idx]);
+            return ((SegmentFrameRef)_fi[idx]).GetSegmentSettor(Info[idx]);
         }
 
         #region --SegSegmentValue--
@@ -181,16 +181,16 @@ namespace FrameIO.Runtime
         public int GetSegmentByteSize(ushort idx)
         {
             int len = 0;
-            _fi[idx].GetBitLen(ref len, Info[idx], this);
+            _fi[idx].GetBitLen(Info.Cach, ref len, Info[idx], this);
             if (len % 8 != 0)
                 throw new Exception("runtime");
             else
                 return len / 8;
         }
 
-        public ushort GetBitLen(ref int bitlen, ushort idx)
+        public ushort GetBitLen(MemoryStream value_buff, ref int bitlen, ushort idx)
         {
-            return _fi[idx].GetBitLen(ref bitlen, Info[idx], this);
+            return _fi[idx].GetBitLen(Info.Cach, ref bitlen, Info[idx], this);
         }
 
         public double GetSegmentValue(ushort idx)
@@ -221,6 +221,11 @@ namespace FrameIO.Runtime
         public SegmentValidator GetValidator(ushort idx, ValidateType type)
         {
             return _fi.GetValidator(idx,type);
+        }
+
+        public SetValueInfo GetSetValueInfo(ushort idx)
+        {
+            return Info[idx];
         }
 
         #endregion

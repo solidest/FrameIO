@@ -26,12 +26,12 @@ namespace FrameIO.Runtime
 
         #region --Pack--
 
-        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
+        internal override ushort GetBitLen(MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
             var pos = _first_childseg_idx;
             while(pos!= _out_seg_idx)
             {
-                var resl = ir.GetBitLen(ref bitlen, pos);
+                var resl = ir.GetBitLen(value_buff,ref bitlen, pos);
                 if (resl == 0)
                     pos += 1;
                 else
@@ -49,25 +49,27 @@ namespace FrameIO.Runtime
 
         #region --Unpack--
 
-        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
-            var pos = _first_childseg_idx;
-            while (pos != _out_seg_idx)
-            {
-                ushort resl = 0;
-                if (ir.TryGetBitLen(ref bitlen, ref resl, pos))
-                {
-                    nextseg = pos;
-                    if (resl == 0)
-                        pos += 1;
-                    else
-                        pos = resl;
-                }
-                else
-                    return false;
-            }
-
+            nextseg = 0;
             return true;
+            //var pos = _first_childseg_idx;
+            //while (pos != _out_seg_idx)
+            //{
+            //    ushort resl = 0;
+            //    if (ir.TryGetBitLen(ref bitlen, ref resl, pos))
+            //    {
+            //        nextseg = pos;
+            //        if (resl == 0)
+            //            pos += 1;
+            //        else
+            //            pos = resl;
+            //    }
+            //    else
+            //        return false;
+            //}
+
+            //return true;
         }
 
         internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)

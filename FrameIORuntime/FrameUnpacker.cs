@@ -21,7 +21,7 @@ namespace FrameIO.Runtime
 
         static FrameUnpacker()
         {
-            _fi = FrameRuntime.Info;
+            _fi = FrameRuntime.Run;
         }
 
         internal FrameUnpacker(ushort startidx, ushort endidx)
@@ -29,7 +29,7 @@ namespace FrameIO.Runtime
             Info = new FrameUnpackerInfo(startidx, endidx);
             FirstBlockSize = GetNextBitLen(startidx);
             _nextsize = FirstBlockSize;
-            SegPosition = startidx;
+            SegPosition = (ushort)(startidx + 1);
         }
 
         internal FrameUnpackerInfo Info { get; private set; }
@@ -51,6 +51,8 @@ namespace FrameIO.Runtime
                 var res = _fi[newpos].Unpack(buff, ref bit_pos, end_bit_pos, Info[newpos], this);
                 if (res == 0)
                     newpos += 1;
+                else if (res == ushort.MaxValue)
+                    break;
                 else
                     newpos = res;
             }
@@ -79,8 +81,8 @@ namespace FrameIO.Runtime
 
         private void Reset()
         {
-            SegPosition = Info.StartIdx;        //当前字段位置
-            _nextsize = FirstBlockSize;         //下一块需要的内存大小
+            SegPosition = (ushort)(Info.StartIdx + 1);        //当前字段位置
+            _nextsize = FirstBlockSize;                 //下一块需要的内存大小
             Info = new FrameUnpackerInfo(Info.StartIdx, Info.EndIdx);
             if(_buff!=null)_buff.Seek(0, SeekOrigin.Begin);
         }
@@ -88,10 +90,11 @@ namespace FrameIO.Runtime
         private int GetNextBitLen(ushort startidx)
         {
             int bitlen = 0;
-            while(startidx != _fi.SegmentsCount)
+            var buff = _buff.GetBuffer();
+            while (startidx != _fi.SegmentsCount)
             {
                 ushort next_seg = 0;
-                if (_fi[startidx].TryGetBitLen(ref bitlen, ref next_seg, Info[startidx], this))
+                if (_fi[startidx].TryGetBitLen(buff, ref bitlen, ref next_seg, Info[startidx], this))
                 {
                     if (next_seg == 0)
                         startidx += 1;
@@ -119,7 +122,7 @@ namespace FrameIO.Runtime
         {
             int len = 0;
             ushort nextseg = 0;
-            if(_fi[idx].TryGetBitLen(ref len, ref nextseg, Info[idx], this))
+            if(_fi[idx].TryGetBitLen(_buff.GetBuffer(), ref len, ref nextseg, Info[idx], this))
             {
                 if (len % 8 != 0)
                     throw new Exception("runtime");
@@ -132,9 +135,9 @@ namespace FrameIO.Runtime
 
         }
 
-        public bool TryGetBitLen(ref int bitlen, ref ushort nextseg, ushort idx)
+        public bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx)
         {
-            return _fi[idx].TryGetBitLen(ref bitlen, ref nextseg, Info[idx], this);
+            return _fi[idx].TryGetBitLen(buff, ref bitlen, ref nextseg, Info[idx], this);
         }
 
         public bool TryGetExpValue(ref double value, ushort idx)
@@ -160,6 +163,11 @@ namespace FrameIO.Runtime
         public SegmentValidator GetValidator(ushort idx, ValidateType type)
         {
             return _fi.GetValidator(idx, type);
+        }
+
+        public UnpackInfo GetUnpackInfo(ushort idx)
+        {
+            return Info[idx];
         }
 
 

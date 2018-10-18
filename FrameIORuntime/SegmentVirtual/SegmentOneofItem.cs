@@ -7,30 +7,21 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    internal class SegmentOneofItem : SegmentBaseRun
+    internal class SegmentOneofItem : SegmentFrameRef
     {
+        internal long IntoValue { get; private set; }
+        internal ushort OutOneOfIdx { get; private set; }
+        internal bool IsDefault { get; private set; }
         public SegmentOneofItem(ulong token, IRunInitial ir) : base(token, ir)
         {
-        }
+            const byte pos_isDefault = 6;
+            const byte pos_into_value = 16;
+            const byte pos_ref_outoneof = 32;
+            //const byte POS_REF_FRAME = 48;
 
-        internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override bool TryGetBitLen(ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
-        {
-            throw new NotImplementedException();
+            IsDefault = GetTokenBool(token, pos_isDefault);
+            IntoValue = GetTokenUShort(token, pos_into_value);
+            OutOneOfIdx = GetTokenUShort(token, pos_ref_outoneof);
         }
     }
 }

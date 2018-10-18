@@ -11,6 +11,13 @@ namespace FrameIO.Interface
     {
 
         /// <summary>
+        /// 获取子数据帧的数据读取接口
+        /// </summary>
+        /// <param name="idx">子数据帧的编号</param>
+        /// <returns></returns>
+        ISegmentGettor GetSubFrame(ushort idx);
+
+        /// <summary>
         /// 获取字段的bool值
         /// </summary>
         /// <param name="segidx">字段的号</param>

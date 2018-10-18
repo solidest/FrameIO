@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,10 +23,10 @@ namespace FrameIO.Runtime
 
         internal static void Initial(byte[] content)
         {
-            Info = new FrameRuntime(content);
+            Run = new FrameRuntime(content);
         }
 
-        internal static FrameRuntime Info { get; private set; }
+        internal static FrameRuntime Run { get; private set; }
 
         private FrameRuntime(byte[] content)
         {
@@ -241,8 +242,9 @@ namespace FrameIO.Runtime
     {
         double GetSegmentValue(ushort idx);
         int GetSegmentByteSize(ushort idx);
-        ushort GetBitLen(ref int bitlen, ushort idx);
+        ushort GetBitLen(MemoryStream value_buff, ref int bitlen, ushort idx);
         double GetExpValue(ushort idx);
+        SetValueInfo GetSetValueInfo(ushort idx);
     }
 
     //解包动态执行接口
@@ -250,8 +252,9 @@ namespace FrameIO.Runtime
     {
         bool TryGetSegmentValue(ref double value, ushort idx);
         bool TryGetSegmentByteSize(ref double size, ushort idx);
-        bool TryGetBitLen(ref int bitlen, ref ushort nextseg, ushort idx);
+        bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
         bool TryGetExpValue(ref double value, ushort idx);
+        UnpackInfo GetUnpackInfo(ushort idx);
     }
 
 

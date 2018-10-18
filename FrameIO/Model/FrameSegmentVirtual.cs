@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    [Serializable]
     public class FrameSegmentVirtual : FrameSegmentBase
     {
         public FrameSegmentVirtual(string name)

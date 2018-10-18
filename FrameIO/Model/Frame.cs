@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    [Serializable]
     public class Frame:INotifyPropertyChanged
     {
         public Frame(string name)

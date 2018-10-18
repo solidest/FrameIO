@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    [Serializable]
     public class FrameSegmentInteger : FrameSegmentBase
     {
         //signed、bitcount、value、byteorder、encoded、repeated

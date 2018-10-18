@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //tail、alignedlen、endfill、repeated
-    [Serializable]
     public class FrameSegmentText :FrameSegmentBase
     {
         public string Tail { get; set; } = null;

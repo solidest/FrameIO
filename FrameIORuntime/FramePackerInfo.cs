@@ -16,7 +16,7 @@ namespace FrameIO.Runtime
 
         static FramePackerInfo()
         {
-            _fi = FrameRuntime.Info;
+            _fi = FrameRuntime.Run;
         }
 
         internal FramePackerInfo(ushort startidx, ushort endidx)
