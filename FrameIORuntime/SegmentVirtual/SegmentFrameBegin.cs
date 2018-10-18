@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-
-
-    internal class SegmentTextRun : SegmentBaseRun
+    internal class SegmentFramBegin : SegmentBaseRun
     {
-        private ushort _bytesize;
-        internal SegmentTextRun(ulong token, IRunInitial ir) : base(token, ir)
+        internal SegmentFramBegin(ulong token, IRunInitial ir) : base(token, ir)
         {
-            const byte pos_bytesize = 48;
-
-            _bytesize = GetTokenUShort(token, pos_bytesize);
+            const byte pos_refBegin = 16;
+            const byte pos_refEnd = 32;
+            BeginIdx = GetTokenUShort(token, pos_refBegin);
+            EndIdx = GetTokenUShort(token, pos_refEnd);
         }
+
+        internal ushort BeginIdx { get; private set; }
+        internal ushort EndIdx { get; private set; }
 
         internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {

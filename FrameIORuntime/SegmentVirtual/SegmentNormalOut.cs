@@ -7,21 +7,12 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    internal class SegmentBlockOut : SegmentBaseRun
+    internal class SegmentNormalOut : SegmentBaseRun
     {
-        private ushort _in_seg_idx;
-        private ushort _first_childseg_idx;
-        private ushort _last_childseg_idx;
-        public SegmentBlockOut(ulong token, IRunInitial ir) : base(token, ir)
+        private ulong _token;
+        public SegmentNormalOut(ulong token, IRunInitial ir) : base(token, ir)
         {
-            const byte pos_first_childseg = 6;
-            const byte pos_last_childseg = 22;
-            const byte pos_in_seg = 38;
-            //const byte pos_out_seg = 38;
-
-            _first_childseg_idx = GetTokenUShort(token, pos_first_childseg);
-            _last_childseg_idx = GetTokenUShort(token, pos_last_childseg);
-            _in_seg_idx = GetTokenUShort(token, pos_in_seg);
+            _token = token;
         }
 
         internal override ushort GetBitLen(ref int bitlen, SetValueInfo info, IPackRunExp ir)
@@ -40,7 +31,7 @@ namespace FrameIO.Runtime
             return true;
         }
 
-        internal override ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir)
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
             return 0;
         }

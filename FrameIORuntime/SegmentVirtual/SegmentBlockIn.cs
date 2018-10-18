@@ -70,7 +70,7 @@ namespace FrameIO.Runtime
             return true;
         }
 
-        internal override ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir)
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
             return 0; 
         }

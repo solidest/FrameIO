@@ -32,7 +32,7 @@ namespace FrameIO.Runtime
 
         #region --Unpack
 
-        internal abstract ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir);
+        internal abstract ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir);
 
         //尝试取字段值
         internal virtual bool TryGetValue(ref double value, byte[] buff,  UnpackInfo info)
@@ -391,7 +391,6 @@ namespace FrameIO.Runtime
                         odd = (byte)(v >> (8 - odd_pos));
                         odd_pos = (byte)(new_odd_pos + odd_pos - 8);
                     }
-
                 }
             }
         }

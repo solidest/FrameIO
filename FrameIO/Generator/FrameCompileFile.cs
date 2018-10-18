@@ -32,8 +32,7 @@ namespace FrameIO.Main
         const byte CO_FRAME_BEGIN = 12;
         const byte CO_FRAME_END = 13;
         const byte CO_REF_FRAME = 14;
-        const byte CO_REF_END_ALL = 64;
-
+        
         const byte CO_VALIDATOR_MAX = 1;
         const byte CO_VALIDATOR_MIN = 2;
         const byte CO_VALIDATOR_EQUAL = 3;
@@ -41,7 +40,7 @@ namespace FrameIO.Main
 
         const byte POS_VALIDATOR_VALUE = 32;
         const byte POS_VALIDATOR_NEXT = 48;
-        const byte POS_NEED_UPDATE = 48;
+        const byte POS_REF_FRAME = 48;
 
 
         const byte ENCO_PRIMITIVE = 1;
@@ -71,7 +70,7 @@ namespace FrameIO.Main
         //编译配置文件
         public static FrameCompiledFile Compile(IOProject pj)
         {
-            const byte pos_ref_frame = 48;  //引用数据帧位
+            //const byte pos_ref_frame = 48;  //引用数据帧位
 
             _pj = pj;
             var ret = new FrameCompiledFile();
@@ -83,12 +82,12 @@ namespace FrameIO.Main
             }
 
             //追加结束字段
-            ret.AddSegment(CO_REF_END_ALL, "$");
+            //ret.AddSegment(CO_REF_END_ALL, "$");
 
             //更新数据帧引用
             foreach(var d in need_update)
             {
-                ret.UpdateSegmentToken(d.Key, ret._symbols[d.Value], pos_ref_frame);
+                ret.UpdateSegmentToken(d.Key, ret._symbols[d.Value], POS_REF_FRAME);
             }
 
             _pj = null;
@@ -163,8 +162,8 @@ namespace FrameIO.Main
             UpdateSegmentToken(refbegin, refend, pos_refEnd);
             UpdateSegmentToken(refend, refend, pos_refEnd);
             UpdateSegmentToken(refbegin, refbegin, pos_refBegin);
-            need_udpate.Add(refend, "$");
-            need_udpate.Add(refbegin, "$");
+            //need_udpate.Add(refend, "$");
+            //need_udpate.Add(refbegin, "$");
         }
 
         #endregion       
@@ -201,7 +200,9 @@ namespace FrameIO.Main
         private ushort CompileSegment(string framename, string parent_pre, string segname, Dictionary<ushort, string> need_udpate)
         {
             ulong token = CO_REF_FRAME;
+            const byte pos_myself = 16;
             var idx = AddSegment(token, parent_pre + "." + segname);
+            UpdateSegmentToken(idx, idx, pos_myself);
             need_udpate.Add(idx, framename);
             return idx;
         }

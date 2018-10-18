@@ -21,7 +21,6 @@ namespace FrameIO.Runtime
 
         internal FramePackerInfo(ushort startidx, ushort endidx)
         {
-            _fi = FrameRuntime.Info;
             _segvi = new SetValueInfo[endidx - startidx+1];
             StartIdx = startidx;
             EndIdx = endidx;

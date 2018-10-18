@@ -100,6 +100,7 @@ namespace FrameIO.Runtime
 
         private static CreateSegment[] SegmentFactory = new CreateSegment[]
         {
+
             CreateSegmentNullRun, 
             CreateSegmentIntegerRun,//const byte CO_SEGINTEGER = 1;
             CreateSegmentRealRun,//const byte CO_SEGREAL = 2;
@@ -108,12 +109,34 @@ namespace FrameIO.Runtime
             CreateSegmentRealArrayRun,//const byte CO_SEGREAL_ARRAY = 5;
             CreateSegmentTextArrayRun,//const byte CO_SEGTEXT_ARRAY = 6;
             CreateSegmentBlockIn,//const byte CO_SEGBLOCK_IN = 7;
-            CreateSegmentBlockOut,//const byte CO_SEGBLOCK_OUT = 8;
-            CreateSegmentNullRun,//const byte CO_SEGONEOF_IN = 9;
-            CreateSegmentNullRun,//const byte CO_SEGONEOF_OUT = 10;
-            CreateSegmentNullRun,//const byte CO_SEGONEOFITEM_IN = 11;
-            CreateSegmentNullRun//const byte CO_SEGONEOFITEM_OUT = 12;
+            CreateSegmentNormalOut,//const byte CO_SEGBLOCK_OUT = 8;
+            CreateSegmentOneofInto,//const byte CO_SEGONEOF_IN = 9;
+            CreateSegmentNormalOut,//const byte CO_SEGONEOF_OUT = 10;
+            CreateSegmentOneofItem,//const byte CO_SEGONEOFITEM = 11;
+            CreateSegmentFrameBegin,//const byte CO_FRAME_BEGIN = 12;
+            CreateSegmentNormalOut,//const byte CO_FRAME_END = 13;
+            CreateSegmentFrameRef//const byte CO_REF_FRAME = 14;
         };
+
+        private static SegmentBaseRun CreateSegmentOneofInto(ulong data, IRunInitial ir)
+        {
+            return new SegmentOneofInto(data,ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentOneofItem(ulong data, IRunInitial ir)
+        {
+            return new SegmentOneofItem(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentFrameRef(ulong data, IRunInitial ir)
+        {
+            return new SegmentFrameRef(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentFrameBegin(ulong data, IRunInitial ir)
+        {
+            return new SegmentFramBegin(data, ir);
+        }
 
         private static SegmentBaseRun CreateSegmentNullRun(ulong data, IRunInitial ir)
         {
@@ -155,9 +178,9 @@ namespace FrameIO.Runtime
             return new SegmentBlockIn(data, ir);
         }
 
-        private static SegmentBaseRun CreateSegmentBlockOut(ulong data, IRunInitial ir)
+        private static SegmentBaseRun CreateSegmentNormalOut(ulong data, IRunInitial ir)
         {
-            return new SegmentBlockOut(data, ir);
+            return new SegmentNormalOut(data, ir);
         }
 
 

@@ -48,10 +48,11 @@
     <Compile Include="FramePackerInfo.cs" />
     <Compile Include="FrameRuntime.cs" />
     <Compile Include="FrameUnpacker.cs" />
+    <Compile Include="FrameUnpackerInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmentRun\SegmentBaseRun.cs" />
     <Compile Include="SegmentGettor.cs" />
-    <Compile Include="SegmentRun\SegmentFrameRun.cs" />
+    <Compile Include="SegmentVirtual\SegmentFrameRef.cs" />
     <Compile Include="SegmentValidator.cs" />
     <Compile Include="SegmentVirtual\SegmentBlockIn.cs" />
     <Compile Include="SegmentRun\SegmentIntegerArrayRun.cs" />
@@ -60,7 +61,10 @@
     <Compile Include="SegmentRun\SegmentRealRun.cs" />
     <Compile Include="SegmentRun\SegmentTextArrayRun.cs" />
     <Compile Include="SegmentRun\SegmentTextRun.cs" />
-    <Compile Include="SegmentVirtual\SegmentBlockOut.cs" />
+    <Compile Include="SegmentVirtual\SegmentNormalOut.cs" />
+    <Compile Include="SegmentVirtual\SegmentFrameBegin.cs" />
+    <Compile Include="SegmentVirtual\SegmentOneofInto.cs" />
+    <Compile Include="SegmentVirtual\SegmentOneofItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">

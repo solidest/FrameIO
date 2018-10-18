@@ -24,7 +24,7 @@ namespace FrameIO.Runtime
         #region --Unpack--
 
 
-        internal override ushort Unpack(byte[] buff, ref int pos_bit, UnpackInfo info, IUnpackRunExp ir)
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
             info.IsUnpack = true;
             info.BitStart = pos_bit;

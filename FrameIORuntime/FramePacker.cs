@@ -56,7 +56,7 @@ namespace FrameIO.Runtime
 
         public ISegmentSettor GetSubFrame(ushort idx)
         {
-            return ((SegmentFrameRun)_fi[idx]).GetSegmentSettor(Info.Cach, Info[idx]);
+            return ((SegmentFrameRef)_fi[idx]).GetSegmentSettor(Info.Cach, Info[idx]);
         }
 
         #region --SegSegmentValue--
