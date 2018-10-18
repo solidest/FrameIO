@@ -19,7 +19,6 @@ namespace FrameIO.Runtime
         private double[] _consts;
         private ExpRun[] _explist;
         private SegmentValidator[] _validats;
-        private ushort _endall;
 
         internal static void Initial(byte[] content)
         {
@@ -58,6 +57,7 @@ namespace FrameIO.Runtime
             }
  
             _explist = new ExpRun[expressioncount];
+            pos += 8; //首位设置为null
             for(int i=1; i< expressioncount; i++)
             {
                 _explist[i] = new ExpRun(BitConverter.ToUInt64(content, pos));
@@ -65,19 +65,18 @@ namespace FrameIO.Runtime
             }
 
             _validats = new SegmentValidator[validatorcount];
-            for(int i=1; i< validatorcount; i++)
+            for(int i=0; i< validatorcount; i++)
             {
                 _validats[i] = SegmentValidator.GetSegmentValidator(BitConverter.ToUInt64(content, pos), this);
                 pos += 8;
             }
 
             _segs = new SegmentBaseRun[segmentcount];
-            for (int i = 1; i < segmentcount; i++)
+            for (int i = 0; i < segmentcount; i++)
             {
-                _segs[i] = SegmentFactory[content[pos]&(~0<<LEN_CODE)].Invoke(BitConverter.ToUInt64(content, pos), this);
+                _segs[i] = SegmentFactory[content[pos]&(~(ulong)0>>(64-LEN_CODE))].Invoke(BitConverter.ToUInt64(content, pos), this);
                 pos += 8;
             }
-            _endall = (ushort)(_segs.Length - 1);
         }
 
         internal SegmentBaseRun this[int index]
@@ -89,11 +88,6 @@ namespace FrameIO.Runtime
         }
 
         internal int SegmentsCount { get => _segs.Length; }
-        internal bool IsEnd(ushort idx)
-        {
-            return (idx == _endall);
-        }
-
 
         #region --SegmentFactory--
 
@@ -194,6 +188,11 @@ namespace FrameIO.Runtime
             return _consts[idx];
         }
 
+        public double GetConstValue(ushort exp_idx)
+        {
+            return _explist[exp_idx].GetConstValue(this);
+        }
+
         public ExpRun GetExp(ushort idx)
         {
             return _explist[idx];
@@ -211,7 +210,9 @@ namespace FrameIO.Runtime
 
         public SegmentValidator GetValidator(ushort idx, ValidateType type)
         {
+            if (idx == 0) return null;
             var vlid = _validats[idx];
+            if (vlid.ValidType == type) return vlid;
             while (vlid.NextIdx != 0)
             {
                 vlid = _validats[vlid.NextIdx];
@@ -229,7 +230,9 @@ namespace FrameIO.Runtime
     //初始化接口
     internal interface IRunInitial
     {
-        double GetConst(ushort idx);
+        double GetConst(ushort const_idx);
+
+        double GetConstValue(ushort exp_idx);
 
         bool IsConst(ushort idx);
 
@@ -255,6 +258,7 @@ namespace FrameIO.Runtime
         bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
         bool TryGetExpValue(ref double value, ushort idx);
         UnpackInfo GetUnpackInfo(ushort idx);
+        void AddErrorInfo(string info, SegmentBaseRun seg);
     }
 
 

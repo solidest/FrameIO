@@ -17,7 +17,7 @@ namespace FrameIO.Runtime
             const byte pos_repeated = 16;
             _repeated_idx = GetTokenUShort(token, pos_repeated);
             if (_repeated_idx == 0) throw new Exception("runtime");
-            if (ir.IsConst(_repeated_idx)) _repeated_const = (int)ir.GetConst(_repeated_idx);
+            if (ir.IsConst(_repeated_idx)) _repeated_const = (int)ir.GetConstValue(_repeated_idx);
         }
 
         #region --Pack--

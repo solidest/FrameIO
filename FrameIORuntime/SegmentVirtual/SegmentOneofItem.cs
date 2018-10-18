@@ -20,7 +20,7 @@ namespace FrameIO.Runtime
             //const byte POS_REF_FRAME = 48;
 
             IsDefault = GetTokenBool(token, pos_isDefault);
-            IntoValue = GetTokenUShort(token, pos_into_value);
+            IntoValue = (long)ir.GetConst(GetTokenUShort(token, pos_into_value));
             OutOneOfIdx = GetTokenUShort(token, pos_ref_outoneof);
         }
     }

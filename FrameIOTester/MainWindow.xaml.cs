@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,10 +47,37 @@ namespace FrameIOTester
             ctrSYS2.DataContext = CUSTOM_SYS2;
             listctr2.ItemsSource = CUSTOM_SYS2.PROPERTY2e;
 
-            //打开通道
-            CUSTOM_SYS2.CHA.Open();
-            CUSTOM_SYS1.CH1.Open();
+            Initial();
 
+            //打开通道
+            //CUSTOM_SYS2.CHA.Open();
+            //CUSTOM_SYS1.CH1.Open();
+
+        }
+
+        public static void Initial()
+        {
+            var config = string.Concat(
+              "H4sIAAAAAAAEAH1QsW4CMQz1JbmDgxwqUoeiViqiQ7uwsMBGTgLBysjfZGDv",
+                "D7Q/0S/oRofyLfQT+mL7OLrUUfL87Dgv9guV1KcO/bV5EPxZDqYf7+flPpy+",
+                "YW87jZPireJecPHa5PnFDLvAtupn6hucGSP9i80b3aufHWbmkrdYyXfKcyzD",
+                "9QW5uQVrzePGDXDA7IFqk2oyWjnHkbXJubLmDhymYqGbZpNTj0bAgrHX9Afx",
+                "TzSzscFG2767BU9NdlMeGpXqehrSHfDoKA+QWvNkEsrsvxCPTuaVdFdRlCqt",
+                "89C+v/x/jLhwD81HYB3lX21e4h7+5CpfKff0RM/ATRnKWDZ1I9qCQx73JP8L",
+                "owSRyiACAAA=");
+
+
+            using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        FrameIO.Runtime.FrameIOFactory.Initial(resultStream.ToArray());
+                    }
+                }
+            }
         }
 
         private static int send_iframe = 0;
@@ -83,8 +112,8 @@ namespace FrameIOTester
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //关闭通道
-            CUSTOM_SYS1.CH1.Close();
-            CUSTOM_SYS2.CHA.Close();
+            //CUSTOM_SYS1.CH1.Close();
+            //CUSTOM_SYS2.CHA.Close();
         }
 
 

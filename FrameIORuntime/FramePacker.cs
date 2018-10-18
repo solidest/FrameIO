@@ -228,6 +228,11 @@ namespace FrameIO.Runtime
             return Info[idx];
         }
 
+        public double GetConstValue(ushort exp_idx)
+        {
+            return _fi.GetConstValue(exp_idx);
+        }
+
         #endregion
 
     }

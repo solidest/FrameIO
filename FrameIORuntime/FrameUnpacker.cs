@@ -24,9 +24,9 @@ namespace FrameIO.Runtime
             _fi = FrameRuntime.Run;
         }
 
-        internal FrameUnpacker(ushort startidx, ushort endidx)
+        internal FrameUnpacker(ushort startidx, ushort endidx, FrameUnpackerInfo parent)
         {
-            Info = new FrameUnpackerInfo(startidx, endidx);
+            Info = new FrameUnpackerInfo(startidx, endidx, parent);
             FirstBlockSize = GetNextBitLen(startidx);
             _nextsize = FirstBlockSize;
             SegPosition = (ushort)(startidx + 1);
@@ -83,7 +83,7 @@ namespace FrameIO.Runtime
         {
             SegPosition = (ushort)(Info.StartIdx + 1);        //当前字段位置
             _nextsize = FirstBlockSize;                 //下一块需要的内存大小
-            Info = new FrameUnpackerInfo(Info.StartIdx, Info.EndIdx);
+            Info = new FrameUnpackerInfo(Info.StartIdx, Info.EndIdx, null);
             if(_buff!=null)_buff.Seek(0, SeekOrigin.Begin);
         }
 
@@ -105,6 +105,24 @@ namespace FrameIO.Runtime
                     break;
             }
             return bitlen;
+        }
+
+        public void AddErrorInfo(string info, SegmentBaseRun seg)
+        {
+            ushort segidx = 0;
+            for(ushort i =Info.StartIdx; i<Info.EndIdx; i++)
+            {
+                if(_fi[i] == seg)
+                {
+                    segidx = i;
+                    break;
+                }
+            }
+            if(segidx != 0)
+            {
+                Info.AddErrorInfo(info, segidx);
+            }
+                
         }
 
         #endregion
@@ -168,6 +186,11 @@ namespace FrameIO.Runtime
         public UnpackInfo GetUnpackInfo(ushort idx)
         {
             return Info[idx];
+        }
+
+        public double GetConstValue(ushort exp_idx)
+        {
+            return _fi.GetConstValue(exp_idx);
         }
 
 

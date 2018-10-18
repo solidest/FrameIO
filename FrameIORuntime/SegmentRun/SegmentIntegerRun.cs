@@ -36,9 +36,12 @@ namespace FrameIO.Runtime
             BitCount = GetTokenByte(token, pos_bitcount, len_bitcount);
             _value = GetTokenUShort(token, pos_value);
             var validator = GetTokenUShort(token, pos_validate);
-            _vlidmax = (SegmentMaxValidator)ir.GetValidator(validator, ValidateType.Max);
-            _vlidmin = (SegmentMinValidator)ir.GetValidator(validator, ValidateType.Min);
-            _vlidcheck = (SegmentCheckValidator)ir.GetValidator(validator, ValidateType.Check);
+            if(validator!=0)
+            {
+                _vlidmax = (SegmentMaxValidator)ir.GetValidator(validator, ValidateType.Max);
+                _vlidmin = (SegmentMinValidator)ir.GetValidator(validator, ValidateType.Min);
+                _vlidcheck = (SegmentCheckValidator)ir.GetValidator(validator, ValidateType.Check);
+            }
         }
 
         #region --Pack--
@@ -82,6 +85,7 @@ namespace FrameIO.Runtime
             info.BitLen = BitCount;
 
             //HACK 验证规则处理
+            //ir.AddErrorInfo("", this);
 
             pos_bit += BitCount;
             return 0;

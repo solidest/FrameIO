@@ -29,8 +29,20 @@ namespace FrameIO.Runtime
             return null;// new FramePack(_pj.DicFrame[framename].RootSegBlockGroupInfo);
         }
 
+        //获取数据帧的字段设置接口
+        public static ISegmentSettor GetFrameSettor(ushort idx)
+        {
+            return ((SegmentFramBegin)FrameRuntime.Run[idx]).GetFramePacker();
+        }
+
+        //获取数据帧解包接口
+        public static IFrameUnpack GetFrameUnpacker(ushort idx)
+        {
+            return ((SegmentFramBegin)FrameRuntime.Run[idx]).GetFrameUnpacker();
+        }
+
         //获取通道的接口
-        
+
         public static IChannelBase GetChannel(string sysname, string channelname)
         {
         //    var ch = _pj.DicSys[sysname].DicChannel[channelname];

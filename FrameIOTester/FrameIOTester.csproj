@@ -54,6 +54,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\..\..\Users\solidest\Desktop\PROJECT1\frame.cs">
+      <Link>AutoGenerate\frame.cs</Link>
+    </Compile>
     <Compile Include="AutoGenerate\Parameter.cs" />
     <Compile Include="AutoGenerate\SYS1.cs" />
     <Compile Include="AutoGenerate\SYS2.cs" />

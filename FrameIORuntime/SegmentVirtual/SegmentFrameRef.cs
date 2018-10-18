@@ -98,7 +98,7 @@ namespace FrameIO.Runtime
             else
             {
                 info.IsUnpack = true;
-                myup = new FrameUnpacker(fr.BeginIdx, fr.EndIdx);
+                myup = new FrameUnpacker(fr.BeginIdx, fr.EndIdx, ((FrameUnpacker)ir).Info);
                 info.Tag = myup;
             }
 

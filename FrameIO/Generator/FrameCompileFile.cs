@@ -67,6 +67,15 @@ namespace FrameIO.Main
 
         #region --Public--
 
+        public FrameCompiledFile()
+        {
+            _segmentlist.Add(0);
+            _constlist.Add(0);
+            _expression.Add(0);
+            _validatorlist.Add(0);
+            _symbols.Add("", 0); 
+        }
+
         //编译配置文件
         public static FrameCompiledFile Compile(IOProject pj)
         {
@@ -229,6 +238,7 @@ namespace FrameIO.Main
             var ref_lastcase = ref_firstcase;
             for (int i = 1; i < parent.OneOfCaseList.Count; i++)
             {
+                ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[i].EnumItem));
                 ref_lastcase = CompileSegment(LookUpExp(ref_intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].IsDefault, need_update_end, need_udpate_refframe);
             }
 
@@ -240,7 +250,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token_begin_oneof, ref_lastcase, pos_last_caseitem, LEN_USHORT);
             UpdateSegmentToken(reftoken_begin_oneof, token_begin_oneof);
 
-            for (int i = 0; i < need_update_end.Count - 1; i++)
+            for (int i = 0; i < need_update_end.Count; i++)
             {
                 UpdateSegmentToken(need_update_end[i], ref_end_oneof, pos_ref_outoneof);
             }
@@ -416,7 +426,7 @@ namespace FrameIO.Main
             const byte pos_bytesize = 48;
             var isarray = seg.Repeated.IsIntOne();
 
-            ulong token = isarray ? CO_SEGREAL_ARRAY : CO_SEGREAL;
+            ulong token = isarray ? CO_SEGTEXT_ARRAY : CO_SEGTEXT;
             if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.ByteSize, pre), pos_bytesize, LEN_USHORT);
             //HACK TEXTSEGMENT
@@ -457,8 +467,8 @@ namespace FrameIO.Main
         {
             if (check == CheckType.None) return 0;
             const byte pos_checktype = 6;
-            const byte pos_checkbegin = 32;
-            const byte pos_checkend = 48;
+            const byte pos_checkbegin = 16;
+            const byte pos_checkend = 32;
             ulong token = CO_VALIDATOR_CHECK;
             SetTokenValue(ref token, (byte)check, pos_checktype, LEN_BYTE);
             SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
@@ -474,14 +484,17 @@ namespace FrameIO.Main
         {
             var firstvalid = LookUpValidator(CO_VALIDATOR_MAX, vmax, 0);
             var lastvalid = firstvalid;
+
             if (firstvalid == 0)
                 firstvalid = LookUpValidator(CO_VALIDATOR_MIN, vmin, 0);
             else
                 lastvalid = LookUpValidator(CO_VALIDATOR_MIN, vmin, lastvalid);
+
             if (firstvalid == 0)
                 firstvalid = LookUpValidator(check, checkbegin, checkend, pre, 0);
             else
                 lastvalid = LookUpValidator(check, checkbegin, checkend, pre, lastvalid);
+
             return firstvalid;
         }
 

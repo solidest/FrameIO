@@ -13,7 +13,9 @@ namespace FrameIO.Runtime
         internal EncodedType Encoded { get; private set; }
         internal bool IsBigOrder { get; private set; }
         private ushort _value;
-        private ushort _validator;
+        private SegmentMaxValidator _vlidmax;
+        private SegmentMinValidator _vlidmin;
+
         public SegmentRealRun(ulong token, IRunInitial ir) : base(token, ir)
         {
 
@@ -27,7 +29,13 @@ namespace FrameIO.Runtime
             IsBigOrder = GetTokenBool(token, pos_byteorder);
             IsDouble = GetTokenBool(token, pos_isdouble);
             _value = GetTokenUShort(token, pos_value);
-            _validator = GetTokenUShort(token, pos_validate);
+            var validator = GetTokenUShort(token, pos_validate);
+            if (validator != 0)
+            {
+                _vlidmax = (SegmentMaxValidator)ir.GetValidator(validator, ValidateType.Max);
+                _vlidmin = (SegmentMinValidator)ir.GetValidator(validator, ValidateType.Min);
+
+            }
         }
 
         #region --Pack--

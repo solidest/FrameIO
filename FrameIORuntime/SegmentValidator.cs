@@ -13,6 +13,7 @@ namespace FrameIO.Runtime
 
         internal static SegmentValidator GetSegmentValidator(ulong token, IRunInitial ir)
         {
+            if (token == 0) return null;
             const byte CO_VALIDATOR_MAX = 1;
             const byte CO_VALIDATOR_MIN = 2;
             const byte CO_VALIDATOR_EQUAL = 3;
@@ -22,8 +23,8 @@ namespace FrameIO.Runtime
             const byte POS_VALIDATOR_NEXT = 48;
 
             const byte pos_checktype = 6;
-            const byte pos_checkbegin = 32;
-            const byte pos_checkend = 48;
+            const byte pos_checkbegin = 16;
+            const byte pos_checkend = 32;
 
             byte type= SegmentBaseRun.GetTokenByte(token, 0, 6);
             switch (type)

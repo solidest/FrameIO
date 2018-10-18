@@ -17,6 +17,16 @@ namespace FrameIO.Runtime
             EndIdx = GetTokenUShort(token, pos_refEnd);
         }
 
+        internal FramePacker GetFramePacker()
+        {
+            return new FramePacker(BeginIdx, EndIdx);
+        }
+        internal FrameUnpacker GetFrameUnpacker()
+        {
+            return new FrameUnpacker(BeginIdx, EndIdx, null);
+        }
+
+
         internal ushort BeginIdx { get; private set; }
         internal ushort EndIdx { get; private set; }
 

@@ -13,17 +13,21 @@ namespace FrameIO.Runtime
         internal ushort EndIdx { get; private set; }
 
         private static FrameRuntime _fi;
+        private FrameUnpackerInfo _parent;
+        private List<ErrorInfo> _errorinfo;
+        private 
         UnpackInfo[] _segus;
 
         static FrameUnpackerInfo()
         {
             _fi = FrameRuntime.Run;
         }
-        internal FrameUnpackerInfo(ushort startidx, ushort endidx)
+        internal FrameUnpackerInfo(ushort startidx, ushort endidx, FrameUnpackerInfo parent)
         {
             StartIdx = startidx;
             EndIdx = endidx;
             _segus = new UnpackInfo[endidx - startidx + 1];
+            _parent = parent;
         }
 
         internal UnpackInfo this[ushort idx]
@@ -33,6 +37,29 @@ namespace FrameIO.Runtime
                 return _segus[idx - StartIdx];
             }
         }
+
+        internal void AddErrorInfo(string info, ushort idx)
+        {
+            var err = new ErrorInfo();
+            err.idx = new List<ushort>();
+            err.idx.Add(idx);
+            if (_parent != null)
+                _parent.AddErrorInfo(err);
+        }
+
+        internal void AddErrorInfo(ErrorInfo err)
+        {
+            err.idx.Add(StartIdx);
+            if (_parent != null)
+                _parent.AddErrorInfo(err);
+            else
+            {
+                if (_errorinfo == null) _errorinfo = new List<ErrorInfo>();
+                _errorinfo.Add(err);
+            }
+                
+        }
+
     }
 
 
@@ -42,5 +69,11 @@ namespace FrameIO.Runtime
         public int BitStart;
         public int BitLen;
         public object Tag;
+    }
+
+    public struct ErrorInfo
+    {
+        public string info;
+        public List<ushort> idx;
     }
 }
