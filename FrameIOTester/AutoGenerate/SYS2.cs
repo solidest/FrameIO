@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using FrameIO.Run;
+using FrameIO.Runtime;
 using FrameIO.Interface;
 using System.Diagnostics;
 using System.Linq;
@@ -31,21 +31,18 @@ namespace demo
             }
         }
 
-		
-
-		
         public void RecvData()
         {
             try
             {
                 var unpack = FrameIOFactory.GetFrameUnpack("MSG1");
                 var data = CHA.ReadFrame(unpack);
-                PROPERTY2a.Value = data.GetByte("SEGMENTa");
-				PROPERTY2b.Value = data.GetSByte("SEGMENTb");
-				PROPERTY2c.Value = data.GetUInt("SEGMENTc");
-				PROPERTY2d.Value = data.GetDouble("SEGMENTd");
+                PROPERTY2a.Value = data.GetByte(1);
+				PROPERTY2b.Value = data.GetSByte(2);
+				PROPERTY2c.Value = data.GetUInt(3);
+				PROPERTY2d.Value = data.GetDouble(4);
 				PROPERTY2e.Clear();
-				var __PROPERTY2e = data.GetBoolArray("SEGMENTe");
+				var __PROPERTY2e = data.GetBoolArray(5);
 				if (__PROPERTY2e != null) foreach (var v in __PROPERTY2e) PROPERTY2e.Add(new Parameter<bool?>(v));
             }
             catch (FrameIOException ex)

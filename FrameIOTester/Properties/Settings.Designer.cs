@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FrameIODemo.Properties
+namespace FrameIOTester.Properties
 {
 
 

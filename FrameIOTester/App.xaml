@@ -1,7 +1,7 @@
-﻿<Application x:Class="FrameIODemo.App"
+﻿<Application x:Class="FrameIOTester.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:FrameIODemo"
+             xmlns:local="clr-namespace:FrameIOTester"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

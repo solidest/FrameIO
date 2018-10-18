@@ -1,15 +1,25 @@
-﻿using System;
+﻿using FrameIO.Interface;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrameIO.Main
+namespace FrameIOTester
 {
     public partial class MainWindow
     {
-        private void test_tcpserver()
+        int loop = 100;
+        void AsyncResult(ISegmentGettor data, out bool isCompleted, object AsyncState)
+        {
+            loop = loop - 1;
+            isCompleted = loop == 0;
+            Debug.WriteLine(loop.ToString());
+            //OutText(string.Format("AsyncResult {0}", loop), false);
+        }
+
+        private void test_tcp()
         {
             #region --配置文件内容--
 
@@ -22,13 +32,19 @@ namespace FrameIO.Main
 	            //分系统
                 system SYS1
                 {
-                    channel CH1:tcpserver
+                    channel CHS:tcpserver
                     {
                         serverip="127.0.0.1";
                         port = 8007;
                     }
-                }
 
+                    channel CHC:tcpclient
+                    {
+                        serverip="127.0.0.1";
+                        port = 8007;
+                    }
+
+                }
                 //数据帧
                 frame MSG1
                 {
@@ -40,6 +56,8 @@ namespace FrameIO.Main
                 }
              }
             */
+
+
 
             #endregion
 
@@ -57,29 +75,51 @@ namespace FrameIO.Main
             bool?[] bool_arr = new bool?[8];
             bool_arr[5] = true;
 
-            //获取打包接口
-            var settor = Run.FrameIOFactory.GetFramePack("MSG1");
-            settor.SetSegmentValue(1, a);
-            settor.SetSegmentValue(2, b);
-            settor.SetSegmentValue(3, c);
-            settor.SetSegmentValue(4, d);
-            settor.SetSegmentValue(5, bool_arr);
+           
 
             #endregion
 
-            var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
-            CH1.Open();
-            CH1.WriteFrame(settor.GetPack());
-            //CH1.WriteFrame(pack);
+
+ 
+            var CHS =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHS");
+            CHS.Open();
+
+            var CHC =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHC");
+            CHC.Open();
+
+
+
+            
+
+            var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
+            //var data = CHS.ReadFrame(unpack);
+            
+
+            CHS.BeginReadFrame(unpack, AsyncResult,null);
+
+            for(int i=0;i<100;i++)
+            {
+                //获取打包接口
+                var settor =FrameIO.Runtime.FrameIOFactory.GetFramePack("MSG1");
+                settor.SetSegmentValue(1, a);
+                settor.SetSegmentValue(2, b);
+                settor.SetSegmentValue(3, c);
+                settor.SetSegmentValue(4, d);
+                settor.SetSegmentValue(5, bool_arr);
+
+                CHC.WriteFrame(settor.GetPack());
+            }
+
+
             //var buf = pack.Pack();
 
-            //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
+            //             var CH2 =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS2", "CHA");
             //             CH2.Open();
-            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //             var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
             //             var data = CH2.ReadFrame(unpack);
 
-            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //             var data = CH1.ReadFrame(unpack);
+            //var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
+            //var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
@@ -113,9 +153,8 @@ namespace FrameIO.Main
             //             Debug.Assert(c == c1);
             //             Debug.Assert(d == d1);
             //             Debug.Assert(bool_arr1[5]);
-            // 
-            // 
-            CH1.Close();
+
+
             DateTime afterDT = System.DateTime.Now;
             TimeSpan ts = afterDT.Subtract(beforDT);
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrameIO.Main
+namespace FrameIOTester
 {
     public partial class MainWindow
     {
@@ -61,7 +61,7 @@ namespace FrameIO.Main
             bool_arr[5] = true;
 
             //获取打包接口
-            var settor = Run.FrameIOFactory.GetFramePack("MSG1");
+            var settor =FrameIO.Runtime.FrameIOFactory.GetFramePack("MSG1");
             settor.SetSegmentValue(1, a);
             settor.SetSegmentValue(2, b);
             settor.SetSegmentValue(3, c);
@@ -70,17 +70,17 @@ namespace FrameIO.Main
 
             #endregion
 
-            var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
+            var CH1 =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CH1");
             CH1.Open();
             CH1.WriteFrame(settor.GetPack());
             //var buf = pack.Pack();
 
-            //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
+            //             var CH2 =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS2", "CHA");
             //             CH2.Open();
-            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            //             var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
             //             var data = CH2.ReadFrame(unpack);
 
-            var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
+            var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
             var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--

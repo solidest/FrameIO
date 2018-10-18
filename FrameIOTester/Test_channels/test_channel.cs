@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace FrameIO.Main
+namespace FrameIOTester
 {
     //测试使用
     public partial class MainWindow
@@ -18,7 +18,7 @@ namespace FrameIO.Main
         private void testchannel(object sender, RoutedEventArgs e)
         {
 
-            //Run.FrameIOFactory.InitialFactory("FrameIO.bin");
+            //Runtime.FrameIOFactory.InitialFactory("FrameIO.bin");
 
             //test_Com();//测试串口
             //test_tcpclient();//测试TCPClient

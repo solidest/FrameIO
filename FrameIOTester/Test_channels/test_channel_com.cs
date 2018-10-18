@@ -6,20 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace FrameIO.Main
+namespace FrameIOTester
 {
-    //测试使用
     public partial class MainWindow
     {
-
-
-        static private int test2 = 6;
-
-        private void testframe(object sender, RoutedEventArgs e)
+        private void test_Com()
         {
-
-            //Run.FrameIOFactory.InitialFactory("FrameIO.bin");
-
             #region --配置文件内容--
 
             //配置文件内容
@@ -31,25 +23,13 @@ namespace FrameIO.Main
             	//分系统
 	            system SYS1
 	            {
-                    byte PROPERTYa;
-                    byte PROPERTYb;
-                    uint PROPERTYc;
-                    double PROPERTYd;
-                    bool[] PROPERTYe;
-		            channel CHa:com
+		            channel CH1:com
 		            {
-			            op1=12;
-			            op2="abc";
-		            }
-	            }
-
-            	//分系统
-	            system SYS2
-	            {
-		            channel CHa:com
-		            {
-			            op1=12;
-			            op2="abc";
+			            portname="COM2";
+                        baudrate = 9600;
+                        databits = 8;
+                        stopbits = 1;
+                        parity = 0;
 		            }
 	            }
 
@@ -57,11 +37,11 @@ namespace FrameIO.Main
 	            //数据帧
 	            frame MSG1
 	            {
-		            integer SEGMENTa bitcount=4 signed=true;
-		            integer SEGMENTb bitcount=4 signed=false;
-		            integer SEGMENTc bitcount=32 signed=false;
-		            real SEGMENTd isdouble=true;
-		            integer SEGMENTe bitcount=1 repeated=b;
+		            integer a bitcount=4 signed=true;
+		            integer b bitcount=4 signed=false;
+		            integer c bitcount=32 signed=false;
+		            real d isdouble=true;
+		            integer e bitcount=1 repeated=b;
 	            }
 
             }
@@ -73,18 +53,18 @@ namespace FrameIO.Main
 
             DateTime beforDT = System.DateTime.Now;
 
-            test2 += 6;
+            test += 6;
 
             //准备测试数据
             sbyte a = -8;
             byte b = 8;
-            int c = -99876 + test2;
+            int c = -99876 + test;
             double d = -7.5633484450000007;
             bool?[] bool_arr = new bool?[8];
             bool_arr[5] = true;
 
             //获取打包接口
-            var settor = Run.FrameIOFactory.GetFramePack("MSG1");
+            var settor = FrameIO.Runtime.FrameIOFactory.GetFramePack("MSG1");
             settor.SetSegmentValue(1, a);
             settor.SetSegmentValue(2, b);
             settor.SetSegmentValue(3, c);
@@ -93,35 +73,38 @@ namespace FrameIO.Main
 
             #endregion
 
-            var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
+            var CH1 =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CH1");
             CH1.Open();
-            //CH1.WriteFrame(settor.GetPack());
-            var buf = settor.GetPack().Pack();
+            CH1.WriteFrame(settor.GetPack());
+            //var buf = pack.Pack();
 
-            //var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
-            //CH2.Open();
-            var u = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //var data = CH2.ReadFrame(unpack);
+            //             var CH2 =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS2", "CHA");
+            //             CH2.Open();
+            //             var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
+            //             var data = CH2.ReadFrame(unpack);
+
+            var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
+            var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
             //模拟驱动接收的数据
-            var buf1 = new byte[buf.Length - 1];
-            for (int i = 0; i < buf1.Length; i++)
-                buf1[i] = buf[i];
-            var buf2 = new byte[1];
-            buf2[0] = buf[buf.Length - 1];
+            //var buf1 = new byte[buf.Length - 1];
+            //for (int i = 0; i < buf1.Length; i++)
+            //    buf1[i] = buf[i];
+            //var buf2 = new byte[1];
+            //buf2[0] = buf[buf.Length - 1];
 
             //获取解包接口
 
 
             //模拟驱动调用解包接口
-            Debug.Assert(u.FirstBlockSize == buf.Length - 1);
-            int ii = u.AppendBlock(buf1);
-            Debug.Assert(ii == 1);
-            ii = u.AppendBlock(buf2);
-            Debug.Assert(ii == 0);
-            var data = u.Unpack();
+            //Debug.Assert(u.FirstBlockSize == buf.Length - 1);
+            //int ii = u.AppendBlock(buf1);
+            //Debug.Assert(ii == 1);
+            //ii = u.AppendBlock(buf2);
+            //Debug.Assert(ii == 0);
+            //var data = u.Unpack();
 
             //读取数值
             var a1 = data.GetSByte(1);
@@ -144,8 +127,7 @@ namespace FrameIO.Main
 
             #endregion
 
-
-
         }
+
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using FrameIO.Run;
+using FrameIO.Runtime;
 using FrameIO.Interface;
 using System.Diagnostics;
 using System.Linq;
@@ -37,12 +37,12 @@ namespace demo
             try
             {
                 var pack = FrameIOFactory.GetFramePack("MSG1");
-                pack.SetSegmentValue("SEGMENTa", PROPERTYa.Value);
-				pack.SetSegmentValue("SEGMENTb", PROPERTYb.Value);
-				pack.SetSegmentValue("SEGMENTc", PROPERTYc.Value);
-				pack.SetSegmentValue("SEGMENTd", PROPERTYd.Value);
-				pack.SetSegmentValue("SEGMENTe", PROPERTYe.Select(p => p.Value).ToArray());
-                CH1.WriteFrame(pack);
+                pack.SetSegmentValue(1, PROPERTYa.Value);
+				pack.SetSegmentValue(2, PROPERTYb.Value);
+				pack.SetSegmentValue(3, PROPERTYc.Value);
+				pack.SetSegmentValue(4, PROPERTYd.Value);
+				pack.SetSegmentValue(5, PROPERTYe.Select(p => p.Value).ToArray());
+                CH1.WriteFrame(pack.GetPack());
             }
             catch (FrameIOException ex)
             {
