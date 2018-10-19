@@ -27,6 +27,8 @@ namespace FrameIO.Runtime
             StartIdx = startidx;
             EndIdx = endidx;
             _segus = new UnpackInfo[endidx - startidx + 1];
+            for (ushort i = startidx; i <= endidx; i++)
+                _segus[i-startidx] = new UnpackInfo();
             _parent = parent;
         }
 
@@ -63,7 +65,7 @@ namespace FrameIO.Runtime
     }
 
 
-    public struct UnpackInfo
+    public class UnpackInfo
     {
         public bool IsUnpack;
         public int BitStart;

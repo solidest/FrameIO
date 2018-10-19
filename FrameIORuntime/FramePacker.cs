@@ -31,7 +31,7 @@ namespace FrameIO.Runtime
             {
                 using (var pdata = new MemoryStream())
                 {
-                    ushort pos = Info.StartIdx;
+                    ushort pos = (ushort)(Info.StartIdx + 1);
                     byte buff = 0;
                     byte oddlen = 0;
                     while (pos != Info.EndIdx)

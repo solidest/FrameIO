@@ -27,9 +27,9 @@ namespace FrameIO.Runtime
         internal FrameUnpacker(ushort startidx, ushort endidx, FrameUnpackerInfo parent)
         {
             Info = new FrameUnpackerInfo(startidx, endidx, parent);
-            FirstBlockSize = GetNextBitLen(startidx);
-            _nextsize = FirstBlockSize;
             SegPosition = (ushort)(startidx + 1);
+            FirstBlockSize = GetNextByteSize(SegPosition, null);
+            _nextsize = FirstBlockSize;
         }
 
         internal FrameUnpackerInfo Info { get; private set; }
@@ -59,21 +59,16 @@ namespace FrameIO.Runtime
 
             SegPosition = newpos;
 
-            if(SegPosition == _fi.SegmentsCount)
+            if(SegPosition == Info.EndIdx)
                 _nextsize = 0;
             else
-            {
-                var needbitlen = GetNextBitLen(newpos);
-                if (needbitlen % 8 != 0) throw new Exception("runtime");
-                _nextsize = needbitlen / 8;
-            }
+                _nextsize = GetNextByteSize(newpos, buff);
 
             return _nextsize;
         }
 
         public ISegmentGettor Unpack()
         {
-            _buff.Close();
             var ret = new SegmentGettor(_buff.ToArray(), Info);
             Reset();
             return ret;
@@ -87,11 +82,11 @@ namespace FrameIO.Runtime
             if(_buff!=null)_buff.Seek(0, SeekOrigin.Begin);
         }
 
-        private int GetNextBitLen(ushort startidx)
+        private int GetNextByteSize(ushort startidx, byte[] buff)
         {
             int bitlen = 0;
-            var buff = _buff.GetBuffer();
-            while (startidx != _fi.SegmentsCount)
+            //var buff = _buff.GetBuffer();
+            while (startidx != Info.EndIdx)
             {
                 ushort next_seg = 0;
                 if (_fi[startidx].TryGetBitLen(buff, ref bitlen, ref next_seg, Info[startidx], this))
@@ -104,7 +99,8 @@ namespace FrameIO.Runtime
                 else
                     break;
             }
-            return bitlen;
+            if (bitlen % 8 != 0) throw new Exception("runtime");
+            return bitlen/8;
         }
 
         public void AddErrorInfo(string info, SegmentBaseRun seg)

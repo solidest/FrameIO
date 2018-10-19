@@ -87,8 +87,6 @@ namespace FrameIO.Runtime
             }
         }
 
-        internal int SegmentsCount { get => _segs.Length; }
-
         #region --SegmentFactory--
 
         private delegate SegmentBaseRun CreateSegment(ulong data, IRunInitial ir);

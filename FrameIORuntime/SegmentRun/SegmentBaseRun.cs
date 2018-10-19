@@ -280,6 +280,13 @@ namespace FrameIO.Runtime
         //取任意位的字节
         static internal ulong GetUInt64FromByte(byte[] buff, uint bitStart)
         {
+            if (buff.Length < 8)
+            {
+                var old = buff;
+                buff = new byte[8];
+                for (int i = 0; i < old.Length; i++)
+                    buff[i] = old[i];
+            }
             uint word_index = bitStart >> 6;
             uint word_offset = bitStart & 63;
             ulong result = BitConverter.ToUInt64(buff, (int)word_index * 8) >> (UInt16)word_offset;
