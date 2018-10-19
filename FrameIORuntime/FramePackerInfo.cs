@@ -22,6 +22,8 @@ namespace FrameIO.Runtime
         internal FramePackerInfo(ushort startidx, ushort endidx)
         {
             _segvi = new SetValueInfo[endidx - startidx+1];
+            for (ushort i = startidx; i <= endidx; i++)
+                _segvi[i - startidx] = new SetValueInfo();
             StartIdx = startidx;
             EndIdx = endidx;
             Cach = new MemoryStream();
@@ -47,7 +49,7 @@ namespace FrameIO.Runtime
     }
 
     //字段值设置信息
-    public struct SetValueInfo
+    internal class SetValueInfo
     {
         public bool IsSetValue;
         public int StartPos;

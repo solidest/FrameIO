@@ -65,7 +65,7 @@ namespace FrameIO.Runtime
     }
 
 
-    public class UnpackInfo
+    internal class UnpackInfo
     {
         public bool IsUnpack;
         public int BitStart;
@@ -73,7 +73,7 @@ namespace FrameIO.Runtime
         public object Tag;
     }
 
-    public struct ErrorInfo
+    internal struct ErrorInfo
     {
         public string info;
         public List<ushort> idx;
