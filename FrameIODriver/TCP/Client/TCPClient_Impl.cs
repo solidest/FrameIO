@@ -14,13 +14,7 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
-            if (TCPClient.client != null)
-            {
-                TCPClient.client.Connect(TCPClient.ipe);
-                return true;
-            }
-
-            return false;
+            return TCPClient.Open();
         }
 
         public void InitConfig(Dictionary<string, object> config)

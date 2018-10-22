@@ -44,15 +44,6 @@ namespace FrameIO.Driver
             if (rs232.IsOpen)
                 rs232.Close();
         }
-        public  void InitPort()
-        {
-            rs232.PortName = "COM6";
-            rs232.BaudRate = 9600;
-            rs232.DataBits = 8;
-            rs232.StopBits = System.IO.Ports.StopBits.One;
-            rs232.Parity = System.IO.Ports.Parity.None;
-
-        }
         public void InitPort(Dictionary<string, object> config)
         {
             rs232.PortName = ""+config["portname"];
@@ -60,7 +51,6 @@ namespace FrameIO.Driver
             rs232.DataBits = Convert.ToInt32(config["databits"]);
             rs232.StopBits = (System.IO.Ports.StopBits)Convert.ToInt32(config["stopbits"]);
             rs232.Parity = (System.IO.Ports.Parity)Convert.ToInt32(config["parity"]);
-
 
         }
 

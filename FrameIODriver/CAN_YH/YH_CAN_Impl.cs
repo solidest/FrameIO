@@ -49,13 +49,11 @@ namespace FrameIO.Driver
             {
                 System.Threading.Thread.Sleep(1);
                 nRet = DevCan.acCanRead(msgRead, (UInt32)msgRead.Length, ref pulNumberofRead);
-                if (nRet == AdvCANIO.TIME_OUT)
-                {
-                    Console.WriteLine("接收失败：接收超时!");
-                }
+
                 if (nRet == AdvCANIO.OPERATION_ERROR)
                 {
                     Console.WriteLine("接收失败：操作失败!");
+                    return null;
                 }
                 nRet = DevCan.acCanRead(msgRead, (UInt32)msgRead.Length, ref pulNumberofRead);
             }
@@ -86,14 +84,10 @@ namespace FrameIO.Driver
             {
                 nRet = DevCan.acCanRead(msgRead, (UInt32)msgRead.Length, ref pulNumberofRead);
 
-
-                if (nRet==AdvCANIO.TIME_OUT)
-                {
-                    Console.WriteLine("接收失败：接收超时!");
-                }
                 if (nRet == AdvCANIO.OPERATION_ERROR)
                 {
                     Console.WriteLine("接收失败：操作失败!");
+                    return null;
                 }
 
                 var lst = new List<System.Byte>();

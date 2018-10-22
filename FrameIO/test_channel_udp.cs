@@ -29,6 +29,13 @@ namespace FrameIO.Main
                         remoteip="127.0.0.1";
                         remoteport = 8008;
                    }
+                   channel CH2:udp
+                    {
+                        localip="127.0.0.1";
+                        localport = 8008;
+                        remoteip="127.0.0.1";
+                        remoteport = 8009;
+                    }
                 }
 
 
@@ -72,16 +79,15 @@ namespace FrameIO.Main
 
             var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
             CH1.Open();
-            CH1.WriteFrame(pack);
-            //var buf = pack.Pack();
 
-            //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
-            //             CH2.Open();
-            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //             var data = CH2.ReadFrame(unpack);
+            //var buf = pack.Pack();
+            var CH2 = Run.FrameIOFactory.GetChannel("SYS1", "CH2");
+            CH2.Open();
+
+            CH1.WriteFrame(pack);
 
             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            var data = CH1.ReadFrame(unpack);
+            var data = CH2.ReadFrame(unpack);
 
             #region --验证收到的数据--
 

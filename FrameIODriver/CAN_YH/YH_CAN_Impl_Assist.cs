@@ -51,11 +51,9 @@ namespace FrameIO.Driver
         #region 辅助函数 Init_Config()
         public void InitConfig(Dictionary<string, object> config)
         {
-            PortName = config["ChannelInd"].ToString();
-            
-            BaudRate = (UInt16)BaudRateTypeConverter.ConvertFrom(config["Baudrate"]);
-            WriteTimeOut = System.Convert.ToUInt16(config["WriteTimeOut"]);
-            WorkMode = System.Convert.ToUInt16(config["workmode"]);
+            PortName = "can"+config["channelind"].ToString();
+            BaudRate = (UInt16)BaudRateTypeConverter.ConvertFrom(config["baudrate"]);
+            WriteTimeOut = System.Convert.ToUInt16(config["writetimeout"]);
         }
         #endregion
         //设备号

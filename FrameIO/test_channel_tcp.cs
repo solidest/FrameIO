@@ -75,8 +75,6 @@ namespace FrameIO.Main
             bool?[] bool_arr = new bool?[8];
             bool_arr[5] = true;
 
-           
-
             #endregion
 
 
@@ -88,71 +86,37 @@ namespace FrameIO.Main
             CHC.Open();
 
 
+            //获取打包接口
+            var pack = Run.FrameIOFactory.GetFramePack("MSG1");
+            pack.SetSegmentValue("a", a);
+            pack.SetSegmentValue("b", b);
+            pack.SetSegmentValue("c", c);
+            pack.SetSegmentValue("d", d);
+            pack.SetSegmentValue("e", bool_arr);
 
-            
+            CHS.WriteFrame(pack);
+
 
             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //var data = CHS.ReadFrame(unpack);
+            var data = CHC.ReadFrame(unpack);
             
 
-            CHS.BeginReadFrame(unpack, AsyncResult,null);
-
-            for(int i=0;i<100;i++)
-            {
-                //获取打包接口
-                var pack = Run.FrameIOFactory.GetFramePack("MSG1");
-                pack.SetSegmentValue("a", a);
-                pack.SetSegmentValue("b", b);
-                pack.SetSegmentValue("c", c);
-                pack.SetSegmentValue("d", d);
-                pack.SetSegmentValue("e", bool_arr);
-
-                CHC.WriteFrame(pack);
-            }
-
-
-            //var buf = pack.Pack();
-
-            //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");
-            //             CH2.Open();
-            //             var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //             var data = CH2.ReadFrame(unpack);
-
-            //var unpack = Run.FrameIOFactory.GetFrameUnpack("MSG1");
-            //var data = CH1.ReadFrame(unpack);
 
             #region --验证收到的数据--
 
-            //模拟驱动接收的数据
-            //var buf1 = new byte[buf.Length - 1];
-            //for (int i = 0; i < buf1.Length; i++)
-            //    buf1[i] = buf[i];
-            //var buf2 = new byte[1];
-            //buf2[0] = buf[buf.Length - 1];
-
-            //获取解包接口
-
-
-            //模拟驱动调用解包接口
-            //Debug.Assert(u.FirstBlockSize == buf.Length - 1);
-            //int ii = u.AppendBlock(buf1);
-            //Debug.Assert(ii == 1);
-            //ii = u.AppendBlock(buf2);
-            //Debug.Assert(ii == 0);
-            //var data = u.Unpack();
 
             //读取数值
-            //             var a1 = data.GetSByte("a");
-            //             var b1 = data.GetByte("b");
-            //             var c1 = data.GetInt("c");
-            //             var d1 = data.GetDouble("d");
-            //             var bool_arr1 = data.GetBoolArray("e");
-            // 
-            //             Debug.Assert(a == a1);
-            //             Debug.Assert(b == b1);
-            //             Debug.Assert(c == c1);
-            //             Debug.Assert(d == d1);
-            //             Debug.Assert(bool_arr1[5]);
+            var a1 = data.GetSByte("a");
+            var b1 = data.GetByte("b");
+            var c1 = data.GetInt("c");
+            var d1 = data.GetDouble("d");
+            var bool_arr1 = data.GetBoolArray("e");
+
+            Debug.Assert(a == a1);
+            Debug.Assert(b == b1);
+            Debug.Assert(c == c1);
+            Debug.Assert(d == d1);
+            Debug.Assert(bool_arr1[5]);
 
 
             DateTime afterDT = System.DateTime.Now;

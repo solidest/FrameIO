@@ -10,27 +10,18 @@ namespace FrameIO.Driver
 {
     public class UDPHelper
     {
-        public Socket client = null;
-        string localIP = String.Empty;
-        public EndPoint point = null;// new IPEndPoint(IPAddress.Any, 0);
+        public UdpClient UdpClient = null;
+        private string localIP = "127.0.0.1";
+        private string remoteIP = "127.0.0.1";
+        private int localPort = 8008;
+        private int remotePort = 8009;
 
-        public  Socket InitClient()
+        private IPEndPoint localEndPoint = null;
+        public IPEndPoint remoteEndPoint = null;
+
+        public UdpClient InitClient(Dictionary<string,object> config)
         {
-            if (client == null)
-            {
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 8008);
-                client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-                client.ExclusiveAddressUse = false;
-                client.Bind(ipep);
-
-                //remoteEp = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8007);
-
-            }
-            return client;
-        }
-        public Socket InitClient(Dictionary<string,object> config)
-        {
-            if (client == null)
+            if (UdpClient == null)
             {
                 //                 IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), Convert.ToInt32(config["localport"]));
                 //                 client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
@@ -38,49 +29,36 @@ namespace FrameIO.Driver
                 //                 client.Bind(ipep);
                 // 
                 //                 remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
-                point = new IPEndPoint(IPAddress.Any, 0);
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Any, Convert.ToInt32(config["remoteport"]));
-                client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-                client.ExclusiveAddressUse = false;
-                client.Bind(ipep);
+                UdpClient = new UdpClient();
+                localEndPoint = new IPEndPoint(IPAddress.Parse("" + config["localip"]), Convert.ToInt32(config["localport"]));
+                remoteEndPoint = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
+
+                UdpClient.Client.Bind(localEndPoint);
 
             }
-            return client;
+            return UdpClient;
         }
 
         public void CloseUDPClient()
         {
-            if(client !=null)
+            if(UdpClient != null)
             {
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
+                UdpClient.Client.Close();
+                UdpClient.Close();
             }
         }
         public  int sendMsg(byte[] msg)
         {
-            return client.SendTo(msg, SocketFlags.None, point);
+            return UdpClient.Send(msg, msg.Length, remoteEndPoint);
         }
 
-        public void ReceiveMsg(int len)
+        public byte[] ReceiveMsg()
         {
-            byte[] buff = new byte[len];
-            byte[] recvBuf = new byte[len];
+            var p = remoteEndPoint;
+            if (p == null)
+                p = new System.Net.IPEndPoint(System.Net.IPAddress.Any, 0);
 
-            int dataLeft = len;
-            int start = 0;
-            while (dataLeft > 0)
-            {
-                int recv = client.ReceiveFrom(recvBuf, ref point);
-
-                if (recv > len - start)
-                    Array.Copy(recvBuf, 0, buff, start, len - start);
-                else
-                    Array.Copy(recvBuf, 0, buff, start, recv);
-
-                start += recv;
-                dataLeft -= recv;
-            }
-
+            return UdpClient.Receive(ref p); 
         }
     }
 }

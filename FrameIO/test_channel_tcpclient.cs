@@ -69,7 +69,8 @@ namespace FrameIO.Main
 
             var CH1 = Run.FrameIOFactory.GetChannel("SYS1", "CH1");
             CH1.Open();
-           // CH1.WriteFrame(pack);
+
+            CH1.WriteFrame(pack);
             //var buf = pack.Pack();
 
             //             var CH2 = Run.FrameIOFactory.GetChannel("SYS2", "CHA");

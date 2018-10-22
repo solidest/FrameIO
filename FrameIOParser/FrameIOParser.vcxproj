@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Tools\winflexbison3;$(IncludePath)</IncludePath>
-    <ExecutablePath>C:\Tools\winflexbison3;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>D:\Tools\winflexbison3;$(IncludePath)</IncludePath>
+    <ExecutablePath>D:\Tools\winflexbison3;C:\Tools\winflexbison3;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

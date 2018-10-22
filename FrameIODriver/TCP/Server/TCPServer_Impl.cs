@@ -16,10 +16,11 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
-            if (TCPServer.server != null)
-                return true;
-
-            return false;
+            //             if (TCPServer.server != null)
+            //                 return true;
+            // 
+            //             return false;
+            return TCPServer.Open();
         }
 
         public void InitConfig(Dictionary<string, object> config)
@@ -45,52 +46,10 @@ namespace FrameIO.Driver
         {
             int len = up.FirstBlockSize;
             while (len != 0)
-                len = up.AppendBlock(ReadBlock(len));
+                len = up.AppendBlock(TCPServer.BeginReceive(len));
 
             return up.Unpack();
         }
-        private int AsyncReceive(IAsyncResult ar)
-        {
-            return TCPServer.server.EndReceive(ar); 
-        }
-        private static int recvlen = 0;
-        private static bool running = true;
-        private Byte[] ReadBlock(int len)
-        {
-            Byte[] data = new byte[len];
-            
-            int dataleft = len;
-
-            recvlen = 0;
-
-            try
-            {
-                while (recvlen < len)
-                {
-                    running = true;
-                    TCPServer.server.BeginReceive(data, recvlen, data.Length, SocketFlags.None,
-                    asyncResult =>
-                    {
-                        lock (this)
-                        {
-                            recvlen += TCPServer.server.EndReceive(asyncResult);
-                            running = false;
-                        }
-                    }, null);
-
-                    while (running)
-                        Thread.Sleep(10);
-                }
-
-                return data;
-            }
-            catch(Exception )
-            {
-                throw new Exception("接收数据异常:");
-            }
-
-        }
-
         public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
         {
             IFrameData[] ret = new IFrameData[framecount];
