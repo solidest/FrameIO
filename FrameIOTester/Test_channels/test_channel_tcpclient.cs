@@ -118,7 +118,7 @@ namespace FrameIODemo
             DateTime afterDT = System.DateTime.Now;
             TimeSpan ts = afterDT.Subtract(beforDT);
 
-            OutText(string.Format("测试通过，用时{0}毫秒", ts.TotalMilliseconds), false);
+            //OutText(string.Format("测试通过，用时{0}毫秒", ts.TotalMilliseconds), false);
 
             #endregion
 

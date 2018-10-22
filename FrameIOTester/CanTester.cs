@@ -43,27 +43,41 @@ namespace FrameIOTester
         {
             Initialize();
             var settor = FrameIOFactory.GetFrameSettor(1);
-            settor.SetSegmentValue(2, 8);   //len
-            settor.SetSegmentValue(3, 1);   //h1
-            settor.SetSegmentValue(4, true);    //frametype
+            settor.SetSegmentValue(2, 2);   //len
+            //settor.SetSegmentValue(3, 0);   //h1
+            settor.SetSegmentValue(4, false);    //frametype
             settor.SetSegmentValue(5, false);   //frameformat
-            settor.SetSegmentValue(6, 100);     //ID
+            settor.SetSegmentValue(6, 1);     //ID
 
-            settor.SetSegmentValue(7, 255);    //data0
-            settor.SetSegmentValue(14, 233);   //data7
+            settor.SetSegmentValue(7, 0x05);    //data0
+            settor.SetSegmentValue(8, 0x06);    //data0
+            //settor.SetSegmentValue(14, 233);   //data7
 
 
             var pack = settor.GetPack();
             //发送pack 
 
-            var data = pack.Pack();
+            var chcan = new FrameIO.Driver.YH_CAN_Impl();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("vender", "yh");
+            dic.Add("channelind", "2");
+            dic.Add("baudrate", "125Kbps");
+            dic.Add("writetimeout", 30000);
+
+            chcan.InitConfig(dic);
+
+
+
+            //var data = pack.Pack();
+
+            chcan.WriteFrame(pack);
 
 
             var unpacker = FrameIOFactory.GetFrameUnpacker(1);
 
 
-            unpacker.AppendBlock(data);
-            var gettor = unpacker.Unpack();
+            //unpacker.AppendBlock(data);
+            var gettor = chcan.ReadFrame(unpacker);
 
             Assert.IsTrue(gettor.GetByte(2) == 8);
             Assert.IsTrue(gettor.GetByte(3) == 1);
