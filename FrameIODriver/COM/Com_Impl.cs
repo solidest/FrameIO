@@ -36,7 +36,7 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public IFrameData ReadFrame(IFrameUnpack up)
+        public ISegmentGettor ReadFrame(IFrameUnpack up)
         {
             int len = up.FirstBlockSize;
 
@@ -54,9 +54,9 @@ namespace FrameIO.Driver
             Com.RS232.Read(buff, 0, len);
             return buff;
         }
-        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
+        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
         {
-            IFrameData[] ret = new IFrameData[framecount];
+            ISegmentGettor[] ret = new ISegmentGettor[framecount];
             for (int i=0;i< framecount;i++)
             {
                 ret[i] = ReadFrame(up);

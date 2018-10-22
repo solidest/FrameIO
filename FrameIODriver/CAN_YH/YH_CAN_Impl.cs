@@ -36,7 +36,7 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public IFrameData ReadFrame(IFrameUnpack up)
+        public ISegmentGettor ReadFrame(IFrameUnpack up)
         {
             canmsg_t[] msgRead = new canmsg_t[1];
             for (System.Int32 i = 0; i < msgRead.Length; i++)
@@ -67,9 +67,9 @@ namespace FrameIO.Driver
             return up.Unpack();
         }
 
-        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
+        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
         {
-            var ret = new IFrameData[framecount];
+            var ret = new ISegmentGettor[framecount];
 
             canmsg_t[] msgRead = new canmsg_t[framecount];
             for (System.Int32 i= 0;i< msgRead.Length;i++)
