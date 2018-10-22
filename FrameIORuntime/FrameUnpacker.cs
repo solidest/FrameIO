@@ -44,6 +44,7 @@ namespace FrameIO.Runtime
             _buff.Write(block, 0, _nextsize);
             int end_bit_pos = (int)_buff.Position * 8;
 
+            _buff.SetLength(_buff.Length + 16);  //HACK 追加16个字节长度
             var buff = _buff.GetBuffer();
             var newpos = SegPosition;
             while(bit_pos != end_bit_pos)
@@ -85,7 +86,6 @@ namespace FrameIO.Runtime
         private int GetNextByteSize(ushort startidx, byte[] buff)
         {
             int bitlen = 0;
-            //var buff = _buff.GetBuffer();
             while (startidx != Info.EndIdx)
             {
                 ushort next_seg = 0;

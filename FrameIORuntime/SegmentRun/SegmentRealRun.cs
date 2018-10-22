@@ -20,7 +20,7 @@ namespace FrameIO.Runtime
         {
 
             const byte pos_encoded = 6;
-            const byte pos_byteorder = 7;
+            const byte pos_byteorder = 8;
             const byte pos_isdouble = 9;
             //const byte not_used = 10;
             const byte pos_value = 32;
@@ -44,7 +44,7 @@ namespace FrameIO.Runtime
         {
             if (!info.IsSetValue) SetAutoValue(value_buff, info, ir);
 
-            CommitValue(value_buff, info.StartPos, IsDouble ? 64 : 32, pack, ref odd, ref odd_pos);
+            CommitValue(value_buff.GetBuffer(), info.StartPos, IsDouble ? 64 : 32, pack, ref odd, ref odd_pos);
             return 0;
         }
 
@@ -106,7 +106,6 @@ namespace FrameIO.Runtime
 
 
         #endregion
-
 
         #region --SetValue--
 
@@ -205,5 +204,71 @@ namespace FrameIO.Runtime
 
 
         #endregion
+
+
+        #region --GetValue--
+
+
+        internal override byte? GetByte(byte[] buff, UnpackInfo info)
+        {
+            return (byte?)GetDouble(buff, info);
+        }
+
+
+        internal override double? GetDouble(byte[] buff, UnpackInfo info)
+        {
+            if (IsDouble)
+                return UnpackToDouble(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+            else
+                return UnpackToFloat(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+        }
+
+        internal override float? GetFloat(byte[] buff, UnpackInfo info)
+        {
+            if (IsDouble)
+                return (float)UnpackToDouble(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+            else
+                return UnpackToFloat(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+        }
+
+
+        internal override int? GetInt(byte[] buff, UnpackInfo info)
+        {
+            return (int?)GetDouble(buff, info);
+        }
+
+        internal override long? GetLong(byte[] buff, UnpackInfo info)
+        {
+            return (long?)GetDouble(buff, info);
+        }
+
+        internal override sbyte? GetSByte(byte[] buff, UnpackInfo info)
+        {
+            return (sbyte?)GetDouble(buff, info);
+        }
+
+        internal override short? GetShort(byte[] buff, UnpackInfo info)
+        {
+            return (short?)GetDouble(buff, info);
+        }
+
+        internal override uint? GetUInt(byte[] buff, UnpackInfo info)
+        {
+            return (uint?)GetDouble(buff, info);
+        }
+
+        internal override ulong? GetULong(byte[] buff, UnpackInfo info)
+        {
+            return (ulong?)GetDouble(buff, info);
+        }
+
+
+        internal override ushort? GetUShort(byte[] buff, UnpackInfo info)
+        {
+            return (ushort?)GetDouble(buff, info);
+        }
+
+        #endregion
+
     }
 }

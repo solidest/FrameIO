@@ -51,7 +51,7 @@ namespace FrameIO.Runtime
         {
             if(!info.IsSetValue) SetAutoValue(value_buff, pack, info, ir);
             
-            CommitValue(value_buff, info.StartPos, BitCount, pack, ref odd, ref odd_pos);
+            CommitValue(value_buff.GetBuffer(), info.StartPos, BitCount, pack, ref odd, ref odd_pos);
             return 0;
         }
 
@@ -307,7 +307,7 @@ namespace FrameIO.Runtime
             if (IsSigned)
                 return (ulong)UnpackToLong(buff, (uint)info.BitStart, BitCount, Encoded, IsBigOrder);
             else
-                return GetUIntxFromByte(buff, (uint)info.BitStart, BitCount); ;
+                return GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
         }
 
 

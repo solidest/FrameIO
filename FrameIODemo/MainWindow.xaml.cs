@@ -74,7 +74,7 @@ namespace FrameIODemo
                     using (var resultStream = new MemoryStream())
                     {
                         zipStream.CopyTo(resultStream);
-                        FrameIO.Runtime.FrameIOFactory.Initial(resultStream.ToArray());
+                        FrameIO.Runtime.FrameIOFactory.Initialize(resultStream.ToArray());
                     }
                 }
             }

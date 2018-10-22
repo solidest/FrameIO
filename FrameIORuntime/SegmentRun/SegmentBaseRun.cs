@@ -280,13 +280,6 @@ namespace FrameIO.Runtime
         //取任意位的字节
         static internal ulong GetUInt64FromByte(byte[] buff, uint bitStart)
         {
-            if (buff.Length < 8)
-            {
-                var old = buff;
-                buff = new byte[8];
-                for (int i = 0; i < old.Length; i++)
-                    buff[i] = old[i];
-            }
             uint word_index = bitStart >> 6;
             uint word_offset = bitStart & 63;
             ulong result = BitConverter.ToUInt64(buff, (int)word_index * 8) >> (UInt16)word_offset;
@@ -309,16 +302,23 @@ namespace FrameIO.Runtime
         {
             ulong nv = GetUIntxFromByte(buff, bit_start, bitlen);
             if (isbigorder) nv = GetBigOrder(nv, bitlen);
-            switch (et)
+
+            //复制负数符号位 && 负数编解码
+            if((nv & ((ulong)1<<(bitlen-1))) != 0)
             {
-                case EncodedType.Primitive:
-                    return BitConverter.ToInt64(BitConverter.GetBytes(nv), bitlen);
-                case EncodedType.Inversion:
-                    return BitConverter.ToInt64(BitConverter.GetBytes(GetInversion(nv, bitlen)), 0);
-                case EncodedType.Complement:
-                    return BitConverter.ToInt64(BitConverter.GetBytes(GetComplement(nv, bitlen)), 0);
+                nv |=  (~(ulong)0 << bitlen);
+                switch (et)
+                {
+                    case EncodedType.Inversion:
+                        nv = GetInversion(nv, bitlen);
+                        break;
+                    case EncodedType.Complement:
+                        nv = GetComplement(nv, bitlen);
+                        break;
+                }
             }
-            throw new Exception("runtime");
+
+            return BitConverter.ToInt64(BitConverter.GetBytes(nv), 0);
         }
 
         //解包一个ulong值
@@ -334,16 +334,19 @@ namespace FrameIO.Runtime
         {
             ulong nv = GetUIntxFromByte(buff, bit_start, 64);
             if (isbigorder) nv = GetBigOrder(nv, 64);
-            switch (et)
+            if ((nv & ((ulong)1 << 63)) != 0)
             {
-                case EncodedType.Primitive:
-                    return BitConverter.ToDouble(BitConverter.GetBytes(nv),0);
-                case EncodedType.Inversion:
-                    return BitConverter.ToDouble(BitConverter.GetBytes(GetInversion(nv,64)), 0);
-                case EncodedType.Complement:
-                    return BitConverter.ToDouble(BitConverter.GetBytes(GetComplement(nv, 64)), 0);
+                switch (et)
+                {
+                    case EncodedType.Inversion:
+                        nv = GetInversion(nv, 64);
+                        break;
+                    case EncodedType.Complement:
+                        nv = GetComplement(nv, 64);
+                        break;
+                }
             }
-            throw new Exception("runtime");
+            return BitConverter.ToDouble(BitConverter.GetBytes(nv), 0);
         }
 
         //解包一个float数值
@@ -351,50 +354,53 @@ namespace FrameIO.Runtime
         {
             ulong nv = GetUIntxFromByte(buff, bit_start, 32);
             if (isbigorder) nv = GetBigOrder(nv, 32);
-            switch (et)
+
+            if ((nv & ((ulong)1 << 31)) != 0)
             {
-                case EncodedType.Primitive:
-                    return BitConverter.ToSingle(BitConverter.GetBytes((uint)nv), 0);
-                case EncodedType.Inversion:
-                    return BitConverter.ToSingle(BitConverter.GetBytes((uint)GetInversion(nv, 32)), 0);
-                case EncodedType.Complement:
-                    return BitConverter.ToSingle(BitConverter.GetBytes((uint)GetComplement(nv, 32)), 0);
+                switch (et)
+                {
+                    case EncodedType.Inversion:
+                        nv = GetInversion(nv, 32);
+                        break;
+                    case EncodedType.Complement:
+                        nv = GetComplement(nv, 32);
+                        break;
+                }
             }
-            throw new Exception("runtime");
+            return BitConverter.ToSingle(BitConverter.GetBytes(nv), 0);
         }
 
 
         //将数值写入打包cach
-        protected static void CommitValue(MemoryStream cach, int start, int bitlen, Stream pack, ref byte odd, ref byte odd_pos)
+        protected static void CommitValue(byte[] cach, int start, int bitlen, Stream pack, ref byte odd, ref byte odd_pos)
         {
             
-            var _cach = cach.GetBuffer();
             int count = bitlen / 8;
             if(odd_pos==0)
             {
-                if (count > 0) pack.Write(_cach, start, count);
+                if (count > 0) pack.Write(cach, start, count);
                 odd_pos = (byte)(bitlen % 8);
-                if (odd_pos!= 0)  odd = _cach[start + count];
+                if (odd_pos!= 0)  odd = cach[start + count];
             }
             else
             {
                 for(int i=0; i<count; i++)
                 {
-                    pack.WriteByte((byte)((_cach[start + i] << odd_pos) | odd));
-                    odd = (byte)(_cach[start + i] >> (8 - odd_pos));
+                    pack.WriteByte((byte)((cach[start + i] << odd_pos) | (byte)(odd & (255>> odd_pos))));
+                    odd = (byte)(cach[start + i] >> (8 - odd_pos));
                 }
                 byte new_odd_pos = (byte)(bitlen % 8);
                 if(new_odd_pos!=0)
                 {
-                    var v = _cach[start + count];
+                    var v = cach[start + count];
                     if(new_odd_pos+odd_pos<8)
                     {
-                        odd |= (byte)(v << odd_pos);
+                        odd = (byte)(((byte)(v << odd_pos)) | ((byte)(odd & (255>> odd_pos))));
                         odd_pos = (byte)(new_odd_pos + odd_pos);
                     }
                     else
                     {
-                        pack.WriteByte((byte)((v << odd_pos) | odd));
+                        pack.WriteByte((byte)((v << odd_pos) | (byte)(odd & (255>>odd_pos))));
                         odd = (byte)(v >> (8 - odd_pos));
                         odd_pos = (byte)(new_odd_pos + odd_pos - 8);
                     }
@@ -407,18 +413,17 @@ namespace FrameIO.Runtime
         protected static ulong PackToULong(long v, byte bitlen, EncodedType et, bool isbigorder)
         {
             ulong unewv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
-            switch (et)
+            if(v<0)
             {
-                case EncodedType.Primitive:
-                    break;
-                case EncodedType.Inversion:
-                    unewv = GetInversion(unewv, bitlen);
-                    break;
-                case EncodedType.Complement:
-                    unewv = GetComplement(unewv, bitlen);
-                    break;
-                default:
-                    break;
+                switch (et)
+                {
+                    case EncodedType.Inversion:
+                        unewv = GetInversion(unewv, bitlen);
+                        break;
+                    case EncodedType.Complement:
+                        unewv = GetComplement(unewv, bitlen);
+                        break;
+                }
             }
             return isbigorder ? GetBigOrder(unewv, bitlen) : unewv;
         }
@@ -431,15 +436,11 @@ namespace FrameIO.Runtime
             {
                 switch (et)
                 {
-                    case EncodedType.Primitive:
-                        break;
                     case EncodedType.Inversion:
                         unewv = GetInversion(unewv, 64);
                         break;
                     case EncodedType.Complement:
                         unewv = GetComplement(unewv, 64);
-                        break;
-                    default:
                         break;
                 }
             }
@@ -455,15 +456,11 @@ namespace FrameIO.Runtime
             {
                 switch (et)
                 {
-                    case EncodedType.Primitive:
-                        break;
                     case EncodedType.Inversion:
                         unewv = GetInversion(unewv, 32);
                         break;
                     case EncodedType.Complement:
                         unewv = GetComplement(unewv, 32);
-                        break;
-                    default:
                         break;
                 }
             }
@@ -473,9 +470,11 @@ namespace FrameIO.Runtime
         //取负数的反码
         protected static ulong GetInversion(ulong value, byte bitlen)
         {
-            value |= (~(ulong)0 << (bitlen - 1));
-            value ^= (~(ulong)0 >> (64 - bitlen - 1));
-            return value;
+            return (value & (~(ulong)0 << (bitlen-1))) | ((~value) & (~(ulong)0 >> (64 - bitlen)));
+            //value ^= (~(ulong)0 >> (64 - bitlen - 1));
+            //value &= (~(ulong)0 >> (64 - bitlen));
+
+            //return value;
         }
 
         //取负数的补码

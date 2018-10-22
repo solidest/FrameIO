@@ -12,9 +12,9 @@ namespace FrameIO.Runtime
     public class FrameIOFactory
     {
         //初始化
-        public static void Initial(byte[] config)
+        public static void Initialize(byte[] config)
         {
-            FrameRuntime.Initial(config);
+            FrameRuntime.Initialize(config);
         }
 
 

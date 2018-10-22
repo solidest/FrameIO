@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //计算表达式
-    [Serializable]
     public class Exp
     {
         

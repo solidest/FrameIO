@@ -20,7 +20,7 @@ namespace FrameIO.Runtime
         private ExpRun[] _explist;
         private SegmentValidator[] _validats;
 
-        internal static void Initial(byte[] content)
+        internal static void Initialize(byte[] content)
         {
             Run = new FrameRuntime(content);
         }

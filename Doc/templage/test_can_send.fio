@@ -1,0 +1,38 @@
+//项目:test
+project main
+{
+
+	//分系统
+    system SYS1
+    {
+        channel CH1:can
+        {
+            vendor="yh";
+            channelind="2";
+            baudrate = "125Kbps";
+            writetimeout = 30000;
+
+        }
+    }
+
+
+    //数据帧
+    frame MSG1
+    {
+        integer len bitcount=4 signed=false;
+        integer h1 bitcount=2 signed=false value=0;
+        integer frametype bitcount=1 signed=false;
+        integer frameformat bitcount=1;
+        integer ID bitcount=16;
+
+	integer data0 bitcount=8;
+	integer data1 bitcount=8;
+	integer data2 bitcount=8;
+	integer data3 bitcount=8;
+	integer data4 bitcount=8;
+	integer data5 bitcount=8;
+	integer data6 bitcount=8;
+	integer data7 bitcount=8;
+    }
+
+}

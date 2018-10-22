@@ -381,14 +381,14 @@ namespace FrameIO.Main
             //ushort RefValidator;
 
             const byte pos_encoded = 6;
-            const byte pos_byteorder = 7;
+            const byte pos_byteorder = 8;
             const byte pos_isdouble = 9;
             //const byte not_used = 10;
             const byte pos_repeated = 16;
             const byte pos_value = 32;
             const byte pos_validate = 48;
 
-            var isarray = seg.Repeated.IsIntOne();
+            var isarray = !seg.Repeated.IsIntOne();
             ulong token = isarray ? CO_SEGREAL_ARRAY : CO_SEGREAL;
             byte encoded = 0;
             switch (seg.Encoded)
@@ -424,7 +424,7 @@ namespace FrameIO.Main
             //ushort RefRepeated;
             const byte pos_repeated = 32;
             const byte pos_bytesize = 48;
-            var isarray = seg.Repeated.IsIntOne();
+            var isarray = !seg.Repeated.IsIntOne();
 
             ulong token = isarray ? CO_SEGTEXT_ARRAY : CO_SEGTEXT;
             if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);

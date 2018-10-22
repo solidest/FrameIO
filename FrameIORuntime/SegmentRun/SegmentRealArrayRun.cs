@@ -89,9 +89,10 @@ namespace FrameIO.Runtime
             if (!info.IsSetValue) SetAutoValue(value_buff, info, ir);
 
             int istart = info.StartPos;
+            var buff = value_buff.GetBuffer();
             for (int i = 0; i < info.Count; i++)
             {
-                CommitValue(value_buff, istart, IsDouble ? 64 : 32, pack, ref odd, ref odd_pos);
+                CommitValue(buff, istart, IsDouble ? 64 : 32, pack, ref odd, ref odd_pos);
                 istart += IsDouble ? 8 : 4;
             }
             return 0;
@@ -117,7 +118,6 @@ namespace FrameIO.Runtime
 
 
         #endregion
-
 
         #region --SetValue--
 
@@ -151,6 +151,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -170,6 +171,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -189,6 +191,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -208,6 +211,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -227,6 +231,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -246,6 +251,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -265,6 +271,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -284,6 +291,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
@@ -303,6 +311,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
@@ -322,6 +331,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
@@ -341,6 +351,7 @@ namespace FrameIO.Runtime
 
             if (_repeated_const > info.Count)
             {
+                info.Count = _repeated_const;
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
@@ -348,6 +359,163 @@ namespace FrameIO.Runtime
 
         #endregion
 
+        #region --GetSegmentValue--
+
+        internal override bool?[] GetBoolArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new bool?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = 0!=(IsDouble ? UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (double)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder));
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override byte?[] GetByteArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new byte?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (byte)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (byte)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override double?[] GetDoubleArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new double?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? UnpackToDouble(buff, (uint)bitstart,  Encoded, IsBigOrder): (double)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override float?[] GetFloatArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new float?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (float)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override int?[] GetIntArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new int?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (int)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (int)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override long?[] GetLongArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new long?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (long)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (long)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override sbyte?[] GetSByteArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new sbyte?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (sbyte)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (sbyte)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override short?[] GetShortArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new short?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (short)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (short)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override uint?[] GetUIntArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new uint?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (uint)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (uint)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override ulong?[] GetULongArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new ulong?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (ulong)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (ulong)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        internal override ushort?[] GetUShortArray(byte[] buff, UnpackInfo info)
+        {
+            var bitcount = (IsDouble ? 64 : 32);
+            int count = info.BitLen / bitcount;
+            var ret = new ushort?[count];
+            var bitstart = info.BitStart;
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = IsDouble ? (ushort)UnpackToDouble(buff, (uint)bitstart, Encoded, IsBigOrder) : (ushort)UnpackToFloat(buff, (uint)bitstart, Encoded, IsBigOrder);
+                bitstart += bitcount;
+            }
+            return ret;
+        }
+
+        #endregion
 
     }
 }
