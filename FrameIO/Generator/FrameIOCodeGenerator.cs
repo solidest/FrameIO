@@ -26,10 +26,13 @@ namespace FrameIO.Main
 
                 PrepareDir();
 
+
                 var fn = _newpath + "\\FrameIO.bin";
                 CodeFile.SaveFrameBinFile(fn, pji);
                 tout.OutText(string.Format("信息：生成文件{0}",fn) , true);
 
+                GenerateFrameFile();
+                
                 var code = new StringBuilder(GetTemplate("TParameter"));
                 ReplaceText(code, "projectname", _pj.Name);
                 CreateFile("Parameter", code);
@@ -43,7 +46,49 @@ namespace FrameIO.Main
             {
                 tout.OutText(e.ToString(), true);
             }
+            finally
+            {
+                _pj = null;
+                _newpath = null;
+                _tout = null;
+            }
         }
+
+        #region --Frame--
+
+        private static void GenerateFrameFile()
+        {
+            var fms = FrameConfigFile.Compile(_pj.FrameList, _pj);
+            foreach (var fm in fms)
+            {
+                var code = new StringBuilder(GetTemplate("TFrame"));
+                ReplaceText(code, "project", _pj.Name);
+                ReplaceText(code, "framename", fm.Key);
+                ReplaceText(code, "contentlist", ToStringList(fm.Value.Content), 4);
+                CreateFile("frame_" + fm.Key, code);
+            }
+        }
+
+        private static IList<string> ToStringList(byte[] data)
+        {
+            var ret = new List<string>();
+            var str = Convert.ToBase64String(data);
+            for (int i=0; i<str.Length; i+=60)
+            {
+                if ((i + 60) >= str.Length)
+                {
+                    ret.Add("\"" + str.Substring(i) + "\"");
+                    break;
+                }
+                else
+                {
+                    ret.Add("\"" + str.Substring(i, 60) + "\",");
+                }
+            }
+            return ret;
+        }
+
+        #endregion
 
         #region --Enum--
 

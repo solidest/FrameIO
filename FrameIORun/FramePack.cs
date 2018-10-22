@@ -143,7 +143,7 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --SegSegmentValue--
+        #region --SetSegmentValue--
 
         //设置字段的数据内容
 

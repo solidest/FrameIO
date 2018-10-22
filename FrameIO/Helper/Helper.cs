@@ -38,31 +38,31 @@ namespace FrameIO.Main
         //验证整数输入是否有效
         static public string ValidInteger(string s)
         {
-            if (ValidateInt(s)) return "";
+            if (ValidateIsInt(s)) return "";
             return "请输入有效的整数";
         }
 
         //验证小数输入是否有效
         static public string ValidReal(string s)
         {
-            if (ValidateRl(s)) return "";
+            if (ValidateIsReal(s)) return "";
             return "请输入有效的小数";
         }
 
         //验证常量数值输入是否有效
         static public string ValidConstNumber(string s)
         {
-            if (ValidateRl(s)) return "";
-            if (ValidateInt(s)) return "";
+            if (ValidateIsReal(s)) return "";
+            if (ValidateIsInt(s)) return "";
             return "请输入有效的数值";
         }
 
-        static private bool ValidateInt(string s)
+        static public bool ValidateIsInt(string s)
         {
             var reg = new Regex(@"^0[0-7]*$");
             if (reg.Match(s).Success) return true;
 
-            reg = new Regex(@"^[1-9][0-9]*$");
+            reg = new Regex(@"^-?[1-9][0-9]*$");
             if (reg.Match(s).Success) return true;
 
             reg = new Regex(@"^0[Xx][0-9a-fA-F]+$");
@@ -71,7 +71,7 @@ namespace FrameIO.Main
             return false;
         }
 
-        static private bool ValidateRl(string s)
+        static public bool ValidateIsReal(string s)
         {
             var reg = new Regex(@"^-?([0-9]*\.[0-9]+|[0-9]+\.)([Ee][-+]?[0-9]+)?$");
             if (reg.Match(s).Success) return true;
