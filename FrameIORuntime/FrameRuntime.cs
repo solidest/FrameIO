@@ -1,88 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FrameRuntime
-    {
-        private static Dictionary<string, FrameInfo> __frames = new Dictionary<string, FrameInfo>();
 
-        //注册一类数据帧
-        public static void RegisterFrame(string framename, byte[] content)
-        {
-            if (__frames.ContainsKey(framename)) return;
-            var frm = new FrameInfo(content);
-            frm.Initial();
-            __frames.Add(framename, frm);
-        }
-
-        //获取数据帧
-        public static FrameInfo GetFrame(string framename)
-        {
-            return __frames[framename];
-        }
-
-    }
-
-    public class FrameInfo
+    //数据帧运行时信息
+    internal class FrameRuntime : IRunInitial
     {
         const byte LEN_USHORT = 16;
         const byte LEN_BYTE = 8;
         const byte LEN_CODE = 6;
 
         private SegmentBaseRun[] _segs;
-        private ConstValue[] _consts;
-        private ExpInfo[] _explist;
-        private Validator[] _validats;
+        private double[] _consts;
+        private ExpRun[] _explist;
+        private SegmentValidator[] _validats;
 
-        public FrameInfo(byte[] content)
+        internal static void Initialize(byte[] content)
         {
-            ushort segmentcount = content[0];
-            ushort constcount = content[1];
-            ushort expressioncount = content[2];
-            ushort validatorcount = content[3];
-            int pos = 4;
-            if (content.Length != segmentcount*8 + constcount*9 + expressioncount*8 + validatorcount*8 + 8)
+            Run = new FrameRuntime(content);
+        }
+
+        internal static FrameRuntime Run { get; private set; }
+
+        private FrameRuntime(byte[] content)
+        {
+            //const byte pos_segment = 0;
+            //const byte pos_const = 16;
+            //const byte pos_expression = 32;
+            //const byte pos_validator = 48;
+
+            ushort segmentcount = BitConverter.ToUInt16(content, 0);
+            ushort constcount = BitConverter.ToUInt16(content, 2);
+            ushort expressioncount = BitConverter.ToUInt16(content, 4);
+            ushort validatorcount = BitConverter.ToUInt16(content, 6);
+
+            if (content.Length != (segmentcount + constcount + expressioncount  + validatorcount +1) * 8)
                 throw new Exception("runtime");
+
+            int pos = 8;
+
+            //WriteMemory(mst, _constlist);
+            //WriteMemory(mst, _expression);
+            //WriteMemory(mst, _validatorlist);
+            //WriteMemory(mst, _segmentlist);
+
+            _consts = new double[constcount];
+            for (int i = 0; i < constcount; i++)
+            {
+                _consts[i] = BitConverter.ToDouble(content, pos);
+                pos += 8;
+            }
+ 
+            _explist = new ExpRun[expressioncount];
+            pos += 8; //首位设置为null
+            for(int i=1; i< expressioncount; i++)
+            {
+                _explist[i] = new ExpRun(BitConverter.ToUInt64(content, pos));
+                pos += 8;
+            }
+
+            _validats = new SegmentValidator[validatorcount];
+            for(int i=0; i< validatorcount; i++)
+            {
+                _validats[i] = SegmentValidator.GetSegmentValidator(BitConverter.ToUInt64(content, pos), this);
+                pos += 8;
+            }
 
             _segs = new SegmentBaseRun[segmentcount];
             for (int i = 0; i < segmentcount; i++)
             {
-                _segs[i] = SegmentFactory[content[pos]&(~0<<LEN_CODE)].Invoke(BitConverter.ToUInt64(content, pos));
-                pos += 8;
-            }
-
-            _consts = new ConstValue[constcount];
-            for (int i = 0; i < constcount; i++)
-            {
-                _consts[i] =new ConstValue(content, pos);
-                pos += 9;
-            }
-
-            _explist = new ExpInfo[expressioncount];
-            for(int i=0; i< expressioncount; i++)
-            {
-                _explist[i] = new ExpInfo(BitConverter.ToUInt64(content, pos));
-                pos += 8;
-            }
-
-            _validats = new Validator[validatorcount];
-            for(int i=0; i< validatorcount; i++)
-            {
-                _validats[i] = new Validator(BitConverter.ToUInt64(content, pos));
+                _segs[i] = SegmentFactory[content[pos]&(~(ulong)0>>(64-LEN_CODE))].Invoke(BitConverter.ToUInt64(content, pos), this);
                 pos += 8;
             }
         }
 
-        public void Initial()
-        {
-
-        }
-
-        public SegmentBaseRun this[int index]
+        internal SegmentBaseRun this[int index]
         {
             get
             {
@@ -90,207 +87,186 @@ namespace FrameIO.Runtime
             }
         }
 
-        public int SegmentsCount { get => _segs.Length; }
-
-
         #region --SegmentFactory--
 
-        private delegate SegmentBaseRun CreateSegment(ulong data);
+        private delegate SegmentBaseRun CreateSegment(ulong data, IRunInitial ir);
 
         private static CreateSegment[] SegmentFactory = new CreateSegment[]
         {
-            CreateSegmentNullInfo, 
-            CreateSegmentIntegerInfo,//const byte CO_SEGINTEGER = 1;
-            CreateSegmentRealInfo, //const byte CO_SEGREAL = 2;
-            CreateSegmentTextInfo, //const byte CO_SEGTEXT = 3;
-            CreateSegmentNullInfo,//const byte CO_SEGBLOCK_IN = 4;
-            CreateSegmentNullInfo,//const byte CO_SEGBLOCK_OUT = 5;
-            CreateSegmentNullInfo,//const byte CO_SEGONEOF_IN = 6;
-            CreateSegmentNullInfo,//const byte CO_SEGONEOF_OUT = 7;
-            CreateSegmentNullInfo,//const byte CO_SEGONEOFITEM_IN = 8;
-            CreateSegmentNullInfo //const byte CO_SEGONEOFITEM_OUT = 9;           
+
+            CreateSegmentNullRun, 
+            CreateSegmentIntegerRun,//const byte CO_SEGINTEGER = 1;
+            CreateSegmentRealRun,//const byte CO_SEGREAL = 2;
+            CreateSegmentTextRun,//const byte CO_SEGTEXT = 3;
+            CreateSegmentIntegerArrayRun,//const byte CO_SEGINTEGER_ARRAY = 4;
+            CreateSegmentRealArrayRun,//const byte CO_SEGREAL_ARRAY = 5;
+            CreateSegmentTextArrayRun,//const byte CO_SEGTEXT_ARRAY = 6;
+            CreateSegmentBlockIn,//const byte CO_SEGBLOCK_IN = 7;
+            CreateSegmentNormalOut,//const byte CO_SEGBLOCK_OUT = 8;
+            CreateSegmentOneofInto,//const byte CO_SEGONEOF_IN = 9;
+            CreateSegmentNormalOut,//const byte CO_SEGONEOF_OUT = 10;
+            CreateSegmentOneofItem,//const byte CO_SEGONEOFITEM = 11;
+            CreateSegmentFrameBegin,//const byte CO_FRAME_BEGIN = 12;
+            CreateSegmentNormalOut,//const byte CO_FRAME_END = 13;
+            CreateSegmentFrameRef//const byte CO_REF_FRAME = 14;
         };
 
-        private static SegmentBaseRun CreateSegmentNullInfo(ulong data)
+        private static SegmentBaseRun CreateSegmentOneofInto(ulong data, IRunInitial ir)
+        {
+            return new SegmentOneofInto(data,ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentOneofItem(ulong data, IRunInitial ir)
+        {
+            return new SegmentOneofItem(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentFrameRef(ulong data, IRunInitial ir)
+        {
+            return new SegmentFrameRef(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentFrameBegin(ulong data, IRunInitial ir)
+        {
+            return new SegmentFramBegin(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentNullRun(ulong data, IRunInitial ir)
         {
             return null;
         }
 
-        private static SegmentBaseRun CreateSegmentIntegerInfo(ulong data)
+        private static SegmentBaseRun CreateSegmentIntegerRun(ulong data, IRunInitial ir)
         {
-            return new SegmentIntegerInfo(data);
+            return new SegmentIntegerRun(data, ir);
         }
 
-        private static SegmentBaseRun CreateSegmentRealInfo(ulong data)
+        private static SegmentBaseRun CreateSegmentRealRun(ulong data, IRunInitial ir)
         {
-            return new SegmentRealInfo(data);
+            return new SegmentRealRun(data, ir);
         }
 
-        private static SegmentBaseRun CreateSegmentTextInfo(ulong data)
+        private static SegmentBaseRun CreateSegmentTextRun(ulong data, IRunInitial ir)
         {
-            return new SegmentTextInfo(data);
+            return new SegmentTextRun(data, ir);
         }
+
+        private static SegmentBaseRun CreateSegmentIntegerArrayRun(ulong data, IRunInitial ir)
+        {
+            return new SegmentIntegerArrayRun(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentRealArrayRun(ulong data, IRunInitial ir)
+        {
+            return new SegmentRealArrayRun(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentTextArrayRun(ulong data, IRunInitial ir)
+        {
+            return new SegmentTextArrayRun(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentBlockIn(ulong data, IRunInitial ir)
+        {
+            return new SegmentBlockIn(data, ir);
+        }
+
+        private static SegmentBaseRun CreateSegmentNormalOut(ulong data, IRunInitial ir)
+        {
+            return new SegmentNormalOut(data, ir);
+        }
+
+
+        #endregion
+
+        #region --IRunInitial--
+
+        public double GetConst(ushort idx)
+        {
+            return _consts[idx];
+        }
+
+        public double GetConstValue(ushort exp_idx)
+        {
+            return _explist[exp_idx].GetConstValue(this);
+        }
+
+        public ExpRun GetExp(ushort idx)
+        {
+            return _explist[idx];
+        }
+
+        public bool IsConst(ushort idx)
+        {
+            return _explist[idx].IsConst(this);
+        }
+
+        public bool IsConstOne(ushort idx)
+        {
+            return _explist[idx].IsConstOne(this);
+        }
+
+        public SegmentValidator GetValidator(ushort idx, ValidateType type)
+        {
+            if (idx == 0) return null;
+            var vlid = _validats[idx];
+            if (vlid.ValidType == type) return vlid;
+            while (vlid.NextIdx != 0)
+            {
+                vlid = _validats[vlid.NextIdx];
+                if (vlid.ValidType == type) return vlid;
+            }
+            return null;
+        }
+
 
         #endregion
 
     }
 
-    
-    public class SegmentIntegerInfo : SegmentBaseRun
+
+    //初始化接口
+    internal interface IRunInitial
     {
-        public EncodedType Encoded { get; private set; }
-        public bool IsBigOrder { get; private set; }
-        public bool IsSigned { get; private set; }
-        public byte BitCount { get; private set; }
-        private ushort _repeated;
-        private ushort _value;
-        private ushort _validator;
-        public SegmentIntegerInfo(ulong token) : base(token)
-        {
-            const byte pos_encoded = 6;
-            const byte pos_byteorder = 8;
-            const byte pos_issigned = 9;
-            const byte pos_bitcount = 10;
-            const byte pos_repeated = 16;
-            const byte pos_value = 32;
-            const byte pos_validate = 48;
-            const byte len_bitcount = 6;
+        double GetConst(ushort const_idx);
 
-            Encoded = (EncodedType)GetTokenByte(token, pos_encoded, 2);
-            IsBigOrder = GetTokenBool(token, pos_byteorder);
-            IsSigned = GetTokenBool(token, pos_issigned);
-            BitCount = GetTokenByte(token, pos_bitcount, len_bitcount);
-            _repeated = GetTokenUShort(token, pos_repeated);
-            _value = GetTokenUShort(token, pos_value);
-            _validator = GetTokenUShort(token, pos_validate);
+        double GetConstValue(ushort exp_idx);
 
-        }
+        bool IsConst(ushort idx);
+
+        bool IsConstOne(ushort idx);
+        SegmentValidator GetValidator(ushort idx, ValidateType type);
     }
 
-    public class SegmentRealInfo : SegmentBaseRun
+    //打包动态执行接口
+    internal interface IPackRunExp : IRunInitial
     {
-        public bool IsDouble { get; private set; }
-        public EncodedType Encoded { get; private set; }
-        public bool IsBigOrder { get; private set; }
-        private ushort _repeated;
-        private ushort _value;
-        private ushort _validator;
-        public SegmentRealInfo(ulong token) : base(token)
-        {
-
-            const byte pos_encoded = 6;
-            const byte pos_byteorder = 7;
-            const byte pos_isdouble = 9;
-            //const byte not_used = 10;
-            const byte pos_repeated = 16;
-            const byte pos_value = 32;
-            const byte pos_validate = 48;
-            Encoded = (EncodedType)GetTokenByte(token, pos_encoded, 2);
-            IsBigOrder = GetTokenBool(token, pos_byteorder);
-            IsDouble = GetTokenBool(token, pos_isdouble);
-            _repeated = GetTokenUShort(token, pos_repeated);
-            _value = GetTokenUShort(token, pos_value);
-            _validator = GetTokenUShort(token, pos_validate);
-        }
+        double GetSegmentValue(ushort idx);
+        int GetSegmentByteSize(ushort idx);
+        ushort GetBitLen(MemoryStream value_buff, ref int bitlen, ushort idx);
+        double GetExpValue(ushort idx);
+        SetValueInfo GetSetValueInfo(ushort idx);
     }
 
-    public class SegmentTextInfo : SegmentBaseRun
+    //解包动态执行接口
+    internal interface IUnpackRunExp:IRunInitial
     {
-        private ushort _repeated;
-        private ushort _bytesize;
-        public SegmentTextInfo(ulong token) : base(token)
-        {
-            const byte pos_repeated = 32;
-            const byte pos_bytesize = 48;
-
-            _repeated = GetTokenUShort(token, pos_repeated);
-            _bytesize = GetTokenUShort(token, pos_bytesize);
-        }
+        bool TryGetSegmentValue(ref double value, ushort idx);
+        bool TryGetSegmentByteSize(ref double size, ushort idx);
+        bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
+        bool TryGetExpValue(ref double value, ushort idx);
+        UnpackInfo GetUnpackInfo(ushort idx);
+        void AddErrorInfo(string info, SegmentBaseRun seg);
     }
 
 
-    public class ConstValue
-    {
-        byte[] _data = new byte[9];
-        public ConstValue(byte[] buff, int pos_start)
-        {
-            for(int i = 0; i<9; i++)
-            {
-                _data[i] = buff[pos_start];
-            }
-        }
-
-        public ulong GetULong()
-        {
-            return Convert.ToUInt64(_data[1]);
-        }
-
-        public byte GetByte()
-        {
-            return _data[0];
-        }
-
-        public bool IsIntOne()
-        {
-            for (int i = 2; i < 9; i++)
-                if (_data[i] != 0) return false;
-            return _data[1] == 1;
-        }
-    }
-
-    public class ExpInfo
-    {
-        const byte pos_left = 32;
-        const byte pos_right = 48;
-        private ExpType _optype;
-        private ushort _left;
-        private ushort _right;
-        private ConstValue[] _const;
-        public ExpInfo(ulong token)
-        {
-            _optype = (ExpType)SegmentBaseRun.GetTokenByte(token, 0, 8);
-            _left = SegmentBaseRun.GetTokenUShort(token, pos_left);
-            _right = SegmentBaseRun.GetTokenUShort(token, pos_right);
-        }
-
-        public bool IsConst
-        {
-            get
-            {
-                return _optype == ExpType.EXP_INT || _optype == ExpType.EXP_REAL;
-            }
-        }
-
-        public bool IsIntOne()
-        {
-            return (_optype == ExpType.EXP_INT && _const[_left].IsIntOne());
-        }
-    } 
-
-    public class Validator
-    {
-        public Validator(ulong token)
-        {
-
-        }
-    }
-    
-    public enum ExpType
-    {
-        EXP_INT = 1,
-        EXP_REAL,
-        EXP_ID,
-        EXP_BYTESIZEOF,
-        EXP_ADD,
-        EXP_SUB,
-        EXP_MUL,
-        EXP_DIV
-    }
-
-    public enum EncodedType
+    //编码类型
+    internal enum EncodedType
     {
         Primitive = 1,
         Inversion,
         Complement
     }
+
+
 }

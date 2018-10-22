@@ -8,171 +8,233 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Runtime
 {
-    public class FramePacker
+    internal class FramePacker : ISegmentSettor, IPackRunExp
     {
-        private FrameInfo _fi;
-        private SegmentPackInfo[] _segpis;
-        private MemoryStream _data;
-        public FramePacker(FrameInfo fi)
+        private static FrameRuntime _fi;
+        static FramePacker()
         {
-            _fi = fi;
-            _segpis = new SegmentPackInfo[fi.SegmentsCount];
-            _data = new MemoryStream();
+            _fi = FrameRuntime.Run;
         }
 
-        public byte[] Pack()
+        internal FramePacker(ushort startidx, ushort endidxi)
         {
-            byte[] ret = null;
+            Info = new FramePackerInfo(startidx, endidxi);
+        }
+
+        internal FramePackerInfo Info { get; private set; }
+
+
+        public IFramePack GetPack()
+        {
+            IFramePack ret = null;
             try
             {
                 using (var pdata = new MemoryStream())
                 {
-                    int pos = 1;
-                    while(pos != _fi.SegmentsCount-1)
+                    ushort pos = (ushort)(Info.StartIdx + 1);
+                    byte buff = 0;
+                    byte oddlen = 0;
+                    while (pos != Info.EndIdx)
                     {
-                        var result = _fi[pos].Pack(_data, pdata, _segpis[pos]);
+                        var result = _fi[pos].Pack(Info.Cach, pdata, ref buff, ref oddlen, Info[pos], this);
                         if (result == 0)
                             pos += 1;
                         else
                             pos = result;
                     }
-                    //打包数值
                     pdata.Close();
-                    ret = pdata.ToArray();
+                    ret = new DataPacker(pdata.ToArray());
                 }
-
             }
             finally
             {
-                _data.Seek(0, SeekOrigin.Begin);
-                _segpis = new SegmentPackInfo[_fi.SegmentsCount];
+                Info.Reset();
             }
+
             return ret;
+        }
+
+        public ISegmentSettor GetSubFrame(ushort idx)
+        {
+            return ((SegmentFrameRef)_fi[idx]).GetSegmentSettor(Info[idx]);
         }
 
         #region --SegSegmentValue--
 
         //设置字段的数据内容
 
-        public void SetSegmentValue(int idx, bool? value)
+        public void SetSegmentValue(ushort idx, bool? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+            _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, byte? value)
+        public void SetSegmentValue(ushort idx, byte? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+            _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, sbyte? value)
+        public void SetSegmentValue(ushort idx, sbyte? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, ushort? value)
+        public void SetSegmentValue(ushort idx, ushort? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, short? value)
+        public void SetSegmentValue(ushort idx, short? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, uint? value)
+        public void SetSegmentValue(ushort idx, uint? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, int? value)
+        public void SetSegmentValue(ushort idx, int? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, ulong? value)
+        public void SetSegmentValue(ushort idx, ulong? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, long? value)
+        public void SetSegmentValue(ushort idx, long? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, float? value)
+        public void SetSegmentValue(ushort idx, float? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, double? value)
+        public void SetSegmentValue(ushort idx, double? value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, bool?[] value)
+        public void SetSegmentValue(ushort idx, bool?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, byte?[] value)
+        public void SetSegmentValue(ushort idx, byte?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, sbyte?[] value)
+        public void SetSegmentValue(ushort idx, sbyte?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, ushort?[] value)
+        public void SetSegmentValue(ushort idx, ushort?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, short?[] value)
+        public void SetSegmentValue(ushort idx, short?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, uint?[] value)
+        public void SetSegmentValue(ushort idx, uint?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, int?[] value)
+        public void SetSegmentValue(ushort idx, int?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, ulong?[] value)
+        public void SetSegmentValue(ushort idx, ulong?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, long?[] value)
+        public void SetSegmentValue(ushort idx, long?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, float?[] value)
+        public void SetSegmentValue(ushort idx, float?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
         }
 
-        public void SetSegmentValue(int idx, double?[] value)
+        public void SetSegmentValue(ushort idx, double?[] value)
         {
-            _segpis[idx] = _fi[idx].SetSegmentValue(_data, value);
+             _fi[idx].SetSegmentValue(Info.Cach, value, Info[idx]);
+        }
+
+
+        #endregion
+
+        #region --IRunExp--
+
+        public int GetSegmentByteSize(ushort idx)
+        {
+            int len = 0;
+            _fi[idx].GetBitLen(Info.Cach, ref len, Info[idx], this);
+            if (len % 8 != 0)
+                throw new Exception("runtime");
+            else
+                return len / 8;
+        }
+
+        public ushort GetBitLen(MemoryStream value_buff, ref int bitlen, ushort idx)
+        {
+            return _fi[idx].GetBitLen(Info.Cach, ref bitlen, Info[idx], this);
+        }
+
+        public double GetSegmentValue(ushort idx)
+        {
+            return _fi[idx].GetValue(Info.Cach, Info[idx], this);
+        }
+
+        public double GetExpValue(ushort idx)
+        {
+            return _fi.GetExp(idx).GetExpValue(this);
+        }
+
+        public double GetConst(ushort idx)
+        {
+            return _fi.GetConst(idx);
+        }
+
+        public bool IsConst(ushort idx)
+        {
+            return _fi.IsConst(idx);
+        }
+
+        public bool IsConstOne(ushort idx)
+        {
+            return _fi.IsConstOne(idx);
+        }
+
+        public SegmentValidator GetValidator(ushort idx, ValidateType type)
+        {
+            return _fi.GetValidator(idx,type);
+        }
+
+        public SetValueInfo GetSetValueInfo(ushort idx)
+        {
+            return Info[idx];
+        }
+
+        public double GetConstValue(ushort exp_idx)
+        {
+            return _fi.GetConstValue(exp_idx);
         }
 
         #endregion
 
     }
 
-    public struct SegmentPackInfo
-    {
-        public bool HaveSetValue;
-        public int StartPos;
-        public int ByteSize;
-        public int OddBitCount;
-    }
 }

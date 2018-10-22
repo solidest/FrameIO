@@ -56,7 +56,8 @@
     <ApplicationIcon>frameio.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>FrameIO.App</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.AvalonEdit">
@@ -97,29 +98,13 @@
     <Compile Include="Dlg\InputDlg.xaml.cs">
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="foobar.cs" />
-    <Compile Include="Generator\FrameConfigFile.cs" />
-    <Compile Include="Generator\FrameIOCodeGenerator.cs" />
-    <Compile Include="Generator\FrameIOCodeCheck.cs" />
     <Compile Include="Helper\CodeFolding.cs" />
-    <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
-    <Compile Include="test_channel.cs" />
-    <Compile Include="test_channel_com.cs" />
-    <Compile Include="test_channel_tcp.cs" />
-    <Compile Include="test_channel_udp.cs" />
-    <Compile Include="test_channel_tcpserver.cs" />
-    <Compile Include="test_channel_tcpclient.cs" />
-    <Compile Include="test_frame.cs" />
-    <Compile Include="Parse\ParseDb.cs" />
-    <Compile Include="Parse\ParseError.cs" />
-    <Compile Include="Parse\SQLLiteWrapper.cs" />
     <Compile Include="TreeNode\EnumdefListNode.cs" />
     <Compile Include="TreeNode\EnumdefNode.cs" />
     <Compile Include="TreeNode\FrameListNode.cs" />
     <Compile Include="TreeNode\FrameNode.cs" />
     <Compile Include="TreeNode\ProjectNode.cs" />
-    <Compile Include="Helper\Helper.cs" />
     <Compile Include="TreeNode\SubsysListNode.cs" />
     <Compile Include="TreeNode\SubsysNode.cs" />
     <Page Include="Dlg\AboutDlg.xaml">
@@ -255,9 +240,9 @@
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
-      <Project>{e265cc24-9349-491b-8cac-4da74d6bc0f8}</Project>
-      <Name>FrameIORun</Name>
+    <ProjectReference Include="FrameIOEditor\FrameIOEditor.csproj">
+      <Project>{cf8f4619-7685-4dee-a5fd-d6a112d95c44}</Project>
+      <Name>FrameIOEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

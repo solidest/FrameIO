@@ -70,9 +70,6 @@ namespace FrameIO.Main
         private ParseDb _db = new ParseDb();
         private Mutex _parseMutext = new Mutex(false);
 
-        [DllImport("FrameIOParser.dll")]
-        private extern static int parse(int projectid);
-
         private delegate void ParseErrorHandler(int codeVer, IList<ParseError> errorlist);
 
         //挂起后台分析线程 
@@ -127,7 +124,7 @@ namespace FrameIO.Main
                     workCode = GetUTF8String(utf8.GetBytes(workCode));
                     projectid = _db.CreateProject(workCode);
                     _lastprojectid = projectid;
-                    int iret = parse(projectid);
+                    int iret = ParseDb.parse(projectid);
                     if (iret>1) throw new Exception(string.Format("错误代码【{0}】:解析器启动失败", iret));
                     //加载错误信息
                     var errlist = _db.LoadError(projectid);
@@ -632,7 +629,7 @@ namespace FrameIO.Main
             }
             else
             {
-                FrameIOCodeGenerator.GenerateCodeFile(_project, pji, this);
+                FrameIOCodeGenerator.GenerateCodeFile(_project, this);
             }
             
         }

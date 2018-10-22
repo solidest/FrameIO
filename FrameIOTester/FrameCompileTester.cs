@@ -1,0 +1,161 @@
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FrameIO.Main;
+using System.Collections.Generic;
+using FrameIO.Runtime;
+
+namespace FrameIO.Tester
+{
+    [TestClass]
+    public class FrameCompileTester
+    {
+        #region --Prepare Segments--
+
+        //创建整数字段
+        private FrameSegmentInteger GetNewIntegerSegment()
+        {
+            var seg = new FrameSegmentInteger();
+            seg.Name = "segint";
+            seg.BitCount = 8;
+            seg.ByteOrder = ByteOrderType.Big;
+            seg.Encoded = EncodedType.Inversion;
+            seg.VMax = "100.99";
+            seg.VMin = "-25";
+            return seg;
+        }
+
+        //创建整数数组
+        private FrameSegmentInteger GetNewIntegerArraySegment()
+        {
+            var seg = new FrameSegmentInteger();
+            seg.Repeated = new Exp { Op = exptype.EXP_INT, ConstStr = "8" };
+            seg.Name = "segintarray";
+            seg.BitCount = 4;
+            seg.Signed = true;
+            seg.ByteOrder = ByteOrderType.Big;
+            seg.Encoded = EncodedType.Complement;
+            seg.VMax = "100.99";
+            seg.VMin = "-25";
+            return seg;
+        }
+
+        //创建浮点数字段
+        private FrameSegmentReal GetNewRealSegment()
+        {
+            var seg = new FrameSegmentReal();
+            seg.Name = "segreal";
+            seg.IsDouble = true;
+            seg.ByteOrder = ByteOrderType.Big;
+            seg.Encoded = EncodedType.Primitive;
+            seg.Value = new Exp() { Op = exptype.EXP_REAL, ConstStr = "10.8987" };
+            seg.VMax = "1000";
+            seg.VMin = "-999";
+            return seg;
+        }
+
+        //创建浮点数组
+        private FrameSegmentReal GetNewRealArraySegment()
+        {
+            var seg = new FrameSegmentReal();
+            seg.Repeated = new Exp { Op = exptype.EXP_INT, ConstStr = "8" };
+            seg.Name = "segrealarray";
+            seg.IsDouble = false;
+            seg.ByteOrder = ByteOrderType.Big;
+            seg.Encoded = EncodedType.Complement;
+            seg.VMax = "100.99";
+            seg.VMin = "-25";
+            return seg;
+        }
+
+        //编译数据帧
+        private byte[] GetCompiledData()
+        {
+            //准备测试数据
+            var frm = new Frame("frametest");
+            frm.Segments = new System.Collections.ObjectModel.ObservableCollection<FrameSegmentBase>();
+            frm.Segments.Add(GetNewIntegerSegment());
+            frm.Segments.Add(GetNewRealSegment());
+            frm.Segments.Add(GetNewIntegerArraySegment());
+            frm.Segments.Add(GetNewRealArraySegment());
+
+            var pj = new IOProject("projecttest");
+            pj.FrameList = new System.Collections.ObjectModel.ObservableCollection<Frame>();
+            pj.FrameList.Add(frm);
+
+            //编译分析结果
+            var cfrms = FrameCompiledFile.Compile(pj);
+            Assert.IsNotNull(cfrms);
+            var config = cfrms.GetBytes();
+            Assert.IsNotNull(config);
+
+            return config;
+        }
+
+        #endregion
+
+        //初始化运行时库
+        [TestMethod]
+        public void RuntimeInitialTest()
+        {
+            var config = GetCompiledData();
+            FrameIOFactory.Initialize(config);
+            Assert.IsTrue(FrameIOFactory.GetFrameSettor(1) != null);
+        }
+
+        //打包数据测试
+        [TestMethod]
+        public void PackTest()
+        {
+            RuntimeInitialTest();
+            var settor = FrameIOFactory.GetFrameSettor(1);
+            Assert.IsNotNull(settor);
+            settor.SetSegmentValue(2, 99);
+            var pack = settor.GetPack();
+            Assert.IsTrue(pack.Pack()!=null);
+        }
+
+        //解包数据测试
+        [TestMethod]
+        public void UnpackTest()
+        {
+            RuntimeInitialTest();
+            var settor = FrameIOFactory.GetFrameSettor(1);
+
+            //字段1 整数
+            settor.SetSegmentValue(2, 99);
+
+            //字段2 小数
+            settor.SetSegmentValue(3, -999.000999);
+
+            //字段3 整数数组
+            var barr = new sbyte?[8];
+            for (int i = 0; i < 8; i++)
+                barr[i] = (i % 2 == 0 ?(sbyte)-4 : (sbyte)6);
+            settor.SetSegmentValue(4, barr);
+
+            //字段4 浮点数组
+            var rarr = new float?[7];
+            for (int i=0; i<7; i++)
+                rarr[i] = (i % 2 == 0 ? (float)-9.65342 : (float)9999.7776);
+            settor.SetSegmentValue(5, rarr);
+
+            var data = settor.GetPack().Pack();
+
+            var unpacker = FrameIOFactory.GetFrameUnpacker(1);
+            Assert.IsNotNull(unpacker);
+            var res = unpacker.AppendBlock(data);
+            Assert.IsTrue(res == 0);
+            var gettor = unpacker.Unpack();
+            Assert.IsTrue(gettor.GetUInt(2) == 99);
+            Assert.IsTrue(gettor.GetDouble(3) == -999.000999);
+            var barr2 = gettor.GetSByteArray(4);
+            for (int i = 0; i < 8; i++)
+                Assert.IsTrue(barr[i] == barr2[i]);
+            var rarr2 = gettor.GetFloatArray(5);
+            for (int i = 0; i < 7; i++)
+                Assert.IsTrue(rarr[i] == rarr2[i]);
+
+        }
+
+    }
+}
