@@ -56,6 +56,13 @@
     <Compile Include="CanTester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test_channels\test_channel.cs" />
+    <Compile Include="Test_channels\test_channel_com.cs" />
+    <Compile Include="Test_channels\test_channel_tcp.cs" />
+    <Compile Include="Test_channels\test_channel_tcpclient.cs" />
+    <Compile Include="Test_channels\test_channel_tcpserver.cs" />
+    <Compile Include="Test_channels\test_channel_udp.cs" />
+    <Compile Include="Test_channels\test_frame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
