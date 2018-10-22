@@ -16,7 +16,7 @@ namespace FrameIO.Driver
         {
             if (UDPClient.UdpClient != null)
                 return true;
-
+             
             return false;
         }
 
