@@ -36,6 +36,11 @@ namespace FrameIO.Runtime
             return ((SegmentFramBegin)FrameRuntime.Run[idx]).GetFramePacker();
         }
 
+        public static void Initial(byte[] v)
+        {
+            throw new NotImplementedException();
+        }
+
         //获取数据帧解包接口
         public static IFrameUnpack GetFrameUnpacker(ushort idx)
         {

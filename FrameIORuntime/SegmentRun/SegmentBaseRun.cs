@@ -386,7 +386,7 @@ namespace FrameIO.Runtime
             {
                 for(int i=0; i<count; i++)
                 {
-                    pack.WriteByte((byte)((cach[start + i] << odd_pos) | (byte)(odd & (255>> odd_pos))));
+                    pack.WriteByte((byte)((cach[start + i] << odd_pos) | (byte)(odd & (255>> (8-odd_pos)))));
                     odd = (byte)(cach[start + i] >> (8 - odd_pos));
                 }
                 byte new_odd_pos = (byte)(bitlen % 8);
@@ -395,12 +395,12 @@ namespace FrameIO.Runtime
                     var v = cach[start + count];
                     if(new_odd_pos+odd_pos<8)
                     {
-                        odd = (byte)(((byte)(v << odd_pos)) | ((byte)(odd & (255>> odd_pos))));
+                        odd = (byte)(((byte)(v << odd_pos)) | ((byte)(odd & (255>> (8-odd_pos)))));
                         odd_pos = (byte)(new_odd_pos + odd_pos);
                     }
                     else
                     {
-                        pack.WriteByte((byte)((v << odd_pos) | (byte)(odd & (255>>odd_pos))));
+                        pack.WriteByte((byte)((v << odd_pos) | (byte)(odd & (255>>(8-odd_pos)))));
                         odd = (byte)(v >> (8 - odd_pos));
                         odd_pos = (byte)(new_odd_pos + odd_pos - 8);
                     }

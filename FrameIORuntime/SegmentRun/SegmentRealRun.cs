@@ -167,9 +167,9 @@ namespace FrameIO.Runtime
         internal override void SetSegmentValue(MemoryStream value_buff, bool? value, SetValueInfo info)
         {
             if (value == null || !(bool)value)
-                SetSegmentValue(value_buff, (float)1, info);
-            else
                 SetSegmentValue(value_buff, (float)0, info);
+            else
+                SetSegmentValue(value_buff, (float)1, info);
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, sbyte? value, SetValueInfo info)
