@@ -37,12 +37,12 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public ISegmentGettor ReadFrame(IFrameUnpack up)
+        public IFrameData ReadFrame(IFrameUnpack up)
         {
             throw new NotImplementedException();
         }
 
-        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
+        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
         {
             throw new NotImplementedException();
         }

@@ -36,7 +36,7 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public ISegmentGettor ReadFrame(IFrameUnpack up)
+        public IFrameData ReadFrame(IFrameUnpack up)
         {
             int len = up.FirstBlockSize;
             while (len != 0)
@@ -60,9 +60,9 @@ namespace FrameIO.Driver
             }
             return buff;
         }
-        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
+        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
         {
-            ISegmentGettor[] ret = new ISegmentGettor[framecount];
+            IFrameData[] ret = new IFrameData[framecount];
             for (int i = 0; i < framecount; i++)
             {
                 ret[i] = ReadFrame(up);

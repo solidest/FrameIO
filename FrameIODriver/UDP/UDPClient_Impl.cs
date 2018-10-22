@@ -14,10 +14,9 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
-            if (UDPClient.client != null)
+            if (UDPClient.UdpClient != null)
                 return true;
 
-             
             return false;
         }
 
@@ -40,41 +39,102 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public ISegmentGettor ReadFrame(IFrameUnpack up)
+//         public IFrameData ReadFrame(IFrameUnpack up)
+//         {
+//             int len = up.FirstBlockSize;
+//             while (len != 0)
+//                 len = up.AppendBlock(ReadBlock(len));
+// 
+//             return up.Unpack();
+//         }
+        public IFrameData ReadFrame(IFrameUnpack up)
         {
             int len = up.FirstBlockSize;
             while (len != 0)
-                len = up.AppendBlock(ReadBlock(len));
-
+            {
+                byte[] readDaata = ReadFixedBlock(len);
+                len = up.AppendBlock(readDaata);
+            }
+                
             return up.Unpack();
+        }
+        static byte[] buffExtra = new byte[65535];
+        static int buffExtraDataLen= 0;
+        static bool wanttoRecv = true;
+        private byte[] ReadFixedBlock(int len)
+        {
+            byte[] buff = new byte[len];
+            byte[] recvBuf = new byte[len];
+
+            int dataLeft = len;
+            int start = 0;
+            while (dataLeft > 0)
+            {
+                if(buffExtraDataLen != 0)
+                {
+                    if(buffExtraDataLen > dataLeft)
+                    {
+                        Array.Copy(buffExtra, 0, buff, 0, dataLeft);
+                        Array.Copy(buffExtra, buffExtraDataLen - dataLeft, buffExtra, 0, buffExtraDataLen - dataLeft);
+                        buffExtraDataLen = buffExtraDataLen - dataLeft;
+                        start += dataLeft;
+                        dataLeft -= dataLeft;
+                        wanttoRecv = false;
+                    }
+                    else
+                    {
+                        Array.Copy(buffExtra, 0, buff, 0, buffExtraDataLen);
+                        start += buffExtraDataLen;
+                        dataLeft -= buffExtraDataLen;
+                        if (dataLeft > 0)
+                            wanttoRecv = true;
+                        else
+                            wanttoRecv = false;
+                    }
+                }
+                if(wanttoRecv)
+                {
+                    var readData = UDPClient.ReceiveMsg();
+
+                    if (readData.Length > len - start)
+                    {
+                        Array.Copy(readData, 0, buff, start, len - start);
+                        buffExtraDataLen = readData.Length - (len - start);
+                        Array.Copy(readData, len - start, buffExtra, 0, buffExtraDataLen);
+
+                    }else
+                        Array.Copy(readData, 0, buff, start, readData.Length);
+
+                    start += readData.Length;
+                    dataLeft -= readData.Length;
+                }
+            }
+            return buff;
         }
         private byte[] ReadBlock(int len)
         {
             byte[] buff = new byte[len];
             byte[] recvBuf = new byte[len];
 
-
             int dataLeft = len;
             int start = 0;
             while (dataLeft > 0)
             {
-                int recv = UDPClient.client.ReceiveFrom(recvBuf, ref UDPClient.point);
+                var readData = UDPClient.ReceiveMsg();
 
-                if (recv > len - start)
-                    Array.Copy(recvBuf, 0, buff, start, len - start);
+                if (readData.Length > len - start)
+                    Array.Copy(readData, 0, buff, start, len - start);
                 else
-                    Array.Copy(recvBuf, 0, buff, start, recv);
+                    Array.Copy(readData, 0, buff, start, readData.Length);
 
-                start += recv;
-                dataLeft -= recv;
-
+                start += readData.Length;
+                dataLeft -= readData.Length;
             }
             return buff;
-
         }
-        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
+        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
         {
-            ISegmentGettor[] ret = new ISegmentGettor[framecount];
+            IFrameData[] ret = new IFrameData[framecount];
             for (int i = 0; i < framecount; i++)
             {
                 ret[i] = ReadFrame(up);

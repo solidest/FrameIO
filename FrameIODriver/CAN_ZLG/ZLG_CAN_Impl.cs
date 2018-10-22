@@ -64,7 +64,7 @@ namespace FrameIO.Driver
         #endregion
 
         #region IFrameReader
-        public ISegmentGettor ReadFrame(IFrameUnpack up)
+        public IFrameData ReadFrame(IFrameUnpack up)
         {
             //TODO 
             UInt32 res = new UInt32();
@@ -84,9 +84,9 @@ namespace FrameIO.Driver
             return up.Unpack();
         }
 
-        public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
+        public IFrameData[] ReadFrameList(IFrameUnpack up, int framecount)
         {
-            var ret = new ISegmentGettor[framecount];
+            var ret = new IFrameData[framecount];
 
             UInt32 res = new UInt32();
             res = Wrapor.VCI_GetReceiveNum(m_devtype, m_devind, m_canind);

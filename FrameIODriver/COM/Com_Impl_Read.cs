@@ -16,7 +16,7 @@ namespace FrameIO.Driver
             while (!completed)
             {
                 var p = (AsyncReadInfo)wr;
-                ISegmentGettor frameBase = ReadFrame(p.packer);
+                IFrameData frameBase = ReadFrame(p.packer);
                 p.callback.Invoke(frameBase, out completed, p.AsyncState);
             }
         }
@@ -27,7 +27,7 @@ namespace FrameIO.Driver
                 var p = (AsyncReadInfoList)wr;
                 do
                 {
-                    ISegmentGettor[] frameBase = ReadFrameList(p.packer, p.framecount);
+                    IFrameData[] frameBase = ReadFrameList(p.packer, p.framecount);
                     bool isCompleted = false;
                     p.callback.Invoke(frameBase, out isCompleted, p.AsyncState);
                     if (isCompleted) return;
