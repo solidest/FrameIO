@@ -1,0 +1,30 @@
+//项目:test
+project main
+{
+
+    //分系统
+    system SYS1
+    {
+        channel CHS:tcpserver
+        {
+            serverip="127.0.0.1";
+            port = 8007;
+        }
+
+        channel CHC:tcpclient
+        {
+            serverip="127.0.0.1";
+            port = 8007;
+        }
+
+    }
+    //数据帧
+    frame MSG1
+    {
+        integer a bitcount=4 signed=true;
+        integer b bitcount=4 signed=false;
+        integer c bitcount=32 signed=false;
+        real d isdouble=true;
+        integer e bitcount=1 repeated=b;
+    }
+ }

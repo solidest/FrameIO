@@ -1,0 +1,43 @@
+//项目:test_com
+project main
+{
+	//受控对象
+	system subsys1
+	{
+		//分系统局部变量
+		double jingdu;
+		double weidu;
+		double haodu;
+		double kuandu;
+		
+		//通道
+		channel chcom:com
+		{
+		    portname="COM2";
+			baudrate = 9600;
+			databits = 8;
+			stopbits = 1;
+			parity = 0;
+		}
+		
+		//动作
+		action ac:send frameFormat on chcom
+		{
+			data1:jingdu;
+			data2:weidu;
+			data3:gaodu;
+			data4:kuandu;
+		}
+	}
+	//数据帧
+	frame frameFormat
+	{
+		integer header bitcount=8 value=0x55;
+		integer len bitcount=8 value=4;
+		real data1 isdouble=true;
+		real data2 isdouble=true;
+		real data3 isdouble=true;
+		real data4 isdouble=true;
+		integer ender bitcount=8 value=0x55;
+	}
+}

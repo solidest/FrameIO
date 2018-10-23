@@ -1,0 +1,33 @@
+//项目:test
+project main
+{
+    //分系统
+    system SYS1
+    {
+        channel CH1:udp
+        {
+            localip="127.0.0.1";
+            localport = 8009;
+            remoteip="127.0.0.1";
+            remoteport = 8008;
+        }
+        channel CH2:udp
+        {
+            localip="127.0.0.1";
+            localport = 8008;
+            remoteip="127.0.0.1";
+            remoteport = 8009;
+        }                   
+    }
+
+
+    //数据帧
+    frame MSG1
+    {
+        integer a bitcount=4 signed=true;
+        integer b bitcount=4 signed=false;
+        integer c bitcount=32 signed=false;
+        real d isdouble=true;
+        integer e bitcount=1 repeated=b;
+    }
+}

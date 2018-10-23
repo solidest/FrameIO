@@ -72,14 +72,14 @@ namespace FrameIO.Driver
         {
             Int32 nRet = DevCan.acCanOpen(PortName, true, 500, 500);
             if (nRet >= 0) return true;
-            Console.WriteLine("打开PCI1680U_CAN 失败, 请检查端口名称是否正确!");
+            Console.WriteLine("打开研华_CAN 失败, 请检查端口名称是否正确!");
             return false;
         }
         private Boolean EnterResetMode()
         {
             var nRet = DevCan.acEnterResetMode();
             if (nRet >= 0) return true;
-            Console.WriteLine("PCI1680U_CAN 复位失败!");
+            Console.WriteLine("研华_CAN 复位失败!");
             DevCan.acCanClose();
             return false;
         }
@@ -87,7 +87,7 @@ namespace FrameIO.Driver
         {
             var nRet = DevCan.acSetTimeOut(ReadTimeOut, WriteTimeOut);
             if (nRet >= 0) return true;
-            Console.WriteLine("PCI1680U_CAN 收发超时设置失败!");
+            Console.WriteLine("研华_CAN 收发超时设置失败!");
             DevCan.acCanClose();
             return false;
         }
@@ -95,7 +95,7 @@ namespace FrameIO.Driver
         {
             var nRet = DevCan.acSetSelfReception(WorkMode == 1);
             if (nRet >= 0) return true;
-            Console.WriteLine("PCI1680U_CAN 工作模式设置失败!");
+            Console.WriteLine("研华_CAN 工作模式设置失败!");
             DevCan.acCanClose();
             return false;
         }
@@ -104,7 +104,7 @@ namespace FrameIO.Driver
         {
             var nRet = DevCan.acEnterWorkMode();
             if (nRet >= 0) return true;
-            Console.WriteLine("PCI1680U_CAN 进入工作状态设置失败!");
+            Console.WriteLine("研华_CAN 进入工作状态设置失败!");
             DevCan.acCanClose();
             return false;
         }
