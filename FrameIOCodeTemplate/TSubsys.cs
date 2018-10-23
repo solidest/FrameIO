@@ -38,7 +38,7 @@ namespace PROJECT1
         public IChannelBase CH1 { get; private set; }
         public IChannelBase CH2 { get; private set; }
 
-        public Parameter<bool?> PROPERTYA { get; set; } = new Parameter<bool?>();
+        public Parameter<uint?> PROPERTYA { get; set; } = new Parameter<uint?>();
         public ObservableCollection<Parameter<int?>> PROPERTYB { get; set; } = new ObservableCollection<Parameter<int?>>();
         public Parameter<double?> PROPERTYC { get; set; }
 
@@ -92,6 +92,15 @@ namespace PROJECT1
             {
                 var settor = new TFrameSettor();
                 settor.SegmentA = PROPERTYA.Value;
+                switch (PROPERTYA.Value)
+                {
+                    case 123:
+                        settor.SegmnetC.InnerSegmengAA = PROPERTYA.Value;
+                        break;
+                    default:
+                        settor.SegmnetC.InnerSegmengAA = PROPERTYA.Value;
+                        break;
+                }
                 CH1.WriteFrame(settor.GetPacker());
             }
             catch (FrameIOException ex)

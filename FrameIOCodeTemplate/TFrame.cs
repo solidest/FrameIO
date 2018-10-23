@@ -54,33 +54,32 @@ namespace PROJECT1
         }
 
         public bool? SegmentA { get => _gettor.GetBool(1); }
-
-        public int?[] SegmentD { get => _gettor.GetIntArray(2); }
+        public int?[] SegmentD { get { if (_SegmentD == null) _SegmentD = _gettor.GetIntArray(2); return _SegmentD; } }        private int?[] _SegmentD;
 
         //引用类
-        private TFrameGettor _SegmentB;
-        public TFrameGettor SegmentB { get { if (_SegmentB == null) _SegmentB = new TFrameGettor(_gettor.GetSubFrame(1)); return _SegmentB; } }
+        public TFrameGettor SegmentB { get { if (_SegmentB == null) _SegmentB = new TFrameGettor(_gettor.GetSubFrame(1)); return _SegmentB; } } private TFrameGettor _SegmentB; 
 
         //内置类
-        private TInnerSegmentC _SegmnetC;
-        public TInnerSegmentC SegmnetC
-        {
-            get
-            {
-                if (_SegmnetC == null) _SegmnetC = new TInnerSegmentC(this);
-                return _SegmnetC;
-            }
-        }
+        public SegmentCGettor SegmnetC { get { if (_SegmnetC == null) _SegmnetC = new SegmentCGettor(this); return _SegmnetC; } }        private SegmentCGettor _SegmnetC;
 
-
-        public class TInnerSegmentC
+        public class SegmentCGettor
         {
             TFrameGettor _parent;
-            public TInnerSegmentC(TFrameGettor parent)
+            public SegmentCGettor(TFrameGettor parent)
             {
                 _parent = parent;
             }
             public bool? InnerSegmengAA { get=>_parent._gettor.GetBool(1); }
+        }
+
+        public class SegmentSwitchGettor
+        {
+            private ISegmentGettor _gettor;
+            private SegmentSwitchGettor(ISegmentGettor gettor)
+            {
+                _gettor = gettor;
+            }
+            public TFrameGettor CaseItem1 { get { if (_CaseItem1 == null) _CaseItem1 = new TFrameGettor(_gettor.GetSubFrame(1)); return _CaseItem1; } } private TFrameGettor _CaseItem1;
         }
 
     }

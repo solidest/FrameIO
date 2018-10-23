@@ -81,34 +81,34 @@ namespace FrameIODemo
 
 
  
-            var CHS =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHS");
-            CHS.Open();
+            //var CHS =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHS");
+            //CHS.Open();
 
-            var CHC =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHC");
-            CHC.Open();
+            //var CHC =FrameIO.Runtime.FrameIOFactory.GetChannel("SYS1", "CHC");
+            //CHC.Open();
 
 
 
             
 
-            var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
-            //var data = CHS.ReadFrame(unpack);
+            //var unpack =FrameIO.Runtime.FrameIOFactory.GetFrameUnpack("MSG1");
+            ////var data = CHS.ReadFrame(unpack);
             
 
-            CHS.BeginReadFrame(unpack, AsyncResult,null);
+            //CHS.BeginReadFrame(unpack, AsyncResult,null);
 
-            for(int i=0;i<100;i++)
-            {
-                //获取打包接口
-                var settor =FrameIO.Runtime.FrameIOFactory.GetFramePack("MSG1");
-                settor.SetSegmentValue(1, a);
-                settor.SetSegmentValue(2, b);
-                settor.SetSegmentValue(3, c);
-                settor.SetSegmentValue(4, d);
-                settor.SetSegmentValue(5, bool_arr);
+            //for(int i=0;i<100;i++)
+            //{
+            //    //获取打包接口
+            //    var settor =FrameIO.Runtime.FrameIOFactory.GetFramePack("MSG1");
+            //    settor.SetSegmentValue(1, a);
+            //    settor.SetSegmentValue(2, b);
+            //    settor.SetSegmentValue(3, c);
+            //    settor.SetSegmentValue(4, d);
+            //    settor.SetSegmentValue(5, bool_arr);
 
-                CHC.WriteFrame(settor.GetPack());
-            }
+            //    CHC.WriteFrame(settor.GetPack());
+            //}
 
 
             //var buf = pack.Pack();
@@ -155,8 +155,8 @@ namespace FrameIODemo
             //             Debug.Assert(bool_arr1[5]);
 
 
-            DateTime afterDT = System.DateTime.Now;
-            TimeSpan ts = afterDT.Subtract(beforDT);
+            //DateTime afterDT = System.DateTime.Now;
+            //TimeSpan ts = afterDT.Subtract(beforDT);
 
             //OutText(string.Format("测试通过，用时{0}毫秒", ts.TotalMilliseconds), false);
 
