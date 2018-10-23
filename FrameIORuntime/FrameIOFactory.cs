@@ -11,12 +11,8 @@ namespace FrameIO.Runtime
     //解包类创建工厂
     public class FrameIOFactory
     {
-        //初始化
-        public static void Initialize(byte[] config)
-        {
-            FrameRuntime.Initialize(config);
-        }
 
+        #region --NotUsed--
 
         //获取数据帧的解析器
         public static IFrameUnpack GetFrameUnpack(string framename)
@@ -30,6 +26,14 @@ namespace FrameIO.Runtime
             return null;// new FramePack(_pj.DicFrame[framename].RootSegBlockGroupInfo);
         }
 
+        #endregion
+
+        //初始化
+        public static void Initialize(byte[] config)
+        {
+            FrameRuntime.Initialize(config);
+        }
+
         //获取数据帧的字段设置接口
         public static ISegmentSettor GetFrameSettor(ushort idx)
         {
@@ -38,7 +42,7 @@ namespace FrameIO.Runtime
 
         public static void Initial(byte[] v)
         {
-            throw new NotImplementedException();
+            FrameRuntime.Initialize(v);
         }
 
         //获取数据帧解包接口
@@ -49,56 +53,44 @@ namespace FrameIO.Runtime
 
         //获取通道的接口
 
-        public static IChannelBase GetChannel(string sysname, string channelname)
+        public static IChannelBase GetChannel(ChannelTypeEnum chtype, ChannelOption options)
         {
-        //    var ch = _pj.DicSys[sysname].DicChannel[channelname];
-        //    switch(ch.ChType)
-        //    {
-        //        case syschanneltype.SCHT_CAN:
-        //            if(ch.DicOption["vendor"].ToString() == "yh")
-        //            {
-        //                var chcan =new FrameIO.Driver.YH_CAN_Impl();
-        //                //chcan.InitConfig(ch.DicOption);
-        //                return chcan;
-        //            }
-        //            else if(ch.DicOption["vendor"].ToString() == "zy")
-        //            {
-                        
-        //            }
-        //            break;
+            var ops = options.GetOptions();
+            switch (chtype)
+            {
+                case ChannelTypeEnum.CAN:
+                    if (ops["vendor"].ToString() == "yh")
+                    {
+                        var chcan = new FrameIO.Driver.YH_CAN_Impl();
+                        //chcan.InitConfig(ch.DicOption);
+                        return chcan;
+                    }
+                    else if (ops["vendor"].ToString() == "zy")
+                    {
 
-        //        case syschanneltype.SCHT_COM:
-        //            {
-        //                var chcom = new FrameIO.Driver.Com_Impl();
-        //                chcom.InitConfig(ch.DicOption);
-        //                return chcom;
-        //            }
-        //            break;
-        //        case syschanneltype.SCHT_TCPCLIENT:
-        //            {
-        //                var chtcpclient = new FrameIO.Driver.TCPClient_Impl();
-        //                chtcpclient.InitConfig(ch.DicOption);
-        //                return chtcpclient;
-        //            }
-        //            break;
-        //        case syschanneltype.SCHT_TCPSERVER:
-        //            {
-        //                var chtcpserver = new FrameIO.Driver.TCPServer_Impl();
-        //                chtcpserver.InitConfig(ch.DicOption);
-        //                return chtcpserver;
-        //            }
-        //            break;
-        //        case syschanneltype.SCHT_UDP:
-        //            {
-        //                var chtudp = new FrameIO.Driver.UDPClient_Impl();
-        //                chtudp.InitConfig(ch.DicOption);
-        //                return chtudp;
-        //            }
-        //            break;
+                    }
+                    break;
+                case ChannelTypeEnum.COM:
+                    {
+                        var chcom = new FrameIO.Driver.Com_Impl();
+                        chcom.InitConfig(ops);
+                        return chcom;
+                    }
+                case ChannelTypeEnum.TCPCLIENT:
+                    {
+                        var chtcpclient = new FrameIO.Driver.TCPClient_Impl();
+                        chtcpclient.InitConfig(ops);
+                        return chtcpclient;
+                    }
+                case ChannelTypeEnum.TCPSERVER:
+                    {
+                        var chtcpserver = new FrameIO.Driver.TCPServer_Impl();
+                        chtcpserver.InitConfig(ops);
+                        return chtcpserver;
+                    }
+                    //TODO 添加其它类型的驱动调用
 
-        //           //TODO 添加其它类型的驱动调用
-
-        //    }
+            }
             return null;
         }
     }

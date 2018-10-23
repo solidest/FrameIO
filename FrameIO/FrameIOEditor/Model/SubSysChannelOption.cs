@@ -12,7 +12,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
 
         public string Name { get; set; }
-        public object OptionValue { get; set; }
+        public string OptionValue { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

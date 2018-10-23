@@ -49,6 +49,8 @@
     <Compile Include="FrameRuntime.cs" />
     <Compile Include="FrameUnpacker.cs" />
     <Compile Include="FrameUnpackerInfo.cs" />
+    <Compile Include="Helper\ChannelOption.cs" />
+    <Compile Include="Helper\ChannelTypeEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmentRun\SegmentBaseRun.cs" />
     <Compile Include="SegmentGettor.cs" />
@@ -67,6 +69,10 @@
     <Compile Include="SegmentVirtual\SegmentOneofItem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FrameIODriver\FrameIODriver.csproj">
+      <Project>{dccc8f67-9865-47d7-9deb-ec2c2509a793}</Project>
+      <Name>FrameIODriver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>

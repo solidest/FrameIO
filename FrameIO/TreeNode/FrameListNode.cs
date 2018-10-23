@@ -30,7 +30,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("folder.png");
+                return ImgHelper.GetImage("folder.png");
             }
         }
 
@@ -38,7 +38,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("openfolder.png");
+                return ImgHelper.GetImage("openfolder.png");
             }
         }
 

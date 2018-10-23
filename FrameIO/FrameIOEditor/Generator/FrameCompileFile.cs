@@ -146,8 +146,9 @@ namespace FrameIO.Main
                 mst.Write(BitConverter.GetBytes(data[i]), 0, 8);
         }
 
+        public Dictionary<string, ushort> Symbols { get => _symbols; }
         #endregion
-        
+
         #region --编译数据帧--
 
         //编译一个数据帧

@@ -26,7 +26,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("project.png");
+                return ImgHelper.GetImage("project.png");
             }
         }
 

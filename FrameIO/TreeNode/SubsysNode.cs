@@ -60,7 +60,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("subsys.png");
+                return ImgHelper.GetImage("subsys.png");
             }
         }
     }
