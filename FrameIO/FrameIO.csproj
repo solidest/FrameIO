@@ -99,6 +99,7 @@
       <DependentUpon>InputDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helper\CodeFolding.cs" />
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
     <Compile Include="TreeNode\EnumdefListNode.cs" />
     <Compile Include="TreeNode\EnumdefNode.cs" />

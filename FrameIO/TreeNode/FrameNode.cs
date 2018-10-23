@@ -61,7 +61,7 @@ namespace FrameIO.Main
         {
             get
             {
-                return Helper.GetImage("frame.png");
+                return ImgHelper.GetImage("frame.png");
             }
         }
     }

@@ -52,50 +52,219 @@ namespace FrameIO.Main
 
         #region --Frame--
 
+
+        //创建Frame代码
         private static void GenerateFrameFile()
         {
             var cpframe = FrameCompiledFile.Compile(_pj);
 
+            //数据帧初始化
             var code = new StringBuilder(GetTemplate("TFrame"));
             ReplaceText(code, "project", _pj.Name);
             ReplaceText(code, "contentlist", ToStringList(cpframe.GetBytes()), 4);
+
+            //数据帧settor && gettors
+            var frm_code = new StringBuilder();
+            foreach (var frm in _pj.FrameList)
+            {
+                frm_code.Append(GetFrameGettorCode(frm, cpframe.Symbols));
+                frm_code.Append(GetFrameSettorCode(frm, cpframe.Symbols));
+            }
+            ReplaceText(code, "framegettorandsettorlist", frm_code.ToString());
+
+            //生成文件
             CreateFile("frame", code);
 
         }
 
-        private static IList<string> ToStringList(byte[] data)
+        #region --Gettor--
+
+        //生成数据帧Gettor代码
+        private static string GetFrameGettorCode(Frame frm, Dictionary<string, ushort> symbols)
         {
-            var ret = new List<string>();
-            var str = Convert.ToBase64String(CompressBytes(data));
-            for (int i=0; i<str.Length; i+=60)
+            var code = new StringBuilder(GetTemplate("TSegmentGettor"));
+            ReplaceText(code, "framename", frm.Name);
+            ReplaceText(code, "frameid", symbols[frm.Name].ToString());
+
+            var prolist = new List<string>();
+            foreach(var seg in frm.Segments)
             {
-                if ((i + 60) >= str.Length)
-                {
-                    ret.Add("\"" + str.Substring(i) + "\"");
-                    break;
-                }
-                else
-                {
-                    ret.Add("\"" + str.Substring(i, 60) + "\",");
-                }
+                GetSegmentGettor(seg, frm.Name + "." + seg.Name, symbols, prolist);
             }
-            return ret;
+
+            ReplaceText(code, "propertygetlist", prolist, 2);
+            return code.ToString();
         }
 
-        //压缩内存
-        public static byte[] CompressBytes(byte[] bytes)
+        //生成字段取值代码
+        private static void GetSegmentGettor(FrameSegmentBase seg, string fullname, Dictionary<string, ushort> symbols, List<string> segcodelist)
         {
-            using (MemoryStream compressStream = new MemoryStream())
+            var ty = seg.GetType();
+            if (ty == typeof(FrameSegmentInteger))
+                segcodelist.Add( GetSegmentGettor((FrameSegmentInteger)seg, fullname, symbols));
+            else if(ty == typeof(FrameSegmentReal))
+                segcodelist.Add(GetSegmentGettor((FrameSegmentReal)seg, fullname, symbols));
+            else if(ty == typeof(FrameSegmentBlock))
             {
-                using (var zipStream = new GZipStream(compressStream, CompressionMode.Compress))
+                var bseg = (FrameSegmentBlock)seg;
+                switch (bseg.UsedType)
                 {
-                    zipStream.Write(bytes, 0, bytes.Length);
-                    zipStream.Close();
-                    return compressStream.ToArray();
+                    case BlockSegType.RefFrame:
+                        GetSegmentGettor(bseg, fullname, bseg.RefFrameName, symbols, segcodelist);
+                        break;
+                    case BlockSegType.DefFrame:
+                        break;
+                    case BlockSegType.OneOf:
+                        break;
+                    case BlockSegType.None:
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
+        //内联数据帧字段
+
+
+        //switch字段
+
+
+        //引用数据帧字段
+        private static void GetSegmentGettor(FrameSegmentBlock seg, string fullname, string refframename, Dictionary<string, ushort> symbols, List<string> segcodelist)
+        {
+            //public TFrameGettor SegmentB { get { if (_SegmentB == null) _SegmentB = new TFrameGettor(_gettor.GetSubFrame(1)); return _SegmentB; } }
+            var pro = string.Format("private {0}Gettor _{1}; ", refframename, seg.Name);
+            segcodelist.Add(pro);
+            var gettor = string.Format("public {0}Gettor {1} {{ get {{ if (_{1} == null) _{1} = new {0}Gettor(_gettor.GetSubFrame({2})); return _{1}; }}}}", refframename, seg.Name, symbols[fullname]);
+            segcodelist.Add(gettor);
+        }
+
+        //整数字段
+        private static string GetSegmentGettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
+        {
+            //public bool? SegmentA { get => _gettor.GetBool(1); }
+            var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            if (seg.Repeated.IsIntOne())
+                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname] );
+            else
+                return string.Format("public {0}?[] {1} {{ get => _gettor.{2}Array({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+        }
+
+        //小数字段
+        private static string GetSegmentGettor(FrameSegmentReal seg, string fullname, Dictionary<string, ushort> symbols)
+        {
+            //public bool? SegmentA { get => _gettor.GetBool(1); }
+            var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
+            if (seg.Repeated.IsIntOne())
+                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+            else
+                return string.Format("public {0}?[] {1} {{ get => _gettor.{2}Array({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+        }
+
+        private static syspropertytype GetSegmentType(int bitcount, bool isSigned)
+        {
+            if (bitcount == 1)
+                return syspropertytype.SYSPT_BOOL;
+            else if (bitcount > 1 && bitcount <= 8)
+                return isSigned ? syspropertytype.SYSPT_SBYTE : syspropertytype.SYSPT_BYTE;
+            else if (bitcount > 8 && bitcount <= 16)
+                return isSigned ? syspropertytype.SYSPT_SHORT : syspropertytype.SYSPT_USHORT;
+            else if (bitcount > 16 && bitcount <= 32)
+                return isSigned ? syspropertytype.SYSPT_INT : syspropertytype.SYSPT_UINT;
+            else if (bitcount > 32 && bitcount <= 64)
+                return isSigned ? syspropertytype.SYSPT_LONG : syspropertytype.SYSPT_ULONG;
+            return 0;
+        }
+
+ 
+        #endregion
+
+        #region --Settor--
+
+        //生成数据帧Settor代码
+        private static string GetFrameSettorCode(Frame frm, Dictionary<string, ushort> symbols)
+        {
+            var code = new StringBuilder(GetTemplate("TSegmentSettor"));
+            ReplaceText(code, "framename", frm.Name);
+            ReplaceText(code, "frameid", symbols[frm.Name].ToString());
+
+            var prolist = new List<string>();
+            foreach (var seg in frm.Segments)
+            {
+                GetSegmentSettor(seg, frm.Name + "." + seg.Name, symbols, prolist);
+            }
+
+            ReplaceText(code, "propertysetlist", prolist, 2);
+            return code.ToString();
+        }
+
+        private static void GetSegmentSettor(FrameSegmentBase seg, string fullname, Dictionary<string, ushort> symbols, List<string> segcodelist)
+        {
+            var ty = seg.GetType();
+            if (ty == typeof(FrameSegmentInteger))
+                segcodelist.Add(GetSegmentSettor((FrameSegmentInteger)seg, fullname, symbols));
+            else if (ty == typeof(FrameSegmentReal))
+                segcodelist.Add(GetSegmentSettor((FrameSegmentReal)seg, fullname, symbols));
+            else if (ty == typeof(FrameSegmentBlock))
+            {
+                var bseg = (FrameSegmentBlock)seg;
+                switch (bseg.UsedType)
+                {
+                    case BlockSegType.RefFrame:
+                        GetSegmentSettor(bseg, fullname, bseg.RefFrameName, symbols, segcodelist);
+                        break;
+                    case BlockSegType.DefFrame:
+                        break;
+                    case BlockSegType.OneOf:
+                        break;
+                    case BlockSegType.None:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //switch字段
+
+
+        //内联数据帧字段
+
+
+        //引用数据帧字段
+        private static void GetSegmentSettor(FrameSegmentBlock seg, string fullname, string refframename, Dictionary<string, ushort> symbols, List<string> segcodelist)
+        {
+            //
+            var pro = string.Format("private {0}Settor _{1}; ", refframename, seg.Name);
+            segcodelist.Add(pro);
+            var gettor = string.Format("public {0}Settor {1} {{ get {{ if (_{1} == null) _{1} = new {0}Settor(_settor.GetSubFrame({2})); return _{1}; }}}}", refframename, seg.Name, symbols[fullname]);
+            segcodelist.Add(gettor);
+        }
+
+        //整数字段
+        private static string GetSegmentSettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
+        {
+            //public bool? SegmentA { set => _settor.SetSegmentValue(2, value); }
+            var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            if (seg.Repeated.IsIntOne())
+                return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            else
+                return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+        }
+
+        //小数字段
+        private static string GetSegmentSettor(FrameSegmentReal seg, string fullname, Dictionary<string, ushort> symbols)
+        {
+            //public bool? SegmentA { get => _gettor.GetBool(1); }
+            var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
+            if (seg.Repeated.IsIntOne())
+                return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            else
+                return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+        }
+
+        #endregion
 
         #endregion
 
@@ -135,7 +304,6 @@ namespace FrameIO.Main
 
         #endregion
 
-
         #region --Subsys--
 
 
@@ -158,20 +326,39 @@ namespace FrameIO.Main
 
             //channel
             var decl = new List<string>();
+            var initcode = new StringBuilder();
             foreach(var ch in sys.Channels)
             {
-                decl.Add(string.Format("public IChannelBase {0} {{ get; private set; }} = FrameIOFactory.GetChannel(\"{1}\", \"{0}\");", ch.Name, sys.Name));
+                decl.Add(string.Format("public IChannelBase {0};", ch.Name, sys.Name));
+                initcode.Append(GetChannelInitial(ch) + Environment.NewLine);
             }
             ReplaceText(code, "channeldeclare", decl, 2);
+            ReplaceText(code, "channelinitial", initcode.ToString());
 
+
+            //property
             SetPropertyDeclare(sys, code);
 
+            //action
             foreach(var ac in sys.Actions)
             {
                 SetActionCode(sys, ac, code);
             }
 
             return code;
+        }
+
+        //通道初始化代码
+        static private string GetChannelInitial(SubsysChannel ch)
+        {
+            var code = new StringBuilder(GetTemplate("TChannelInitial"));
+            ReplaceText(code, "channelname", ch.Name);
+            ReplaceText(code, "channeltype", GetChannelType(ch.ChannelType));
+            var oplist = new List<string>();
+            foreach (var op in ch.Options)
+                oplist.Add(string.Format("if (!ops.Contains(\"{0}\")) ops.SetOption(\"{0}\", {1});",op.Name, op.OptionValue ));
+            ReplaceText(code, "channeloptionlist", oplist, 3);
+            return code.ToString();
         }
 
 
@@ -183,11 +370,11 @@ namespace FrameIO.Main
             {
                 if(pro.IsArray)
                 {
-                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetPropertyTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
                 }
                 else
                 {
-                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetPropertyTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetTypeName(pro.PropertyType), pro.Name));
                 }
             }
             ReplaceText(code, "propertydeclare", decl, 2);
@@ -206,9 +393,9 @@ namespace FrameIO.Main
                     ReplaceText(code, "recvactionlist", GetRecvActionCode(sys, ac));
                     break;
 
-                case actioniotype.AIO_RECVLOOP:
-                    ReplaceText(code, "recvloopactionlist", GetRecvLoopActionCode(sys, ac));
-                    break;
+                //case actioniotype.AIO_RECVLOOP:
+                //    ReplaceText(code, "recvloopactionlist", GetRecvLoopActionCode(sys, ac));
+                //    break;
             }
 
         }
@@ -227,7 +414,7 @@ namespace FrameIO.Main
                 {
                     getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
                     getlist.Add(string.Format("var __{0} = data.{1}Array(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
-                    getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));", setor.SysPropertyName, GetPropertyTypeName(GetProType(sys, setor.SysPropertyName))));
+                    getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));", setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
                 }
                 else
                     getlist.Add(string.Format("{0}.Value = data.{1}(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
@@ -245,14 +432,14 @@ namespace FrameIO.Main
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var setlist = new List<string>();
-            foreach(var setor in ac.Maps)
+            foreach(var gettor in ac.Maps)
             {
-                if(ProIsArray(sys, setor.SysPropertyName))
+                if(ProIsArray(sys, gettor.SysPropertyName))
                 {
-                    setlist.Add(string.Format("pack.SetSegmentValue(\"{0}\", {1}.Select(p => p.Value).ToArray());", setor.FrameSegName, setor.SysPropertyName));
+                    setlist.Add(string.Format("settor.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
                 }
                 else
-                    setlist.Add(string.Format("pack.SetSegmentValue(\"{0}\", {1}.Value);", setor.FrameSegName, setor.SysPropertyName));
+                    setlist.Add(string.Format("settor.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
             }
             ReplaceText(code, "setvaluelist", setlist, 4);
             return code.ToString();
@@ -271,11 +458,10 @@ namespace FrameIO.Main
                 if(ProIsArray(sys, setor.SysPropertyName))
                 {
                     getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
-                    getlist.Add(string.Format("var __{0} = data.{1}Array(\"{2}\");", setor.SysPropertyName, GetGetorName(sys, setor.SysPropertyName), setor.FrameSegName));
-                    getlist.Add(string.Format("if (__{0} != null) foreach (var v in __{0}) {0}.Add(new Parameter<{1}?>(v));",setor.SysPropertyName, GetPropertyTypeName(GetProType(sys,setor.SysPropertyName))));
+                    getlist.Add(string.Format("for (int i = 0; i < gettor.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(gettor.{1}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys,setor.SysPropertyName))));
                 }
                 else
-                    getlist.Add(string.Format("{0}.Value = data.{1}(\"{2}\");", setor.SysPropertyName,GetGetorName(sys,setor.SysPropertyName), setor.FrameSegName));
+                    getlist.Add(string.Format("{0}.Value = gettor.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
                 
             }
             ReplaceText(code, "getvaluelist", getlist, 4);
@@ -284,9 +470,66 @@ namespace FrameIO.Main
 
         #endregion
 
-
         #region --Helper--
 
+        //取通道类型
+        private static string GetChannelType(syschanneltype chtype)
+        {
+            switch (chtype)
+            {
+                case syschanneltype.SCHT_COM:
+                    return "ChannelTypeEnum.COM";
+                case syschanneltype.SCHT_CAN:
+                    return "ChannelTypeEnum.CAN";
+                case syschanneltype.SCHT_TCPSERVER:
+                    return "ChannelTypeEnum.TCPSERVER";
+                case syschanneltype.SCHT_TCPCLIENT:
+                    return "ChannelTypeEnum.TCPCLIENT";
+                case syschanneltype.SCHT_UDP:
+                    return "ChannelTypeEnum.UDP";
+                case syschanneltype.SCHT_DI:
+                    return "ChannelTypeEnum.DI";
+                case syschanneltype.SCHT_DO:
+                    return "ChannelTypeEnum.DO";
+            }
+            return "";
+        }
+
+        //切割内存字符串
+        private static IList<string> ToStringList(byte[] data)
+        {
+            var ret = new List<string>();
+            var str = Convert.ToBase64String(CompressBytes(data));
+            for (int i = 0; i < str.Length; i += 60)
+            {
+                if ((i + 60) >= str.Length)
+                {
+                    ret.Add("\"" + str.Substring(i) + "\"");
+                    break;
+                }
+                else
+                {
+                    ret.Add("\"" + str.Substring(i, 60) + "\",");
+                }
+            }
+            return ret;
+        }
+
+        //压缩内存
+        public static byte[] CompressBytes(byte[] bytes)
+        {
+            using (MemoryStream compressStream = new MemoryStream())
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Compress))
+                {
+                    zipStream.Write(bytes, 0, bytes.Length);
+                    zipStream.Close();
+                    return compressStream.ToArray();
+                }
+            }
+        }
+
+        //属性是否为数组
         static private bool ProIsArray(Subsys sys, string proname)
         {
             foreach (var p in sys.Propertys)
@@ -350,7 +593,7 @@ namespace FrameIO.Main
         }
 
         //类型名称
-        static private string GetPropertyTypeName(syspropertytype ty)
+        static private string GetTypeName(syspropertytype ty)
         {
             switch(ty)
             {
