@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace FrameIOTester
 {
     [TestClass]
-    public class TCP_Tester
+    public class UDP_Tester
     {
         [TestMethod]
-        public void Com_Send_Receive()
+        public void UDP_Send_Receive()
         {
 
         }

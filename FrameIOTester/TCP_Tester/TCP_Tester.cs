@@ -11,7 +11,7 @@ namespace FrameIOTester
     public class TCP_Tester
     {
         [TestMethod]
-        public void Com_Send_Receive()
+        public void TCP_Send_Receive()
         {
 
         }

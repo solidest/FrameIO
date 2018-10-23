@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="CAN_YH_Tester\Can_Test_Send.cs" />
     <Compile Include="CAN_YH_Tester\Can_Test_Receive.cs" />
-    <Compile Include="COM_Tester\COM_Tester.cs" />
+    <Compile Include="COM_Tester\COM_Send_Tester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCP_Tester\TCP_Tester.cs" />
