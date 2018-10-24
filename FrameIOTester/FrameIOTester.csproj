@@ -53,8 +53,21 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\frame.cs">
+      <Link>frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\Parameter.cs">
+      <Link>Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\SYS1.cs">
+      <Link>SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\sys2.cs">
+      <Link>sys2.cs</Link>
+    </Compile>
     <Compile Include="CAN_YH_Tester\Can_Test_Send.cs" />
     <Compile Include="CAN_YH_Tester\Can_Test_Receive.cs" />
+    <Compile Include="CAN_YH_Tester\sendtester.cs" />
     <Compile Include="COM_Tester\COM_Send_Tester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
