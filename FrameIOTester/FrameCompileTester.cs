@@ -157,5 +157,46 @@ namespace FrameIO.Tester
 
         }
 
+        //用户接受测试--基本
+        [TestMethod]
+        public void UserAcceptTestBase()
+        {
+            var sys1 = new demo.SYS1();
+            var sys2 = new demo.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 1;
+            sys1.PROPERTYb.Value = -2;
+            sys1.PROPERTYc.Value = 3;
+            sys1.PROPERTYd.Value = -4.5;
+            sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
+            sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
+
+            sys1.SendData();
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.PROPERTY2a.Value == 1);
+            Assert.IsTrue(sys2.PROPERTY2b.Value == -2);
+            Assert.IsTrue(sys2.PROPERTY2c.Value == 3);
+            Assert.IsTrue(sys2.PROPERTY2d.Value == -4.5);
+            Assert.IsTrue((bool)sys2.PROPERTY2e[0].Value);
+            Assert.IsTrue((bool)sys2.PROPERTY2e[1].Value);
+            Assert.IsFalse((bool)sys2.PROPERTY2e[2].Value); //以下为默认值
+            Assert.IsFalse((bool)sys2.PROPERTY2e[3].Value);
+            Assert.IsFalse((bool)sys2.PROPERTY2e[4].Value);
+            Assert.IsFalse((bool)sys2.PROPERTY2e[5].Value);
+            Assert.IsFalse((bool)sys2.PROPERTY2e[6].Value);
+            Assert.IsFalse((bool)sys2.PROPERTY2e[7].Value); 
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
     }
 }

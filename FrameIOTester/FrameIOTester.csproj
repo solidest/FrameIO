@@ -53,25 +53,21 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\frame.cs">
-      <Link>frame.cs</Link>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\frame.cs">
+      <Link>AutoGenerate\frame.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\Parameter.cs">
-      <Link>Parameter.cs</Link>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\Parameter.cs">
+      <Link>AutoGenerate\Parameter.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\SYS1.cs">
-      <Link>SYS1.cs</Link>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS1.cs">
+      <Link>AutoGenerate\SYS1.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\main\sys2.cs">
-      <Link>sys2.cs</Link>
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS2.cs">
+      <Link>AutoGenerate\SYS2.cs</Link>
     </Compile>
-    <Compile Include="CAN_YH_Tester\Can_Test_Send.cs" />
-    <Compile Include="CAN_YH_Tester\Can_Test_Receive.cs" />
-    <Compile Include="CAN_YH_Tester\sendtester.cs" />
-    <Compile Include="COM_Tester\COM_Send_Tester.cs" />
+    <Compile Include="CanTester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TCP_Tester\TCP_Tester.cs" />
     <Compile Include="Test_channels\test_channel.cs" />
     <Compile Include="Test_channels\test_channel_com.cs" />
     <Compile Include="Test_channels\test_channel_tcp.cs" />
@@ -79,14 +75,9 @@
     <Compile Include="Test_channels\test_channel_tcpserver.cs" />
     <Compile Include="Test_channels\test_channel_udp.cs" />
     <Compile Include="Test_channels\test_frame.cs" />
-    <Compile Include="UDP_Tester\UDP_Tester.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CAN_YH_Tester\test_can_send.fio" />
-    <None Include="COM_Tester\test_com.fio" />
     <None Include="packages.config" />
-    <None Include="TCP_Tester\test_tcp.fio" />
-    <None Include="UDP_Tester\test_udp.fio" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIODriver\FrameIODriver.csproj">
@@ -108,9 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DIO_Tester\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

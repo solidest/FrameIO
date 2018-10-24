@@ -12,22 +12,6 @@ namespace FrameIO.Runtime
     public class FrameIOFactory
     {
 
-        #region --NotUsed--
-
-        //获取数据帧的解析器
-        public static IFrameUnpack GetFrameUnpack(string framename)
-        {
-            return null;
-        }
-
-        //获取数据帧的打包接口
-        public static ISegmentSettor GetFramePack(string framename)
-        {
-            return null;// new FramePack(_pj.DicFrame[framename].RootSegBlockGroupInfo);
-        }
-
-        #endregion
-
         //初始化
         public static void Initialize(byte[] config)
         {

@@ -45,8 +45,8 @@
   <ItemGroup>
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Example.cs" />
-    <Compile Include="Subsys.cs" />
+    <Compile Include="TFrame.cs" />
+    <Compile Include="TSubsys.cs" />
     <None Include="..\FrameIO\x64\Debug\Template\TChannelInitial.cst">
       <Link>TChannelInitial.cst</Link>
     </None>
@@ -55,6 +55,12 @@
     </None>
     <None Include="..\FrameIO\x64\Debug\Template\TFrame.cst">
       <Link>TFrame.cst</Link>
+    </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TInnerClassGettor.cst">
+      <Link>TInnerClassGettor.cst</Link>
+    </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TInnerClassSettor.cst">
+      <Link>TInnerClassSettor.cst</Link>
     </None>
     <None Include="..\FrameIO\x64\Debug\Template\TParameter.cst">
       <Link>TParameter.cst</Link>
@@ -73,6 +79,12 @@
     </None>
     <None Include="..\FrameIO\x64\Debug\Template\TSendAction.cst">
       <Link>TSendAction.cst</Link>
+    </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TSwitchClassGettor.cst">
+      <Link>TSwitchClassGettor.cst</Link>
+    </None>
+    <None Include="..\FrameIO\x64\Debug\Template\TSwitchClassSettor.cst">
+      <Link>TSwitchClassSettor.cst</Link>
     </None>
     <None Include="..\FrameIO\x64\Debug\Template\TSystem.cst">
       <Link>TSystem.cst</Link>
