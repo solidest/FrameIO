@@ -34,6 +34,7 @@ namespace FrameIO.Runtime
             IsBigOrder = GetTokenBool(token, pos_byteorder);
             IsSigned = GetTokenBool(token, pos_issigned);
             BitCount = GetTokenByte(token, pos_bitcount, len_bitcount);
+            if (BitCount == 0) BitCount = 64;
             _value = GetTokenUShort(token, pos_value);
             var validator = GetTokenUShort(token, pos_validate);
             if(validator!=0)
@@ -80,6 +81,8 @@ namespace FrameIO.Runtime
 
         internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
+            if (info.IsUnpack) return 0;
+
             info.IsUnpack = true;
             info.BitStart = pos_bit;
             info.BitLen = BitCount;
@@ -109,9 +112,15 @@ namespace FrameIO.Runtime
         }
 
         //尝试取字段的位大小
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
+            if (info.IsUnpack)
+            {
+                nextseg = 0;
+                return true;
+            }
             bitlen += BitCount;
+            nextseg = 0;
             return true;
         }
 

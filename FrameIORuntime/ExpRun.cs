@@ -82,7 +82,7 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        internal bool TryGetExpValue(ref double value, IUnpackRunExp ir)
+        internal bool TryGetExpValue(byte[] buff, ref double value, IUnpackRunExp ir)
         {
             double d1=0, d2=0;
 
@@ -92,7 +92,7 @@ namespace FrameIO.Runtime
                     value = ir.GetConst(_left);
                     return true;
                 case ExpType.EXP_ADD:
-                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    if (ir.TryGetExpValue(buff, ref d1, _left) && ir.TryGetExpValue(buff, ref d2, _right))
                     {
                         value = d1 + d2;
                         return true;
@@ -100,7 +100,7 @@ namespace FrameIO.Runtime
                     else
                         return false;
                 case ExpType.EXP_SUB:
-                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    if (ir.TryGetExpValue(buff, ref d1, _left) && ir.TryGetExpValue(buff, ref d2, _right))
                     {
                         value = d1 - d2;
                         return true;
@@ -108,7 +108,7 @@ namespace FrameIO.Runtime
                     else
                         return false;
                 case ExpType.EXP_MUL:
-                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    if (ir.TryGetExpValue(buff, ref d1, _left) && ir.TryGetExpValue(buff, ref d2, _right))
                     {
                         value = d1 * d2;
                         return true;
@@ -116,7 +116,7 @@ namespace FrameIO.Runtime
                     else
                         return false;
                 case ExpType.EXP_DIV:
-                    if (ir.TryGetExpValue(ref d1, _left) && ir.TryGetExpValue(ref d2, _right))
+                    if (ir.TryGetExpValue(buff, ref d1, _left) && ir.TryGetExpValue(buff, ref d2, _right))
                     {
                         value = d1 / d2;
                         return true;
@@ -124,9 +124,9 @@ namespace FrameIO.Runtime
                     else
                         return false;
                 case ExpType.EXP_REF_SEGMENT:
-                    return ir.TryGetSegmentValue(ref value, _left);
+                    return ir.TryGetSegmentValue(buff, ref value, _left);
                 case ExpType.EXP_FUN_BYTESIZEOF:
-                    return ir.TryGetSegmentByteSize(ref value, _left);
+                    return ir.TryGetSegmentByteSize(buff, ref value, _left);
             }
             throw new Exception("runtime");
         }

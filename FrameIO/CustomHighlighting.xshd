@@ -6,6 +6,7 @@
 	<!-- This is the main ruleset. -->
 	<RuleSet>
 		<Span color="Comment" begin="//" />
+    <Span color="String" begin="@" />
 		<!--<Span color="Comment" multiline="true" begin="/\*" end="\*/" />-->
 		
 		<Span color="String">
@@ -66,7 +67,7 @@
       <Word>value</Word>
       <Word>signed</Word>
       <Word>bitcount</Word>
-      <Word>default</Word>
+      <Word>other</Word>
       <Word>repeated</Word>
       <Word>byteorder</Word>
       <Word>encoded</Word>

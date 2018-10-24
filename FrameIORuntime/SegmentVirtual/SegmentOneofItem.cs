@@ -23,5 +23,25 @@ namespace FrameIO.Runtime
             IntoValue = (long)ir.GetConst(GetTokenUShort(token, pos_into_value));
             OutOneOfIdx = GetTokenUShort(token, pos_ref_outoneof);
         }
+
+
+        #region --Unpack--
+
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        {
+            var res = base.TryGetNeedBitLen(buff, ref bitlen, ref nextseg, info, ir);
+            if (res && nextseg == 0) nextseg = OutOneOfIdx;
+            return res;
+        }
+
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
+        {
+            var res = base.Unpack(buff, ref pos_bit, end_bit_pos, info, ir);
+            if (res == 0) return OutOneOfIdx;
+            return res;
+        }
+
+        #endregion
+
     }
 }

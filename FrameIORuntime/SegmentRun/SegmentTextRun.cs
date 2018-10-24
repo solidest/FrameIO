@@ -29,7 +29,7 @@ namespace FrameIO.Runtime
             throw new NotImplementedException();
         }
 
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             throw new NotImplementedException();
         }

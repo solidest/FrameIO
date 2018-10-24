@@ -89,7 +89,7 @@ namespace FrameIO.Runtime
             while (startidx != Info.EndIdx)
             {
                 ushort next_seg = 0;
-                if (_fi[startidx].TryGetBitLen(buff, ref bitlen, ref next_seg, Info[startidx], this))
+                if (_fi[startidx].TryGetNeedBitLen(buff, ref bitlen, ref next_seg, Info[startidx], this))
                 {
                     if (next_seg == 0)
                         startidx += 1;
@@ -127,36 +127,37 @@ namespace FrameIO.Runtime
         #region --IRunExp--
 
 
-        public bool TryGetSegmentValue(ref double value, ushort idx)
+        public bool TryGetSegmentValue(byte[] buff, ref double value, ushort idx)
         {
-            return _fi[idx].TryGetValue(ref value, _buff.GetBuffer(), Info[idx]);
+            return _fi[idx].TryGetValue(ref value, buff, Info[idx]);
         }
 
-        public bool TryGetSegmentByteSize(ref double size, ushort idx)
+        public bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx)
         {
-            int len = 0;
-            ushort nextseg = 0;
-            if(_fi[idx].TryGetBitLen(_buff.GetBuffer(), ref len, ref nextseg, Info[idx], this))
-            {
-                if (len % 8 != 0)
-                    throw new Exception("runtime");
-                else
-                    size = len / 8;
-                return true;
-            }
+            //HACK 
+            //int len = 0;
+            //ushort nextseg = 0;
+            //if(_fi[idx].TryGetBitLen(buff, ref len, ref nextseg, Info[idx], this))
+            //{
+            //    if (len % 8 != 0)
+            //        throw new Exception("runtime");
+            //    else
+            //        size = len / 8;
+            //    return true;
+            //}
 
             return false;
 
         }
 
-        public bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx)
+        public bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx)
         {
-            return _fi[idx].TryGetBitLen(buff, ref bitlen, ref nextseg, Info[idx], this);
+            return _fi[idx].TryGetNeedBitLen(buff, ref bitlen, ref nextseg, Info[idx], this);
         }
 
-        public bool TryGetExpValue(ref double value, ushort idx)
+        public bool TryGetExpValue(byte[] buff, ref double value, ushort idx)
         {
-            return _fi.GetExp(idx).TryGetExpValue(ref value, this);
+            return _fi.GetExp(idx).TryGetExpValue(buff, ref value, this);
         }
 
         public double GetConst(ushort idx)

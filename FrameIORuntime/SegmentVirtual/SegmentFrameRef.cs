@@ -40,7 +40,7 @@ namespace FrameIO.Runtime
             ushort idx = (ushort)(fr.BeginIdx + 1);
             while (idx != fr.EndIdx)
             {
-                var result = FrameRuntime.Run[idx].Pack(value_buff, pack, ref odd, ref oddlen, fp.Info[idx], fp);
+                var result = FrameRuntime.Run[idx].Pack(fp.Info.Cach, pack, ref odd, ref oddlen, fp.Info[idx], fp);
                 if (result == 0)
                     idx += 1;
                 else
@@ -67,41 +67,39 @@ namespace FrameIO.Runtime
         #endregion
 
         #region --Unpack--
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
-            if (!info.IsUnpack) return false;
-            var upi = (FrameUnpacker)info.Tag;
             var fr = (SegmentFramBegin)FrameRuntime.Run[_refframe];
-            ushort next = 0;
-            fr.TryGetBitLen(buff, ref bitlen, ref next, info, upi);
-            if(next == fr.EndIdx)
+            if (info.Tag==null) info.Tag =  new FrameUnpacker(fr.BeginIdx, fr.EndIdx, null);
+
+            var myup = (FrameUnpacker)info.Tag;
+
+            var mynextseg = (ushort)(fr.BeginIdx+1);
+            while (mynextseg != fr.EndIdx)
             {
-                nextseg = 0;
-                return true;
+                ushort _nseg = 0;
+                if (!FrameRuntime.Run[mynextseg].TryGetNeedBitLen(buff, ref bitlen, ref _nseg, myup.Info[mynextseg], myup))
+                {
+                    nextseg = ushort.MaxValue;
+                    return false;
+                }
+                if (_nseg == 0)
+                    mynextseg += 1;
+                else
+                    mynextseg = _nseg;
             }
-            else
-            {
-                nextseg = ushort.MaxValue;
-                return false;
-            }
+            nextseg = 0;
+            return true;
+
         }
 
         internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
+            
             var fr = (SegmentFramBegin)FrameRuntime.Run[_refframe];
-            FrameUnpacker myup = null;
-            if(info.IsUnpack)
-            {
-                //断点续解
-                myup = (FrameUnpacker)info.Tag;
-            }
-            else
-            {
-                info.IsUnpack = true;
-                myup = new FrameUnpacker(fr.BeginIdx, fr.EndIdx, ((FrameUnpacker)ir).Info);
-                info.Tag = myup;
-            }
-
+            if (info.Tag == null) info.Tag = new FrameUnpacker(fr.BeginIdx, fr.EndIdx, null);
+            var myup = (FrameUnpacker)info.Tag;
 
             while (pos_bit!=end_bit_pos && myup.SegPosition!=fr.EndIdx)
             {
@@ -121,6 +119,7 @@ namespace FrameIO.Runtime
                 return ushort.MaxValue;
             }
         }
+
         #endregion
 
         #region --SetValue--
@@ -128,7 +127,7 @@ namespace FrameIO.Runtime
         private void SetAutoValue(SetValueInfo inf, SegmentFramBegin fr)
         {
             inf.IsSetValue = true;
-            inf.Tag = new FramePackerInfo(fr.BeginIdx, fr.EndIdx);
+            inf.Tag = new FramePacker(fr.BeginIdx, fr.EndIdx);
         }
 
         #endregion

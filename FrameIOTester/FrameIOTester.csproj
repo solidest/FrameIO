@@ -65,6 +65,36 @@
     <Compile Include="..\..\..\Users\solidest\Desktop\demo\SYS2.cs">
       <Link>AutoGenerate\SYS2.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_frame_ref\emtest.cs">
+      <Link>Test_FrameRef\emtest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_frame_ref\frame.cs">
+      <Link>Test_FrameRef\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_frame_ref\Parameter.cs">
+      <Link>Test_FrameRef\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_frame_ref\SYS1.cs">
+      <Link>Test_FrameRef\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_frame_ref\SYS2.cs">
+      <Link>Test_FrameRef\SYS2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_oneof\emtest.cs">
+      <Link>Test_OneOf\emtest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_oneof\frame.cs">
+      <Link>Test_OneOf\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_oneof\Parameter.cs">
+      <Link>Test_OneOf\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_oneof\SYS1.cs">
+      <Link>Test_OneOf\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Users\solidest\Desktop\test_oneof\SYS2.cs">
+      <Link>Test_OneOf\SYS2.cs</Link>
+    </Compile>
     <Compile Include="CanTester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

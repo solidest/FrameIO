@@ -142,7 +142,7 @@ namespace FrameIO.Main
                 if (str != "") segcodelist.Add(str);
         }
 
-        //switch字段
+        //oneof字段
         private static void GetSegmentGettor(FrameSegmentBlock seg, string fullname, Dictionary<string, ushort> symbols, List<string> segcodelist)
         {
             segcodelist.Add(string.Format("public {0}Gettor {1} {{ get {{ if (_{1} == null) _{1} = new {0}Gettor(_gettor); return _{1}; }} }}private {0}Gettor _{1};", seg.Name, seg.Name));
@@ -385,7 +385,6 @@ namespace FrameIO.Main
             ReplaceText(code, "channeldeclare", decl, 2);
             ReplaceText(code, "channelinitial", initcode.ToString());
 
-
             //property
             SetPropertyDeclare(sys, code);
 
@@ -485,12 +484,12 @@ namespace FrameIO.Main
             var setlist = new List<string>();
             foreach(var gettor in ac.Maps)
             {
-                if(ProIsArray(sys, gettor.SysPropertyName))
-                {
-                    setlist.Add(string.Format("settor.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
-                }
+                if (gettor.FrameSegName == "")
+                    setlist.Add(gettor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
+                else if(ProIsArray(sys, gettor.SysPropertyName))
+                    setlist.Add(string.Format("data.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
                 else
-                    setlist.Add(string.Format("settor.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
+                    setlist.Add(string.Format("data.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
             }
             ReplaceText(code, "setvaluelist", setlist, 4);
             return code.ToString();
@@ -506,13 +505,15 @@ namespace FrameIO.Main
             var getlist = new List<string>();
             foreach(var setor in ac.Maps)
             {
-                if(ProIsArray(sys, setor.SysPropertyName))
+                if (setor.FrameSegName == "")
+                    getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
+                else if (ProIsArray(sys, setor.SysPropertyName))
                 {
                     getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
-                    getlist.Add(string.Format("for (int i = 0; i < gettor.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(gettor.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys,setor.SysPropertyName))));
+                    getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys,setor.SysPropertyName))));
                 }
                 else
-                    getlist.Add(string.Format("{0}.Value = gettor.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
+                    getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
                 
             }
             ReplaceText(code, "getvaluelist", getlist, 4);

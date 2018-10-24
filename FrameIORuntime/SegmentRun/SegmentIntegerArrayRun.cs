@@ -66,10 +66,11 @@ namespace FrameIO.Runtime
         //解包
         internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
+            if (info.IsUnpack) return 0;
             info.IsUnpack = true;
             info.BitStart = pos_bit;
             int count = 0;
-            if (TryGetRepeated(ref count, ir))
+            if (TryGetRepeated(buff, ref count, ir))
             {
                 info.BitLen = BitCount * count;
                 pos_bit += info.BitLen;
@@ -79,30 +80,29 @@ namespace FrameIO.Runtime
                 throw new Exception("unkonw");
         }
 
-        //尝试取字段的位大小
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        //尝试取字段所需的位大小
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
-            int count = 0;
             if(info.IsUnpack)
             {
-                bitlen += info.BitLen;
+                nextseg = 0;
+                return true;
+            }
+
+            int count = 0;
+
+            if (TryGetRepeated(buff, ref count, ir))
+            {
+                bitlen += (BitCount * count);
                 return true;
             }
             else
-            {
-                if (TryGetRepeated(ref count, ir))
-                {
-                    bitlen += (BitCount * count);
-                    return true;
-                }
-                else
-                    return false;
-            }
+                return false;
 
         }
 
         //尝试取重复次数
-        private bool TryGetRepeated(ref int count, IUnpackRunExp ir)
+        private bool TryGetRepeated(byte[] buff, ref int count, IUnpackRunExp ir)
         {
             if (_repeated_const > 0)
             {
@@ -112,7 +112,7 @@ namespace FrameIO.Runtime
             else
             {
                 double dres = 0;
-                if (ir.TryGetExpValue(ref dres, _repeated_idx))
+                if (ir.TryGetExpValue(buff, ref dres, _repeated_idx))
                 {
                     count = (int)dres;
                     return true;

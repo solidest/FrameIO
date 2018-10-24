@@ -189,7 +189,7 @@ namespace FrameIO.Main
                                 LastErrorInfo = string.Format("OneOf 分支出现重复定义");
                                 return false;
                             }
-                            if(refem.ItemsList.Where(p=>p.Name == oi.EnumItem).Count()==0)
+                            if(refem.ItemsList.Where(p=>p.Name == oi.EnumItem).Count()==0 && oi.EnumItem!="other")
                             {
                                 LastErrorSyid = bseg.Syid;
                                 LastErrorInfo = string.Format("OneOf 分支名称设置不正确");

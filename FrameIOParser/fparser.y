@@ -62,13 +62,13 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %token T_SEND T_ON T_RECV T_RECVLOOP
 %token T_COM T_CAN T_TCPSERVER T_TCPCLIENT T_UDP T_DI T_DO
 %token T_SIGNED T_BITCOUNT T_VALUE T_REPEATED T_BYTEORDER T_ENCODED T_REPEATED T_ISDOUBLE T_TAIL T_ALIGNEDLEN T_TYPE T_BYTESIZE 
-%token T_BYTESIZEOF T_TOENUM T_ONEOF T_MAX T_MIN T_CHECK T_CHECKRANGE
+%token T_BYTESIZEOF T_TOENUM T_ONEOF T_DEFAULT T_MAX T_MIN T_CHECK T_CHECKRANGE 
 %token T_TRUE T_FALSE T_SMALL T_BIG T_PRIMITIVE T_INVERSION T_COMPLEMENT
 %token T_SUM8 T_XOR8 T_SUM16 T_SUM16_FALSE T_XOR16 T_XOR16_FALSE T_SUM32 T_SUM32_FALSE T_XOR32 T_XOR32_FALSE T_CRC4_ITU T_CRC5_EPC T_CRC5_ITU
 %token T_CRC5_USB T_CRC6_ITU T_CRC7_MMC T_CRC8 T_CRC8_ITU T_CRC8_ROHC T_CRC8_MAXIM T_CRC16_IBM T_CRC16_MAXIM T_CRC16_USB T_CRC16_MODBUS
 %token T_CRC16_CCITT T_CRC16_CCITT_FALSE T_CRC16_X25 T_CRC16_XMODEM T_CRC16_DNP T_CRC32 T_CRC32_MPEG_2 T_CRC64 T_CRC64_WE
 
-%token <symbol> VALUE_STRING VALUE_INT VALUE_REAL T_ID T_NOTE T_UNION_ID
+%token <symbol> VALUE_STRING VALUE_INT VALUE_REAL T_ID T_NOTE T_UNION_ID T_AT_USER
 
 %type <project> project 
 %type <pitem> projectitem frame enumcfg system
@@ -181,7 +181,7 @@ channeloptionlist:																{ $$ = NULL; }
 ;
 
 channeloption:
-	notelist T_ID '=' channeloptionvalue ';'						{ $$ = new_channeloption($2, $4, $1); }
+	notelist T_ID '=' channeloptionvalue ';'									{ $$ = new_channeloption($2, $4, $1); }
 ;
 
 
@@ -208,6 +208,7 @@ actionmaplist:																			{ $$ = NULL; }
 actionmap:
 	notelist T_ID ':' T_ID ';'															{ $$ = new_actionmap($2, $4, $1); }
 	| notelist T_UNION_ID ':' T_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
+	| notelist T_AT_USER																{ $$ = new_actionmap(0, $2, $1); }
 ;
 
 
@@ -323,6 +324,7 @@ framesegmentoneoflist:
 
 framesegmentoneofitem:
 	T_ID ':' T_ID																{ $$ = new_oneofitem($1, $3); }
+	| T_DEFAULT ':' T_ID														{ $$ = new_oneofitem(0, $3); }
 ;
 
 framesegmentpropertyexp:

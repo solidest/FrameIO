@@ -245,7 +245,7 @@ PRAGMA foreign_keys = on;
                     Notes = LoadNotes(Convert.ToInt32(r["segsyid"])),
                     SysPropertyName = r["proname"].ToString()
                 };
-                if (_checkSemantics && ret.Where(p => p.FrameSegName == mp.FrameSegName).Count() > 0)
+                if (_checkSemantics && Convert.ToInt32(r["segsyid"])!=0 && ret.Where(p => p.FrameSegName == mp.FrameSegName).Count() > 0)
                 {
                     AddError(Convert.ToInt32(r["segsyid"]), 7);
                 }
@@ -534,7 +534,8 @@ PRAGMA foreign_keys = on;
             {
                 var iof = new OneOfMap()
                 {
-                    EnumItem = r["itname"].ToString(),
+                    IsDefault = (Convert.ToInt32(r["itemsyid"]) == 0),
+                    EnumItem = (Convert.ToInt32(r["itemsyid"]) == 0) ? "other" : r["itname"].ToString(),
                     FrameName = r["frname"].ToString()
                 };
                 if (_checkSemantics && ret.Where(p => p.EnumItem == iof.EnumItem).Count() > 0)

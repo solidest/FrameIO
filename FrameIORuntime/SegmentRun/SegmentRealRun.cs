@@ -70,6 +70,7 @@ namespace FrameIO.Runtime
 
         internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
         {
+            if (info.IsUnpack) return 0;
             info.IsUnpack = true;
             info.BitStart = pos_bit;
             info.BitLen = IsDouble?64:32;
@@ -97,8 +98,13 @@ namespace FrameIO.Runtime
         }
 
         //尝试取字段的位大小
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
+            if (info.IsUnpack)
+            {
+                nextseg = 0;
+                return true;
+            }
             bitlen += IsDouble ? 64 : 32;
             return true;
         }

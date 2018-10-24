@@ -198,5 +198,58 @@ namespace FrameIO.Tester
 
         }
 
+        [TestMethod]
+        public void FrameRefTest()
+        {
+            var sys1 = new test_frame_ref.SYS1();
+            var sys2 = new test_frame_ref.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCH1(null);
+
+            sys2.CH1.Open();
+            sys1.CH1.Open();
+
+            sys1.count.Value = 2;
+            sys1.dataarr.Add(new test_frame_ref.Parameter<double?>() { Value = 9876.9993 });
+            sys1.dataarr.Add(new test_frame_ref.Parameter<double?>() { Value = 9876.9994 });
+
+            sys1.SendData();
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.dataarr[1].Value == 9876.9994);
+
+            sys1.CH1.Close();
+            sys2.CH1.Close();
+        }
+
+        //oneof 分支测试
+        [TestMethod]
+        public void OneOfTest()
+        {
+            var sys1 = new test_oneof.SYS1();
+            var sys2 = new test_oneof.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCH1(null);
+
+            sys2.CH1.Open();
+            sys1.CH1.Open();
+
+            sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 100.99 });
+            sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 99901.99 });
+
+            sys1.b.Value = 12;
+            sys1.count.Value = 2;
+
+            sys1.SendData();
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.one[1].Value == 99901.99);
+
+            sys1.CH1.Close();
+            sys2.CH1.Close();
+        }
+
     }
 }

@@ -235,12 +235,12 @@ namespace FrameIO.Main
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
             var ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var ref_firstcase = CompileSegment(LookUpExp(ref_intovalue), parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, parent.OneOfCaseList[0].IsDefault, need_update_end, need_udpate_refframe);
+            var ref_firstcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, parent.OneOfCaseList[0].IsDefault, need_update_end, need_udpate_refframe);
             var ref_lastcase = ref_firstcase;
             for (int i = 1; i < parent.OneOfCaseList.Count; i++)
             {
                 ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[i].EnumItem));
-                ref_lastcase = CompileSegment(LookUpExp(ref_intovalue), parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].IsDefault, need_update_end, need_udpate_refframe);
+                ref_lastcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].IsDefault, need_update_end, need_udpate_refframe);
             }
 
             ulong token_end_oneof = CO_SEGONEOF_OUT;
@@ -354,7 +354,10 @@ namespace FrameIO.Main
             SetTokenValue(ref token, encoded, pos_encoded, 2);
             SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big ? 1 : 0), pos_byteorder, 1);
             SetTokenValue(ref token, (byte)(seg.Signed ? 1 : 0), pos_issigned, 1);
+              if (seg.BitCount == 64)
+                ; ;
             SetTokenValue(ref token, (byte)(seg.BitCount), pos_bitcount, len_bitcount);
+
             if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             if (seg.VCheck != CheckType.None)

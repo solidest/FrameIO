@@ -251,10 +251,10 @@ namespace FrameIO.Runtime
     //解包动态执行接口
     internal interface IUnpackRunExp:IRunInitial
     {
-        bool TryGetSegmentValue(ref double value, ushort idx);
-        bool TryGetSegmentByteSize(ref double size, ushort idx);
-        bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
-        bool TryGetExpValue(ref double value, ushort idx);
+        bool TryGetSegmentValue(byte[] buff, ref double value, ushort idx);
+        bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx);
+        bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
+        bool TryGetExpValue(byte[] buff, ref double value, ushort idx);
         UnpackInfo GetUnpackInfo(ushort idx);
         void AddErrorInfo(string info, SegmentBaseRun seg);
     }

@@ -69,11 +69,39 @@ namespace FrameIO.Runtime
 
         #region --Unpack--
 
+
+        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
+        {
+            ushort selected_idx = 0;
+            var selecteditem = TryGetSelectedItem(buff, out selected_idx, ir);
+            if (selecteditem == null) throw new Exception("runtime");
+            info.IsUnpack = true;
+            return selected_idx;
+        }
+
+
+        internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
+        {
+            ushort selected_idx = 0;
+            var selecteditem = TryGetSelectedItem(buff, out selected_idx, ir);
+            if (selecteditem == null)
+            {
+                nextseg = ushort.MaxValue;
+                return false;
+            }
+            else
+            {
+                nextseg = selected_idx;
+                return true;
+            }
+        }
+
+        //查找分支项
         private SegmentOneofItem TryGetSelectedItem(byte[] buff, out ushort selected_idx, IUnpackRunExp ir)
         {
             selected_idx = 0;
-            double bydvalue=0;
-            if(!FrameRuntime.Run[_by_seg_idx].TryGetValue(ref bydvalue, buff, ir.GetUnpackInfo(_by_seg_idx))) return null;
+            double bydvalue = 0;
+            if (!FrameRuntime.Run[_by_seg_idx].TryGetValue(ref bydvalue, buff, ir.GetUnpackInfo(_by_seg_idx))) return null;
             long byvalue = (long)bydvalue;
             ushort default_idx = 0;
 
@@ -89,37 +117,10 @@ namespace FrameIO.Runtime
                 }
             }
 
-            if (selected_idx == 0 && default_idx == 0) return null;
+            if (selected_idx == 0 && default_idx == 0) throw new Exception("runtime");
             if (selected_idx == 0) selected_idx = default_idx;
             return (SegmentOneofItem)FrameRuntime.Run[selected_idx];
         }
-
-        internal override bool TryGetBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
-        {
-            ushort selected_idx = 0;
-            var selecteditem = TryGetSelectedItem(buff, out selected_idx, ir);
-            if (selecteditem == null) return false;
-            var res = selecteditem.TryGetBitLen(buff, ref bitlen, ref nextseg, ir.GetUnpackInfo(selected_idx), ir);
-            if(res)
-            {
-                nextseg = selecteditem.OutOneOfIdx;
-                return true;
-            }
-            return false;
-        }
-
-        internal override ushort Unpack(byte[] buff, ref int pos_bit, int end_bit_pos, UnpackInfo info, IUnpackRunExp ir)
-        {
-            ushort selected_idx = 0;
-            var selecteditem = TryGetSelectedItem(buff, out selected_idx, ir);
-            if (selecteditem == null) throw new Exception("runtime");
-            var res = selecteditem.Unpack(buff, ref pos_bit, end_bit_pos, ir.GetUnpackInfo(selected_idx), ir);
-            if (res == ushort.MaxValue)
-                return ushort.MaxValue;
-            else
-                return selecteditem.OutOneOfIdx;
-        }
-
 
         #endregion
 

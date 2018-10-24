@@ -31,6 +31,7 @@ int utf8len = 0;
 
 ^("//"|([ \t]+"//")).*\n	{ yycolumn = 1; yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line-1, yylloc->first_column, yylloc->last_column-1);  return T_NOTE; }
 "//".*\n					{ yycolumn = 1; }
+"@".*\n						{ yycolumn = 1; yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line-1, yylloc->first_column, yylloc->last_column-1);  return T_AT_USER; }
 
 
 \"([^"\\]|\\['"?\\abfnrtv]|\\[0-7]{1,3}|\\[xX][0-9a-fA-F]+|{UCN}|{CHS})*\"	{ yylval->symbol = db->SaveSymbol(yytext, yylloc->first_line, yylloc->first_column, yylloc->last_column); return VALUE_STRING; }
@@ -107,6 +108,7 @@ int utf8len = 0;
 "checkrange"			{ return T_CHECKRANGE;}
 
 "oneof"					{ return T_ONEOF; }
+"other"					{ return T_DEFAULT; }
 "bytesizeof"			{ return T_BYTESIZEOF; }
 
 "true"					{ return T_TRUE; }
