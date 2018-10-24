@@ -76,11 +76,11 @@ namespace FrameIO.Driver
         {
             byte[] buff = p.Pack();
 
-            while (TCPServer.server == null)
+            while (TCPServer.client == null)
                 Thread.Sleep(1);
             try
             {
-                NetworkStream netStream = new NetworkStream(TCPServer.server);
+                NetworkStream netStream = new NetworkStream(TCPServer.client);
                 netStream.Write(buff, 0, buff.Length);
                 return 1;
 

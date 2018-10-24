@@ -9,50 +9,63 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Driver
 {
-    public  class TCPServerHelper
+    public class TCPServerHelper
     {
-        public Socket server = null;
-        string localIP = String.Empty;
-        EndPoint point = new IPEndPoint(IPAddress.Any, 0);
-
-        private Socket serverTemp = null;
+        public Socket client = null;
+        private String listenerIp;
+        private Int32 listenerPort;
+        private String clientIp;
         private IPEndPoint serverEPoint = null;
+
+
+        public static Dictionary<string, Socket> clients = new Dictionary<string, Socket>();
+        private static Socket serverTemp = null;
+        private static bool IsRunning = false;
         public Socket InitServer(Dictionary<string, object> config)
         {
-            if(server==null)
+            if (client == null)
             {
-                string host = "" + config["serverip"];
-                int port = Convert.ToInt32(config["port"]);
-                IPAddress ip = IPAddress.Parse(host);
-                serverEPoint = new IPEndPoint(ip, port);
-                
-            }
-            return server;
-        }
-        public  bool Open()
-        {
-            if (server == null)
-            {
-                try
-                {
-                    serverTemp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    serverTemp.Bind(serverEPoint);
-                    serverTemp.Listen(0);
-                    serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                listenerIp = "" + config["serverip"];
+                listenerPort = Convert.ToInt32(config["port"]);
+                clientIp = "" + config["clientip"];
+
+                IPAddress ip = IPAddress.Parse(listenerIp);
+                serverEPoint = new IPEndPoint(ip, listenerPort);
 
             }
-            return false;
+            return client;
         }
-        private  void AcceptConnection(IAsyncResult ar)
+        public bool Open()
         {
+            try
+            {
+                if (!IsRunning)
+                {
+                    IsRunning = true;
+                    serverTemp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    serverTemp.Bind(serverEPoint);
+                    serverTemp.Listen(1);
+                }
+
+                serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        private void AcceptConnection(IAsyncResult ar)
+        {
+            Console.WriteLine("AcceptConnection");
             Socket mySserver = (Socket)ar.AsyncState;
-            server = mySserver.EndAccept(ar);
+
+            var newClient = mySserver.EndAccept(ar);
+            lock (clients)
+            {
+                clients.Add(newClient.RemoteEndPoint.ToString(), newClient);
+                client = newClient;
+            }
 
         }
         private static int recvlen = 0;
@@ -63,17 +76,20 @@ namespace FrameIO.Driver
 
             int dataleft = len;
             recvlen = 0;
+
+            var dicclient = clients.ToArray().FirstOrDefault(c => c.Value.RemoteEndPoint.ToString().Contains(clientIp));
+
             try
             {
                 while (recvlen < len)
                 {
                     running = true;
-                    server.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
+                    dicclient.Value.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
                     asyncResult =>
                     {
                         lock (this)
                         {
-                            recvlen += server.EndReceive(asyncResult);
+                            recvlen += dicclient.Value.EndReceive(asyncResult);
                             running = false;
                         }
                     }, null);
@@ -88,12 +104,12 @@ namespace FrameIO.Driver
                 throw new Exception("接收数据异常:");
             }
         }
-        private  void SendData(IAsyncResult ar)
+        private void SendData(IAsyncResult ar)
         {
             Socket client = (Socket)ar.AsyncState;
             try
             {
-                server.EndSend(ar);
+                client.EndSend(ar);
             }
             catch
             {
@@ -101,24 +117,27 @@ namespace FrameIO.Driver
                 serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
             }
         }
-        public  void Send(byte[] msg)
+        public void Send(byte[] msg)
         {
-            server.BeginSend(msg, 0, msg.Length, SocketFlags.None, new AsyncCallback(SendData), server);
+            var client = clients.ToArray().FirstOrDefault(c => c.Value.RemoteEndPoint.ToString() == c.Key);
+
+            client.Value.BeginSend(msg, 0, msg.Length, SocketFlags.None, new AsyncCallback(SendData), client);
 
         }
 
         public void CloseServer()
         {
-            //serverTemp.Shutdown(SocketShutdown.Both);
-            //serverTemp.Close();
-
-            if(server!=null)
+            foreach (var client in clients)
             {
-                if (server.Connected)
+                if (client.Value != null)
                 {
-                    server.Close();
+                    if (client.Value.Connected)
+                    {
+                        client.Value.Close();
+                    }
                 }
             }
+
 
         }
 
