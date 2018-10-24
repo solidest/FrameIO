@@ -93,6 +93,8 @@ namespace FrameIO.Runtime
                 {
                     if (next_seg == 0)
                         startidx += 1;
+                    else if (next_seg == ushort.MaxValue)
+                        break;
                     else
                         startidx = next_seg;
                 }

@@ -32,13 +32,7 @@ namespace FrameIO.Runtime
 
         internal override ushort GetBitLen(MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir)
         {
-            return GetBitLen((ushort)(BeginIdx + 1),value_buff, ref bitlen, info, ir);
-        }
-
-        //从指定位置开始计算大小
-        internal ushort GetBitLen(ushort startseg, MemoryStream value_buff, ref int bitlen, SetValueInfo info, IPackRunExp ir)
-        {
-            var pos = startseg;
+            var pos = (ushort)(BeginIdx + 1);
             while (pos != EndIdx)
             {
                 var res = FrameRuntime.Run[pos].GetBitLen(value_buff, ref bitlen, ir.GetSetValueInfo(pos), ir);
@@ -48,6 +42,7 @@ namespace FrameIO.Runtime
                     pos = res;
             }
             return 0;
+
         }
 
         internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
@@ -55,7 +50,6 @@ namespace FrameIO.Runtime
             throw new Exception("runtime");
         }
 
-        //取全部数据帧内字段的所需填充的大小
         internal override bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, UnpackInfo info, IUnpackRunExp ir)
         {
             throw new Exception("runtime");

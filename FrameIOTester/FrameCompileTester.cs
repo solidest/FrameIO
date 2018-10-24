@@ -198,6 +198,7 @@ namespace FrameIO.Tester
 
         }
 
+        //数据帧引用测试
         [TestMethod]
         public void FrameRefTest()
         {
@@ -237,15 +238,25 @@ namespace FrameIO.Tester
             sys1.CH1.Open();
 
             sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 100.99 });
-            sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 99901.99 });
+            sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 99901.90 });
+            sys1.one.Add(new test_oneof.Parameter<double?>() { Value = 99901.09 });
 
             sys1.b.Value = 12;
-            sys1.count.Value = 2;
+            sys1.count.Value = 3;
 
             sys1.SendData();
             sys2.RecvData();
 
-            Assert.IsTrue(sys2.one[1].Value == 99901.99);
+            Assert.IsTrue(sys2.one[0].Value == 100.99);
+            Assert.IsTrue(sys2.one[1].Value == 99901.90);
+            Assert.IsTrue(sys2.one[2].Value == 99901.09);
+
+
+            sys1.two.Value = 9996667;
+            sys1.b.Value = 0;
+            sys1.SendData();
+            sys2.RecvData();
+            Assert.IsTrue(sys2.two.Value == 9996667);
 
             sys1.CH1.Close();
             sys2.CH1.Close();
