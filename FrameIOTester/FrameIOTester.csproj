@@ -53,16 +53,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Users\solidest\Desktop\demo\frame.cs">
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\frame.cs">
       <Link>AutoGenerate\frame.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Users\solidest\Desktop\demo\Parameter.cs">
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\Parameter.cs">
       <Link>AutoGenerate\Parameter.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Users\solidest\Desktop\demo\SYS1.cs">
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS1.cs">
       <Link>AutoGenerate\SYS1.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Users\solidest\Desktop\demo\SYS2.cs">
+    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS2.cs">
       <Link>AutoGenerate\SYS2.cs</Link>
     </Compile>
     <Compile Include="CanTester.cs" />
