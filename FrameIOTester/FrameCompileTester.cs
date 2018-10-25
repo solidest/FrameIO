@@ -211,15 +211,20 @@ namespace FrameIO.Tester
             sys2.CH1.Open();
             sys1.CH1.Open();
 
-            sys1.count.Value = 2;
+            sys1.count.Value = 10000;
             sys1.dataarr.Add(new test_frame_ref.Parameter<double?>() { Value = 9876.9993 });
+            for (int i=0; i<sys1.count.Value-2; i++)
+            {
+                sys1.dataarr.Add(new test_frame_ref.Parameter<double?>() { Value = 6671.111555});
+            }
             sys1.dataarr.Add(new test_frame_ref.Parameter<double?>() { Value = 9876.9994 });
 
             sys1.SendData();
             sys2.RecvData();
 
-            Assert.IsTrue(sys2.dataarr[1].Value == 9876.9994);
-
+            Assert.IsTrue(sys2.dataarr[0].Value == 9876.9993);
+            Assert.IsTrue(sys2.dataarr.Count == sys1.count.Value);
+            Assert.IsTrue(sys2.dataarr[sys2.dataarr.Count - 1].Value == 9876.9994);
             sys1.CH1.Close();
             sys2.CH1.Close();
         }
