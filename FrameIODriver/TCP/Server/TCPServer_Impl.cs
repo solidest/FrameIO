@@ -75,9 +75,12 @@ namespace FrameIO.Driver
         public int WriteFrame(IFramePack p)
         {
             byte[] buff = p.Pack();
+
+            while (TCPServer.client == null)
+                Thread.Sleep(1);
             try
             {
-                NetworkStream netStream = new NetworkStream(TCPServer.server);
+                NetworkStream netStream = new NetworkStream(TCPServer.client);
                 netStream.Write(buff, 0, buff.Length);
                 return 1;
 

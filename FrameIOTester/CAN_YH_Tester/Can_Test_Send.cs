@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace FrameIOTester
 {
     [TestClass]
-    public class CANTester
+    public class CAN_Test_Send
     {
         #region --Initialize--
 
@@ -39,58 +39,80 @@ namespace FrameIOTester
 
 
         [TestMethod]
-        public void TestCAN()
+        public void Test_CAN_SendOnePacket()
         {
+            //data:[2 1 0 5 6 0 0 0 0 0 0]
+
             Initialize();
             var settor = FrameIOFactory.GetFrameSettor(1);
             settor.SetSegmentValue(2, 2);   //len
-            //settor.SetSegmentValue(3, 0);   //h1
             settor.SetSegmentValue(4, false);    //frametype
             settor.SetSegmentValue(5, false);   //frameformat
             settor.SetSegmentValue(6, 1);     //ID
 
             settor.SetSegmentValue(7, 0x05);    //data0
             settor.SetSegmentValue(8, 0x06);    //data0
-            //settor.SetSegmentValue(14, 233);   //data7
 
 
             var pack = settor.GetPack();
-            //发送pack 
 
             var chcan = new FrameIO.Driver.YH_CAN_Impl();
             Dictionary<string, object> dic = new Dictionary<string, object>();
             dic.Add("vender", "yh");
             dic.Add("channelind", "2");
             dic.Add("baudrate", "125Kbps");
-            dic.Add("writetimeout", 30000);
+            dic.Add("writetimeout", 3000);
 
             chcan.InitConfig(dic);
+            chcan.Open();
 
+            var ret=chcan.WriteFrame(pack);
 
-
-            //var data = pack.Pack();
-
-            chcan.WriteFrame(pack);
-
-
-            var unpacker = FrameIOFactory.GetFrameUnpacker(1);
-
-
-            //unpacker.AppendBlock(data);
-            var gettor = chcan.ReadFrame(unpacker);
-
-            Assert.IsTrue(gettor.GetByte(2) == 8);
-            Assert.IsTrue(gettor.GetByte(3) == 1);
-            Assert.IsTrue(gettor.GetBool(4) == true);
-            Assert.IsTrue(gettor.GetBool(5) == false);
-            Assert.IsTrue(gettor.GetUShort(6) == 100);
-
-            Assert.IsTrue(gettor.GetByte(7) == 255);
-            Assert.IsTrue(gettor.GetByte(14) == 233);
-
+            if (ret != 0)
+                chcan.Close();
 
         }
 
+        [TestMethod]
+        public void Test_CAN_SendTwoPacket()
+        {
+            //data:[2 1 0 5 6 0 0 0 0 0 0] [2 1 0 6 7 0 0 0 0 0 0]
 
+            Initialize();
+            var settors = new FrameIO.Interface.ISegmentSettor[2];
+            for (int i = 0; i<2; i++)
+            {
+                settors[i] = FrameIOFactory.GetFrameSettor(1);
+
+                settors[i].SetSegmentValue(2, 2);   //len
+                settors[i].SetSegmentValue(4, false);    //frametype
+                settors[i].SetSegmentValue(5, false);   //frameformat
+                settors[i].SetSegmentValue(6, 1);     //ID
+
+                settors[i].SetSegmentValue(7, 0x05+i);    //data0
+                settors[i].SetSegmentValue(8, 0x06+i);    //data0
+            }
+
+
+            var packs = new FrameIO.Interface.IFramePack[2];
+            for (int i = 0; i < 2; i++)
+                packs[i] = settors[i].GetPack();
+            var chcan = new FrameIO.Driver.YH_CAN_Impl();
+
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic.Add("vender", "yh");
+            dic.Add("channelind", "2");
+            dic.Add("baudrate", "125Kbps");
+            dic.Add("writetimeout", 3000);
+
+            chcan.InitConfig(dic);
+            chcan.Open();
+            int ret=chcan.WriteFrameList(packs, settors.Length);
+
+            if (ret != 0)
+                chcan.Close();
+
+        }
+        
     }
 }

@@ -93,6 +93,7 @@ namespace FrameIO.Driver
                 var lst = new List<System.Byte>();
                 for(System.UInt32 i= hasRead; i< hasRead+pulNumberofRead; i++)
                 {
+                    lst.Clear();
                     var arr= PVCI_CAN_OBJ_ToBytes(msgRead[i]);
                     lst.AddRange(arr);
                     up.AppendBlock(lst.ToArray());

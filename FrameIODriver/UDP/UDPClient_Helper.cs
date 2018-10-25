@@ -16,7 +16,7 @@ namespace FrameIO.Driver
         private int localPort = 8008;
         private int remotePort = 8009;
 
-        private IPEndPoint localEndPoint = null;
+        private IPEndPoint localEndPoint = null; 
         public IPEndPoint remoteEndPoint = null;
 
         public UdpClient InitClient(Dictionary<string,object> config)
