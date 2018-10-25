@@ -126,7 +126,8 @@ namespace FrameIO.Runtime
                 case ExpType.EXP_REF_SEGMENT:
                     return ir.TryGetSegmentValue(buff, ref value, _left);
                 case ExpType.EXP_FUN_BYTESIZEOF:
-                    return ir.TryGetSegmentByteSize(buff, ref value, _left);
+                    throw new Exception("runtime");
+                    //return ir.TryGetSegmentByteSize(buff, ref value, _left);
             }
             throw new Exception("runtime");
         }

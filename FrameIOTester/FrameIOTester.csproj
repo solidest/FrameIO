@@ -65,6 +65,18 @@
     <Compile Include="..\..\FrameIOTest\demo\SYS2.cs">
       <Link>Test_Demo\SYS2.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\test_bytesizeof\frame.cs">
+      <Link>Test_ByteSizeOf\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_bytesizeof\Parameter.cs">
+      <Link>Test_ByteSizeOf\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_bytesizeof\SYS1.cs">
+      <Link>Test_ByteSizeOf\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_bytesizeof\SYS2.cs">
+      <Link>Test_ByteSizeOf\SYS2.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\test_frame_ref\emtest.cs">
       <Link>Test_FrameRef\emtest.cs</Link>
     </Compile>

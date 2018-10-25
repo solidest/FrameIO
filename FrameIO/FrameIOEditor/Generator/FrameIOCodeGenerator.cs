@@ -419,7 +419,7 @@ namespace FrameIO.Main
                         actionrecvcode.Append(GetRecvActionCode(sys, ac));
                         break;
                     case actioniotype.AIO_RECVLOOP:
-                        //HACK
+                        //HACK recvloop
                         break;
                     default:
                         break;

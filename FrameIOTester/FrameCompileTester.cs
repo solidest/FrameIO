@@ -177,7 +177,7 @@ namespace FrameIO.Tester
             sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
             sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
 
-            //sys1.SendData();
+            sys1.SendData();
             sys2.RecvData();
 
             Assert.IsTrue(sys2.PROPERTY2a.Value == 1);
@@ -267,7 +267,7 @@ namespace FrameIO.Tester
             sys2.CH1.Close();
         }
 
-        //用户接受测试--验证规则
+        //测试--规则
         [TestMethod]
         public void TestValidate()
         {
@@ -298,6 +298,40 @@ namespace FrameIO.Tester
             sys2.RecvData();
 
             Assert.IsTrue(sys2.check_value.Value != null && sys2.check_value.Value !=0);
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
+        //测试bytesizeof
+        [TestMethod]
+        public void TestBytesizeof()
+        {
+            var sys1 = new test_bytesizeof.SYS1();
+            var sys2 = new test_bytesizeof.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 4;
+            sys1.PROPERTYb.Value = 8;
+            sys1.PROPERTYc.Value = 999988887;
+            sys1.PROPERTYd.Value = 999.77766;
+            int len = (new Random()).Next(1, 100);
+            sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(8));
+            for (int i=0; i<len; i++) sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(9));
+            sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(7));
+
+            sys1.SendData();
+
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.PROPERTY2e.Count == len+2);
+
 
             sys1.CH1.Close();
             sys2.CHA.Close();

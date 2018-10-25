@@ -272,7 +272,7 @@ namespace FrameIO.Runtime
     internal interface IUnpackRunExp:IRunInitial
     {
         bool TryGetSegmentValue(byte[] buff, ref double value, ushort idx);
-        bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx);
+        //bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx);
         bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
         bool TryGetExpValue(byte[] buff, ref double value, ushort idx);
         UnpackInfo GetUnpackInfo(ushort idx);
