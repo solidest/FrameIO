@@ -287,6 +287,14 @@ framesegmentcheckvalue:
 	T_SUM8																		{ $$ = SEGPV_SUM8; }
 	| T_XOR8																	{ $$ = SEGPV_XOR8; }
 	| T_SUM16																	{ $$ = SEGPV_SUM16; }
+	| T_SUM16_FALSE																{ $$ = SEGPV_SUM16_FALSE;}
+	| T_XOR16																	{ $$ = SEGPV_XOR16;}
+	| T_XOR16_FALSE																{ $$ = SEGPV_XOR16_FALSE;}
+	| T_SUM32																	{ $$ = SEGPV_SUM32;}
+	| T_SUM32_FALSE																{ $$ = SEGPV_SUM32_FALSE;}
+	| T_XOR32																	{ $$ = SEGPV_XOR32;}
+	| T_XOR32_FALSE																{ $$ = SEGPV_XOR32_FALSE;}
+	| T_CRC4_ITU																{ $$ = SEGPV_CRC4_ITU; }
 	| T_CRC5_EPC																{ $$ = SEGPV_CRC5_EPC; }
 	| T_CRC5_ITU																{ $$ = SEGPV_CRC5_ITU; }
 	| T_CRC5_USB																{ $$ = SEGPV_CRC5_USB; }

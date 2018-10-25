@@ -12,10 +12,16 @@ namespace FrameIO.Runtime
     public class FrameIOFactory
     {
 
-        //初始化
+        //初始化数据帧
         public static void Initialize(byte[] config)
         {
             FrameRuntime.Initialize(config);
+        }
+
+        //初始化符号表
+        public static void InitializeSymbols(byte[] symbols)
+        {
+            FrameRuntime.InitializeSymbols(symbols);
         }
 
         //获取数据帧的字段设置接口

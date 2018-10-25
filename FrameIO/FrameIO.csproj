@@ -246,5 +246,9 @@
       <Name>FrameIOEditor</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\compilecpp.png" />
+    <Resource Include="img\compilesharp.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

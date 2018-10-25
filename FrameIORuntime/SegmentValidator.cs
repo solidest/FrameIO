@@ -62,6 +62,10 @@ namespace FrameIO.Runtime
         {
             _max = maxv;
         }
+        internal bool Valid(double value)
+        {
+            return (value <= _max);
+        }
     }
 
     //最小值验证
@@ -72,6 +76,10 @@ namespace FrameIO.Runtime
         {
             _min = minv;
         }
+        internal bool Valid(double value)
+        {
+            return (value >= _min);
+        }
     }
 
     //相等值验值
@@ -81,6 +89,11 @@ namespace FrameIO.Runtime
         internal SegmentEqualValidator(double value, ushort next_idx) : base(next_idx, ValidateType.ToEnum)
         {
             _value = value;
+        }
+
+        internal bool Valid(double value)
+        {
+            return (value == _value);
         }
     }
 
@@ -98,9 +111,10 @@ namespace FrameIO.Runtime
             _checkend = checkend;
         }
 
-        internal ulong GetCheckValue(byte[] buff, IPackRunExp ir)
+
+        internal ulong GetCheckValue(byte[] buff,  int endpos)
         {
-            return 0;
+            return CRCHelper.GetCheckValue(_checktype, buff, 0, endpos);
         }
     }
 

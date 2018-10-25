@@ -547,6 +547,7 @@ namespace FrameIO.Main
             return ret;
         }
 
+        //代码检查
         private void CheckCode(object sender, RoutedEventArgs e)
         {
             if (FileName.Length == 0) return;
@@ -614,23 +615,28 @@ namespace FrameIO.Main
         {
             e.CanExecute = (FileName != "");
             btCheckCode.IsEnabled = e.CanExecute;
+            if (e.Parameter.ToString() == "cpp") e.CanExecute = false;
             e.Handled = true;
         }
 
         //导出
         private void SaveAs(object sender, ExecutedRoutedEventArgs e)
         {
-            if (FileName.Length == 0) return;
-            var pji = DoCheckCode();
-            if (pji == null)
+            if(e.Parameter.ToString() == "csharp")
             {
-                OutText("信息：无法启动代码输出", false);
-                return;
+                if (FileName.Length == 0) return;
+                var pji = DoCheckCode();
+                if (pji == null)
+                {
+                    OutText("信息：无法启动代码输出", false);
+                    return;
+                }
+                else
+                {
+                    FrameIOCodeGenerator.GenerateCodeFile(_project, this);
+                }
             }
-            else
-            {
-                FrameIOCodeGenerator.GenerateCodeFile(_project, this);
-            }
+
             
         }
 
@@ -918,9 +924,13 @@ namespace FrameIO.Main
         }
 
 
+
         #endregion
 
-
+        private void ClearOut(object sender, RoutedEventArgs e)
+        {
+            OutText("", true);
+        }
     }
 
 

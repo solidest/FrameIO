@@ -25,7 +25,7 @@
 
     <Grid Name="gridMain">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30px"/>
+            <RowDefinition Height="40px"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="2px"/>
             <RowDefinition Height="160"/>
@@ -72,32 +72,32 @@
             <Separator/>
             <Button Name="btExpand" ToolTip="展开/收缩项目树" Click="Expand" VerticalAlignment="Bottom">
                 <Button.Content>
-                    <Image Source="img/expand.png" Height="20" Width="20"></Image>
+                    <Image Source="img/expand.png"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btAddSubsys" ToolTip="添加受控对象" Click="AddSubsys">
                 <Button.Content>
-                    <Image Source="img/subsys1.png"  Height="20" Width="20"></Image>
+                    <Image Source="img/subsys1.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btAddFrame" ToolTip="添加数据帧" Click="AddFrame">
                 <Button.Content>
-                    <Image Source="img/frame1.png" Height="20" Width="20"></Image>
+                    <Image Source="img/frame1.png"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btAddEnum" ToolTip="添加枚举" Click="AddEnum">
                 <Button.Content>
-                    <Image Source="img/enum.png" Height="20" Width="20" ></Image>
+                    <Image Source="img/enum.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btRename" ToolTip="重命名" Click="RenameSelected">
                 <Button.Content>
-                    <Image Source="img/rename.png" Height="20" Width="20"></Image>
+                    <Image Source="img/rename.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btDelete" ToolTip="删除选中项" Command="ApplicationCommands.Delete">
                 <Button.Content>
-                    <Image Source="img/del.png" Height="20" Width="20"></Image>
+                    <Image Source="img/del.png" ></Image>
                 </Button.Content>
             </Button>
 
@@ -108,27 +108,27 @@
             </Button>
             <Button Name="btCopy" ToolTip="复制" Command="ApplicationCommands.Copy" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/copy.png" Height="20" Width="20"></Image>
+                    <Image Source="img/copy.png"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btPaste" ToolTip="粘贴" Command="ApplicationCommands.Paste" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/paste.png" Height="20" Width="20"></Image>
+                    <Image Source="img/paste.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btUndo" ToolTip="撤销" Command="ApplicationCommands.Undo" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/undo.png" Height="20" Width="20"></Image>
+                    <Image Source="img/undo.png"></Image>
                 </Button.Content>
             </Button>
             <Button Name="btRedo" ToolTip="重做" Command="ApplicationCommands.Redo" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/redo.png" Height="20" Width="20"></Image>
+                    <Image Source="img/redo.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Name="btFindReplace" ToolTip="查找/替换" Command="ApplicationCommands.Find" Visibility="Collapsed">
                 <Button.Content>
-                    <Image Source="img/find.png" Height="20" Width="20"></Image>
+                    <Image Source="img/find.png"></Image>
                 </Button.Content>
             </Button>
             <Separator/>
@@ -138,9 +138,14 @@
                     <Image Source="img/check.png"></Image>
                 </Button.Content>
             </Button>
-            <Button ToolTip="输出" Command="ApplicationCommands.SaveAs">
+            <Button ToolTip="输出c#代码" Command="ApplicationCommands.SaveAs" CommandParameter="csharp">
                 <Button.Content>
-                    <Image Source="img/compile.png"></Image>
+                    <Image Source="img/compilesharp.png"></Image>
+                </Button.Content>
+            </Button>
+            <Button ToolTip="输出c++代码" Command="ApplicationCommands.SaveAs" CommandParameter="cpp">
+                <Button.Content>
+                    <Image Source="img/compilecpp.png"></Image>
                 </Button.Content>
             </Button>
             <Button ToolTip="关于" Click="OnHelper">
@@ -219,6 +224,7 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin = "3" VerticalAlignment="Center">输出信息：</TextBlock>
+                <Button Width="60" Background="AliceBlue" BorderBrush="CadetBlue" Click="ClearOut">清除</Button>
             </StackPanel>
 
             <TextBox BorderBrush="LightGray" Name="txtOut" Grid.Row="1" Margin="3" IsReadOnly="True"/>

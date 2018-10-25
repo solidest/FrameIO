@@ -177,7 +177,7 @@ namespace FrameIO.Tester
             sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
             sys1.PROPERTYe.Add(new demo.Parameter<bool?>() { Value = true });
 
-            sys1.SendData();
+            //sys1.SendData();
             sys2.RecvData();
 
             Assert.IsTrue(sys2.PROPERTY2a.Value == 1);
@@ -266,6 +266,44 @@ namespace FrameIO.Tester
             sys1.CH1.Close();
             sys2.CH1.Close();
         }
+
+        //用户接受测试--验证规则
+        [TestMethod]
+        public void TestValidate()
+        {
+            var sys1 = new test_validate.SYS1();
+            var sys2 = new test_validate.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 4;
+            sys1.PROPERTYb.Value = 8;
+            sys1.PROPERTYc.Value = 999988887;
+            sys1.PROPERTYd.Value = 999.77766;
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+
+            sys1.SendData();
+
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.check_value.Value != null && sys2.check_value.Value !=0);
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
 
     }
 }

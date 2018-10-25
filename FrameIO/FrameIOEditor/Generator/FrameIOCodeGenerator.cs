@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -62,6 +63,7 @@ namespace FrameIO.Main
             var code = new StringBuilder(GetTemplate("TFrame"));
             ReplaceText(code, "project", _pj.Name);
             ReplaceText(code, "contentlist", ToStringList(cpframe.GetBytes()), 4);
+            ReplaceText(code, "symbollist", ToStringList(GetSymbols(cpframe.Symbols)), 4);
 
             //数据帧settor && gettors
             var frm_code = new StringBuilder();
@@ -75,6 +77,21 @@ namespace FrameIO.Main
             //生成文件
             CreateFile("frame", code);
 
+        }
+
+        private static byte[] GetSymbols(Dictionary<string, ushort> symbols)
+        {
+            var _sym = new Dictionary<ushort, string>();
+            foreach (var sy in symbols)
+                _sym.Add(sy.Value, sy.Key);
+
+            using (var ms = new MemoryStream())
+            {
+                var bf = new BinaryFormatter();
+                bf.Serialize(ms, _sym);
+                ms.Close();
+                return ms.ToArray();
+            }
         }
 
         #region --Gettor--

@@ -75,7 +75,16 @@ namespace FrameIO.Runtime
             info.BitStart = pos_bit;
             info.BitLen = IsDouble?64:32;
 
-            //HACK 验证规则处理
+            if (_vlidmax != null || _vlidmin != null)
+            {
+                double v;
+                if (IsDouble)
+                    v = UnpackToDouble(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+                else
+                    v = UnpackToFloat(buff, (uint)info.BitStart, Encoded, IsBigOrder);
+                if (_vlidmax != null) if (!_vlidmax.Valid(v)) ir.AddErrorInfo("超出最大值设置", this);
+                if (_vlidmin != null) if (!_vlidmin.Valid(v)) ir.AddErrorInfo("低于最小值设置", this);
+            }
 
             pos_bit += IsDouble ? 64 : 32;
             return 0;

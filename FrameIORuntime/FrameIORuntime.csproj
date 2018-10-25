@@ -51,6 +51,7 @@
     <Compile Include="FrameUnpackerInfo.cs" />
     <Compile Include="Helper\ChannelOption.cs" />
     <Compile Include="Helper\ChannelTypeEnum.cs" />
+    <Compile Include="Helper\CRCHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmentRun\SegmentBaseRun.cs" />
     <Compile Include="SegmentGettor.cs" />

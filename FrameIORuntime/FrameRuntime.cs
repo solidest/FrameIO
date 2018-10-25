@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -219,6 +220,25 @@ namespace FrameIO.Runtime
             return null;
         }
 
+
+        #endregion
+
+        #region --SegmentName--
+
+        static Dictionary<ushort, string> _symbols;
+        internal static void InitializeSymbols(byte[] content)
+        {
+            using (var ms = new MemoryStream(content))
+            {
+                var bf = new BinaryFormatter();
+                _symbols = (Dictionary<ushort, string>)bf.Deserialize(ms);
+            }
+        }
+
+        internal static string GetName(ushort idx)
+        {
+            return _symbols[idx];
+        }
 
         #endregion
 

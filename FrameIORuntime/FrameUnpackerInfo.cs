@@ -14,9 +14,7 @@ namespace FrameIO.Runtime
 
         private static FrameRuntime _fi;
         private FrameUnpackerInfo _parent;
-        private List<ErrorInfo> _errorinfo;
-        private 
-        UnpackInfo[] _segus;
+        private  UnpackInfo[] _segus;
 
         static FrameUnpackerInfo()
         {
@@ -42,28 +40,18 @@ namespace FrameIO.Runtime
 
         internal void AddErrorInfo(string info, ushort idx)
         {
-            var err = new ErrorInfo();
-            err.idx = new List<ushort>();
-            err.idx.Add(idx);
-            if (_parent != null)
-                _parent.AddErrorInfo(err);
+            throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.RecvErr, FrameRuntime.GetName(idx), info);
         }
 
-        internal void AddErrorInfo(ErrorInfo err)
-        {
-            err.idx.Add(StartIdx);
-            if (_parent != null)
-                _parent.AddErrorInfo(err);
-            else
-            {
-                if (_errorinfo == null) _errorinfo = new List<ErrorInfo>();
-                _errorinfo.Add(err);
-            }
-                
-        }
-
+        //internal void AddErrorInfo(ErrorInfo err)
+        //{
+        //    err.idx.Add(StartIdx);
+        //    if (_parent != null)
+        //        _parent.AddErrorInfo(err);
+        //    else
+        //        throw new Exception(err.Info);
+        //}
     }
-
 
     internal class UnpackInfo
     {
@@ -72,10 +60,5 @@ namespace FrameIO.Runtime
         public int BitLen;
         public object Tag;
     }
-
-    internal struct ErrorInfo
-    {
-        public string info;
-        public List<ushort> idx;
-    }
+ 
 }
