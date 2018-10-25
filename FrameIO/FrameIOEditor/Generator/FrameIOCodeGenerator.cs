@@ -389,11 +389,27 @@ namespace FrameIO.Main
             SetPropertyDeclare(sys, code);
 
             //action
-            foreach(var ac in sys.Actions)
+            var actionsendcode = new StringBuilder();
+            var actionrecvcode = new StringBuilder();
+            foreach (var ac in sys.Actions)
             {
-                SetActionCode(sys, ac, code);
+                switch (ac.IOType)
+                {
+                    case actioniotype.AIO_SEND:
+                        actionsendcode.Append(GetSendActionCode(sys, ac));
+                        break;
+                    case actioniotype.AIO_RECV:
+                        actionrecvcode.Append(GetRecvActionCode(sys, ac));
+                        break;
+                    case actioniotype.AIO_RECVLOOP:
+                        //HACK
+                        break;
+                    default:
+                        break;
+                }
             }
-
+            ReplaceText(code, "sendactionlist", actionsendcode.ToString());
+            ReplaceText(code, "recvactionlist", actionrecvcode.ToString());
             return code;
         }
 
@@ -429,25 +445,6 @@ namespace FrameIO.Main
             ReplaceText(code, "propertydeclare", decl, 2);
         }
 
-        //设置动作代码
-        static private void SetActionCode(Subsys sys, SubsysAction ac, StringBuilder code)
-        {
-            switch(ac.IOType)
-            {
-                case actioniotype.AIO_SEND:
-                    ReplaceText(code, "sendactionlist", GetSendActionCode(sys, ac));
-                    break;
-
-                case actioniotype.AIO_RECV:
-                    ReplaceText(code, "recvactionlist", GetRecvActionCode(sys, ac));
-                    break;
-
-                //case actioniotype.AIO_RECVLOOP:
-                //    ReplaceText(code, "recvloopactionlist", GetRecvLoopActionCode(sys, ac));
-                //    break;
-            }
-
-        }
 
         //获取recvloopaction代码
         static private string GetRecvLoopActionCode(Subsys sys,SubsysAction ac)
