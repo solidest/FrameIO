@@ -53,6 +53,21 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\0.flo\tcp_server_test\frame.cs">
+      <Link>Test_tcpserver\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\tcp_server_test\Parameter.cs">
+      <Link>Test_tcpserver\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\tcp_server_test\SYS1.cs">
+      <Link>Test_tcpserver\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\tcp_server_test\SYS2.cs">
+      <Link>Test_tcpserver\SYS2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\tcp_server_test\SYS3.cs">
+      <Link>Test_tcpserver\SYS3.cs</Link>
+    </Compile>
     <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\frame.cs">
       <Link>AutoGenerate\frame.cs</Link>
     </Compile>
@@ -96,6 +111,7 @@
       <Link>Test_OneOf\SYS2.cs</Link>
     </Compile>
     <Compile Include="CanTester.cs" />
+    <Compile Include="ChannelTester.cs" />
     <Compile Include="FrameCompileTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_channels\test_channel.cs" />
