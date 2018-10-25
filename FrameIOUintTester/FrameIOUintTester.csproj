@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B3CBFD2-D322-43C0-806C-3885A96ECB62}</ProjectGuid>
+    <ProjectGuid>{04EDC4B0-E4F3-4EB8-B938-638CC0F75864}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FrameIOTester</RootNamespace>
-    <AssemblyName>FrameIOTester</AssemblyName>
+    <RootNamespace>FrameIOUintTester</RootNamespace>
+    <AssemblyName>FrameIOUintTester</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -29,7 +29,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,11 +45,8 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\FrameIO\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\0.flo\tcp_server_test\frame.cs">
@@ -68,58 +64,23 @@
     <Compile Include="..\..\0.flo\tcp_server_test\SYS3.cs">
       <Link>Test_tcpserver\SYS3.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\frame.cs">
-      <Link>AutoGenerate\frame.cs</Link>
+    <Compile Include="..\..\0.flo\test_PowerSupplyManager\frame.cs">
+      <Link>Test_PowerSupplyManager\frame.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\Parameter.cs">
-      <Link>AutoGenerate\Parameter.cs</Link>
+    <Compile Include="..\..\0.flo\test_PowerSupplyManager\FrameDataType.cs">
+      <Link>Test_PowerSupplyManager\FrameDataType.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS1.cs">
-      <Link>AutoGenerate\SYS1.cs</Link>
+    <Compile Include="..\..\0.flo\test_PowerSupplyManager\Parameter.cs">
+      <Link>Test_PowerSupplyManager\Parameter.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\demo\SYS2.cs">
-      <Link>AutoGenerate\SYS2.cs</Link>
+    <Compile Include="..\..\0.flo\test_PowerSupplyManager\PowerSupplyManager.cs">
+      <Link>Test_PowerSupplyManager\PowerSupplyManager.cs</Link>
     </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_frame_ref\emtest.cs">
-      <Link>Test_FrameRef\emtest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_frame_ref\frame.cs">
-      <Link>Test_FrameRef\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_frame_ref\Parameter.cs">
-      <Link>Test_FrameRef\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_frame_ref\SYS1.cs">
-      <Link>Test_FrameRef\SYS1.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_frame_ref\SYS2.cs">
-      <Link>Test_FrameRef\SYS2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_oneof\emtest.cs">
-      <Link>Test_OneOf\emtest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_oneof\frame.cs">
-      <Link>Test_OneOf\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_oneof\Parameter.cs">
-      <Link>Test_OneOf\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_oneof\SYS1.cs">
-      <Link>Test_OneOf\SYS1.cs</Link>
-    </Compile>
-    <Compile Include="..\..\我的文档\Desktop\核九院PCI\0.flo文件\test_oneof\SYS2.cs">
-      <Link>Test_OneOf\SYS2.cs</Link>
-    </Compile>
+    <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
-    <Compile Include="FrameCompileTester.cs" />
+    <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test_channels\test_channel.cs" />
-    <Compile Include="Test_channels\test_channel_com.cs" />
-    <Compile Include="Test_channels\test_channel_tcp.cs" />
-    <Compile Include="Test_channels\test_channel_tcpclient.cs" />
-    <Compile Include="Test_channels\test_channel_tcpserver.cs" />
-    <Compile Include="Test_channels\test_channel_udp.cs" />
-    <Compile Include="Test_channels\test_frame.cs" />
+    <Compile Include="UserPowerSupplyManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -137,13 +98,6 @@
       <Project>{df94efc4-4a33-4c1d-b1d2-f27ff6f64309}</Project>
       <Name>FrameIORuntime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FrameIO\FrameIOEditor\FrameIOEditor.csproj">
-      <Project>{cf8f4619-7685-4dee-a5fd-d6a112d95c44}</Project>
-      <Name>FrameIOEditor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
