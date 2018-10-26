@@ -18,9 +18,7 @@ namespace FrameIOUintTester
 
             tester.InitialChannelCHServer(null);
 
-
             Assert.IsTrue(tester.CHServer.Open());
-
 
             tester.SetpointVoltage.Value = 10;
             tester.SetpointCurrent.Value = 20;
