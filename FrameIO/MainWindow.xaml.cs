@@ -531,9 +531,9 @@ namespace FrameIO.Main
              //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
             SaveProject(this, null);
 
-            bool ret = false;
+            bool ret = ReLoadProjectToUI(false, true);
 
-            if(ReLoadProjectToUI(false, true))
+            if(ret)
             {
                 ret = FrameIOCodeCheck.CheckProject(_project);
                 if (!ret) OutOneError(FrameIOCodeCheck.ErrorList);
@@ -622,7 +622,7 @@ namespace FrameIO.Main
             if(e.Parameter.ToString() == "csharp")
             {
                 if (FileName.Length == 0) return;
-                if (DoCheckCode())
+                if (!DoCheckCode())
                 {
                     OutText("信息：无法启动代码输出", false);
                     return;

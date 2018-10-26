@@ -462,7 +462,6 @@ namespace FrameIO.Main
                             return;
                         }
                         segns.Add(bseg.Name + "." + oi.EnumItem, frms.First());
-                        return;
                     }
                     break;
                 default:
