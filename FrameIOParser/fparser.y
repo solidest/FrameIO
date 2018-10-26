@@ -60,7 +60,7 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %token T_INTEGER T_REAL T_BLOCK T_TEXT
 %token T_BOOL T_BYTE T_SBYTE T_USHORT T_SHORT T_UINT T_INT T_ULONG T_LONG T_FLOAT T_DOUBLE T_STRING
 %token T_SEND T_ON T_RECV T_RECVLOOP
-%token T_COM T_CAN T_TCPSERVER T_TCPCLIENT T_UDP T_DI T_DO
+%token T_COM T_CAN T_TCPSERVER T_TCPCLIENT T_UDP T_DIO
 %token T_SIGNED T_BITCOUNT T_VALUE T_REPEATED T_BYTEORDER T_ENCODED T_REPEATED T_ISDOUBLE T_TAIL T_ALIGNEDLEN T_TYPE T_BYTESIZE 
 %token T_BYTESIZEOF T_TOENUM T_ONEOF T_DEFAULT T_MAX T_MIN T_CHECK T_CHECKRANGE 
 %token T_TRUE T_FALSE T_SMALL T_BIG T_PRIMITIVE T_INVERSION T_COMPLEMENT
@@ -172,8 +172,7 @@ channeltype:
 	| T_TCPSERVER																{ $$ = SCHT_TCPSERVER; }
 	| T_TCPCLIENT																{ $$ = SCHT_TCPCLIENT; }
 	| T_UDP																		{ $$ = SCHT_UDP; }
-	| T_DI																		{ $$ = SCHT_DI; }
-	| T_DO																		{ $$ = SCHT_DO; }
+	| T_DIO																		{ $$ = SCHT_DIO; }
 ;
 
 channeloptionlist:																{ $$ = NULL; }

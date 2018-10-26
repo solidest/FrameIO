@@ -62,8 +62,7 @@ enum syschanneltype
 	SCHT_TCPSERVER,
 	SCHT_TCPCLIENT,
 	SCHT_UDP,
-	SCHT_DI,
-	SCHT_DO
+	SCHT_DIO
 };
 
 

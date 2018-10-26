@@ -13,7 +13,6 @@ namespace FrameIO.Runtime
         TCPSERVER,
         TCPCLIENT,
         UDP,
-        DI,
-        DO
+        DIO
     }
 }

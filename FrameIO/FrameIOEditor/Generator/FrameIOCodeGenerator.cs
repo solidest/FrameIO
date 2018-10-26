@@ -553,10 +553,8 @@ namespace FrameIO.Main
                     return "ChannelTypeEnum.TCPCLIENT";
                 case syschanneltype.SCHT_UDP:
                     return "ChannelTypeEnum.UDP";
-                case syschanneltype.SCHT_DI:
-                    return "ChannelTypeEnum.DI";
-                case syschanneltype.SCHT_DO:
-                    return "ChannelTypeEnum.DO";
+                case syschanneltype.SCHT_DIO:
+                    return "ChannelTypeEnum.DIO";
             }
             return "";
         }

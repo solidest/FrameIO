@@ -93,8 +93,7 @@ namespace FrameIO.Main
                 case syschanneltype.SCHT_UDP:
                     CheckUdpOption(ch.Options);
                     break;
-                case syschanneltype.SCHT_DI:
-                case syschanneltype.SCHT_DO:
+                case syschanneltype.SCHT_DIO:
                    CheckDiDoOption(ch.Options);
                     break;
             }
