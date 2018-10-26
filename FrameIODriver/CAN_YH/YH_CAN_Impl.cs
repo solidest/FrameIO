@@ -17,6 +17,8 @@ namespace FrameIO.Driver
             if (!SetTimeOut()) return false;
             if (!SetSelfReception()) return false;
             if (!EnterWorkMode()) return false;
+            if (!SetAccmarkAccCode()) return false;
+
             return true;
         }
 

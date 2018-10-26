@@ -46,6 +46,11 @@ namespace FrameIO.Driver
                     serverTemp.Bind(serverEPoint);
                     serverTemp.Listen(1);
                 }
+                foreach(var c in clients)
+                {
+                    if (c.Value.RemoteEndPoint.ToString().Contains(clientIp))
+                        return false;
+                }
 
                 serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
                 return true;
@@ -57,7 +62,6 @@ namespace FrameIO.Driver
         }
         private void AcceptConnection(IAsyncResult ar)
         {
-            Console.WriteLine("AcceptConnection");
             Socket mySserver = (Socket)ar.AsyncState;
 
             var newClient = mySserver.EndAccept(ar);

@@ -9,10 +9,12 @@ namespace FrameIO.Driver
     partial class YH_CAN_Impl
     {
         private string PortName = string.Empty;
-        private UInt16 ReadTimeOut = 1;
+        private UInt16 ReadTimeOut = 1000;
         private UInt16 WriteTimeOut = 3000;
         private UInt16 WorkMode = 1;
         private UInt16 BaudRate;
+        private uint Acccode = 0x00000000;
+        private uint Accmark = 0xffffffff;
 
         private static Byte[] PVCI_CAN_OBJ_ToBytes(canmsg_t obj)
         {
@@ -54,6 +56,9 @@ namespace FrameIO.Driver
             PortName = "can"+config["channelind"].ToString();
             BaudRate = (UInt16)BaudRateTypeConverter.ConvertFrom(config["baudrate"]);
             WriteTimeOut = System.Convert.ToUInt16(config["writetimeout"]);
+            //WorkMode= System.Convert.ToUInt16(config["mode"]);
+            Acccode = System.Convert.ToByte(config["acccode"]);
+            Accmark= System.Convert.ToByte(config["accmark"]);
         }
         #endregion
         //设备号
@@ -105,6 +110,14 @@ namespace FrameIO.Driver
             var nRet = DevCan.acEnterWorkMode();
             if (nRet >= 0) return true;
             Console.WriteLine("研华_CAN 进入工作状态设置失败!");
+            DevCan.acCanClose();
+            return false;
+        }
+        private Boolean SetAccmarkAccCode()
+        {
+            var nRet = DevCan.acSetAcceptanceFilter(Accmark,Acccode);
+            if (nRet >= 0) return true;
+            Console.WriteLine("PCI1680U_CAN 设备验收码屏蔽码失败!");
             DevCan.acCanClose();
             return false;
         }
