@@ -78,6 +78,12 @@ namespace FrameIO.Runtime
                         chtcpserver.InitConfig(ops);
                         return chtcpserver;
                     }
+                case ChannelTypeEnum.DIO:
+                    {
+                        var chtcdio = new FrameIO.Driver.DIO_Impl();
+                        chtcdio.InitConfig(ops);
+                        return chtcdio;
+                    }
                     //TODO 添加其它类型的驱动调用
 
             }

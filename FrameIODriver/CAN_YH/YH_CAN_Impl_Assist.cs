@@ -13,8 +13,9 @@ namespace FrameIO.Driver
         private UInt16 WriteTimeOut = 3000;
         private UInt16 WorkMode = 1;
         private UInt16 BaudRate;
-        private uint Acccode = 0x00000000;
+        private uint Acccode = 0xffffffff;
         private uint Accmark = 0xffffffff;
+        private uint Filter = 1;
 
         private static Byte[] PVCI_CAN_OBJ_ToBytes(canmsg_t obj)
         {
@@ -57,6 +58,7 @@ namespace FrameIO.Driver
             BaudRate = (UInt16)BaudRateTypeConverter.ConvertFrom(config["baudrate"]);
             WriteTimeOut = System.Convert.ToUInt16(config["writetimeout"]);
             //WorkMode= System.Convert.ToUInt16(config["mode"]);
+            Filter= System.Convert.ToByte(config["filter"]);
             Acccode = System.Convert.ToByte(config["acccode"]);
             Accmark= System.Convert.ToByte(config["accmark"]);
         }
@@ -113,11 +115,27 @@ namespace FrameIO.Driver
             DevCan.acCanClose();
             return false;
         }
-        private Boolean SetAccmarkAccCode()
+        private Boolean SetFilterMode()
         {
-            var nRet = DevCan.acSetAcceptanceFilter(Accmark,Acccode);
+            var nRet = DevCan.acSetAcceptanceFilterMode(Filter);
             if (nRet >= 0) return true;
-            Console.WriteLine("PCI1680U_CAN 设备验收码屏蔽码失败!");
+            Console.WriteLine("PCI1680U_CAN 设置滤波模式失败!");
+            DevCan.acCanClose();
+            return false;
+        }
+        private Boolean SetAccCode()
+        {
+            var nRet = DevCan.acSetAcceptanceFilterCode(Acccode);
+            if (nRet >= 0) return true;
+            Console.WriteLine("PCI1680U_CAN 设备验收码失败!");
+            DevCan.acCanClose();
+            return false;
+        }
+        private Boolean SetAccMark()
+        {
+            var nRet = DevCan.acSetAcceptanceFilterMask(Accmark);
+            if (nRet >= 0) return true;
+            Console.WriteLine("PCI1680U_CAN 设备屏蔽码失败!");
             DevCan.acCanClose();
             return false;
         }

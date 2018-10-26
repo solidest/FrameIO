@@ -16,8 +16,10 @@ namespace FrameIO.Driver
             if (!EnterResetMode()) return false;
             if (!SetTimeOut()) return false;
             if (!SetSelfReception()) return false;
+            if (!SetFilterMode()) return false;
+            if (!SetAccMark()) return false;
+            if (!SetAccCode()) return false;
             if (!EnterWorkMode()) return false;
-            if (!SetAccmarkAccCode()) return false;
 
             return true;
         }
