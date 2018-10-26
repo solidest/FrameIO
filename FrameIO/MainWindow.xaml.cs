@@ -326,16 +326,16 @@ namespace FrameIO.Main
         private const string DefaultCode = "//项目:{0}\nproject main\n{\n\t//受控对象\n\tsystem subsys1\n\t{\n\t\n\t}\n\t//数据帧\n\tframe frame1\n\t{\n\t\n\t}\n}";
         
         //输出一条错误信息
-        private void OutOneError(string info, int syid)
+        private void OutOneError(Dictionary<int, string> infos)
         {
-            //if (_isCoding) SuspendBackgroundParse();
-            var err = _db.GetError(syid, 100);
-            err.ErrorInfo = info;
             var errl = new List<ParseError>();
-            errl.Add(err);
-            //Dispatcher.BeginInvoke(new ParseErrorHandler(ShowParseError), _workedVersion, errl);
+            foreach(var erri in infos)
+            {
+                var err = _db.GetError(erri.Key, 100);
+                err.ErrorInfo = erri.Value;
+                errl.Add(err);
+            }
             ShowParseError(_workedVersion, errl);
-            //if (_isCoding) RecoveryBackgroundParse();
         }
 
         //加载编辑器配置
@@ -526,24 +526,21 @@ namespace FrameIO.Main
         #region --Command--
 
         //代码检查
-        private ProjectInfo DoCheckCode()
+        private bool DoCheckCode()
         {
              //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
             SaveProject(this, null);
 
-            ProjectInfo ret = null;
+            bool ret = false;
 
             if(ReLoadProjectToUI(false, true))
             {
-                ret = FrameIOCodeCheck.GenerateCheck(_project);
-                if (ret == null)
-                {
-                    OutOneError(FrameIOCodeCheck.LastErrorInfo, FrameIOCodeCheck.LastErrorSyid);
-                }
+                ret = FrameIOCodeCheck.CheckProject(_project);
+                if (!ret) OutOneError(FrameIOCodeCheck.ErrorList);
             }
 
             if (HSplitter.Visibility != Visibility.Visible) OutDispHide(this, null);
-            OutText(string.Format("信息：代码检查{0}", (ret!=null)?"成功":"失败"), false);
+            OutText(string.Format("信息：代码检查{0}", ret?"成功":"失败"), false);
             return ret;
         }
 
@@ -625,8 +622,7 @@ namespace FrameIO.Main
             if(e.Parameter.ToString() == "csharp")
             {
                 if (FileName.Length == 0) return;
-                var pji = DoCheckCode();
-                if (pji == null)
+                if (DoCheckCode())
                 {
                     OutText("信息：无法启动代码输出", false);
                     return;

@@ -44,8 +44,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeFile.cs" />
-    <Compile Include="FrameBlock.cs" />
     <Compile Include="Generator\FrameCompileFile.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />
     <Compile Include="Generator\FrameIOCodeGenerator.cs" />

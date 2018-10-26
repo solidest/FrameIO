@@ -136,7 +136,8 @@ PRAGMA foreign_keys = on;
                     Notes = LoadNotes(syid),
                     Propertys = LoadSubsysProperty(ssid),
                     Channels = LoadChannel(ssid),
-                    Actions = LoadAction(ssid)
+                    Actions = LoadAction(ssid),
+                    Syid = syid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == ss.Name).Count() > 0)
                 {
@@ -165,7 +166,8 @@ PRAGMA foreign_keys = on;
                     Name = chname,
                     ChannelType = (syschanneltype)Convert.ToInt32(r["channeltype"]),
                     Notes = LoadNotes(syid),
-                    Options = LoadChannelOptions(chid)
+                    Options = LoadChannelOptions(chid),
+                    Syid = syid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == ch.Name).Count() > 0)
                 {
@@ -182,7 +184,7 @@ PRAGMA foreign_keys = on;
         private ObservableCollection<SubsysChannelOption>  LoadChannelOptions(int chid)
         {
             var ret = new ObservableCollection<SubsysChannelOption>();
-            var tb = _db.ExecuteQuery("SELECT sy2.symbol name, valuesyid, sy.symbol option FROM fio_sys_channel_option op LEFT JOIN fio_symbol sy ON op.valuesyid=sy.rowid LEFT JOIN fio_symbol sy2 ON op.nameid=sy2.rowid WHERE op.channelid ="
+            var tb = _db.ExecuteQuery("SELECT nameid, sy2.symbol name, valuesyid, sy.symbol option FROM fio_sys_channel_option op LEFT JOIN fio_symbol sy ON op.valuesyid=sy.rowid LEFT JOIN fio_symbol sy2 ON op.nameid=sy2.rowid WHERE op.channelid ="
                 + chid.ToString());
             foreach(DataRow r in tb.Rows)
             {
@@ -190,7 +192,8 @@ PRAGMA foreign_keys = on;
                 {
                     Notes = LoadNotes(Convert.ToInt32(r["valuesyid"])),
                     Name = r["name"].ToString(),
-                    OptionValue = r["option"].ToString()
+                    OptionValue = r["option"].ToString(),
+                    Syid = Convert.ToInt32(r["nameid"])
                 };
                 if (ret.Where(p => p.Name == op.Name).Count() > 0)
                 {
@@ -210,6 +213,7 @@ PRAGMA foreign_keys = on;
                + ssid.ToString());
             foreach(DataRow r in tb.Rows)
             {
+                var syid = Convert.ToInt32(r["namesyid"]);
                 var acid = Convert.ToInt32(r["rowid"]);
                 var ac = new SubsysAction()
                 {
@@ -218,11 +222,12 @@ PRAGMA foreign_keys = on;
                     IOType = (actioniotype)Convert.ToInt32(r["actiontype"]),
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                    Maps = LoadActionMaps(acid)
+                    Maps = LoadActionMaps(acid),
+                    Syid = syid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == ac.Name).Count() > 0)
                 {
-                    AddError(Convert.ToInt32(r["namesyid"]), 6);
+                    AddError(syid, 6);
                 }
                 ret.Add(ac);
             }
@@ -238,16 +243,18 @@ PRAGMA foreign_keys = on;
                 + acid.ToString());
             foreach (DataRow r in tb.Rows)
             {
+                var syid = Convert.ToInt32(r["segsyid"]);
                 var mid = Convert.ToInt32(r["rowid"]);
                 var mp = new SubsysActionMap()
                 {
                     FrameSegName = r["segname"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["segsyid"])),
-                    SysPropertyName = r["proname"].ToString()
+                    SysPropertyName = r["proname"].ToString(),
+                    Syid = syid
                 };
                 if (_checkSemantics && Convert.ToInt32(r["segsyid"])!=0 && ret.Where(p => p.FrameSegName == mp.FrameSegName).Count() > 0)
                 {
-                    AddError(Convert.ToInt32(r["segsyid"]), 7);
+                    AddError(syid, 7);
                 }
                 ret.Add(mp);
             }
@@ -263,16 +270,18 @@ PRAGMA foreign_keys = on;
                + ssid.ToString());
             foreach (DataRow r in tb.Rows)
             {
+                var syid = Convert.ToInt32(r["namesyid"]);
                 var sp = new SubsysProperty()
                 {
                     IsArray = Convert.ToInt32(r["isarray"]) == 0 ? false : true,
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                    PropertyType = (syspropertytype)Convert.ToInt32(r["propertytype"])
+                    PropertyType = (syspropertytype)Convert.ToInt32(r["propertytype"]),
+                    Syid = syid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == sp.Name).Count() > 0)
                 {
-                    AddError(Convert.ToInt32(r["namesyid"]), 8);
+                    AddError(syid, 8);
                 }
                 ret.Add(sp);
             }

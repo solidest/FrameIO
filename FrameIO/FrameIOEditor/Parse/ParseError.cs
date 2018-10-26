@@ -18,10 +18,12 @@ namespace FrameIO.Main
         {
             get
             {
-                var str = GetErrorStr();
+                return GetErrorStr();
+              
+
                 //if (str == "UNKNOW")
                 {
-                    return "---ErrorCode" + ErrorCode.ToString() + "--- " + str;
+                    //return "---ErrorCode" + ErrorCode.ToString() + "--- " + str;
                 }
                 //else
                 //  return str;
