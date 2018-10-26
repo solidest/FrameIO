@@ -15,6 +15,8 @@ namespace FrameIO.Main
         public actioniotype IOType { get; set; }
         public string ChannelName { get; set; }
         public string FrameName { get; set; }
+        public int Syid { get; set; }
+
         public ObservableCollection<SubsysActionMap> Maps { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }

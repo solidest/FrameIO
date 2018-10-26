@@ -87,8 +87,7 @@ int utf8len = 0;
 "tcpserver"				{ return T_TCPSERVER; }
 "tcpclient"				{ return T_TCPCLIENT; }
 "udp"					{ return T_UDP; }
-"di"					{ return T_DI; }
-"do"					{ return T_DO; }
+"dio"					{ return T_DIO; }
       
 "signed"				{ return T_SIGNED; }
 "bitcount"				{ return T_BITCOUNT; }

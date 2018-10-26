@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FrameIOParserDb.h"
+#pragma comment (lib,"sqlite3.lib")
 
 //≥ı ºªØ
 FrameIOParserDb::FrameIOParserDb()

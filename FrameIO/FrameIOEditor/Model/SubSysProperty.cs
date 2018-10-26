@@ -13,6 +13,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
         public syspropertytype PropertyType{ get; set; }
         public bool IsArray { get; set; }
+        public int Syid { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

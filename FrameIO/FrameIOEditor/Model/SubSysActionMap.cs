@@ -12,6 +12,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
         public string SysPropertyName { get; set; }
         public string FrameSegName { get; set; }
+        public int Syid { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

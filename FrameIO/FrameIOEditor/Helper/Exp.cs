@@ -65,7 +65,7 @@ namespace FrameIO.Main
                     return LeftExp.CanEval(varlist) && RightExp.CanEval(varlist);
                 case exptype.EXP_BYTESIZEOF:
                 case exptype.EXP_ID:
-                    return varlist.Contains(ConstStr);
+                    return varlist.Contains(ConstStr) || ConstStr=="this";
             }
             Debug.Assert(false);
             return false;

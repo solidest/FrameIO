@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -222,6 +223,25 @@ namespace FrameIO.Runtime
 
         #endregion
 
+        #region --SegmentName--
+
+        static Dictionary<ushort, string> _symbols;
+        internal static void InitializeSymbols(byte[] content)
+        {
+            using (var ms = new MemoryStream(content))
+            {
+                var bf = new BinaryFormatter();
+                _symbols = (Dictionary<ushort, string>)bf.Deserialize(ms);
+            }
+        }
+
+        internal static string GetName(ushort idx)
+        {
+            return _symbols[idx];
+        }
+
+        #endregion
+
     }
 
 
@@ -252,7 +272,7 @@ namespace FrameIO.Runtime
     internal interface IUnpackRunExp:IRunInitial
     {
         bool TryGetSegmentValue(byte[] buff, ref double value, ushort idx);
-        bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx);
+        //bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx);
         bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx);
         bool TryGetExpValue(byte[] buff, ref double value, ushort idx);
         UnpackInfo GetUnpackInfo(ushort idx);

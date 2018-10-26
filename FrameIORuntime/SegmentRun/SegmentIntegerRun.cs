@@ -87,9 +87,20 @@ namespace FrameIO.Runtime
             info.BitStart = pos_bit;
             info.BitLen = BitCount;
 
-            //HACK 验证规则处理
-            //ir.AddErrorInfo("", this);
-
+            if(_vlidmax!=null || _vlidmin!=null || _vlidcheck!=null)
+            {
+                double v;
+                if (IsSigned)
+                    v = UnpackToLong(buff, (uint)info.BitStart, BitCount, Encoded, IsBigOrder);
+                else
+                    v = UnpackToULong(buff, (uint)info.BitStart, BitCount, IsBigOrder);
+                if (_vlidmax != null) if (!_vlidmax.Valid(v)) ir.AddErrorInfo("超出最大值设置", this);
+                if (_vlidmin != null) if (!_vlidmin.Valid(v)) ir.AddErrorInfo("低于最小值设置", this);
+                if (_vlidcheck != null)
+                {
+                    if (v != (_vlidcheck.GetCheckValue(buff, pos_bit / 8)& (~(ulong)0)>>(64-BitCount))) ir.AddErrorInfo("校验值错误", this); ;
+                }
+            }
             pos_bit += BitCount;
             return 0;
         }
@@ -100,7 +111,6 @@ namespace FrameIO.Runtime
         {
             if (info.IsUnpack)
             {
-               //var vv = GetUIntxFromByte(buff, (uint)info.BitStart, BitCount);
                 if (IsSigned)
                     value = UnpackToLong(buff, (uint)info.BitStart, BitCount, Encoded, IsBigOrder);
                 else
@@ -133,7 +143,7 @@ namespace FrameIO.Runtime
         {
             if (_vlidcheck != null && pack != null)
             {
-                SetSegmentValue(value_buff, _vlidcheck.GetCheckValue(pack.GetBuffer(), ir), info);
+                SetSegmentValue(value_buff, _vlidcheck.GetCheckValue(pack.GetBuffer(), (int)pack.Position),info);
                 return;
             }
 

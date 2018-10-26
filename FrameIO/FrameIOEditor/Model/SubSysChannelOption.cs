@@ -13,7 +13,7 @@ namespace FrameIO.Main
 
         public string Name { get; set; }
         public string OptionValue { get; set; }
-
+        public int Syid { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

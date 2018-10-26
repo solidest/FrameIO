@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FrameIO.Main;
 using System.Collections.Generic;
 using FrameIO.Runtime;
+using System.Threading;
 
 namespace FrameIO.Tester
 {
@@ -20,7 +21,7 @@ namespace FrameIO.Tester
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Inversion;
             seg.VMax = "100.99";
-            seg.VMin = "-25";
+            seg.VMin = "-10000";
             return seg;
         }
 
@@ -35,7 +36,7 @@ namespace FrameIO.Tester
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Complement;
             seg.VMax = "100.99";
-            seg.VMin = "-25";
+            seg.VMin = "-1000";
             return seg;
         }
 
@@ -49,7 +50,7 @@ namespace FrameIO.Tester
             seg.Encoded = EncodedType.Primitive;
             seg.Value = new Exp() { Op = exptype.EXP_REAL, ConstStr = "10.8987" };
             seg.VMax = "1000";
-            seg.VMin = "-999";
+            seg.VMin = "-99099";
             return seg;
         }
 
@@ -118,6 +119,7 @@ namespace FrameIO.Tester
         [TestMethod]
         public void UnpackTest()
         {
+
             RuntimeInitialTest();
             var settor = FrameIOFactory.GetFrameSettor(1);
 
@@ -266,6 +268,80 @@ namespace FrameIO.Tester
             sys1.CH1.Close();
             sys2.CH1.Close();
         }
+
+        //测试--规则
+        [TestMethod]
+        public void TestValidate()
+        {
+
+            var sys1 = new test_validate.SYS1();
+            var sys2 = new test_validate.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 4;
+            sys1.PROPERTYb.Value = 8;
+            sys1.PROPERTYc.Value = 999988887;
+            sys1.PROPERTYd.Value = 999.77766;
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
+
+            sys1.SendData();
+
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.check_value.Value != null && sys2.check_value.Value !=0);
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
+        //测试bytesizeof
+        [TestMethod]
+        public void TestBytesizeof()
+        {
+
+            var sys1 = new test_bytesizeof.SYS1();
+            var sys2 = new test_bytesizeof.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 4;
+            sys1.PROPERTYb.Value = 8;
+            sys1.PROPERTYc.Value = 999988887;
+            sys1.PROPERTYd.Value = 999.77766;
+            int len = (new Random()).Next(1, 100);
+            sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(8));
+            for (int i=0; i<len; i++) sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(9));
+            sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(7));
+
+            sys1.SendData();
+
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.PROPERTY2e.Count == len+2);
+
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
 
     }
 }

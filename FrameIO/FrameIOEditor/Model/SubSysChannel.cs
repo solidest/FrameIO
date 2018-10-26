@@ -13,6 +13,8 @@ namespace FrameIO.Main
         public string Name { get; set; }
         public string Notes { get; set; }
         public syschanneltype ChannelType { get; set; }
+        public int Syid { get; set; }
+
         public ObservableCollection<SubsysChannelOption> Options { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }

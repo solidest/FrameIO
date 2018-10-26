@@ -134,23 +134,6 @@ namespace FrameIO.Runtime
             return _fi[idx].TryGetValue(ref value, buff, Info[idx]);
         }
 
-        public bool TryGetSegmentByteSize(byte[] buff, ref double size, ushort idx)
-        {
-            //HACK 
-            //int len = 0;
-            //ushort nextseg = 0;
-            //if(_fi[idx].TryGetBitLen(buff, ref len, ref nextseg, Info[idx], this))
-            //{
-            //    if (len % 8 != 0)
-            //        throw new Exception("runtime");
-            //    else
-            //        size = len / 8;
-            //    return true;
-            //}
-
-            return false;
-
-        }
 
         public bool TryGetNeedBitLen(byte[] buff, ref int bitlen, ref ushort nextseg, ushort idx)
         {

@@ -354,23 +354,23 @@ namespace FrameIO.Main
             SetTokenValue(ref token, encoded, pos_encoded, 2);
             SetTokenValue(ref token, (byte)(seg.ByteOrder == ByteOrderType.Big ? 1 : 0), pos_byteorder, 1);
             SetTokenValue(ref token, (byte)(seg.Signed ? 1 : 0), pos_issigned, 1);
-              if (seg.BitCount == 64)
-                ; ;
             SetTokenValue(ref token, (byte)(seg.BitCount), pos_bitcount, len_bitcount);
 
             if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
+            var ret = AddSegment(token, pre + "." + seg.Name);
+
             if (seg.VCheck != CheckType.None)
             {
                 if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
                     seg.VCheckRangeBegin = brotherlist[0].Name;
                 if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
-                    seg.VCheckRangeEnd = FindPreiousSegment(seg, brotherlist);
+                    seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
             }
             var refvalid = LookUpValidator(seg.VMax, seg.VMin, seg.VCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
-
-            return AddSegment(token, pre + "." + seg.Name);
+            UpdateSegmentToken(ret, token);
+            return ret;
         }
 
         //编译浮点数字段
@@ -474,7 +474,7 @@ namespace FrameIO.Main
             const byte pos_checkbegin = 16;
             const byte pos_checkend = 32;
             ulong token = CO_VALIDATOR_CHECK;
-            SetTokenValue(ref token, (byte)check, pos_checktype, LEN_BYTE);
+            SetTokenValue(ref token, (byte)((int)check- (int)CheckType.SEGPV_SUM8+1), pos_checktype, LEN_BYTE);
             SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
             SetTokenValue(ref token, (byte)LookUpSegment(checkend, pre), pos_checkend, LEN_USHORT);
             return AddValidator(token, refprevious);
@@ -661,19 +661,19 @@ namespace FrameIO.Main
 
             }
 
-            //查找字段
-            private static string FindPreiousSegment(FrameSegmentBase who, IList<FrameSegmentBase> brother)
-            {
-                var ret = "";
-                for (int i = 0; i < brother.Count - 1; i++)
-                {
-                    if (brother[i] == who)
-                        return ret;
-                    else
-                        ret = brother[i].Name;
-                }
-                throw new Exception("unknow");
-            }
+            ////查找上一个字段
+            //private static string FindPreiousSegment(FrameSegmentBase who, IList<FrameSegmentBase> brother)
+            //{
+            //    var ret = "";
+            //    for (int i = 0; i < brother.Count - 1; i++)
+            //    {
+            //        if (brother[i] == who)
+            //            return ret;
+            //        else
+            //            ret = brother[i].Name;
+            //    }
+            //    throw new Exception("unknow");
+            //}
 
             //查找引用的数据帧
             private static Frame FindFrame(string fname)
