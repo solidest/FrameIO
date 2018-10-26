@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FrameIO.Main;
 using System.Collections.Generic;
 using FrameIO.Runtime;
+using System.Threading;
 
 namespace FrameIO.Tester
 {
@@ -20,7 +21,7 @@ namespace FrameIO.Tester
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Inversion;
             seg.VMax = "100.99";
-            seg.VMin = "-25";
+            seg.VMin = "-10000";
             return seg;
         }
 
@@ -35,7 +36,7 @@ namespace FrameIO.Tester
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Complement;
             seg.VMax = "100.99";
-            seg.VMin = "-25";
+            seg.VMin = "-1000";
             return seg;
         }
 
@@ -49,7 +50,7 @@ namespace FrameIO.Tester
             seg.Encoded = EncodedType.Primitive;
             seg.Value = new Exp() { Op = exptype.EXP_REAL, ConstStr = "10.8987" };
             seg.VMax = "1000";
-            seg.VMin = "-999";
+            seg.VMin = "-99099";
             return seg;
         }
 
@@ -118,6 +119,7 @@ namespace FrameIO.Tester
         [TestMethod]
         public void UnpackTest()
         {
+
             RuntimeInitialTest();
             var settor = FrameIOFactory.GetFrameSettor(1);
 
@@ -271,6 +273,7 @@ namespace FrameIO.Tester
         [TestMethod]
         public void TestValidate()
         {
+
             var sys1 = new test_validate.SYS1();
             var sys2 = new test_validate.SYS2();
 
@@ -308,6 +311,7 @@ namespace FrameIO.Tester
         [TestMethod]
         public void TestBytesizeof()
         {
+
             var sys1 = new test_bytesizeof.SYS1();
             var sys2 = new test_bytesizeof.SYS2();
 
