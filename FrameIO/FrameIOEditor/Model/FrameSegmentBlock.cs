@@ -7,14 +7,27 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    using PropertyTools.DataAnnotations;
 
     public class FrameSegmentBlock : FrameSegmentBase
     {
+        [Browsable(false)]
         public BlockSegType UsedType { get; set; } = BlockSegType.None;
-        public string RefFrameName { get; set; } = null;
+
+        [VisibleBy(nameof(UsedType), BlockSegType.RefFrame)]
+        [Category("Data")]
+        public string RefFrameName { get; set; } = "";
+
+        [Browsable(false)]
         public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = null;
-        public string OneOfFromSegment { get; set; } = null;
-        public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = null;
+
+        [VisibleBy(nameof(UsedType), BlockSegType.OneOf)]
+        [Category("Data")]
+        public string OneOfBySegment { get; set; } = "";
+
+        [VisibleBy(nameof(UsedType), BlockSegType.OneOf)]
+        [Category("Data")]
+        public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = new ObservableCollection<OneOfMap>();
 
     }
 
@@ -23,7 +36,6 @@ namespace FrameIO.Main
     {
         public string EnumItem { get; set; } = "";
         public string FrameName { get; set; } = "";
-        public bool IsDefault { get; set; } = false;
     }
 
     public enum BlockSegType

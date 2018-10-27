@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\PropertyChanged2.Fody.2.5.12\build\PropertyChanged2.Fody.props" Condition="Exists('..\packages\PropertyChanged2.Fody.2.5.12\build\PropertyChanged2.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,6 +36,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PropertyChanged2, Version=2.5.12.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyChanged2.Fody.2.5.12\lib\net40\PropertyChanged2.dll</HintPath>
+    </Reference>
+    <Reference Include="PropertyTools">
+      <HintPath>..\libs\PropertyTools.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -54,6 +62,7 @@
     <Compile Include="Generator\FrameIOCodeGenerator.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
+    <Compile Include="Helper\ExpConverter.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Model\Enumdef.cs" />
@@ -63,8 +72,8 @@
     <Compile Include="Model\FrameSegmentBlock.cs" />
     <Compile Include="Model\FrameSegmentInteger.cs" />
     <Compile Include="Model\FrameSegmentReal.cs" />
+    <Compile Include="ModelSummary\FrameSegmentSummary.cs" />
     <Compile Include="Model\FrameSegmentText.cs" />
-    <Compile Include="Model\FrameSegmentVirtual.cs" />
     <Compile Include="Model\IOProject.cs" />
     <Compile Include="Model\SubSys.cs" />
     <Compile Include="Model\SubSysAction.cs" />
@@ -77,5 +86,16 @@
     <Compile Include="Parse\SqlLiteWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.3.2.13\build\Fody.targets" Condition="Exists('..\packages\Fody.3.2.13\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.3.2.13\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.2.13\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\PropertyChanged2.Fody.2.5.12\build\PropertyChanged2.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged2.Fody.2.5.12\build\PropertyChanged2.Fody.props'))" />
+  </Target>
 </Project>

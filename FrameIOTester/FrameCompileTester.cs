@@ -20,8 +20,8 @@ namespace FrameIO.Tester
             seg.BitCount = 8;
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Inversion;
-            seg.VMax = "100.99";
-            seg.VMin = "-10000";
+            seg.ValidateMax = "100.99";
+            seg.ValidateMin = "-10000";
             return seg;
         }
 
@@ -35,8 +35,8 @@ namespace FrameIO.Tester
             seg.Signed = true;
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Complement;
-            seg.VMax = "100.99";
-            seg.VMin = "-1000";
+            seg.ValidateMax = "100.99";
+            seg.ValidateMin = "-1000";
             return seg;
         }
 
@@ -49,8 +49,8 @@ namespace FrameIO.Tester
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Primitive;
             seg.Value = new Exp() { Op = exptype.EXP_REAL, ConstStr = "10.8987" };
-            seg.VMax = "1000";
-            seg.VMin = "-99099";
+            seg.ValidateMax = "1000";
+            seg.ValidateMin = "-99099";
             return seg;
         }
 
@@ -63,8 +63,8 @@ namespace FrameIO.Tester
             seg.IsDouble = false;
             seg.ByteOrder = ByteOrderType.Big;
             seg.Encoded = EncodedType.Complement;
-            seg.VMax = "100.99";
-            seg.VMin = "-25";
+            seg.ValidateMax = "100.99";
+            seg.ValidateMin = "-25";
             return seg;
         }
 

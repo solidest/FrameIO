@@ -215,6 +215,8 @@ PRAGMA foreign_keys = on;
             {
                 var syid = Convert.ToInt32(r["namesyid"]);
                 var acid = Convert.ToInt32(r["rowid"]);
+                ObservableCollection<SubsysActionMap> liteMaps = null;
+                List<string> userBeginCode = null, userEndCode = null;
                 var ac = new SubsysAction()
                 {
                     ChannelName = r["channelname"].ToString(),
@@ -222,9 +224,12 @@ PRAGMA foreign_keys = on;
                     IOType = (actioniotype)Convert.ToInt32(r["actiontype"]),
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                    Maps = LoadActionMaps(acid),
+                    Maps = LoadActionMaps(acid, out liteMaps, out userBeginCode, out userEndCode),
                     Syid = syid
                 };
+                ac.LiteMaps = liteMaps;
+                ac.BeginCodes = userBeginCode;
+                ac.EndCodes = userEndCode;
                 if (_checkSemantics && ret.Where(p => p.Name == ac.Name).Count() > 0)
                 {
                     AddError(syid, 6);
@@ -236,9 +241,12 @@ PRAGMA foreign_keys = on;
 
 
         //加载IO操作 映射
-        public ObservableCollection<SubsysActionMap> LoadActionMaps(int acid)
+        public ObservableCollection<SubsysActionMap> LoadActionMaps(int acid, out ObservableCollection<SubsysActionMap> liteMaps, out List<string> userBeginCode, out List<string> userEndCode)
         {
             var ret = new ObservableCollection<SubsysActionMap>();
+            liteMaps = new ObservableCollection<SubsysActionMap>();
+            userBeginCode = new List<string>();
+            userEndCode = new List<string>();
             var tb = _db.ExecuteQuery("SELECT mp.rowid, segsyid, sy1.symbol segname, sy2.symbol proname FROM fio_sys_action_map mp LEFT JOIN fio_symbol sy1 ON mp.segsyid=sy1.rowid LEFT JOIN fio_symbol sy2 ON mp.sysprosyid=sy2.rowid WHERE mp.actionid="
                 + acid.ToString());
             foreach (DataRow r in tb.Rows)
@@ -257,6 +265,28 @@ PRAGMA foreign_keys = on;
                     AddError(syid, 7);
                 }
                 ret.Add(mp);
+            }
+
+            for(int i=0; i<ret.Count; i++)
+            {
+                if (!ret[i].SysPropertyName.StartsWith("@"))
+                    liteMaps.Add(ret[i]);
+            }
+
+            for (int i = 0; i < ret.Count; i++)
+            {
+                if (!ret[i].SysPropertyName.StartsWith("@@"))
+                    userBeginCode.Add(ret[i].SysPropertyName);
+                else
+                    break;
+            }
+
+            for(int i = ret.Count-1; i>=0; i--)
+            {
+                if (!ret[i].SysPropertyName.StartsWith("@@"))
+                    userEndCode.Add(ret[i].SysPropertyName);
+                else
+                    break;
             }
 
             return ret;
@@ -444,13 +474,13 @@ PRAGMA foreign_keys = on;
                         seg.Repeated = GetExp(pro.proid, null, null);
                         break;
                     case segpropertytype.SEGP_MAX:
-                        seg.VMax = pro.ivalue;
+                        seg.ValidateMax = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_MIN:
-                        seg.VMin = pro.ivalue;
+                        seg.ValidateMin = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_CHECK:
-                        seg.VCheck = (CheckType)Convert.ToInt32(pro.vtype);
+                        seg.ValidateCheck = (CheckType)Convert.ToInt32(pro.vtype);
                         break;
                     case segpropertytype.SEGP_CHECKRANGE_BEGIN:
                         seg.VCheckRangeBegin = pro.ivalue;
@@ -459,7 +489,7 @@ PRAGMA foreign_keys = on;
                         seg.VCheckRangeEnd = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_TOENUM:
-                        seg.VToEnum = pro.ivalue;
+                        seg.ToEnum = pro.ivalue;
                         if(_checkSemantics)
                         {
                             if (_pj.EnumdefList.Where(p => p.Name == pro.ivalue).Count() == 0)
@@ -496,10 +526,10 @@ PRAGMA foreign_keys = on;
                         seg.Repeated = GetExp(pro.proid, null, null);
                         break;
                     case segpropertytype.SEGP_MAX:
-                        seg.VMax = pro.ivalue;
+                        seg.ValidateMax = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_MIN:
-                        seg.VMin = pro.ivalue;
+                        seg.ValidateMin = pro.ivalue;
                         break;
                         
                     default:
@@ -543,7 +573,7 @@ PRAGMA foreign_keys = on;
             {
                 var iof = new OneOfMap()
                 {
-                    IsDefault = (Convert.ToInt32(r["itemsyid"]) == 0),
+                    //IsDefault = (Convert.ToInt32(r["itemsyid"]) == 0),
                     EnumItem = (Convert.ToInt32(r["itemsyid"]) == 0) ? "other" : r["itname"].ToString(),
                     FrameName = r["frname"].ToString()
                 };
@@ -571,7 +601,7 @@ PRAGMA foreign_keys = on;
                                 seg.UsedType = BlockSegType.DefFrame;
                                 break;
                             case segpropertyvaluetype.SEGPV_ONEOF:
-                                seg.OneOfFromSegment = pro.ivalue;
+                                seg.OneOfBySegment = pro.ivalue;
                                 seg.OneOfCaseList = LoadOneOfList(pro.proid);
                                 seg.UsedType = BlockSegType.OneOf;
                                 break;

@@ -93,5 +93,30 @@ namespace FrameIO.Main
             return -1;
         }
 
+        public override string ToString()
+        {
+            switch (Op)
+            {
+                case exptype.EXP_INT:
+                    return ConstStr;
+                case exptype.EXP_REAL:
+                    return ConstStr;
+                case exptype.EXP_ID:
+                    return ConstStr;
+                case exptype.EXP_BYTESIZEOF:
+                    return "bytesizeof(" + ConstStr + ")";
+                case exptype.EXP_ADD:
+                    return"(" + LeftExp.ToString() + "+" + RightExp.ToString() + ")";
+                case exptype.EXP_SUB:
+                    return "(" + LeftExp.ToString() + "-" + RightExp.ToString() + ")";
+                case exptype.EXP_MUL:
+                    return  LeftExp.ToString() + "*" + RightExp.ToString();
+                case exptype.EXP_DIV:
+                    return LeftExp.ToString() + "/" + RightExp.ToString();
+            }
+
+            return "";
+        }
+
     }
 }

@@ -527,38 +527,6 @@ namespace FrameIO.Main
 
         #region --Command--
 
-        //添加受控对象
-        private void AddSubsys(object sender, RoutedEventArgs e)
-        {
-            var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新受控对象的名称:";
-            dlg.Validate = ValidId;
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                var p = GetSubsysParent().AddChild(dlg.input.Text);
-                trProject.SelectedItem = p;
-            }
-            e.Handled = true;
-        }
-
-        //添加数据帧
-        private void AddFrame(object sender, RoutedEventArgs e)
-        {
-            var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新建数据帧的名称:";
-            dlg.Validate = ValidId;
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                var p = GetFrameParent().AddChild(dlg.input.Text);
-                trProject.SelectedItem = p;
-            }
-            e.Handled = true;
-        }
-
-
-
         //代码检查
         private bool DoCheckCode()
         {
@@ -950,7 +918,12 @@ namespace FrameIO.Main
             if (n != null)
             {
                 var ty = n.GetType();
-                if(ty==typeof(EnumdefNode)) OpenEnumdef(((EnumdefNode)n).TheValue);
+                if(ty==typeof(EnumdefNode))
+                    OpenEnumdef(((EnumdefNode)n).TheValue);
+                else if(ty == typeof(SubsysNode))
+                    OpenSubsys(((SubsysNode)n).TheValue);
+                else if(ty == typeof(FrameNode))
+                    OpenFrame(((FrameNode)n).TheValue);
             }
         }
 
@@ -1009,6 +982,75 @@ namespace FrameIO.Main
 
         #endregion
 
+        #region --SubsysUI--
+
+
+        //添加受控对象
+        private void AddSubsys(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新受控对象的名称:";
+            dlg.Validate = ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                SubsysNode p = (SubsysNode)GetSubsysParent().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+                OpenSubsys(p.TheValue);
+            }
+            e.Handled = true;
+        }
+
+        private void OpenSubsys(Subsys sys)
+        {
+            var ti = Findpage(sys.Name);
+            if (ti == null)
+            {
+                tbPages.AddTabItem();
+                ti = tbPages.Items[tbPages.Items.Count - 1] as TabItem;
+                var mb = new Binding("Name") { Mode = BindingMode.OneWay, Source = sys };
+                ti.SetBinding(HeaderedContentControl.HeaderProperty, mb);
+            }
+            ti.Content = new SubsysEditor(sys, _project.FrameList);
+            tbPages.SelectedItem = ti;
+        }
+
+
+        #endregion
+
+        #region --FrameUI--
+
+        //添加数据帧
+        private void AddFrame(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新建数据帧的名称:";
+            dlg.Validate = ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                FrameNode p = (FrameNode)GetFrameParent().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+                OpenFrame(p.TheValue);
+            }
+            e.Handled = true;
+        }
+
+        private void OpenFrame(Frame frm)
+        {
+            var ti = Findpage(frm.Name);
+            if (ti == null)
+            {
+                tbPages.AddTabItem();
+                ti = tbPages.Items[tbPages.Items.Count - 1] as TabItem;
+                var mb = new Binding("Name") { Mode = BindingMode.OneWay, Source = frm };
+                ti.SetBinding(HeaderedContentControl.HeaderProperty, mb);
+            }
+            ti.Content = new FrameEditor(frm);
+            tbPages.SelectedItem = ti;
+        }
+
+        #endregion
 
     }
 

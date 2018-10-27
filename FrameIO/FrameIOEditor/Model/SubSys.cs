@@ -17,9 +17,9 @@ namespace FrameIO.Main
         public string Name { get; set; }
         public string Notes { get; set; }
         public int Syid { get; set; }
-        public ObservableCollection<SubsysChannel> Channels { get; set; }
-        public ObservableCollection<SubsysAction> Actions { get; set; }
-        public ObservableCollection<SubsysProperty> Propertys { get; set; }
+        public ObservableCollection<SubsysChannel> Channels { get; set; } = new ObservableCollection<SubsysChannel>();
+        public ObservableCollection<SubsysAction> Actions { get; set; } = new ObservableCollection<SubsysAction>();
+        public ObservableCollection<SubsysProperty> Propertys { get; set; } = new ObservableCollection<SubsysProperty>();
 
 
         public event PropertyChangedEventHandler PropertyChanged;

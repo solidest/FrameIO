@@ -18,8 +18,13 @@ namespace FrameIO.Main
         public int Syid { get; set; }
         public string Notes { get; set; }
 
-        public ObservableCollection<FrameSegmentBase> Segments { get; set; }
-        [field: NonSerialized()]
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public ObservableCollection<FrameSegmentBase> Segments { get; set; } = new ObservableCollection<FrameSegmentBase>();
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

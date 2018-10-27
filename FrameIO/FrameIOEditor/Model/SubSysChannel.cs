@@ -15,7 +15,12 @@ namespace FrameIO.Main
         public syschanneltype ChannelType { get; set; }
         public int Syid { get; set; }
 
-        public ObservableCollection<SubsysChannelOption> Options { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public ObservableCollection<SubsysChannelOption> Options { get; set; } = new ObservableCollection<SubsysChannelOption>();
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

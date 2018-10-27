@@ -200,7 +200,7 @@ namespace FrameIO.Main
                     case BlockSegType.DefFrame:
                         return CompileSegment(bseg.DefineSegments, bseg, pre, need_udpate_refframe);
                     case BlockSegType.OneOf:
-                        return CompileSegment(bseg.OneOfFromSegment, (ushort)bseg.OneOfCaseList.Count, bseg, pre, brotherlist, need_udpate_refframe);
+                        return CompileSegment(bseg.OneOfBySegment, (ushort)bseg.OneOfCaseList.Count, bseg, pre, brotherlist, need_udpate_refframe);
                 }
             }
             throw new Exception("unknow");
@@ -235,12 +235,12 @@ namespace FrameIO.Main
             var byenum = FindToEnum(bysegname, brotherlist);
             var byseg = LookUpSegment(bysegname, parent_pre);
             var ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[0].EnumItem));
-            var ref_firstcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, parent.OneOfCaseList[0].IsDefault, need_update_end, need_udpate_refframe);
+            var ref_firstcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[0].FrameName, pre + "." + parent.OneOfCaseList[0].EnumItem, parent.OneOfCaseList[0].EnumItem == "other", need_update_end, need_udpate_refframe);
             var ref_lastcase = ref_firstcase;
             for (int i = 1; i < parent.OneOfCaseList.Count; i++)
             {
                 ref_intovalue = LookUpExp(GetEnumItemValue(byenum, parent.OneOfCaseList[i].EnumItem));
-                ref_lastcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].IsDefault, need_update_end, need_udpate_refframe);
+                ref_lastcase = CompileSegment(ref_intovalue, parent.OneOfCaseList[i].FrameName, pre + "." + parent.OneOfCaseList[i].EnumItem, parent.OneOfCaseList[i].EnumItem=="other", need_update_end, need_udpate_refframe);
             }
 
             ulong token_end_oneof = CO_SEGONEOF_OUT;
@@ -360,14 +360,14 @@ namespace FrameIO.Main
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             var ret = AddSegment(token, pre + "." + seg.Name);
 
-            if (seg.VCheck != CheckType.None)
+            if (seg.ValidateCheck != CheckType.None)
             {
                 if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
                     seg.VCheckRangeBegin = brotherlist[0].Name;
                 if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
                     seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
             }
-            var refvalid = LookUpValidator(seg.VMax, seg.VMin, seg.VCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
+            var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
             UpdateSegmentToken(ret, token);
             return ret;
@@ -412,7 +412,7 @@ namespace FrameIO.Main
             SetTokenValue(ref token, (byte)(seg.IsDouble ? 1 : 0), pos_isdouble, 1);
             if (isarray) SetTokenValue(ref token, LookUpExp(seg.Repeated, pre), pos_repeated, LEN_USHORT);
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
-            SetTokenValue(ref token, LookUpValidator(seg.VMax, seg.VMin, pre), pos_validate, LEN_USHORT);
+            SetTokenValue(ref token, LookUpValidator(seg.ValidateMax, seg.ValidateMin, pre), pos_validate, LEN_USHORT);
 
             return AddSegment(token, pre + "." + seg.Name);
         }
@@ -689,7 +689,7 @@ namespace FrameIO.Main
                 foreach (var seg in brotherlist)
                 {
                     if (seg.Name == segname)
-                        return ((FrameSegmentInteger)seg).VToEnum;
+                        return ((FrameSegmentInteger)seg).ToEnum;
                 }
                 throw new Exception("nukonw");
             }

@@ -29,15 +29,30 @@ namespace FrameIO.Main
                 return ImgHelper.GetImage("project.png");
             }
         }
-
-
         public override bool IsEditable
         {
             get
             {
-                return false;
+                return true;
             }
         }
+
+        public override string LoadEditText()
+        {
+            return Text.ToString();
+        }
+
+        public override bool SaveEditText(string value)
+        {
+            var s = Helper.ValidId(value);
+            if (s == string.Empty)
+            {
+                _project.Name = value;
+                return true;
+            }
+            return false;
+        }
+
 
         protected override void LoadChildren()
         {

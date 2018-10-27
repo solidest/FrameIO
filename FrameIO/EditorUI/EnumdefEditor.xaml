@@ -8,10 +8,10 @@
              xmlns:p="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <p:DataGrid ItemsSource="{Binding ItemsSource}">
+        <p:DataGrid ItemsSource="{Binding ItemsSource}" AutoInsert="False">
             <p:DataGrid.ColumnDefinitions>
-                <p:ColumnDefinition PropertyName="Name" Width="100"  Header="枚举项名称"/>
-                <p:ColumnDefinition PropertyName="ItemValue" Width="60" Header="数值"/>
+                <p:ColumnDefinition PropertyName="Name" Width="160" Header="枚举项名称"/>
+                <p:ColumnDefinition PropertyName="ItemValue" Width="80" Header="数值"/>
             </p:DataGrid.ColumnDefinitions>
         </p:DataGrid>
     </Grid>

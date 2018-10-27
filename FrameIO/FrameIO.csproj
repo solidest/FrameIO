@@ -109,6 +109,12 @@
     <Compile Include="EditorUI\EnumdefEditor.xaml.cs">
       <DependentUpon>EnumdefEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EditorUI\FrameEditor.xaml.cs">
+      <DependentUpon>FrameEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EditorUI\SubsysEditor.xaml.cs">
+      <DependentUpon>SubsysEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helper\CodeFolding.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\TextMarkerService.cs" />
@@ -132,6 +138,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EditorUI\EnumdefEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditorUI\FrameEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditorUI\SubsysEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

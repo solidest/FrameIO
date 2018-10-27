@@ -76,27 +76,70 @@ namespace FrameIO.Main
         //检查通道
         static private void CheckChannel(SubsysChannel ch)
         {
-            switch (ch.ChannelType)
+            string[] str = GetChannelStrOptionName(ch.ChannelType);
+            string[] nms = GetChannelNumberOptionName(ch.ChannelType);
+            foreach (var op in ch.Options)
+            {
+                if (nms.Contains(op.Name))
+                {
+                    CheckIsInteger(op.OptionValue, op.Syid);
+                }
+                else if (str.Contains(op.Name))
+                {
+                    if (Helper.ValidateIsInt(op.OptionValue) || Helper.ValidateIsReal(op.OptionValue))
+                        AddErrorInfo(op.Syid, "参数值设置错误");
+                }
+                else
+                    AddErrorInfo(op.Syid, "参数名称错误");
+            }
+        }
+
+        static public string[] GetChannelOptionName(syschanneltype chtype)
+        {
+            var ret1 = GetChannelNumberOptionName(chtype);
+            var ret2 = GetChannelStrOptionName(chtype);
+            return ret1.Concat(ret2).ToArray();
+
+        }
+
+        static private string[] GetChannelNumberOptionName(syschanneltype chtype)
+        {
+            switch (chtype)
             {
                 case syschanneltype.SCHT_COM:
-                    CheckComOption(ch.Options);
-                    break;
+                    return new string[4] { "baudrate", "parity", "databits", "stopbits" }; 
                 case syschanneltype.SCHT_CAN:
-                    CheckCanOption(ch.Options);
-                    break;
+                    return new string[9] { "devtype", "devind", "channelind", "baudrate", "acccode", "accmark", "mode", "filter", "waittimeout" };
                 case syschanneltype.SCHT_TCPSERVER:
-                    CheckTcpserverOption(ch.Options);
-                    break;
+                    return new string[1] { "port" };
                 case syschanneltype.SCHT_TCPCLIENT:
-                    CheckTcpclientOption(ch.Options);
-                    break;
+                    return new string[1] { "port" };
                 case syschanneltype.SCHT_UDP:
-                    CheckUdpOption(ch.Options);
-                    break;
+                    return new string[2] { "localport", "remoteport" }; 
                 case syschanneltype.SCHT_DIO:
-                   CheckDiDoOption(ch.Options);
-                    break;
+                    return new string[3] { "deviceno", "channelidx", "minvalue" };
             }
+            return new string[0];
+        }
+
+        static private string[] GetChannelStrOptionName(syschanneltype chtype)
+        {
+            switch (chtype)
+            {
+                case syschanneltype.SCHT_COM:
+                    return new string[1] { "portname"};
+                case syschanneltype.SCHT_CAN:
+                    return new string[1] { "vendor" };
+                case syschanneltype.SCHT_TCPSERVER:
+                    return new string[2] { "serverip", "clientip" };
+                case syschanneltype.SCHT_TCPCLIENT:
+                    return new string[1] { "serverip" };
+                case syschanneltype.SCHT_UDP:
+                    return new string[2] { "localip", "remoteip" };
+                case syschanneltype.SCHT_DIO:
+                    return new string[0];
+            }
+            return new string[0];
         }
 
 
@@ -104,7 +147,7 @@ namespace FrameIO.Main
         //检查di do通道
         static private void CheckDiDoOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] nsm = new string[3] { "deviceno", "channelidx", "minvalue" };
+            string[] nsm = GetChannelNumberOptionName(syschanneltype.SCHT_DIO);
             foreach (var op in ops)
             {
                 if (nsm.Contains(op.Name))
@@ -120,8 +163,8 @@ namespace FrameIO.Main
         //检查udp通道
         static private void CheckUdpOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] str = new string[2] { "localip", "remoteip" };
-            string[] nms = new string[2] { "localport", "remoteport" };
+            string[] str = GetChannelStrOptionName(syschanneltype.SCHT_UDP);
+            string[] nms = GetChannelNumberOptionName(syschanneltype.SCHT_UDP);
             foreach (var op in ops)
             {
                 if (nms.Contains(op.Name))
@@ -142,8 +185,8 @@ namespace FrameIO.Main
         //检查tcpclient通道
         static private void CheckTcpclientOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] str = new string[1] { "serverip"};
-            string[] nms = new string[1] { "port"};
+            string[] str = GetChannelStrOptionName(syschanneltype.SCHT_TCPCLIENT);
+            string[] nms = GetChannelNumberOptionName(syschanneltype.SCHT_TCPCLIENT);
             foreach (var op in ops)
             {
                 if (nms.Contains(op.Name))
@@ -163,10 +206,11 @@ namespace FrameIO.Main
         //检查tcpserver通道
         static private void CheckTcpserverOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] str = new string[2] { "serverip", "clientip"};
+            string[] nms = GetChannelNumberOptionName(syschanneltype.SCHT_TCPSERVER);
+            string[] str = GetChannelStrOptionName(syschanneltype.SCHT_TCPSERVER);
             foreach (var op in ops)
             {
-                if (op.Name == "port")
+                if (nms.Contains(op.Name))
                 {
                     CheckIsInteger(op.OptionValue, op.Syid);
                 }
@@ -183,15 +227,16 @@ namespace FrameIO.Main
         //检查COM通道
         static private void CheckComOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] str = new string[4] { "baudrate", "parity", "databits", "stopbits" };
+            string[] nms = GetChannelNumberOptionName(syschanneltype.SCHT_COM);
+            string[] str = GetChannelStrOptionName(syschanneltype.SCHT_COM);
             foreach (var op in ops)
             {
-                if (op.Name == "portname")
+                if (str.Contains(op.Name))
                 {
                     if (Helper.ValidateIsInt(op.OptionValue)||Helper.ValidateIsReal(op.OptionValue))
                         AddErrorInfo(op.Syid, "参数值设置错误");
                 }
-                else if (str.Contains(op.Name))
+                else if (nms.Contains(op.Name))
                 {
                     CheckIsInteger(op.OptionValue, op.Syid);
                 }
@@ -203,7 +248,8 @@ namespace FrameIO.Main
         //检查Can通道
         static private void CheckCanOption(IEnumerable<SubsysChannelOption> ops)
         {
-            string[] str = new string[9] { "devtype", "devind", "channelind", "baudrate","acccode","accmark", "mode", "filter", "waittimeout" };
+            string[] nms = GetChannelNumberOptionName(syschanneltype.SCHT_CAN);
+            string[] str = GetChannelStrOptionName(syschanneltype.SCHT_CAN);
             foreach (var op in ops)
             {
                 if (op.Name == "vendor")
@@ -211,7 +257,7 @@ namespace FrameIO.Main
                     if (op.OptionValue != "\"gzzy\"" && op.OptionValue != "\"yh\"")
                         AddErrorInfo(op.Syid, "CAN制造商类型取值必须为\"gzzy\"或\"yh\"");
                 }
-                else if (str.Contains(op.Name))
+                else if (nms.Contains(op.Name))
                 {
                     CheckIsInteger(op.OptionValue, op.Syid);
                 }
@@ -427,17 +473,17 @@ namespace FrameIO.Main
                     }
 
                 case BlockSegType.OneOf:
-                    if(!segns.Keys.Contains(bseg.OneOfFromSegment)) AddErrorInfo(bseg.Syid, string.Format("错误的字段【{0}】引用", bseg.OneOfFromSegment));
-                    var em = GetToEnum(frm, bseg.OneOfFromSegment);
+                    if(!segns.Keys.Contains(bseg.OneOfBySegment)) AddErrorInfo(bseg.Syid, string.Format("错误的字段【{0}】引用", bseg.OneOfBySegment));
+                    var em = GetToEnum(frm, bseg.OneOfBySegment);
                     if (em == null)
                     {
-                        AddErrorInfo(bseg.Syid, string.Format("oneof 引用的字段【{0}】未正确设置toenum", bseg.OneOfFromSegment));
+                        AddErrorInfo(bseg.Syid, string.Format("oneof 引用的字段【{0}】未正确设置toenum", bseg.OneOfBySegment));
                         return;
                     }
                     var ems = _pj.EnumdefList.Where(p => p.Name == em);
                     if(ems.Count() ==0)
                     {
-                        AddErrorInfo(bseg.Syid, string.Format("oneof 引用的字段【{0}】未正确设置toenum", bseg.OneOfFromSegment));
+                        AddErrorInfo(bseg.Syid, string.Format("oneof 引用的字段【{0}】未正确设置toenum", bseg.OneOfBySegment));
                         return;
                     }
                     segns.Add(bseg.Name, null);
@@ -482,7 +528,7 @@ namespace FrameIO.Main
             if (seg.Value != null && !seg.Value.CanEval(segns.Keys.ToList()))
                 AddErrorInfo(seg.Syid, "value使用的表达式无法解析");
 
-            if (seg.VToEnum != null && seg.VToEnum != "" && _pj.EnumdefList.Where(p => p.Name == seg.VToEnum).Count() == 0)
+            if (seg.ToEnum != null && seg.ToEnum != "" && _pj.EnumdefList.Where(p => p.Name == seg.ToEnum).Count() == 0)
                 AddErrorInfo(seg.Syid, "未找到所引用的枚举定义");
 
             if (seg.VCheckRangeBegin != null && seg.VCheckRangeBegin.Length > 0 && !segns.Keys.Contains(seg.VCheckRangeBegin))
@@ -532,7 +578,7 @@ namespace FrameIO.Main
                 {
                     if (seg.GetType() != typeof(FrameSegmentInteger))
                         return null;
-                    var ve = ((FrameSegmentInteger)seg).VToEnum;
+                    var ve = ((FrameSegmentInteger)seg).ToEnum;
                     if (ve == null || ve == "")
                         return null;
                     else

@@ -15,5 +15,10 @@ namespace FrameIO.Main
         public bool IsArray { get; set; }
         public int Syid { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

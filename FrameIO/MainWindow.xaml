@@ -95,7 +95,7 @@
                     <Image Source="img/rename.png" ></Image>
                 </Button.Content>
             </Button>
-            <Button Name="btDelete" ToolTip="删除选中项" Click="DeleteSelected">
+            <Button Name="btDelete" ToolTip="删除全部" Click="DeleteSelected">
                 <Button.Content>
                     <Image Source="img/del.png" ></Image>
                 </Button.Content>
