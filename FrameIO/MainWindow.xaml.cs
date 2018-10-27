@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
 using FrameIO.Interface;
+using System.Windows.Data;
 
 namespace FrameIO.Main
 {
@@ -40,6 +41,7 @@ namespace FrameIO.Main
 
             _isCoding = true;
             UpdateEditMode();
+            SwitchView(this, null);
         }
 
         private IOProject _project;
@@ -525,6 +527,38 @@ namespace FrameIO.Main
 
         #region --Command--
 
+        //添加受控对象
+        private void AddSubsys(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新受控对象的名称:";
+            dlg.Validate = ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                var p = GetSubsysParent().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+            }
+            e.Handled = true;
+        }
+
+        //添加数据帧
+        private void AddFrame(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新建数据帧的名称:";
+            dlg.Validate = ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                var p = GetFrameParent().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+            }
+            e.Handled = true;
+        }
+
+
+
         //代码检查
         private bool DoCheckCode()
         {
@@ -640,6 +674,7 @@ namespace FrameIO.Main
         private void CanSave(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = FileName.Length > 0;
+            UpdateEditorToolbar();
             e.Handled = true;
         }
 
@@ -711,17 +746,16 @@ namespace FrameIO.Main
             e.Handled = true;
         }
 
-        //是否可以删除
-        private void CanDelete(object sender, CanExecuteRoutedEventArgs e)
+        //更新工具栏按钮
+        private void UpdateEditorToolbar()
         {
             bool b = !_isCoding && FileName.Length > 0;
             var n = trProject.SelectedItem;
-            e.CanExecute = b && n!=null && ((ICSharpCode.TreeView.SharpTreeNode)n).CanDelete();
+            btDelete.IsEnabled = b && n!=null  && ((ICSharpCode.TreeView.SharpTreeNode)n).CanDelete();
             btRename.IsEnabled = b && n != null && ((ICSharpCode.TreeView.SharpTreeNode)n).IsEditable;
             btAddFrame.IsEnabled = b;
             btAddSubsys.IsEnabled = b;
             btAddEnum.IsEnabled = b;
-            e.Handled = true;
         }
 
         //重命名选中项
@@ -732,57 +766,14 @@ namespace FrameIO.Main
         }
 
         //删除选中项
-        private void DeleteSelected(object sender, ExecutedRoutedEventArgs e)
+        private void DeleteSelected(object sender, RoutedEventArgs e)
         {
-            ((ICSharpCode.TreeView.SharpTreeNode)trProject.SelectedItem).Delete();
+            var sn = (ICSharpCode.TreeView.SharpTreeNode)trProject.SelectedItem;
+            ClosePage(sn.Text.ToString());
+            sn.Delete();
             e.Handled = true;
         }
 
-        //添加受控对象
-        private void AddSubsys(object sender, RoutedEventArgs e)
-        {
-            var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新受控对象的名称:";
-            dlg.Validate = Helper.ValidId;
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                var p = GetSubsysParent().AddChild(dlg.input.Text);
-                trProject.SelectedItem = p;
-            }
-            e.Handled = true;
-        }
-
-        //添加数据帧
-        private void AddFrame(object sender, RoutedEventArgs e)
-        {
-            var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新建数据帧的名称:";
-            dlg.Validate = Helper.ValidId;
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                var p = GetFrameParent().AddChild(dlg.input.Text);
-                trProject.SelectedItem = p;
-            }
-            e.Handled = true;
-        }
-
-
-        //添加枚举
-        private void AddEnum(object sender, RoutedEventArgs e)
-        {
-            var dlg = new InputDlg();
-            dlg.caption.Text = "请输入新建枚举的名称:";
-            dlg.Validate = Helper.ValidId;
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                var p = GetEnumdefList().AddChild(dlg.input.Text);
-                trProject.SelectedItem = p;
-            }
-            e.Handled = true;
-        }
 
         //全部展开
         private void Expand(object sender, RoutedEventArgs e)
@@ -807,6 +798,7 @@ namespace FrameIO.Main
             miAddSubsys.IsEnabled = btAddSubsys.IsEnabled;
             miAddEnum.IsEnabled = btAddEnum.IsEnabled;
             miRename.IsEnabled = btRename.IsEnabled;
+            miDeleteSel.IsEnabled = btDelete.IsEnabled;
 
             var n = trProject.SelectedItem;
             if( n != null)
@@ -920,13 +912,104 @@ namespace FrameIO.Main
         }
 
 
-
-        #endregion
-
         private void ClearOut(object sender, RoutedEventArgs e)
         {
             OutText("", true);
         }
+
+        #endregion
+
+        #region --UIHelper--
+
+        //关闭页面
+        private void ClosePage(string name)
+        {
+            foreach (TabItem ti in tbPages.Items)
+            {
+                if (ti.Header.ToString() == name)
+                {
+                    tbPages.Items.Remove(ti);
+                    return;
+                }
+            }
+        }
+
+
+        //查找是否已经打开页面
+        private TabItem Findpage(string name)
+        {
+            foreach (TabItem ti in tbPages.Items)
+                if (ti.Header.ToString() == name) return ti;
+            return null;
+        }
+
+        //双击打开
+        private void tbPagesMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var n = trProject.SelectedItem;
+            if (n != null)
+            {
+                var ty = n.GetType();
+                if(ty==typeof(EnumdefNode)) OpenEnumdef(((EnumdefNode)n).TheValue);
+            }
+        }
+
+        //验证名称是否重复
+        private string ValidId(string s)
+        {
+            var ret = Helper.ValidId(s);
+            if (ret != "") return ret;
+            if (_project != null)
+            {
+                if (_project.EnumdefList.Where(p => p.Name == s).Count() > 0) ret = "名称重复";
+                if (ret != "") return ret;
+                if (_project.SubsysList.Where(p => p.Name == s).Count() > 0) ret = "名称重复";
+                if (ret != "") return ret;
+                if (_project.FrameList.Where(p => p.Name == s).Count() > 0) ret = "名称重复";
+            }
+            return ret;
+        }
+
+
+        #endregion
+
+        #region --EnumdefUI--
+
+        //添加枚举
+        private void AddEnum(object sender, RoutedEventArgs e)
+        {
+            var dlg = new InputDlg();
+            dlg.caption.Text = "请输入新建枚举的名称:";
+            dlg.Validate = ValidId;
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                EnumdefNode p = (EnumdefNode)GetEnumdefList().AddChild(dlg.input.Text);
+                trProject.SelectedItem = p;
+                OpenEnumdef(p.TheValue);
+            }
+            e.Handled = true;
+        }
+
+
+        //打开枚举
+        private void OpenEnumdef(Enumdef emd)
+        {
+            var ti = Findpage(emd.Name);
+            if (ti == null)
+            {
+                tbPages.AddTabItem();
+                ti = tbPages.Items[tbPages.Items.Count - 1] as TabItem;
+                var mb = new Binding("Name") { Mode = BindingMode.OneWay, Source=emd };
+                ti.SetBinding(HeaderedContentControl.HeaderProperty, mb);
+            }
+            ti.Content = new EnumdefEditor(emd);
+            tbPages.SelectedItem = ti;
+        }
+
+        #endregion
+
+
     }
 
 

@@ -95,7 +95,7 @@
                     <Image Source="img/rename.png" ></Image>
                 </Button.Content>
             </Button>
-            <Button Name="btDelete" ToolTip="删除选中项" Command="ApplicationCommands.Delete">
+            <Button Name="btDelete" ToolTip="删除选中项" Click="DeleteSelected">
                 <Button.Content>
                     <Image Source="img/del.png" ></Image>
                 </Button.Content>
@@ -168,7 +168,7 @@
         <TabControl BorderBrush="{x:Null}"  Name="tbDocTree" Grid.Row="1"  Margin="3,0,0,0" >
             <TabItem Header="项目管理器">
                 <Grid>
-                    <tree:SharpTreeView  x:Name="trProject"  ShowRoot="True"  ContextMenuOpening="trMain_ContextMenuOpening" >
+                    <tree:SharpTreeView  x:Name="trProject"  ShowRoot="True"  ContextMenuOpening="trMain_ContextMenuOpening" MouseDoubleClick="tbPagesMouseDoubleClick">
                         <tree:SharpTreeView.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="新建受控对象" Name="miAddSubsys" Click="AddSubsys">
@@ -197,7 +197,7 @@
                                         <Image Source="img/rename.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="删除" Command="ApplicationCommands.Delete">
+                                <MenuItem Header="删除"  Name="miDeleteSel" Click="DeleteSelected">
                                     <MenuItem.Icon>
                                         <Image Source="img/del.png"/>
                                     </MenuItem.Icon>
@@ -209,7 +209,7 @@
             </TabItem>            
         </TabControl>
 
-        <r:TabControl Margin="3,0,3,3" x:Name="tbPages" Grid.Row="1" Grid.Column="2"  
+        <r:TabControl  Margin="3,0,3,3" x:Name="tbPages" Grid.Row="1" Grid.Column="2"  
             TabStripPlacement="{Binding ElementName=listBox, Path=SelectedItem}" 
             TabItemMinWidth="80" TabItemMaxWidth="300" TabItemMinHeight="20" TabItemMaxHeight="40"
             VerticalContentAlignment="Center" AllowAddNew="False">
@@ -237,7 +237,6 @@
         <CommandBinding Command="ApplicationCommands.Find" Executed="FindAndReplace" CanExecute="CanFind"/>
         <CommandBinding Command="ApplicationCommands.Save" Executed="SaveProject" CanExecute="CanSave" />
         <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs" CanExecute="CanSaveAs" />
-        <CommandBinding Command="ApplicationCommands.Delete" Executed="DeleteSelected" CanExecute="CanDelete" />
     </Window.CommandBindings>
 
 </Window>

@@ -18,7 +18,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
         public int Syid { get; set; }
 
-        public ObservableCollection<EnumdefItem> ItemsList { get; set; }
+        public ObservableCollection<EnumdefItem> ItemsList { get; set; } = new ObservableCollection<EnumdefItem>();
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
