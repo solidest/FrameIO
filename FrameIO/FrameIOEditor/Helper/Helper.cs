@@ -13,8 +13,8 @@ namespace FrameIO.Main
     public partial class Helper
     {
 
-
-        public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms)
+        //取数据帧基础字段名
+        public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist = null)
         {
             var ret = new List<string>();
             var frms = pjfrms.Where(p => p.Name == name);
@@ -22,12 +22,12 @@ namespace FrameIO.Main
             var frm = frms.First();
             foreach (var seg in frm.Segments)
             {
-                AddSegName(ret, "", seg, pjfrms);
+                AddSegName(frm, ret, "", seg, pjfrms, oneoflist);
             }
             return ret;
         }
 
-        private static void AddSegName(List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms)
+        private static void AddSegName(Frame frm, List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist=null)
         {
             if (segnames.Count > 1000) return;
             var ty = seg.GetType();
@@ -43,25 +43,63 @@ namespace FrameIO.Main
                 {
                     case BlockSegType.RefFrame:
                         {
-                            var mylist = GetFrameSegmentsName(bseg.RefFrameName, pjfrms);
+                            var mylist = GetFrameSegmentsName(bseg.RefFrameName, pjfrms, oneoflist);
                             segnames.AddRange(mylist.Select(p => mypre + "." + p));
                             return;
                         }
                     case BlockSegType.DefFrame:
                         foreach (var myseg in bseg.DefineSegments)
-                            AddSegName(segnames, mypre, myseg, pjfrms);
+                            AddSegName(frm, segnames, mypre, myseg, pjfrms, oneoflist);
                         return;
                     case BlockSegType.OneOf:
                         foreach (var item in bseg.OneOfCaseList)
                         {
                             var itempre = mypre + "." + item.EnumItem;
-                            var mylist = GetFrameSegmentsName(item.FrameName, pjfrms);
+                            var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
                             segnames.AddRange(mylist.Select(p => itempre + "." + p));
+                        }
+                        if (oneoflist != null)
+                        {
+                            var refsegs = frm.Segments.Where(p => p.Name == bseg.OneOfBySegment);
+                            if (refsegs == null) break;
+                            var refseg = refsegs.First();
+                            if (refseg != null && refseg.GetType()==typeof(FrameSegmentInteger))
+                            {
+                                var iseg =(FrameSegmentInteger)refseg;
+                                if (iseg.ToEnum != null && iseg.ToEnum.Length >= 0)
+                                {
+                                    var ooh = new OneOfHelper() { ByEnum = iseg.ToEnum, BySegname = (pre == "" ? "" : (pre + "."))  + bseg.OneOfBySegment };
+                                    foreach (var item in bseg.OneOfCaseList)
+                                    {
+                                        var itempre = mypre + "." + item.EnumItem;
+                                        var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
+                                        var mysegs = mylist.Select(p => itempre + "." + p);
+                                        var ooih = new OneOfItemHelper() { ItemName = item.EnumItem == "other" ? "default" : ooh.ByEnum + "." + item.EnumItem };
+                                        ooih.Segmens.AddRange(mysegs);
+                                        ooh.Items.Add(ooih);
+                                    }
+                                    oneoflist.Add(ooh);
+                                }
+                            }
                         }
                         return;
                 }
             }
         }
+
+        public class OneOfHelper
+        {
+            public string ByEnum { get; set; }
+            public string BySegname { get; set; }
+
+            public List<OneOfItemHelper> Items { get; private set; } = new List<OneOfItemHelper>();
+        }
+        public class OneOfItemHelper
+        {
+            public string ItemName { get; set; }
+            public List<string> Segmens { get; private set; } = new List<string>();
+        }
+
 
         //验证标识名称是否有效
         static public string ValidId(string s)

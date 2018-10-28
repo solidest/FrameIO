@@ -32,8 +32,55 @@ namespace FrameIO.Runtime
             public static extern uint xor32_false(IntPtr data, int data_len);
             [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
             public static extern uint crc4_itu(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc5_epc(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc5_itu(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc5_usb(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc6_itu(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc7_mmc(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc8(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc8_itu(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc8_rohc(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc8_maxim(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_ibm(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_maxim(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_usb(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_modbus(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_ccitt(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_ccitt_false(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_x25(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_xmodem(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc16_dnp(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc32(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern uint crc32_mpeg_2(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern ulong crc64(IntPtr data, int data_len);
+            [DllImport("CRC.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+            public static extern ulong crc64_we(IntPtr data, int data_len);
 
-            public static ulong GetCheckValue(ushort checktype, byte[] data, int startpos, int endpos)
+
+
+
+        public static ulong GetCheckValue(ushort checktype, byte[] data, int startpos, int endpos)
             {
                 //byte[] data = new byte[] { 0x01, 0x02, 0x03, 0x04 };
                 var len = endpos - startpos;
@@ -99,6 +146,51 @@ namespace FrameIO.Runtime
                     return xor32_false(ptr, len);
                 case 11:
                     return crc4_itu(ptr, len);
+                case 12:
+                    return crc5_epc(ptr, len);
+                case 13:
+                    return crc5_itu(ptr, len);
+                case 14:
+                    return crc5_usb(ptr, len);
+                case 15:
+                    return crc6_itu(ptr, len);
+                case 16:
+                    return crc7_mmc(ptr, len);
+                case 17:
+                    return crc8(ptr, len);
+                case 18:
+                    return crc8_itu(ptr, len);
+                case 19:
+                    return crc8_rohc(ptr, len);
+                case 20:
+                    return crc8_maxim(ptr, len);
+                case 21:
+                    return crc16_ibm(ptr, len);
+                case 22:
+                    return crc16_maxim(ptr, len);
+                case 23:
+                    return crc16_usb(ptr, len);
+                case 24:
+                    return crc16_modbus(ptr, len);
+                case 25:
+                    return crc16_ccitt(ptr, len);
+                case 26:
+                    return crc16_ccitt_false(ptr, len);
+                case 27:
+                    return crc16_x25(ptr, len);
+                case 28:
+                    return crc16_xmodem(ptr, len);
+                case 29:
+                    return crc16_dnp(ptr, len);
+                case 30:
+                    return crc32(ptr, len);
+                case 31:
+                    return crc32_mpeg_2(ptr, len);
+                case 32:
+                    return crc64(ptr, len);
+                case 33:
+                    return crc64_we(ptr, len);
+
                 default:
                     return 0;
                 }

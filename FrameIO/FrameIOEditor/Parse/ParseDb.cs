@@ -275,18 +275,25 @@ PRAGMA foreign_keys = on;
 
             for (int i = 0; i < ret.Count; i++)
             {
-                if (!ret[i].SysPropertyName.StartsWith("@@"))
+                if (ret[i].SysPropertyName.StartsWith("@@"))
                     userBeginCode.Add(ret[i].SysPropertyName);
                 else
                     break;
             }
 
+            int ifind = -1;
             for(int i = ret.Count-1; i>=0; i--)
             {
-                if (!ret[i].SysPropertyName.StartsWith("@@"))
-                    userEndCode.Add(ret[i].SysPropertyName);
+                if (ret[i].SysPropertyName.StartsWith("@@"))
+                    ifind = i;
                 else
                     break;
+            }
+
+            if(ifind>=0)
+            {
+                for(int i=ifind; i<ret.Count; i++)
+                    userEndCode.Add(ret[i].SysPropertyName);
             }
 
             return ret;

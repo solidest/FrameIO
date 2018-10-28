@@ -13,10 +13,10 @@ namespace FrameIO.Main
         private int _projectid;
         public string Name { get; set; }
         public string Notes { get; set; }
-        public ObservableCollection<Subsys> SubsysList { get; set; }
+        public ObservableCollection<Subsys> SubsysList { get; set; } = new ObservableCollection<Subsys>();
 
-        public ObservableCollection<Frame> FrameList { get; set; }
-        public ObservableCollection<Enumdef> EnumdefList { get; set;  }
+        public ObservableCollection<Frame> FrameList { get; set; } = new ObservableCollection<Frame>();
+        public ObservableCollection<Enumdef> EnumdefList { get; set; } = new ObservableCollection<Enumdef>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -12,7 +12,7 @@ namespace FrameIO.Main
     {
         public string Name { get; set; }
         public string Notes { get; set; }
-        public syschanneltype ChannelType { get; set; }
+        public syschanneltype ChannelType { get; set; } = syschanneltype.SCHT_COM;
         public int Syid { get; set; }
 
         public override string ToString()

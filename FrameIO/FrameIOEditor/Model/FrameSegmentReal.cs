@@ -35,7 +35,7 @@ namespace FrameIO.Main
             if (Value != null && !Value.IsIntZero()) code.AppendFormat(" value={0}", Value.ToString());
             if (ValidateMax != null && ValidateMax.Length>0) code.AppendFormat(" max={0}", ValidateMax);
             if (ValidateMin != null && ValidateMin.Length>0) code.AppendFormat(" min={0}", ValidateMin);
-            code.Append(";" + Environment.NewLine);
+            code.Append(";" );
         }
     }
 }

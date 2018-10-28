@@ -299,6 +299,10 @@ namespace FrameIO.Main
             {
                 _isModified = edCode.IsModified;
             }
+            else
+            {
+                if (_project != null && !_isModified) _isModified = (edCode.Text != ProjectToCode.GetProjectCode(_project));
+            }
 
             if (_isModified)
             {
@@ -306,6 +310,7 @@ namespace FrameIO.Main
                 switch (res)
                 {
                     case MessageBoxResult.Yes:
+                        if (!_isCoding && _project != null) edCode.Text = ProjectToCode.GetProjectCode(_project);
                         File.WriteAllText(FileName, edCode.Text);
                         break;
                     case MessageBoxResult.No:
@@ -530,7 +535,7 @@ namespace FrameIO.Main
         //代码检查
         private bool DoCheckCode()
         {
-             //TODO if (!_isCoding) edCode.Text = _project.CreateCode();
+            if (!_isCoding && _project!=null) edCode.Text = ProjectToCode.GetProjectCode(_project);
             SaveProject(this, null);
 
             bool ret = ReLoadProjectToUI(false, true);
@@ -565,7 +570,17 @@ namespace FrameIO.Main
                 }
                 else
                 {
-                    //TODO if(_project!=null)edCode.Text = _project.CreateCode();
+                    trProject.Focus();
+                    if (_project != null)
+                    {
+                        var code = ProjectToCode.GetProjectCode(_project);
+                        if(edCode.Text!= code)
+                        {
+                            edCode.Text = code;
+                            edCode.IsModified = true;
+                            _isModified = true;
+                        }
+                    }
                     RecoveryBackgroundParse();
                 }
             }
@@ -581,8 +596,14 @@ namespace FrameIO.Main
             UpdateEditMode();
             OutText(string.Format("信息：切换为{0}编辑模式", _isCoding ? "代码" : "可视化"), false);
 
+            if (!_isCoding)
+            {
+                tbPages.Items.Clear();
+                if (_project != null)  trProject.Root = new ProjectNode(_project);
+            }
             if(e!=null) e.Handled = true;
         }
+
 
         //显示隐藏输出面板
         private void OutDispHide(object sender, RoutedEventArgs e)
@@ -649,6 +670,8 @@ namespace FrameIO.Main
         //保存
         private void SaveProject(object sender, ExecutedRoutedEventArgs e)
         {
+            if(!_isCoding && _project!=null) edCode.Text = ProjectToCode.GetProjectCode(_project);
+
             File.WriteAllText(FileName, edCode.Text);
             _isModified = false;
             edCode.IsModified = false;

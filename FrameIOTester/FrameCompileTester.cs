@@ -101,12 +101,12 @@ namespace FrameIO.Tester
             var start = 200;
 
             var code = new StringBuilder();
-            for (int i = start; i<= 32; i++)
+            for (int i = start; i<= start+32; i++)
             {
                 var ty = (segpropertyvaluetype)i;
-                var nm = ty.ToString().TrimStart("SEGPV_".ToCharArray()).ToLower();
-                code.Append("[DllImport(\"CRC.dll\", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]" + Environment.NewLine);
-                code.AppendFormat("public static extern uint {0}(IntPtr data, int data_len);" + Environment.NewLine, nm);
+                var nm = ty.ToString().Substring(6).ToLower();
+                code.AppendFormat("case {0}:" + Environment.NewLine, i-start + 1);
+                code.AppendFormat("\treturn {0}(ptr, len); " + Environment.NewLine, nm);
             }
             var str = code.ToString();
         }

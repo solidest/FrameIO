@@ -44,15 +44,14 @@ namespace FrameIO.Main
                     code.Append("}}");
                     break;
                 case BlockSegType.OneOf:
-                    code.AppendFormat("oneof({0}){{", OneOfBySegment);
-                    int len = code.Length;
+                    code.AppendFormat("oneof({0}){{", OneOfBySegment.Length==0?"_":OneOfBySegment);
+                    int i = -1;
                     foreach(var oi in OneOfCaseList)
                     {
-                        len = code.Length;
-                        code.AppendFormat(" {0} : {1},", oi.EnumItem, oi.FrameName);
+                        i++;
+                        code.AppendFormat(" {0} : {1}{2}", oi.EnumItem.Length==0?"_": oi.EnumItem, oi.FrameName.Length==0?"_": oi.FrameName, i==OneOfCaseList.Count-1?"":",");
                     }
-                    code.Replace(",", "", len, 1);
-                    code.Append("}};");
+                    code.Append("}" );
                     break;
             }
             code.Append(";");

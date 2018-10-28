@@ -16,7 +16,7 @@ namespace FrameIO.Main
 
         public override void AppendSegmentCode(StringBuilder code)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }
