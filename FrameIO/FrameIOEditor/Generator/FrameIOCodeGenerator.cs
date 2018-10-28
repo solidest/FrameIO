@@ -657,7 +657,7 @@ namespace FrameIO.Main
         }
 
         //类型名称
-        static private string GetTypeName(syspropertytype ty)
+        static public string GetTypeName(syspropertytype ty)
         {
             switch(ty)
             {

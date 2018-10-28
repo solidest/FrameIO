@@ -56,60 +56,12 @@ namespace FrameIO.Main
             {
                 acOpGrid.ItemsSource = _sys.Actions[s].LiteMaps;
                 if (_frms.Where(p => p.Name == _sys.Actions[s].FrameName).Count() > 0)
-                    acOpGrid.ColumnDefinitions[0].ItemsSource = GetFrameSegmentsName(_sys.Actions[s].FrameName);
+                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(_sys.Actions[s].FrameName, _frms);
                 else
                     acOpGrid.ColumnDefinitions[0].ItemsSource = null;
             }
         }
 
-        private IList<string> GetFrameSegmentsName(string name)
-        {
-            var ret = new List<string>();
-            var frms = _frms.Where(p => p.Name == name);
-            if (frms==null || frms.Count() == 0) return ret;
-            var frm = frms.First();
-            foreach(var seg in frm.Segments)
-            {
-                AddSegName(ret, "", seg);
-            }
-            return ret;
-        }
-
-        private void AddSegName(List<string> segnames, string pre, FrameSegmentBase seg)
-        {
-            if (segnames.Count > 1000) return;
-            var ty = seg.GetType();
-            if (ty == typeof(FrameSegmentInteger))
-                segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
-            else if (ty == typeof(FrameSegmentReal))
-                segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
-            else if (ty == typeof(FrameSegmentBlock))
-            {
-                var mypre = (pre == "" ? "" : (pre + ".")) + seg.Name;
-                var bseg = (FrameSegmentBlock)seg;
-                switch (bseg.UsedType)
-                {
-                    case BlockSegType.RefFrame:
-                        {
-                            var mylist = GetFrameSegmentsName(bseg.RefFrameName);
-                            segnames.AddRange(mylist.Select(p => mypre + "." + p));
-                            return;
-                        }
-                    case BlockSegType.DefFrame:
-                        foreach (var myseg in bseg.DefineSegments)
-                            AddSegName(segnames, mypre, myseg);
-                        return;
-                    case BlockSegType.OneOf:
-                        foreach(var item in bseg.OneOfCaseList)
-                        {
-                            var itempre = mypre + "." + item.EnumItem;
-                            var mylist = GetFrameSegmentsName(item.FrameName);
-                            segnames.AddRange(mylist.Select(p => itempre + "." + p));
-                        }
-                        return;
-                }
-            }
-        }
 
         private void UpdateTimerCh()
         {

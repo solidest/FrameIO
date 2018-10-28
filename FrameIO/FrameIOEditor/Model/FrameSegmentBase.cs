@@ -34,8 +34,24 @@ namespace FrameIO.Main
             return Name;
         }
 
+        public abstract void AppendSegmentCode(StringBuilder code);
+
         [field: NonSerialized()]
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected string GetEncodTypeName(EncodedType ty )
+        {
+            switch (ty)
+            {
+                case EncodedType.Primitive:
+                    return "primitive";
+                case EncodedType.Inversion:
+                    return "inversion";
+                case EncodedType.Complement:
+                    return "complement";
+            }
+            return "";
+        }
 
     }
 }

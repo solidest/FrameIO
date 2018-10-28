@@ -26,5 +26,16 @@ namespace FrameIO.Main
         [Category("Validator")]
         public string ValidateMin { get; set; } = null;
 
+        public override void AppendSegmentCode(StringBuilder code)
+        {
+            code.Append(string.Format("real {0}", Name));
+            if (IsDouble) code.Append(" isdouble=true");
+            if (ByteOrder == ByteOrderType.Big) code.Append(" byteorder=big");
+            if (Encoded != EncodedType.Primitive) code.AppendFormat(" encoded={0}", GetEncodTypeName(Encoded));
+            if (Value != null && !Value.IsIntZero()) code.AppendFormat(" value={0}", Value.ToString());
+            if (ValidateMax != null && ValidateMax.Length>0) code.AppendFormat(" max={0}", ValidateMax);
+            if (ValidateMin != null && ValidateMin.Length>0) code.AppendFormat(" min={0}", ValidateMin);
+            code.Append(";" + Environment.NewLine);
+        }
     }
 }

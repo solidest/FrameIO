@@ -29,6 +29,34 @@ namespace FrameIO.Main
         [Category("Data")]
         public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = new ObservableCollection<OneOfMap>();
 
+        public override void AppendSegmentCode(StringBuilder code)
+        {
+            code.AppendFormat("block {0} type=", Name);
+            switch (UsedType)
+            {
+                case BlockSegType.RefFrame:
+                    code.Append(RefFrameName);
+                    break;
+                case BlockSegType.DefFrame:
+                    code.Append("{{");
+                    foreach (var seg in DefineSegments)
+                        seg.AppendSegmentCode(code);
+                    code.Append("}}");
+                    break;
+                case BlockSegType.OneOf:
+                    code.AppendFormat("oneof({0}){{", OneOfBySegment);
+                    int len = code.Length;
+                    foreach(var oi in OneOfCaseList)
+                    {
+                        len = code.Length;
+                        code.AppendFormat(" {0} : {1},", oi.EnumItem, oi.FrameName);
+                    }
+                    code.Replace(",", "", len, 1);
+                    code.Append("}};");
+                    break;
+            }
+            code.Append(";");
+        }
     }
 
    

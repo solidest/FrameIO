@@ -13,6 +13,56 @@ namespace FrameIO.Main
     public partial class Helper
     {
 
+
+        public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms)
+        {
+            var ret = new List<string>();
+            var frms = pjfrms.Where(p => p.Name == name);
+            if (frms == null || frms.Count() == 0) return ret;
+            var frm = frms.First();
+            foreach (var seg in frm.Segments)
+            {
+                AddSegName(ret, "", seg, pjfrms);
+            }
+            return ret;
+        }
+
+        private static void AddSegName(List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms)
+        {
+            if (segnames.Count > 1000) return;
+            var ty = seg.GetType();
+            if (ty == typeof(FrameSegmentInteger))
+                segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
+            else if (ty == typeof(FrameSegmentReal))
+                segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
+            else if (ty == typeof(FrameSegmentBlock))
+            {
+                var mypre = (pre == "" ? "" : (pre + ".")) + seg.Name;
+                var bseg = (FrameSegmentBlock)seg;
+                switch (bseg.UsedType)
+                {
+                    case BlockSegType.RefFrame:
+                        {
+                            var mylist = GetFrameSegmentsName(bseg.RefFrameName, pjfrms);
+                            segnames.AddRange(mylist.Select(p => mypre + "." + p));
+                            return;
+                        }
+                    case BlockSegType.DefFrame:
+                        foreach (var myseg in bseg.DefineSegments)
+                            AddSegName(segnames, mypre, myseg, pjfrms);
+                        return;
+                    case BlockSegType.OneOf:
+                        foreach (var item in bseg.OneOfCaseList)
+                        {
+                            var itempre = mypre + "." + item.EnumItem;
+                            var mylist = GetFrameSegmentsName(item.FrameName, pjfrms);
+                            segnames.AddRange(mylist.Select(p => itempre + "." + p));
+                        }
+                        return;
+                }
+            }
+        }
+
         //验证标识名称是否有效
         static public string ValidId(string s)
         {

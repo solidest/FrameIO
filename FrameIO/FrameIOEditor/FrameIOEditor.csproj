@@ -60,6 +60,7 @@
     <Compile Include="Generator\FrameCompileFile.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />
     <Compile Include="Generator\FrameIOCodeGenerator.cs" />
+    <Compile Include="Generator\ProjectToCode.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\ExpConverter.cs" />

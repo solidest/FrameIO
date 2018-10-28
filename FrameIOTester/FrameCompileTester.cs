@@ -4,6 +4,7 @@ using FrameIO.Main;
 using System.Collections.Generic;
 using FrameIO.Runtime;
 using System.Threading;
+using System.Text;
 
 namespace FrameIO.Tester
 {
@@ -93,6 +94,22 @@ namespace FrameIO.Tester
         }
 
         #endregion
+        
+        [TestMethod]
+        public void foobar()
+        {
+            var start = 200;
+
+            var code = new StringBuilder();
+            for (int i = start; i<= 32; i++)
+            {
+                var ty = (segpropertyvaluetype)i;
+                var nm = ty.ToString().TrimStart("SEGPV_".ToCharArray()).ToLower();
+                code.Append("[DllImport(\"CRC.dll\", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]" + Environment.NewLine);
+                code.AppendFormat("public static extern uint {0}(IntPtr data, int data_len);" + Environment.NewLine, nm);
+            }
+            var str = code.ToString();
+        }
 
         //初始化运行时库
         [TestMethod]

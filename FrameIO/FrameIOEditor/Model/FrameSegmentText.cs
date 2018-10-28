@@ -14,6 +14,9 @@ namespace FrameIO.Main
         public Exp ByteSize { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr = "0" };
         public int ByteSizeNumber { get; set; } = -1;
 
-
+        public override void AppendSegmentCode(StringBuilder code)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
