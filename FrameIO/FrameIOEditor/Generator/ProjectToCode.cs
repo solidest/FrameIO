@@ -238,7 +238,7 @@ namespace FrameIO.Main
                 case syschanneltype.SCHT_TCPCLIENT:
                     return "tcpclient";
                 case syschanneltype.SCHT_UDP:
-                    return "upd";
+                    return "udp";
                 case syschanneltype.SCHT_DIO:
                     return "dio";
             }
