@@ -131,6 +131,12 @@ namespace FrameIO.Main
 
                     var oneoflist = new List<Helper.OneOfHelper>();
                     var nms = Helper.GetFrameSegmentsName(ac.FrameName, pj.FrameList, oneoflist);
+                    foreach(var ofl in oneoflist)
+                    {
+                        var pros = ac.Maps.Where(p => p.FrameSegName == ofl.BySegname);
+                        if (pros != null && pros.Count() > 0)
+                            ofl.ByProperty = pros.First().SysPropertyName;
+                    }
 
                     //字段映射
                     if(nms.Count==0 || oneoflist.Count==0)
@@ -151,7 +157,11 @@ namespace FrameIO.Main
                         //switch case 分支
                         foreach (var ofi in oneoflist)
                         {
-                            code.AppendFormat("\t\t\t@switch(({0})data.{1}) {{" + Environment.NewLine,ofi.ByEnum, ofi.BySegname);
+                            if (ac.IOType == actioniotype.AIO_SEND && ofi.ByProperty.Length == 0) continue;
+                            if(ac.IOType == actioniotype.AIO_SEND)
+                                code.AppendFormat("\t\t\t@switch(({0}){1}) {{" + Environment.NewLine, ofi.ByEnum, ofi.ByProperty);
+                            else
+                                code.AppendFormat("\t\t\t@switch(({0})data.{1}) {{" + Environment.NewLine,ofi.ByEnum,  ofi.BySegname);
 
                             foreach (var casesegs in ofi.Items)
                             {
@@ -160,7 +170,7 @@ namespace FrameIO.Main
                                 {
                                     var needmaps = new List<SubsysActionMap>();
                                     needmaps.AddRange(needsmaps);
-                                    code.AppendFormat("\t\t\t@case {0}:" + Environment.NewLine, casesegs.ItemName);
+                                    code.AppendFormat("\t\t\t@{0}{1}:" + Environment.NewLine, casesegs.ItemName=="default"?"":"case ", casesegs.ItemName);
                                     foreach(var needmap in needmaps)
                                     {
                                         if (needmap.FrameSegName == null || needmap.FrameSegName.Length == 0) continue;

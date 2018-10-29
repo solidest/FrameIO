@@ -89,8 +89,9 @@ namespace FrameIO.Main
 
         public class OneOfHelper
         {
-            public string ByEnum { get; set; }
-            public string BySegname { get; set; }
+            public string ByEnum { get; set; } = "";
+            public string BySegname { get; set; } = "";
+            public string ByProperty { get; set; } = "";
 
             public List<OneOfItemHelper> Items { get; private set; } = new List<OneOfItemHelper>();
         }

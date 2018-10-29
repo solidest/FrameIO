@@ -1,0 +1,9 @@
+﻿public class <%segmentname%>Settor
+{
+    ISegmentSettor _settor;
+    public <%segmentname%>Settor(ISegmentSettor settor)
+    {
+		_settor = settor;
+    }
+    <%caseitemlist%>
+}

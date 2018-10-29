@@ -1,0 +1,17 @@
+﻿	
+	public class <%framename%>Gettor : FrameBase
+    {
+        private ISegmentGettor _gettor;
+
+        public static IFrameUnpack Unpacker
+        {
+            get { InitialBase(); return FrameIOFactory.GetFrameUnpacker(<%frameid%>); }
+        }
+
+        public <%framename%>Gettor(ISegmentGettor gettor)
+        {
+            _gettor = gettor;
+        }
+
+		<%propertygetlist%>
+    }

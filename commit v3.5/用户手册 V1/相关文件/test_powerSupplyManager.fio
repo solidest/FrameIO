@@ -1,0 +1,121 @@
+//项目:test_powerSupplyManager
+project test_PowerSupplyManager
+{
+	//受控对象
+	system PowerSupplyManager
+	{
+		//模拟数据
+		bool Command1HasFeedback;
+		bool Command2HasFeedback;
+		
+		bool Status1;
+		int    Status2;
+		
+		double SetpointVoltage;
+		double SetpointCurrent;
+		
+		double OutputVoltage;
+		double OutputCurrent;
+		
+		byte LastRecvDatatype;
+		byte LastRecvPowerSupplyIdx;
+		
+		channel CHServer:tcpserver
+		{
+			serverip="192.168.0.150";
+			port=8007;
+			clientip="192.168.0.150";
+		}
+		
+		action Send_SetPowerSupply:send SendDataFrame on CHServer
+		{
+			@data.g_header_datatype=3;
+			@data.g_header_PowerSupplyIdx=2;
+			g_data.g_SetpointVoltage:SetpointVoltage;
+			g_data.g_SetpointCurrent:SetpointCurrent;
+		}
+		
+		action Recv_RecvData:recv RecvDataFrame on CHServer
+		{
+			g_header_datatype : LastRecvDatatype;
+			g_header_PowerSupplyIdx : LastRecvPowerSupplyIdx;
+			
+			@switch(LastRecvDatatype.Value) {
+			@case 1:
+			 g_data.EmFeedbackData.g_Command1HasFeedback : Command1HasFeedback;
+		        g_data.EmFeedbackData.g_Command2HasFeedback : Command2HasFeedback;
+	        	@break;
+	        	
+	        	@case 2:
+	        	 g_data.EmStatusData.g_Status1 : Status1;
+	        	 g_data.EmStatusData.g_Status2 : Status2;
+	        	@break;
+	        	
+	        	@case 3:
+	        	 g_data.EmPowerSupply_Get.g_OutputVoltage : OutputVoltage;
+	        	 g_data.EmPowerSupply_Get.g_OutputCurrent : OutputCurrent;
+	        	 @break;
+	        	
+	        	@case 4:
+	        	@UserCustomFunction(data.g_data.EmUserCustom.g_data);
+	        	
+	        	@break;}
+		        
+		}
+		
+	}
+	//数据帧类型枚举
+	enum FrameDataType
+	{
+		EmFeedbackData=1,
+		EmStatusData=2,
+		EmPowerSupply_Get=3,
+		EmUserCustom=4
+	}
+	
+	//数据帧
+	frame RecvDataFrame
+	{
+		integer g_header_datatype bitcount=8 toenum=FrameDataType;
+		integer g_header_PowerSupplyIdx bitcount=8;
+		block g_data type=oneof(g_header_datatype) {EmFeedbackData:FeedbackData, EmStatusData:StatusData, EmPowerSupply_Get:PowerSupply_Get, EmUserCustom:UserCustomFrame};
+	}
+	
+	frame SendDataFrame
+	{
+		integer g_header_datatype bitcount=8;
+		integer g_header_PowerSupplyIdx bitcount=8;
+		block g_data type=PowerSupply_Set;
+	}
+	
+	frame UserCustomFrame
+	{
+		real g_data isdouble=true repeated=20;
+	}
+	
+	frame FeedbackData
+	{
+		integer g_Command1HasFeedback bitcount=1;
+		integer g_Command2HasFeedback bitcount=1;
+		integer g_h1 bitcount=6;
+	}
+	
+	frame StatusData
+	{
+		integer g_Status1 bitcount=1;
+		integer g_h1 bitcount=7;
+		integer g_Status2 bitcount=32 signed=true;
+	}
+	
+	frame PowerSupply_Set
+	{
+		real g_SetpointVoltage isdouble=true;
+		real g_SetpointCurrent isdouble=true;
+	}
+	
+	frame PowerSupply_Get
+	{
+		real g_OutputVoltage isdouble=true;
+		real g_OutputCurrent isdouble=true;
+	}
+}
