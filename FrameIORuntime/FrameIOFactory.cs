@@ -78,6 +78,12 @@ namespace FrameIO.Runtime
                         chtcpserver.InitConfig(ops);
                         return chtcpserver;
                     }
+                case ChannelTypeEnum.UDP:
+                    {
+                        var chudp = new FrameIO.Driver.UDPClient_Impl();
+                        chudp.InitConfig(ops);
+                        return chudp;
+                    }
                 case ChannelTypeEnum.DIO:
                     {
                         var chtcdio = new FrameIO.Driver.DIO_Impl();

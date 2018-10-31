@@ -49,6 +49,24 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\0.flo\1.test_tcp\frame.cs">
+      <Link>1.test_tcp\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\1.test_tcp\Parameter.cs">
+      <Link>1.test_tcp\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\1.test_tcp\tcp.cs">
+      <Link>1.test_tcp\tcp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\2.test_udp\frame.cs">
+      <Link>2.test_udp\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\2.test_udp\Parameter.cs">
+      <Link>2.test_udp\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\2.test_udp\testudp.cs">
+      <Link>2.test_udp\testudp.cs</Link>
+    </Compile>
     <Compile Include="..\..\0.flo\tcp_server_test\frame.cs">
       <Link>Test_tcpserver\frame.cs</Link>
     </Compile>
@@ -64,11 +82,11 @@
     <Compile Include="..\..\0.flo\tcp_server_test\SYS3.cs">
       <Link>Test_tcpserver\SYS3.cs</Link>
     </Compile>
+    <Compile Include="..\..\0.flo\test_PowerSupplyManager\Enum_DataType.cs">
+      <Link>Test_PowerSupplyManager\Enum_DataType.cs</Link>
+    </Compile>
     <Compile Include="..\..\0.flo\test_PowerSupplyManager\frame.cs">
       <Link>Test_PowerSupplyManager\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\test_PowerSupplyManager\FrameDataType.cs">
-      <Link>Test_PowerSupplyManager\FrameDataType.cs</Link>
     </Compile>
     <Compile Include="..\..\0.flo\test_PowerSupplyManager\Parameter.cs">
       <Link>Test_PowerSupplyManager\Parameter.cs</Link>
@@ -76,6 +94,8 @@
     <Compile Include="..\..\0.flo\test_PowerSupplyManager\PowerSupplyManager.cs">
       <Link>Test_PowerSupplyManager\PowerSupplyManager.cs</Link>
     </Compile>
+    <Compile Include="2.test_udp.cs" />
+    <Compile Include="1.test_tcp.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
@@ -83,6 +103,8 @@
     <Compile Include="UserPowerSupplyManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="1.test_tcp\1.test_tcp.fio" />
+    <None Include="2.test_udp\2.test_udp.fio" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
