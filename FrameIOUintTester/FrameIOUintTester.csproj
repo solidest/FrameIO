@@ -67,6 +67,45 @@
     <Compile Include="..\..\0.flo\2.test_udp\testudp.cs">
       <Link>2.test_udp\testudp.cs</Link>
     </Compile>
+    <Compile Include="..\..\0.flo\3.test_com\frame.cs">
+      <Link>3.test_com\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\3.test_com\Parameter.cs">
+      <Link>3.test_com\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\3.test_com\testcom.cs">
+      <Link>3.test_com\testcom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\4.test_enum\Enum_Type.cs">
+      <Link>4.test_enum\Enum_Type.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\4.test_enum\frame.cs">
+      <Link>4.test_enum\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\4.test_enum\Parameter.cs">
+      <Link>4.test_enum\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\4.test_enum\testenum.cs">
+      <Link>4.test_enum\testenum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\5.test_array\frame.cs">
+      <Link>5.test_array\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\5.test_array\Parameter.cs">
+      <Link>5.test_array\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\5.test_array\testarray.cs">
+      <Link>5.test_array\testarray.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\6.test_can_yh\frame.cs">
+      <Link>6.test_can_yh\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\6.test_can_yh\Parameter.cs">
+      <Link>6.test_can_yh\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\0.flo\6.test_can_yh\testcan.cs">
+      <Link>6.test_can_yh\testcan.cs</Link>
+    </Compile>
     <Compile Include="..\..\0.flo\tcp_server_test\frame.cs">
       <Link>Test_tcpserver\frame.cs</Link>
     </Compile>
@@ -94,6 +133,10 @@
     <Compile Include="..\..\0.flo\test_PowerSupplyManager\PowerSupplyManager.cs">
       <Link>Test_PowerSupplyManager\PowerSupplyManager.cs</Link>
     </Compile>
+    <Compile Include="6.test_can_yh.cs" />
+    <Compile Include="5.test_array.cs" />
+    <Compile Include="4.test_enum.cs" />
+    <Compile Include="3.test_com.cs" />
     <Compile Include="2.test_udp.cs" />
     <Compile Include="1.test_tcp.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
@@ -105,6 +148,9 @@
   <ItemGroup>
     <None Include="1.test_tcp\1.test_tcp.fio" />
     <None Include="2.test_udp\2.test_udp.fio" />
+    <None Include="4.test_enum\4.test_enum.fio" />
+    <None Include="5.test_array\5.test_array.fio" />
+    <None Include="6.test_can_yh\6.test_can_yh.fio" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

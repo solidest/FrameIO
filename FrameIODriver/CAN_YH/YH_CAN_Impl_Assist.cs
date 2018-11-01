@@ -55,12 +55,12 @@ namespace FrameIO.Driver
         public void InitConfig(Dictionary<string, object> config)
         {
             PortName = "can"+config["channelind"].ToString();
-            BaudRate = (UInt16)BaudRateTypeConverter.ConvertFrom(config["baudrate"]);
-            WriteTimeOut = System.Convert.ToUInt16(config["writetimeout"]);
+            BaudRate = System.Convert.ToUInt16(config["baudrate"]);
+            WriteTimeOut = System.Convert.ToUInt16(config["waittimeout"]);
             //WorkMode= System.Convert.ToUInt16(config["mode"]);
             Filter= System.Convert.ToByte(config["filter"]);
-            Acccode = System.Convert.ToByte(config["acccode"]);
-            Accmark= System.Convert.ToByte(config["accmark"]);
+            Acccode = System.Convert.ToUInt32(config["acccode"]);
+            Accmark= System.Convert.ToUInt32(config["accmark"]);
         }
         #endregion
         //设备号
