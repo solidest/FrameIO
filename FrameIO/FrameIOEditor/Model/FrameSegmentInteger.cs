@@ -44,6 +44,7 @@ namespace FrameIO.Main
             if (ByteOrder == ByteOrderType.Big) code.Append(" byteorder=big");
             if (Encoded != EncodedType.Primitive) code.AppendFormat(" encoded={0}", GetEncodTypeName(Encoded));
             if (Value != null && !Value.IsIntZero()) code.AppendFormat(" value={0}", Value.ToString());
+            if (!Repeated.IsIntOne()) code.AppendFormat(" repeated={0}", Repeated.ToString());
             if (ValidateMax != null && ValidateMax.Length>0) code.AppendFormat(" max={0}", ValidateMax);
             if (ValidateMin != null && ValidateMin.Length>0) code.AppendFormat(" min={0}", ValidateMin);
             if (ValidateCheck != CheckType.None) code.AppendFormat(" check={0}", GetCheckName(ValidateCheck));
