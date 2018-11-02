@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //代码生成器
-    public class FrameIOCodeGenerator
+    public class FrameIOSharpCodeGenerator
     {
         static private IOutText _tout;
         static private string _newpath = "";
         static private IOProject _pj;
 
-        static public void GenerateCodeFile(IOProject pj, IOutText tout)
+        static public void GenerateSharpCodeFile(IOProject pj, IOutText tout)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace FrameIO.Main
         //创建Frame代码
         private static void GenerateFrameFile()
         {
-            var cpframe = FrameCompiledFile.Compile(_pj);
+            var cpframe = FrameCompiledBytes.Compile(_pj);
 
             //数据帧初始化
             var code = new StringBuilder(GetTemplate("TFrame"));

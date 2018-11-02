@@ -635,28 +635,26 @@ namespace FrameIO.Main
         {
             e.CanExecute = (FileName != "");
             btCheckCode.IsEnabled = e.CanExecute;
-            if (e.Parameter.ToString() == "cpp") e.CanExecute = false;
+            //if (e.Parameter.ToString() == "cpp") e.CanExecute = false;
             e.Handled = true;
         }
 
         //导出
         private void SaveAs(object sender, ExecutedRoutedEventArgs e)
         {
-            if(e.Parameter.ToString() == "csharp")
+            if (FileName.Length == 0) return;
+            if (!DoCheckCode())
             {
-                if (FileName.Length == 0) return;
-                if (!DoCheckCode())
-                {
-                    OutText("信息：无法启动代码输出", false);
-                    return;
-                }
-                else
-                {
-                    FrameIOCodeGenerator.GenerateCodeFile(_project, this);
-                }
+                OutText("信息：无法启动代码输出", false);
+                return;
             }
-
-            
+            else
+            {
+                if (e.Parameter.ToString() == "csharp")
+                    FrameIOSharpCodeGenerator.GenerateSharpCodeFile(_project, this);
+                else if (e.Parameter.ToString() == "cpp")
+                    FrameIOCppCodeGenerator.GenerateCppCodeFile(_project, this);
+            }
         }
 
         //是否可以保存

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class IOProject:INotifyPropertyChanged
     {
         private int _projectid;
@@ -15,6 +12,7 @@ namespace FrameIO.Main
         public string Notes { get; set; }
         public ObservableCollection<Subsys> SubsysList { get; set; } = new ObservableCollection<Subsys>();
 
+        [JsonProperty]
         public ObservableCollection<Frame> FrameList { get; set; } = new ObservableCollection<Frame>();
         public ObservableCollection<Enumdef> EnumdefList { get; set; } = new ObservableCollection<Enumdef>();
 

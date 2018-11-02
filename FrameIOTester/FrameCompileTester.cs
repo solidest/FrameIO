@@ -85,7 +85,7 @@ namespace FrameIO.Tester
             pj.FrameList.Add(frm);
 
             //编译分析结果
-            var cfrms = FrameCompiledFile.Compile(pj);
+            var cfrms = FrameCompiledBytes.Compile(pj);
             Assert.IsNotNull(cfrms);
             var config = cfrms.GetBytes();
             Assert.IsNotNull(config);

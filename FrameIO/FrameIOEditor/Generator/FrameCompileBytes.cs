@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //数据帧配置文件编译
-    public class FrameCompiledFile
+    public class FrameCompiledBytes
     {
 
         #region --Const--
@@ -67,7 +67,7 @@ namespace FrameIO.Main
 
         #region --Public--
 
-        public FrameCompiledFile()
+        public FrameCompiledBytes()
         {
             _segmentlist.Add(0);
             _constlist.Add(0);
@@ -77,12 +77,12 @@ namespace FrameIO.Main
         }
 
         //编译配置文件
-        public static FrameCompiledFile Compile(IOProject pj)
+        public static FrameCompiledBytes Compile(IOProject pj)
         {
             //const byte pos_ref_frame = 48;  //引用数据帧位
 
             _pj = pj;
-            var ret = new FrameCompiledFile();
+            var ret = new FrameCompiledBytes();
             var need_update = new Dictionary<ushort, string>(); //需要更新数据帧引用的位置
 
             for (int i=0; i<pj.FrameList.Count; i++)

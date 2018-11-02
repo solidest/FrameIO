@@ -88,7 +88,7 @@ namespace FrameIO.Main
                 {
                     if (pro.Name == null || pro.Name.Length == 0) continue;
                     AppendNotes(code, pro.Notes, 2);
-                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, FrameIOCodeGenerator.GetTypeName(pro.PropertyType), pro.IsArray ? "[]" : "", pro.Name);
+                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, FrameIOSharpCodeGenerator.GetTypeName(pro.PropertyType), pro.IsArray ? "[]" : "", pro.Name);
                 }
 
                 code.Append(Environment.NewLine);
