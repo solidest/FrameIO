@@ -531,10 +531,10 @@ namespace FrameIO.Main
             if (seg.ToEnum != null && seg.ToEnum != "" && _pj.EnumdefList.Where(p => p.Name == seg.ToEnum).Count() == 0)
                 AddErrorInfo(seg.Syid, "未找到所引用的枚举定义");
 
-            if (seg.VCheckRangeBegin != null && seg.VCheckRangeBegin.Length > 0 && !segns.Keys.Contains(seg.VCheckRangeBegin))
+            if (seg.CheckRangeBegin != null && seg.CheckRangeBegin.Length > 0 && !segns.Keys.Contains(seg.CheckRangeBegin))
                 AddErrorInfo(seg.Syid, "所引用的校验开始字段不正确");
 
-            if (seg.VCheckRangeEnd != null && seg.VCheckRangeEnd.Length > 0 && !segns.Keys.Contains(seg.VCheckRangeEnd))
+            if (seg.CheckRangeEnd != null && seg.CheckRangeEnd.Length > 0 && !segns.Keys.Contains(seg.CheckRangeEnd))
                 AddErrorInfo(seg.Syid, "所引用的校验结尾字段不正确");
 
             segns.Add(seg.Name, null);

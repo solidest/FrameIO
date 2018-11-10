@@ -1,0 +1,34 @@
+﻿
+		
+		public bool IsStop<%recvloopname%> { get; set; }
+        public void <%recvloopname%>()
+        {
+            var unpack = FrameIOFactory.GetFrameUnpack("<%framename%>");
+            <%channelname%>.BeginReadFrame(unpack, <%recvloopname%>Callback, null);
+			_IsStop<%recvloopname%> = false;
+        }
+
+		public void Stop<%recvloopname%>()
+        {
+            _IsStop<%recvloopname%> = true;
+        }
+
+		private bool _IsStop<%recvloopname%>;
+        public delegate void <%recvloopname%>Handle();
+        public event <%recvloopname%>Handle On<%recvloopname%>;
+        private void <%recvloopname%>Callback(IFrameData data, out bool isstop<%recvloopname%>, object AsyncState)
+        {
+            try
+            {
+                <%getvaluelist%>
+                if(On<%recvloopname%> != null) foreach (<%recvloopname%>Handle deleg in On<%recvloopname%>.GetInvocationList()) deleg.BeginInvoke(null, null); 
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
+			finally
+            {
+                isstop<%recvloopname%> = _IsStop<%recvloopname%>;
+            }
+        }

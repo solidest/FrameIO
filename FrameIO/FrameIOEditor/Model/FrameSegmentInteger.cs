@@ -13,9 +13,11 @@ namespace FrameIO.Main
         [Category("Data")]
         [JsonProperty]
         public bool Signed { get; set; } = false;
+
         [Category("Data")]
         [JsonProperty]
         public int BitCount { get; set; } = 32;
+
         [Category("Data")]
         [Converter(typeof(ComplexConverter))]
         [JsonProperty]
@@ -30,18 +32,22 @@ namespace FrameIO.Main
         [Category("Validator")]
         [JsonProperty]
         public string ValidateMax { get; set; } = null;
+
         [Category("Validator")]
         [JsonProperty]
         public string ValidateMin { get; set; } = null;
-        [Browsable(false)]
+
+        [Category("Validator")]
         [JsonProperty]
-        public string VCheckRangeBegin { get; set; } = null;
-        [Browsable(false)]
-        [JsonProperty]
-        public string VCheckRangeEnd { get; set; } = null;
+        public string CheckRangeBegin { get; set; } = null;
+
+        [Category("Validator")]
+        public string CheckRangeEnd { get; set; } = null;
+
         [Category("Validator")]
         [JsonProperty]
         public CheckType ValidateCheck { get; set; } = CheckType.None;
+
         [Category("Other")]
         [JsonProperty]
         public string ToEnum { get; set; } = null;
@@ -58,7 +64,7 @@ namespace FrameIO.Main
             if (ValidateMax != null && ValidateMax.Length>0) code.AppendFormat(" max={0}", ValidateMax);
             if (ValidateMin != null && ValidateMin.Length>0) code.AppendFormat(" min={0}", ValidateMin);
             if (ValidateCheck != CheckType.None) code.AppendFormat(" check={0}", GetCheckName(ValidateCheck));
-            if (VCheckRangeBegin != null && VCheckRangeBegin.Length>0) code.AppendFormat(" checkrange=({0},{1})", VCheckRangeBegin, VCheckRangeEnd);
+            if (CheckRangeBegin != null && CheckRangeBegin.Length>0) code.AppendFormat(" checkrange=({0},{1})", CheckRangeBegin, CheckRangeEnd);
             if (ToEnum != null && ToEnum.Length>0) code.AppendFormat(" toenum={0}", ToEnum);
 
             code.Append(";" );

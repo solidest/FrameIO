@@ -367,7 +367,7 @@ namespace FrameIO.Main
             //    if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
             //        seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
             //}
-            var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
+            var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.CheckRangeBegin, seg.CheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
             UpdateSegmentToken(ret, token);
             return ret;
