@@ -1,0 +1,39 @@
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using FrameIO.Runtime;
+using FrameIO.Interface;
+using System.Diagnostics;
+using System.Linq;
+
+namespace <%project%>
+{
+    public partial class <%system%>
+    {
+        <%channeldeclare%>
+
+		<%channelinitial%>
+
+		<%propertydeclare%>
+
+		//异常处理接口
+        private void HandleFrameIOError(FrameIOException ex)
+        {
+            switch(ex.ErrType)
+            {
+                case FrameIOErrorType.ChannelErr:
+                case FrameIOErrorType.SendErr:
+                case FrameIOErrorType.RecvErr:
+                case FrameIOErrorType.CheckDtaErr:
+                    Debug.WriteLine("位置：{0}    错误：{1}", ex.Position, ex.ErrInfo);
+                    break;
+            }
+        }
+
+		<%sendactionlist%>
+
+		<%recvactionlist%>
+
+		<%recvloopactionlist%>
+
+	}
+}

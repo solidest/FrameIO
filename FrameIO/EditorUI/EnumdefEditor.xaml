@@ -12,6 +12,7 @@
             <p:DataGrid.ColumnDefinitions>
                 <p:ColumnDefinition PropertyName="Name" Width="160" Header="枚举项名称"/>
                 <p:ColumnDefinition PropertyName="ItemValue" Width="80" Header="数值"/>
+                <p:ColumnDefinition PropertyName="Notes" Width="180" Header="备注"/>
             </p:DataGrid.ColumnDefinitions>
         </p:DataGrid>
     </Grid>

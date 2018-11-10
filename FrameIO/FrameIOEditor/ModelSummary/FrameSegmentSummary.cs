@@ -102,6 +102,7 @@ namespace FrameIO.Main
             _segs = parent;
         }
 
+        public string Notes { get => _seg.Notes; set { _seg.Notes = value; } }
         public string Name { get => _seg.Name; set { _seg.Name = value; } }
 
         public SegmentType SegType { get => _type; set { ChangedType(value); } }

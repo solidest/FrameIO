@@ -118,7 +118,7 @@ PRAGMA foreign_keys = on;
                 ret.Append(l);
                 ret.Append(Environment.NewLine);
             }
-            return ret.ToString();
+            return ret.ToString().TrimEnd(Environment.NewLine.ToArray());
         }
 
         //加载受控对象系统

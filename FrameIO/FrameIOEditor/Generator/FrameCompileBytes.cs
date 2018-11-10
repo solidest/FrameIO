@@ -360,13 +360,13 @@ namespace FrameIO.Main
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             var ret = AddSegment(token, pre + "." + seg.Name);
 
-            if (seg.ValidateCheck != CheckType.None)
-            {
-                if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
-                    seg.VCheckRangeBegin = brotherlist[0].Name;
-                if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
-                    seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
-            }
+            //if (seg.ValidateCheck != CheckType.None)
+            //{
+            //    if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
+            //        seg.VCheckRangeBegin = brotherlist[0].Name;
+            //    if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
+            //        seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
+            //}
             var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
             UpdateSegmentToken(ret, token);
@@ -475,8 +475,12 @@ namespace FrameIO.Main
             const byte pos_checkend = 32;
             ulong token = CO_VALIDATOR_CHECK;
             SetTokenValue(ref token, (byte)((int)check- (int)CheckType.SEGPV_SUM8+1), pos_checktype, LEN_BYTE);
-            SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
-            SetTokenValue(ref token, (byte)LookUpSegment(checkend, pre), pos_checkend, LEN_USHORT);
+            if (checkbegin != null && checkbegin.Length>0)
+            {
+                SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
+                SetTokenValue(ref token, (byte)LookUpSegment(checkend, pre), pos_checkend, LEN_USHORT);
+            }
+
             return AddValidator(token, refprevious);
         }
 

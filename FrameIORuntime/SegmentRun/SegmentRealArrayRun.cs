@@ -89,6 +89,8 @@ namespace FrameIO.Runtime
 
         internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
         {
+            info.PackBitPos = (int)pack.Position * 8 + odd_pos;
+
             if (!info.IsSetValue) SetAutoValue(value_buff, info, ir);
 
             int istart = info.StartPos;
@@ -128,6 +130,7 @@ namespace FrameIO.Runtime
         private void SetAutoValue(MemoryStream value_buff, SetValueInfo info, IPackRunExp ir)
         {
             info.IsSetValue = true;
+            info.StartPos = (int)value_buff.Position;
             if (_repeated_const > 0)
                 info.Count = _repeated_const;
             else if (_repeated_idx > 0)
@@ -137,6 +140,7 @@ namespace FrameIO.Runtime
             {
                 SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
 
@@ -145,6 +149,7 @@ namespace FrameIO.Runtime
             info.IsSetValue = true;
             info.StartPos = (int)value_buff.Position;
             info.Count = value == null ? 0 : value.Length;
+
             if (_repeated_const > 0 && _repeated_const < info.Count) info.Count = _repeated_const;
 
             for (int i = 0; i < info.Count; i++)
@@ -158,6 +163,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, byte?[] value, SetValueInfo info)
@@ -178,6 +184,8 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
+
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, sbyte?[] value, SetValueInfo info)
@@ -198,6 +206,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, ushort?[] value, SetValueInfo info)
@@ -218,6 +227,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, short?[] value, SetValueInfo info)
@@ -238,6 +248,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, uint?[] value, SetValueInfo info)
@@ -258,6 +269,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, int?[] value, SetValueInfo info)
@@ -278,6 +290,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, ulong?[] value, SetValueInfo info)
@@ -298,6 +311,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, long?[] value, SetValueInfo info)
@@ -318,6 +332,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         internal override void SetSegmentValue(MemoryStream value_buff, float?[] value, SetValueInfo info)
@@ -338,7 +353,9 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (float?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
+
 
         internal override void SetSegmentValue(MemoryStream value_buff, double?[] value, SetValueInfo info)
         {
@@ -358,6 +375,7 @@ namespace FrameIO.Runtime
                 for (int i = 0; i < _repeated_const - info.Count; i++)
                     SetSegmentValue(value_buff, (double?)0);
             }
+            info.BitLen = (IsDouble ? 64 : 32) * info.Count;
         }
 
         #endregion

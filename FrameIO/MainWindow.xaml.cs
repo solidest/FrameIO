@@ -692,6 +692,7 @@ namespace FrameIO.Main
             };
             if (ofd.ShowDialog() == true && ofd.FileName != FileName)
             {
+                tbPages.Items.Clear();
                 FileName = ofd.FileName;
                 edCode.Text = File.ReadAllText(FileName);
                 ResetCodeState();

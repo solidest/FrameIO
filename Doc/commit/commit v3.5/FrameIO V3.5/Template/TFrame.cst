@@ -1,0 +1,51 @@
+﻿
+using System.IO;
+using System.IO.Compression;
+using System;
+using FrameIO.Runtime;
+using FrameIO.Interface;
+
+
+namespace <%project%>
+{
+    public class FrameBase
+    {
+
+        static FrameBase()
+        {
+            var config = string.Concat(
+				<%contentlist%>);
+
+			using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        FrameIO.Runtime.FrameIOFactory.Initial(resultStream.ToArray());
+                    }
+                }
+            }
+
+			var symbols = string.Concat(
+				<%symbollist%>);
+			using (var compressStream = new MemoryStream(Convert.FromBase64String(symbols)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        FrameIO.Runtime.FrameIOFactory.InitializeSymbols(resultStream.ToArray());
+                    }
+                }
+            }
+        }
+
+		protected static void InitialBase(){}
+    }
+
+	<%framegettorandsettorlist%>
+
+}

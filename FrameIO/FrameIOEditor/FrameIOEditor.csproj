@@ -63,8 +63,8 @@
     <Compile Include="Generator\FrameCompileJson.cs" />
     <Compile Include="Generator\FrameCompileBytes.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />
-    <Compile Include="Generator\FrameIOCppCodeGenerator.cs" />
     <Compile Include="Generator\FrameIOSharpCodeGenerator.cs" />
+    <Compile Include="Generator\FrameIOCppCodeGenerator.cs" />
     <Compile Include="Generator\ProjectToCode.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />

@@ -53,6 +53,7 @@ namespace FrameIO.Runtime
     {
         public bool IsSetValue;
         public int StartPos;
+        public int PackBitPos;
         public int BitLen;
         public int Count;
         public object Tag;

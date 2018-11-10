@@ -1,0 +1,22 @@
+
+	public class <%framename%>Settor : FrameBase
+    {
+        private ISegmentSettor _settor;
+
+        public IFramePack GetPacker()
+        {
+            return _settor.GetPack();
+        }
+
+        public <%framename%>Settor()
+        {
+            _settor = FrameIOFactory.GetFrameSettor(<%frameid%>);
+        }
+
+        public <%framename%>Settor(ISegmentSettor packer)
+        {
+            _settor = packer;
+        }
+
+        <%propertysetlist%>     
+    }
