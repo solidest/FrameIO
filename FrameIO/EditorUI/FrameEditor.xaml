@@ -17,6 +17,7 @@
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称"/>
                     <p:ColumnDefinition PropertyName="SegType" Width="2*" Header="字段类型"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>

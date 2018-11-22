@@ -23,6 +23,7 @@
                     <p:ColumnDefinition PropertyName="Name" Width="2*"  Header="名称"/>
                     <p:ColumnDefinition PropertyName="PropertyType" Width="2*"  Header="数据类型"/>
                     <p:ColumnDefinition HorizontalAlignment="Center" PropertyName="IsArray" Width="1*" Header="数组"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>      
         </GroupBox>
@@ -52,10 +53,11 @@
                 GotFocus="StartUpdateAc" LostFocus="StopUpdateAc"        
                 Background="Seashell" AutoInsert="False">
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name"  Width="1*" Header="名称"/>
-                    <p:ColumnDefinition PropertyName="IOType"  Width="1*" Header="动作类型"/>
-                    <p:ColumnDefinition PropertyName="ChannelName"  Width="1*" Header="通道"/>
-                    <p:ColumnDefinition PropertyName="FrameName"  Width="1*" Header="数据帧"/>
+                    <p:ColumnDefinition PropertyName="Name"  Width="2*" Header="名称"/>
+                    <p:ColumnDefinition PropertyName="IOType"  Width="2*" Header="动作类型"/>
+                    <p:ColumnDefinition PropertyName="ChannelName"  Width="2*" Header="通道"/>
+                    <p:ColumnDefinition PropertyName="FrameName"  Width="2*" Header="数据帧"/>
+                    <p:ColumnDefinition PropertyName="Notes"  Width="3*" Header="备注"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>

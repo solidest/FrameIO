@@ -12,31 +12,31 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //代码生成器
-    public class FrameIOCodeGenerator
+    public class FrameIOCppCodeGenerator
     {
         static private IOutText _tout;
         static private string _newpath = "";
         static private IOProject _pj;
 
-        static public void GenerateCodeFile(IOProject pj, IOutText tout)
+        static public void GenerateCppCodeFile(IOProject pj, IOutText tout)
         {
             try
             {
                 _tout = tout;
                 _pj = pj;
-                _newpath = tout.GetMainOutPath() + "\\" + pj.Name;
+                _newpath = tout.GetMainOutPath() + "\\" + pj.Name + "_cpp";
 
                 PrepareDir();
 
                 GenerateFrameFile();
-                
-                var code = new StringBuilder(GetTemplate("TParameter"));
-                ReplaceText(code, "projectname", _pj.Name);
-                CreateFile("Parameter", code);
 
-                GenerateEnumFile(pj.EnumdefList);
-                GenerateSysFile(pj.SubsysList);
-                tout.OutText("信息：代码文件输出完成", false);
+                //var code = new StringBuilder(GetTemplate("TParameter"));
+                //ReplaceText(code, "projectname", _pj.Name);
+                //CreateFile("Parameter", code);
+
+                //GenerateEnumFile(pj.EnumdefList);
+                //GenerateSysFile(pj.SubsysList);
+                //tout.OutText("信息：代码文件输出完成", false);
 
             }
             catch (Exception e)
@@ -54,28 +54,11 @@ namespace FrameIO.Main
         #region --Frame--
 
 
-        //创建Frame代码
+        //创建FramesJson文件
         private static void GenerateFrameFile()
         {
-            var cpframe = FrameCompiledFile.Compile(_pj);
-
-            //数据帧初始化
-            var code = new StringBuilder(GetTemplate("TFrame"));
-            ReplaceText(code, "project", _pj.Name);
-            ReplaceText(code, "contentlist", ToStringList(cpframe.GetBytes()), 4);
-            ReplaceText(code, "symbollist", ToStringList(GetSymbols(cpframe.Symbols)), 4);
-
-            //数据帧settor && gettors
-            var frm_code = new StringBuilder();
-            foreach (var frm in _pj.FrameList)
-            {
-                frm_code.Append(GetFrameGettorCode(frm, cpframe.Symbols));
-                frm_code.Append(GetFrameSettorCode(frm, cpframe.Symbols));
-            }
-            ReplaceText(code, "framegettorandsettorlist", frm_code.ToString());
-
-            //生成文件
-            CreateFile("frame", code);
+            var frms_code = FrameCompileJson.ToJson(_pj);
+            CreateFile("frames.json", new StringBuilder(frms_code));
 
         }
 
@@ -104,7 +87,7 @@ namespace FrameIO.Main
             ReplaceText(code, "frameid", symbols[frm.Name].ToString());
 
             var prolist = new List<string>();
-            foreach(var seg in frm.Segments)
+            foreach (var seg in frm.Segments)
             {
                 GetSegmentGettor(seg, frm.Name + "." + seg.Name, symbols, prolist, frm.Name);
             }
@@ -118,10 +101,10 @@ namespace FrameIO.Main
         {
             var ty = seg.GetType();
             if (ty == typeof(FrameSegmentInteger))
-                segcodelist.Add( GetSegmentGettor((FrameSegmentInteger)seg, fullname, symbols));
-            else if(ty == typeof(FrameSegmentReal))
+                segcodelist.Add(GetSegmentGettor((FrameSegmentInteger)seg, fullname, symbols));
+            else if (ty == typeof(FrameSegmentReal))
                 segcodelist.Add(GetSegmentGettor((FrameSegmentReal)seg, fullname, symbols));
-            else if(ty == typeof(FrameSegmentBlock))
+            else if (ty == typeof(FrameSegmentBlock))
             {
                 var bseg = (FrameSegmentBlock)seg;
                 switch (bseg.UsedType)
@@ -189,7 +172,7 @@ namespace FrameIO.Main
             //public bool? SegmentA { get => _gettor.GetBool(1); }
             var ty = GetSegmentType(seg.BitCount, seg.Signed);
             if (seg.Repeated.IsIntOne())
-                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname] );
+                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
             else
                 return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
         }
@@ -220,7 +203,7 @@ namespace FrameIO.Main
             return 0;
         }
 
- 
+
         #endregion
 
         #region --Settor--
@@ -272,7 +255,7 @@ namespace FrameIO.Main
         }
 
         //switch字段
-        private static void GetSegmentSettor(FrameSegmentBlock seg,string fullname, Dictionary<string, ushort> symbols, List<string> segcodelist)
+        private static void GetSegmentSettor(FrameSegmentBlock seg, string fullname, Dictionary<string, ushort> symbols, List<string> segcodelist)
         {
             segcodelist.Add(string.Format("public {0}Settor {1} {{ get {{ if (_{1} == null) _{1} = new {0}Settor(_settor); return _{1}; }} }}private {0}Settor _{1};", seg.Name, seg.Name));
             var code = new StringBuilder(GetTemplate("TSwitchClassSettor"));
@@ -300,7 +283,7 @@ namespace FrameIO.Main
             ReplaceText(code, "innersegmentlist", segs, 1);
             var codelist = code.ToString().Split(Environment.NewLine.ToCharArray());
             foreach (var str in codelist)
-                if(str!="") segcodelist.Add(str);
+                if (str != "") segcodelist.Add(str);
         }
 
         //引用数据帧字段
@@ -340,7 +323,7 @@ namespace FrameIO.Main
         //生成枚举文件
         static private void GenerateEnumFile(ICollection<Enumdef> emlist)
         {
-            foreach(var emdef in emlist)
+            foreach (var emdef in emlist)
             {
                 var code = GetSharpCode(emdef);
                 CreateFile(emdef.Name, code);
@@ -354,14 +337,14 @@ namespace FrameIO.Main
             ReplaceText(code, "project", _pj.Name);
             ReplaceText(code, "enumname", em.Name);
             var il = new List<string>();
-            foreach(var it in em.ItemsList)
+            foreach (var it in em.ItemsList)
             {
                 if (it.ItemValue != "")
                     il.Add(string.Format("{0} = {1},", it.Name, it.ItemValue));
                 else
                     il.Add(string.Format("{0},", it.Name));
             }
-            if(il.Count>0)
+            if (il.Count > 0)
             {
                 il[il.Count - 1] = il.Last().TrimEnd(',');
             }
@@ -377,11 +360,11 @@ namespace FrameIO.Main
         //输出系统文件
         static private void GenerateSysFile(ICollection<Subsys> syslist)
         {
-           foreach(var sys in syslist)
-           {
+            foreach (var sys in syslist)
+            {
                 var code = GetSharpCode(sys);
                 CreateFile(sys.Name, code);
-           }
+            }
         }
 
         //生成分系统代码
@@ -394,7 +377,7 @@ namespace FrameIO.Main
             //channel
             var decl = new List<string>();
             var initcode = new StringBuilder();
-            foreach(var ch in sys.Channels)
+            foreach (var ch in sys.Channels)
             {
                 decl.Add(string.Format("public IChannelBase {0};", ch.Name, sys.Name));
                 initcode.Append(GetChannelInitial(ch) + Environment.NewLine);
@@ -438,7 +421,7 @@ namespace FrameIO.Main
             ReplaceText(code, "channeltype", GetChannelType(ch.ChannelType));
             var oplist = new List<string>();
             foreach (var op in ch.Options)
-                oplist.Add(string.Format("if (!ops.Contains(\"{0}\")) ops.SetOption(\"{0}\", {1});",op.Name, op.OptionValue ));
+                oplist.Add(string.Format("if (!ops.Contains(\"{0}\")) ops.SetOption(\"{0}\", {1});", op.Name, op.OptionValue));
             ReplaceText(code, "channeloptionlist", oplist, 3);
             return code.ToString();
         }
@@ -448,9 +431,9 @@ namespace FrameIO.Main
         static private void SetPropertyDeclare(Subsys sys, StringBuilder code)
         {
             var decl = new List<string>();
-            foreach(var pro in sys.Propertys)
+            foreach (var pro in sys.Propertys)
             {
-                if(pro.IsArray)
+                if (pro.IsArray)
                 {
                     decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
                 }
@@ -464,7 +447,7 @@ namespace FrameIO.Main
 
 
         //获取recvloopaction代码
-        static private string GetRecvLoopActionCode(Subsys sys,SubsysAction ac)
+        static private string GetRecvLoopActionCode(Subsys sys, SubsysAction ac)
         {
             //var code = new StringBuilder(GetTemplate("TRecvLoopAction"));
             //ReplaceText(code, "recvloopname", ac.Name);
@@ -489,18 +472,18 @@ namespace FrameIO.Main
         }
 
         //获取sendaction代码
-        static private string GetSendActionCode(Subsys sys,SubsysAction ac)
+        static private string GetSendActionCode(Subsys sys, SubsysAction ac)
         {
             var code = new StringBuilder(GetTemplate("TSendAction"));
             ReplaceText(code, "sendaction", ac.Name);
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var setlist = new List<string>();
-            foreach(var gettor in ac.Maps)
+            foreach (var gettor in ac.Maps)
             {
                 if (gettor.FrameSegName == "")
                     setlist.Add(gettor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
-                else if(ProIsArray(sys, gettor.SysPropertyName))
+                else if (ProIsArray(sys, gettor.SysPropertyName))
                     setlist.Add(string.Format("data.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
                 else
                     setlist.Add(string.Format("data.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
@@ -510,25 +493,25 @@ namespace FrameIO.Main
         }
 
         //获取recvaction代码
-        static private string GetRecvActionCode(Subsys sys,SubsysAction ac)
+        static private string GetRecvActionCode(Subsys sys, SubsysAction ac)
         {
             var code = new StringBuilder(GetTemplate("TRecvAction"));
             ReplaceText(code, "recvaction", ac.Name);
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var getlist = new List<string>();
-            foreach(var setor in ac.Maps)
+            foreach (var setor in ac.Maps)
             {
                 if (setor.FrameSegName == "")
                     getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
                 else if (ProIsArray(sys, setor.SysPropertyName))
                 {
-                    getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
-                    getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys,setor.SysPropertyName))));
+                    getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
+                    getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
                 }
                 else
-                    getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
-                
+                    getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName, setor.FrameSegName));
+
             }
             ReplaceText(code, "getvaluelist", getlist, 4);
             return code.ToString();
@@ -606,7 +589,7 @@ namespace FrameIO.Main
 
         static private string GetGetorName(Subsys sys, string proname)
         {
-            foreach(var p in sys.Propertys)
+            foreach (var p in sys.Propertys)
             {
                 if (p.Name == proname)
                     return GetGetorName(p.PropertyType);
@@ -616,7 +599,7 @@ namespace FrameIO.Main
 
         static private syspropertytype GetProType(Subsys sys, string proname)
         {
-            foreach(var p in sys.Propertys)
+            foreach (var p in sys.Propertys)
             {
                 if (p.Name == proname)
                     return p.PropertyType;
@@ -659,7 +642,7 @@ namespace FrameIO.Main
         //类型名称
         static public string GetTypeName(syspropertytype ty)
         {
-            switch(ty)
+            switch (ty)
             {
                 case syspropertytype.SYSPT_BOOL:
                     return "bool";
@@ -691,9 +674,9 @@ namespace FrameIO.Main
         //生成代码文件
         static private void CreateFile(string fname, StringBuilder content)
         {
-            var fn = _newpath + "\\" + fname + ".cs";
+            var fn = _newpath + "\\" + fname;
             var match = Regex.Match(content.ToString(), "<%.+%>");
-            while(match.Success)
+            while (match.Success)
             {
                 content.Replace(match.Value, "");
                 match = match.NextMatch();
@@ -719,8 +702,8 @@ namespace FrameIO.Main
             if (new_list.Count == 0) return;
             var pre = new string('\t', tab_count);
             var str = new StringBuilder(new_list[0]);
-            
-            for(int i=1; i<new_list.Count; i++)
+
+            for (int i = 1; i < new_list.Count; i++)
             {
                 str.Append(Environment.NewLine + pre + new_list[i]);
             }
@@ -731,7 +714,7 @@ namespace FrameIO.Main
         //准备输出目录
         static private void PrepareDir()
         {
-            if(!Path.HasExtension(_newpath))
+            if (!Path.HasExtension(_newpath))
             {
                 Directory.CreateDirectory(_newpath);
             }
@@ -749,7 +732,7 @@ namespace FrameIO.Main
             FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
             foreach (FileSystemInfo i in fileinfo)
             {
-                if (i is FileInfo) 
+                if (i is FileInfo)
                 {
                     if (i.Extension == "cs" || i.Extension == "bin")
                         File.Delete(i.FullName);

@@ -1,29 +1,30 @@
-﻿using PropertyTools.DataAnnotations;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.ComponentModel;
-using System.Diagnostics.PerformanceData;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FrameIO.Main
 {
+    using Newtonsoft.Json;
     using PropertyTools.DataAnnotations;
+    using System.Runtime.Serialization;
 
+    [JsonObject(MemberSerialization.OptIn)]
     public abstract class FrameSegmentBase : INotifyPropertyChanged
     {
 
         [Category("Other")]
+        [JsonProperty]
         public string Notes { get; set; }
         [Category("Data")]
         [Converter(typeof(ComplexConverter))]
+        [JsonProperty]
         public Exp Repeated { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr="1" };
 
 
         [Category("Main")]
         [ReadOnly(true)]
+        [JsonProperty]
         public string Name { get; set; }
 
         [Browsable(false)]

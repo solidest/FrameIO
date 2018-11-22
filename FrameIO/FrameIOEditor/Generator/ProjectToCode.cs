@@ -88,7 +88,7 @@ namespace FrameIO.Main
                 {
                     if (pro.Name == null || pro.Name.Length == 0) continue;
                     AppendNotes(code, pro.Notes, 2);
-                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, FrameIOCodeGenerator.GetTypeName(pro.PropertyType), pro.IsArray ? "[]" : "", pro.Name);
+                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, FrameIOSharpCodeGenerator.GetTypeName(pro.PropertyType), pro.IsArray ? "[]" : "", pro.Name);
                 }
 
                 code.Append(Environment.NewLine);
@@ -159,7 +159,7 @@ namespace FrameIO.Main
                         {
                             if (ac.IOType == actioniotype.AIO_SEND && ofi.ByProperty.Length == 0) continue;
                             if(ac.IOType == actioniotype.AIO_SEND)
-                                code.AppendFormat("\t\t\t@switch(({0}){1}) {{" + Environment.NewLine, ofi.ByEnum, ofi.ByProperty);
+                                code.AppendFormat("\t\t\t@switch(({0}){1}.Value) {{" + Environment.NewLine, ofi.ByEnum, ofi.ByProperty);
                             else
                                 code.AppendFormat("\t\t\t@switch(({0})data.{1}) {{" + Environment.NewLine,ofi.ByEnum,  ofi.BySegname);
 

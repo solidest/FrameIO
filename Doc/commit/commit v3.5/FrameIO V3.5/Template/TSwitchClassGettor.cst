@@ -1,0 +1,9 @@
+﻿public class <%segmentname%>Gettor
+{
+    ISegmentGettor _gettor;
+    public <%segmentname%>Gettor(ISegmentGettor gettor)
+    {
+		_gettor = gettor;
+    }
+    <%caseitemlist%>
+}

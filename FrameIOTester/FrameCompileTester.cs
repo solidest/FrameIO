@@ -85,7 +85,7 @@ namespace FrameIO.Tester
             pj.FrameList.Add(frm);
 
             //编译分析结果
-            var cfrms = FrameCompiledFile.Compile(pj);
+            var cfrms = FrameCompiledBytes.Compile(pj);
             Assert.IsNotNull(cfrms);
             var config = cfrms.GetBytes();
             Assert.IsNotNull(config);
@@ -300,8 +300,8 @@ namespace FrameIO.Tester
             sys2.CHA.Open();
             sys1.CH1.Open();
 
-            sys1.PROPERTYa.Value = 4;
-            sys1.PROPERTYb.Value = 8;
+            sys1.PROPERTYa.Value = 8;   //3..9
+            sys1.PROPERTYb.Value = 9;
             sys1.PROPERTYc.Value = 999988887;
             sys1.PROPERTYd.Value = 999.77766;
             sys1.PROPERTYe.Add(new test_validate.Parameter<bool?>(true));
@@ -318,6 +318,44 @@ namespace FrameIO.Tester
             sys2.RecvData();
 
             Assert.IsTrue(sys2.check_value.Value != null && sys2.check_value.Value !=0);
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
+        //测试--CRC
+        [TestMethod]
+        public void TestCrc()
+        {
+
+            var sys1 = new test_crc.SYS1();
+            var sys2 = new test_crc.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = 8;   //3..9
+            sys1.PROPERTYb.Value = 9;
+            sys1.PROPERTYc.Value = 999988887;
+            sys1.PROPERTYd.Value = 999.77766;
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(false));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(true));
+            sys1.PROPERTYe.Add(new test_crc.Parameter<bool?>(true));
+
+            sys1.SendData();
+
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.check_value.Value != null && sys2.check_value.Value != 0);
 
             sys1.CH1.Close();
             sys2.CHA.Close();
@@ -347,9 +385,9 @@ namespace FrameIO.Tester
             for (int i=0; i<len; i++) sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(9));
             sys1.PROPERTYe.Add(new test_bytesizeof.Parameter<byte?>(7));
 
-            sys1.SendData();
+            sys1.SendData2();
 
-            sys2.RecvData();
+            sys2.RecvData2();
 
             Assert.IsTrue(sys2.PROPERTY2e.Count == len+2);
 

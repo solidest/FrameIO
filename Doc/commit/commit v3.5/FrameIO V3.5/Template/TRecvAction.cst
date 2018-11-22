@@ -1,0 +1,13 @@
+﻿
+        public void <%recvaction%>()
+        {
+            try
+            {
+				var data = new <%framename%>Gettor(<%channelname%>.ReadFrame(<%framename%>Gettor.Unpacker));
+                <%getvaluelist%>
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
+        }

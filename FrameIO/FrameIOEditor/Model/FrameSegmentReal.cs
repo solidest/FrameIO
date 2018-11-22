@@ -1,29 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    using Newtonsoft.Json;
     using PropertyTools.DataAnnotations;
+
     //isdouble、byteorder、value、encoded、repeated
+    [JsonObject(MemberSerialization.OptIn)]
     public class FrameSegmentReal:FrameSegmentBase
     {
         [Category("Data")]
+        [JsonProperty]
         public bool IsDouble { get; set; } = false;
         [Category("Data")]
+        [JsonProperty]
         public ByteOrderType ByteOrder { get; set; } = ByteOrderType.Small;
         [Category("Data")]
+        [JsonProperty]
         public EncodedType Encoded { get; set; } = EncodedType.Primitive;
 
         [Category("Data")]
         [Converter(typeof(ComplexConverter))]
+        [JsonProperty]
         public Exp Value { get; set; } = new Exp() { Op = exptype.EXP_INT, ConstStr = "0" };
 
         [Category("Validator")]
+        [JsonProperty]
         public string ValidateMax { get; set; } = null;
         [Category("Validator")]
+        [JsonProperty]
         public string ValidateMin { get; set; } = null;
 
         public override void AppendSegmentCode(StringBuilder code)

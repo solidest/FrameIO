@@ -118,7 +118,7 @@ PRAGMA foreign_keys = on;
                 ret.Append(l);
                 ret.Append(Environment.NewLine);
             }
-            return ret.ToString();
+            return ret.ToString().TrimEnd(Environment.NewLine.ToArray());
         }
 
         //加载受控对象系统
@@ -490,10 +490,10 @@ PRAGMA foreign_keys = on;
                         seg.ValidateCheck = (CheckType)Convert.ToInt32(pro.vtype);
                         break;
                     case segpropertytype.SEGP_CHECKRANGE_BEGIN:
-                        seg.VCheckRangeBegin = pro.ivalue;
+                        seg.CheckRangeBegin = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_CHECKRANGE_END:
-                        seg.VCheckRangeEnd = pro.ivalue;
+                        seg.CheckRangeEnd = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_TOENUM:
                         seg.ToEnum = pro.ivalue;

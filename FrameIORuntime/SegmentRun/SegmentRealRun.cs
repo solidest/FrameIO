@@ -42,6 +42,8 @@ namespace FrameIO.Runtime
 
         internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
         {
+            info.PackBitPos = (int)pack.Position * 8 + odd_pos;
+
             if (!info.IsSetValue) SetAutoValue(value_buff, info, ir);
 
             CommitValue(value_buff.GetBuffer(), info.StartPos, IsDouble ? 64 : 32, pack, ref odd, ref odd_pos);

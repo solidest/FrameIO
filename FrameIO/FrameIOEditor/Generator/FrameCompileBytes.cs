@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Main
 {
     //数据帧配置文件编译
-    public class FrameCompiledFile
+    public class FrameCompiledBytes
     {
 
         #region --Const--
@@ -67,7 +67,7 @@ namespace FrameIO.Main
 
         #region --Public--
 
-        public FrameCompiledFile()
+        public FrameCompiledBytes()
         {
             _segmentlist.Add(0);
             _constlist.Add(0);
@@ -77,12 +77,12 @@ namespace FrameIO.Main
         }
 
         //编译配置文件
-        public static FrameCompiledFile Compile(IOProject pj)
+        public static FrameCompiledBytes Compile(IOProject pj)
         {
             //const byte pos_ref_frame = 48;  //引用数据帧位
 
             _pj = pj;
-            var ret = new FrameCompiledFile();
+            var ret = new FrameCompiledBytes();
             var need_update = new Dictionary<ushort, string>(); //需要更新数据帧引用的位置
 
             for (int i=0; i<pj.FrameList.Count; i++)
@@ -360,14 +360,14 @@ namespace FrameIO.Main
             SetTokenValue(ref token, LookUpExp(seg.Value, pre), pos_value, LEN_USHORT);
             var ret = AddSegment(token, pre + "." + seg.Name);
 
-            if (seg.ValidateCheck != CheckType.None)
-            {
-                if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
-                    seg.VCheckRangeBegin = brotherlist[0].Name;
-                if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
-                    seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
-            }
-            var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.VCheckRangeBegin, seg.VCheckRangeEnd, pre);
+            //if (seg.ValidateCheck != CheckType.None)
+            //{
+            //    if (seg.VCheckRangeBegin == null || seg.VCheckRangeBegin.Length == 0)
+            //        seg.VCheckRangeBegin = brotherlist[0].Name;
+            //    if (seg.VCheckRangeEnd == null || seg.VCheckRangeEnd.Length == 0)
+            //        seg.VCheckRangeEnd = seg.Name;//FindPreiousSegment(seg, brotherlist);
+            //}
+            var refvalid = LookUpValidator(seg.ValidateMax, seg.ValidateMin, seg.ValidateCheck, seg.CheckRangeBegin, seg.CheckRangeEnd, pre);
             SetTokenValue(ref token, refvalid, pos_validate, LEN_USHORT);
             UpdateSegmentToken(ret, token);
             return ret;
@@ -475,8 +475,12 @@ namespace FrameIO.Main
             const byte pos_checkend = 32;
             ulong token = CO_VALIDATOR_CHECK;
             SetTokenValue(ref token, (byte)((int)check- (int)CheckType.SEGPV_SUM8+1), pos_checktype, LEN_BYTE);
-            SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
-            SetTokenValue(ref token, (byte)LookUpSegment(checkend, pre), pos_checkend, LEN_USHORT);
+            if (checkbegin != null && checkbegin.Length>0)
+            {
+                SetTokenValue(ref token, (byte)LookUpSegment(checkbegin, pre), pos_checkbegin, LEN_USHORT);
+                SetTokenValue(ref token, (byte)LookUpSegment(checkend, pre), pos_checkend, LEN_USHORT);
+            }
+
             return AddValidator(token, refprevious);
         }
 

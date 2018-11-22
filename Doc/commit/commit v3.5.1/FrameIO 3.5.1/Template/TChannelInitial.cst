@@ -1,0 +1,7 @@
+﻿ 
+		public void InitialChannel<%channelname%>(ChannelOption ops)
+		{
+			if (ops == null) ops = new ChannelOption();
+			<%channeloptionlist%>
+			<%channelname%> = FrameIOFactory.GetChannel(<%channeltype%>, ops);
+		}

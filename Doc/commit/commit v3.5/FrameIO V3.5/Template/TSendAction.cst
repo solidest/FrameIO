@@ -1,0 +1,14 @@
+﻿
+		public void <%sendaction%>()
+        {
+            try
+            {
+                var data = new <%framename%>Settor();
+                <%setvaluelist%>
+                <%channelname%>.WriteFrame(data.GetPacker());
+            }
+            catch (FrameIOException ex)
+            {
+                HandleFrameIOError(ex);
+            }
+        }

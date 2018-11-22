@@ -1,0 +1,30 @@
+v3.5.1更新内容：
+
+1、生成代码中枚举不再作为int使用
+
+2、ui操作模式下增加注释功能
+
+3、修正第一次使用时使用datagrid出现的问题
+
+4、生成的代码缩进全部使用4个空格
+
+5、包长校验增加对部分字段校验的功能
+
+    //默认校验从0字节至校验字段之前的内容
+    integer SEG_CHECK signed=false check=sum32_false;
+
+    //校验从字段SEGA至SEGB之间的内容 注意：SEGA和SEGB均为基础类型
+    integer SEG_CHECK signed=false check=sum32_false checkrange=(SEGA,SEGB);
+
+6、设置自动计算包长功能
+
+    //整包长度
+    integer SEG_LEN value=bytesizeof(this);
+
+    //不含包头
+    integer SEG_LEN value=bytesizeof(this)-bytesizeof(SEG_HEADER)；
+
+遗留问题：
+1、datagrid插入新行时自动复用上一行数据
+    由于目前选用的datagrid控件只能绑定数据对象，不支持对单元格数据的操作，所以这个功能无法实现
+

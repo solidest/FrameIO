@@ -50,7 +50,9 @@ namespace FrameIO.Runtime
         //打包到数据帧
         internal override ushort Pack(MemoryStream value_buff, MemoryStream pack, ref byte odd, ref byte odd_pos, SetValueInfo info, IPackRunExp ir)
         {
-            if(!info.IsSetValue) SetAutoValue(value_buff, pack, info, ir);
+            info.PackBitPos = (int)pack.Position * 8 + odd_pos;
+
+            if (!info.IsSetValue) SetAutoValue(value_buff, pack, info, ir);
             
             CommitValue(value_buff.GetBuffer(), info.StartPos, BitCount, pack, ref odd, ref odd_pos);
             return 0;
@@ -98,7 +100,16 @@ namespace FrameIO.Runtime
                 if (_vlidmin != null) if (!_vlidmin.Valid(v)) ir.AddErrorInfo("低于最小值设置", this);
                 if (_vlidcheck != null)
                 {
-                    if (v != (_vlidcheck.GetCheckValue(buff, pos_bit / 8)& (~(ulong)0)>>(64-BitCount))) ir.AddErrorInfo("校验值错误", this); ;
+                    int ibegin = 0;
+                    int iend = pos_bit / 8;
+                    if (_vlidcheck.ChecekEndSegIdx != 0)
+                    {
+                        
+                        ibegin = ir.GetUnpackInfo(_vlidcheck.ChecekBeginSegIdx).BitStart / 8;
+                        var end = ir.GetUnpackInfo(_vlidcheck.ChecekEndSegIdx);
+                        iend = (end.BitStart + end.BitLen) / 8;
+                    }
+                    if (v != (_vlidcheck.GetCheckValue(buff, ibegin, iend) & (~(ulong)0) >> (64 - BitCount))) ir.AddErrorInfo("校验值错误", this); ;
                 }
             }
             pos_bit += BitCount;
@@ -143,7 +154,15 @@ namespace FrameIO.Runtime
         {
             if (_vlidcheck != null && pack != null)
             {
-                SetSegmentValue(value_buff, _vlidcheck.GetCheckValue(pack.GetBuffer(), (int)pack.Position),info);
+                int ibegin = 0;
+                int iend = (int)pack.Position;
+                if (_vlidcheck.ChecekEndSegIdx != 0)
+                {
+                    ibegin = ir.GetSetValueInfo(_vlidcheck.ChecekBeginSegIdx).PackBitPos / 8;
+                    var end = ir.GetSetValueInfo(_vlidcheck.ChecekEndSegIdx);
+                    iend = (end.PackBitPos + end.BitLen) / 8;
+                }
+                SetSegmentValue(value_buff, _vlidcheck.GetCheckValue(pack.GetBuffer(), ibegin, iend),info);
                 return;
             }
 

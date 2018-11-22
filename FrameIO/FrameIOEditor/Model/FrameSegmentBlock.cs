@@ -1,32 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
+    using Newtonsoft.Json;
     using PropertyTools.DataAnnotations;
+    using System.Runtime.Serialization;
 
+    [JsonObject(MemberSerialization.OptIn)]
     public class FrameSegmentBlock : FrameSegmentBase
     {
         [Browsable(false)]
+        [JsonProperty]
         public BlockSegType UsedType { get; set; } = BlockSegType.None;
 
         [VisibleBy(nameof(UsedType), BlockSegType.RefFrame)]
         [Category("Data")]
+        [JsonProperty]
         public string RefFrameName { get; set; } = "";
 
         [Browsable(false)]
+        [JsonProperty]
         public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = null;
 
         [VisibleBy(nameof(UsedType), BlockSegType.OneOf)]
         [Category("Data")]
+        [JsonProperty]
         public string OneOfBySegment { get; set; } = "";
 
         [VisibleBy(nameof(UsedType), BlockSegType.OneOf)]
         [Category("Data")]
+        [JsonProperty]
         public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = new ObservableCollection<OneOfMap>();
 
         public override void AppendSegmentCode(StringBuilder code)

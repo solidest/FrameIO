@@ -36,7 +36,7 @@ namespace FrameIO.Runtime
                 case CO_VALIDATOR_EQUAL:
                     return new SegmentEqualValidator(ir.GetConst(SegmentBaseRun.GetTokenUShort(token, POS_VALIDATOR_VALUE)), SegmentBaseRun.GetTokenUShort(token, POS_VALIDATOR_NEXT));
                 case CO_VALIDATOR_CHECK:
-                    return new SegmentCheckValidator(SegmentBaseRun.GetTokenByte(token, pos_checktype, 6), SegmentBaseRun.GetTokenUShort(token, pos_checkbegin), SegmentBaseRun.GetTokenUShort(token, pos_checkend), SegmentBaseRun.GetTokenUShort(token, POS_VALIDATOR_NEXT));
+                    return new SegmentCheckValidator(SegmentBaseRun.GetTokenByte(token, pos_checktype, 8), SegmentBaseRun.GetTokenUShort(token, pos_checkbegin), SegmentBaseRun.GetTokenUShort(token, pos_checkend), SegmentBaseRun.GetTokenUShort(token, POS_VALIDATOR_NEXT));
                 default:
                     break;
             }
@@ -102,19 +102,21 @@ namespace FrameIO.Runtime
     internal class SegmentCheckValidator : SegmentValidator
     {
         private byte _checktype;
-        private ushort _checkbegin;
-        private ushort _checkend;
+
+        public ushort ChecekBeginSegIdx { get; }
+        public ushort ChecekEndSegIdx { get; }
         public SegmentCheckValidator(byte checktype, ushort checkbeing, ushort checkend, ushort next_idx) : base(next_idx, ValidateType.Check)
         {
             _checktype = checktype;
-            _checkbegin = checkbeing;
-            _checkend = checkend;
+            ChecekBeginSegIdx = checkbeing;
+            ChecekEndSegIdx = checkend;
         }
 
 
-        internal ulong GetCheckValue(byte[] buff,  int endpos)
+        internal ulong GetCheckValue(byte[] buff, int beginpos, int endpos)
         {
-            return CRCHelper.GetCheckValue(_checktype, buff, 0, endpos);
+            if (endpos <= beginpos) return 0;
+            return CRCHelper.GetCheckValue(_checktype, buff, beginpos, endpos);
         }
     }
 
