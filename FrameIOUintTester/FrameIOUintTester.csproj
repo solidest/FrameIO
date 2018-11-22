@@ -133,12 +133,24 @@
     <Compile Include="..\..\0.flo\test_PowerSupplyManager\PowerSupplyManager.cs">
       <Link>Test_PowerSupplyManager\PowerSupplyManager.cs</Link>
     </Compile>
+    <Compile Include="9.test_crc.cs" />
+    <Compile Include="8.test_calc.cs" />
+    <Compile Include="7.test_bit.cs" />
     <Compile Include="6.test_can_yh.cs" />
     <Compile Include="5.test_array.cs" />
     <Compile Include="4.test_enum.cs" />
     <Compile Include="3.test_com.cs" />
     <Compile Include="2.test_udp.cs" />
     <Compile Include="1.test_tcp.cs" />
+    <Compile Include="7.test_bit\frame.cs" />
+    <Compile Include="7.test_bit\Parameter.cs" />
+    <Compile Include="7.test_bit\test_bit.cs" />
+    <Compile Include="8.test_calc\frame.cs" />
+    <Compile Include="8.test_calc\Parameter.cs" />
+    <Compile Include="8.test_calc\test_calc.cs" />
+    <Compile Include="9.test_crc\frame.cs" />
+    <Compile Include="9.test_crc\Parameter.cs" />
+    <Compile Include="9.test_crc\test_crc.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
@@ -151,6 +163,8 @@
     <None Include="4.test_enum\4.test_enum.fio" />
     <None Include="5.test_array\5.test_array.fio" />
     <None Include="6.test_can_yh\6.test_can_yh.fio" />
+    <None Include="7.test_bit\7.test_bit.fio" />
+    <None Include="8.test_calc\8.test_caculate.fio" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +181,7 @@
       <Name>FrameIORuntime</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
