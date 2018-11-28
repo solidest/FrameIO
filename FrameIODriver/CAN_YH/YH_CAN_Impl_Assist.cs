@@ -16,6 +16,7 @@ namespace FrameIO.Driver
         private uint Acccode = 0xffffffff;
         private uint Accmark = 0xffffffff;
         private uint Filter = 1;
+        private int ReceiveTimeOut = 5000;
 
         private static Byte[] PVCI_CAN_OBJ_ToBytes(canmsg_t obj)
         {
@@ -54,6 +55,12 @@ namespace FrameIO.Driver
         #region 辅助函数 Init_Config()
         public void InitConfig(Dictionary<string, object> config)
         {
+            if (!config.ContainsKey("channelind") || !config.ContainsKey("baudrate") 
+                || !config.ContainsKey("waittimeout") || !config.ContainsKey("filter") 
+                || !config.ContainsKey("acccode") || !config.ContainsKey("accmark") )
+                throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化研华CAN板卡", "缺少初始化配置参数!");
+
+
             PortName = "can"+config["channelind"].ToString();
             BaudRate = System.Convert.ToUInt16(config["baudrate"]);
             WriteTimeOut = System.Convert.ToUInt16(config["waittimeout"]);
@@ -61,6 +68,9 @@ namespace FrameIO.Driver
             Filter= System.Convert.ToByte(config["filter"]);
             Acccode = System.Convert.ToUInt32(config["acccode"]);
             Accmark= System.Convert.ToUInt32(config["accmark"]);
+
+            if (config.ContainsKey("receivetimeout"))
+                ReceiveTimeOut= (ushort)Convert.ToInt32(config["receivetimeout"]);
         }
         #endregion
         //设备号

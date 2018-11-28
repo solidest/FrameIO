@@ -76,6 +76,7 @@ namespace FrameIO.Main
         //检查通道
         static private void CheckChannel(SubsysChannel ch)
         {
+            //return;
             string[] str = GetChannelStrOptionName(ch.ChannelType);
             string[] nms = GetChannelNumberOptionName(ch.ChannelType);
             foreach (var op in ch.Options)

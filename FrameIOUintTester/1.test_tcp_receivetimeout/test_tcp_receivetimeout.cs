@@ -5,9 +5,9 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System.Linq;
 
-namespace test_crc
+namespace test_tcp_receivetimeout
 {
-    public partial class test_crc
+    public partial class test_tcp_receivetimeout
     {
         public IChannelBase CHS;
         public IChannelBase CHC;
@@ -19,6 +19,7 @@ namespace test_crc
             if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.153");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
             if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.153");
+            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
             CHS = FrameIOFactory.GetChannel(ChannelTypeEnum.TCPSERVER, ops);
         }
  
@@ -27,13 +28,14 @@ namespace test_crc
             if (ops == null) ops = new ChannelOption();
             if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.153");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
+            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
             CHC = FrameIOFactory.GetChannel(ChannelTypeEnum.TCPCLIENT, ops);
         }
 
 
-        public Parameter<ushort?> len { get; set;} = new Parameter<ushort?>();
-        public Parameter<ushort?> end { get; set;} = new Parameter<ushort?>();
-        public Parameter<ushort?> head { get; set;} = new Parameter<ushort?>();
+        public Parameter<uint?> len { get; set;} = new Parameter<uint?>();
+        public Parameter<uint?> end { get; set;} = new Parameter<uint?>();
+        public Parameter<uint?> head { get; set;} = new Parameter<uint?>();
 
         //异常处理接口
         private void HandleFrameIOError(FrameIOException ex)
@@ -57,6 +59,7 @@ namespace test_crc
                 var data = new frameSRSettor();
                 data.HEAD = head.Value;
                 data.LEN = len.Value;
+                data.END = end.Value;
                 CHS.WriteFrame(data.GetPacker());
             }
             catch (FrameIOException ex)

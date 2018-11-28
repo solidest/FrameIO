@@ -6,7 +6,7 @@ using FrameIO.Runtime;
 using FrameIO.Interface;
 
 
-namespace test_crc
+namespace test_tcp_receivetimeout
 {
     public class FrameBase
     {
@@ -14,8 +14,7 @@ namespace test_crc
         static FrameBase()
         {
             var config = string.Concat(
-                "H4sIAAAAAAAEAGNjYARCJgZcgIWRiYEZic8DVM0KpB0dIHxUmpGBFyoPAMPh",
-                "htVYAAAA");
+                "H4sIAAAAAAAEAGNjYARDQoAHqIYVSDs2QPjoNC9UHgD2fvJHUAAAAA==");
 
             using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
             {
@@ -46,9 +45,9 @@ namespace test_crc
             _gettor = gettor;
         }
 
-        public ushort? HEAD { get => _gettor.GetUShort(2); }
-        public ushort? LEN { get => _gettor.GetUShort(3); }
-        public ushort? END { get => _gettor.GetUShort(4); }
+        public uint? HEAD { get => _gettor.GetUInt(2); }
+        public uint? LEN { get => _gettor.GetUInt(3); }
+        public uint? END { get => _gettor.GetUInt(4); }
     }
     public class frameSRSettor : FrameBase
     {
@@ -69,9 +68,9 @@ namespace test_crc
             _settor = packer;
         }
 
-        public ushort? HEAD { set => _settor.SetSegmentValue(2, value); }
-        public ushort? LEN { set => _settor.SetSegmentValue(3, value); }
-        public ushort? END { set => _settor.SetSegmentValue(4, value); }     
+        public uint? HEAD { set => _settor.SetSegmentValue(2, value); }
+        public uint? LEN { set => _settor.SetSegmentValue(3, value); }
+        public uint? END { set => _settor.SetSegmentValue(4, value); }     
     }
 
 }

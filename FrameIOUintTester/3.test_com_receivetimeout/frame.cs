@@ -6,7 +6,7 @@ using FrameIO.Runtime;
 using FrameIO.Interface;
 
 
-namespace test_crc
+namespace test_com_receivetimeout
 {
     public class FrameBase
     {
@@ -14,8 +14,7 @@ namespace test_crc
         static FrameBase()
         {
             var config = string.Concat(
-                "H4sIAAAAAAAEAGNjYARCJgZcgIWRiYEZic8DVM0KpB0dIHxUmpGBFyoPAMPh",
-                "htVYAAAA");
+                "H4sIAAAAAAAEAGNjYARDQoAHqIYVSDs2QPjoNC9UHgD2fvJHUAAAAA==");
 
             using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
             {
@@ -32,7 +31,7 @@ namespace test_crc
     }
 
         
-    public class frameSRGettor : FrameBase
+    public class FrameSRGettor : FrameBase
     {
         private ISegmentGettor _gettor;
 
@@ -41,16 +40,16 @@ namespace test_crc
             get { InitialBase(); return FrameIOFactory.GetFrameUnpacker(1); }
         }
 
-        public frameSRGettor(ISegmentGettor gettor)
+        public FrameSRGettor(ISegmentGettor gettor)
         {
             _gettor = gettor;
         }
 
-        public ushort? HEAD { get => _gettor.GetUShort(2); }
-        public ushort? LEN { get => _gettor.GetUShort(3); }
-        public ushort? END { get => _gettor.GetUShort(4); }
+        public uint? HEAD { get => _gettor.GetUInt(2); }
+        public uint? LEN { get => _gettor.GetUInt(3); }
+        public uint? END { get => _gettor.GetUInt(4); }
     }
-    public class frameSRSettor : FrameBase
+    public class FrameSRSettor : FrameBase
     {
         private ISegmentSettor _settor;
 
@@ -59,19 +58,19 @@ namespace test_crc
             return _settor.GetPack();
         }
 
-        public frameSRSettor()
+        public FrameSRSettor()
         {
             _settor = FrameIOFactory.GetFrameSettor(1);
         }
 
-        public frameSRSettor(ISegmentSettor packer)
+        public FrameSRSettor(ISegmentSettor packer)
         {
             _settor = packer;
         }
 
-        public ushort? HEAD { set => _settor.SetSegmentValue(2, value); }
-        public ushort? LEN { set => _settor.SetSegmentValue(3, value); }
-        public ushort? END { set => _settor.SetSegmentValue(4, value); }     
+        public uint? HEAD { set => _settor.SetSegmentValue(2, value); }
+        public uint? LEN { set => _settor.SetSegmentValue(3, value); }
+        public uint? END { set => _settor.SetSegmentValue(4, value); }     
     }
 
 }
