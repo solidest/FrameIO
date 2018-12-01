@@ -183,7 +183,7 @@ namespace FrameIO.Runtime
             int len = 0;
             _fi[idx].GetBitLen(Info.Cach, ref len, Info[idx], this);
             if (len % 8 != 0)
-                throw new Exception("runtime");
+                throw new Exception("runtime 数据帧字段未能整字节对齐");
             else
                 return len / 8;
         }

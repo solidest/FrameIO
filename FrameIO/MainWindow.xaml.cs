@@ -535,7 +535,7 @@ namespace FrameIO.Main
         //代码检查
         private bool DoCheckCode()
         {
-            if (!_isCoding && _project!=null) edCode.Text = ProjectToCode.GetProjectCode(_project);
+            //if (!_isCoding && _project!=null) edCode.Text = ProjectToCode.GetProjectCode(_project);
             SaveProject(this, null);
 
             bool ret = ReLoadProjectToUI(false, true);
@@ -668,7 +668,11 @@ namespace FrameIO.Main
         //保存
         private void SaveProject(object sender, ExecutedRoutedEventArgs e)
         {
-            if(!_isCoding && _project!=null) edCode.Text = ProjectToCode.GetProjectCode(_project);
+            if (!_isCoding)
+            {
+                trProject.Focus();
+                if (_project != null) edCode.Text = ProjectToCode.GetProjectCode(_project);
+            }
 
             File.WriteAllText(FileName, edCode.Text);
             _isModified = false;
@@ -716,6 +720,7 @@ namespace FrameIO.Main
 
             if (sfd.ShowDialog() == true)
             {
+                tbPages.Items.Clear();
                 if (File.Exists(sfd.FileName)) File.Delete(sfd.FileName);
                 FileName = sfd.FileName;
                 var code = DefaultCode.Replace("{0}", System.IO.Path.GetFileNameWithoutExtension(FileName));

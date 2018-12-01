@@ -39,7 +39,7 @@ namespace FrameIO.Runtime
         public int AppendBlock(byte[] block)
         {
             if(_buff == null) _buff = new MemoryStream();
-            if (_nextsize == 0 || block.Length != _nextsize) throw new Exception("runtime");
+            if (_nextsize == 0 || block.Length != _nextsize) throw new Exception("runtime 参数错误");
             var bit_pos = (int)_buff.Position * 8;
             _buff.Write(block, 0, _nextsize);
             int end_bit_pos = (int)_buff.Position * 8;
@@ -101,7 +101,7 @@ namespace FrameIO.Runtime
                 else
                     break;
             }
-            if (bitlen % 8 != 0) throw new Exception("runtime");
+            if (bitlen % 8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
             return bitlen/8;
         }
 

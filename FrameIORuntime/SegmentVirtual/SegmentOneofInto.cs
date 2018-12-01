@@ -74,7 +74,7 @@ namespace FrameIO.Runtime
         {
             ushort selected_idx = 0;
             var selecteditem = TryGetSelectedItem(buff, out selected_idx, ir);
-            if (selecteditem == null) throw new Exception("runtime");
+            if (selecteditem == null) throw new Exception("runtime one of error");
             info.IsUnpack = true;
             return selected_idx;
         }
@@ -117,7 +117,7 @@ namespace FrameIO.Runtime
                 }
             }
 
-            if (selected_idx == 0 && default_idx == 0) throw new Exception("runtime");
+            if (selected_idx == 0 && default_idx == 0) throw new Exception("runtime one of error");
             if (selected_idx == 0) selected_idx = default_idx;
             return (SegmentOneofItem)FrameRuntime.Run[selected_idx];
         }

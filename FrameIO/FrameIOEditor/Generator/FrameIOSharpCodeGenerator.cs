@@ -418,7 +418,7 @@ namespace FrameIO.Main
                     case actioniotype.AIO_RECV:
                         actionrecvcode.Append(GetRecvActionCode(sys, ac));
                         break;
-                    case actioniotype.AIO_RECVLOOP:
+                    //case actioniotype.AIO_RECVLOOP:
                         //HACK recvloop
                         break;
                     default:
@@ -452,11 +452,11 @@ namespace FrameIO.Main
             {
                 if(pro.IsArray)
                 {
-                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; private set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
                 }
                 else
                 {
-                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetTypeName(pro.PropertyType), pro.Name));
+                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; private set;}} = new Parameter<{0}?>();", GetTypeName(pro.PropertyType), pro.Name));
                 }
             }
             ReplaceText(code, "propertydeclare", decl, 2);

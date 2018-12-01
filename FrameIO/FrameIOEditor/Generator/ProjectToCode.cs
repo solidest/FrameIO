@@ -254,8 +254,8 @@ namespace FrameIO.Main
                     return "send";
                 case actioniotype.AIO_RECV:
                     return "recv";
-                case actioniotype.AIO_RECVLOOP:
-                    return "recvloop";
+                //case actioniotype.AIO_RECVLOOP:
+                    //return "recvloop";
             }
             return "";
         }

@@ -16,7 +16,7 @@ namespace FrameIO.Runtime
         {
             const byte pos_repeated = 16;
             _repeated_idx = GetTokenUShort(token, pos_repeated);
-            if (_repeated_idx == 0) throw new Exception("runtime");
+            if (_repeated_idx == 0) throw new Exception("runtime 空数组引用");
             if (ir.IsConst(_repeated_idx)) _repeated_const = (int)ir.GetConstValue(_repeated_idx);
         }
 

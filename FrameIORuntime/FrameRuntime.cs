@@ -41,7 +41,7 @@ namespace FrameIO.Runtime
             ushort validatorcount = BitConverter.ToUInt16(content, 6);
 
             if (content.Length != (segmentcount + constcount + expressioncount  + validatorcount +1) * 8)
-                throw new Exception("runtime");
+                throw new Exception("runtime 格式错误");
 
             int pos = 8;
 

@@ -40,7 +40,7 @@ namespace FrameIO.Runtime
                 default:
                     break;
             }
-            throw new Exception("runtime");
+            throw new Exception("runtime unknow error");
         }
 
         internal SegmentValidator(ushort next_idx, ValidateType type)

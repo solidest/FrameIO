@@ -82,7 +82,7 @@ namespace FrameIO.Main
 
         private void StopUpdateCh(object sender, RoutedEventArgs e)
         {
-            _fUpdateTimerCh.Start();
+            _fUpdateTimerCh.Stop();
         }
 
         private void StartUpdateAc(object sender, RoutedEventArgs e)

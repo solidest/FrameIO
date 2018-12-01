@@ -107,8 +107,8 @@ namespace FrameIO.Main
     public enum actioniotype
     {
         AIO_SEND = 1,
-        AIO_RECV,
-        AIO_RECVLOOP
+        AIO_RECV
+        //AIO_RECVLOOP
     };
 
     //表达式类型

@@ -57,7 +57,7 @@ namespace FrameIO.Runtime
                 case ExpType.EXP_DIV:
                     return ir.GetConst(_left) / ir.GetConst(_right);
             }
-            throw new Exception("runtime");
+            throw new Exception("runtime unknow error");
         }
 
         internal double GetExpValue(IPackRunExp ir)
@@ -79,7 +79,7 @@ namespace FrameIO.Runtime
                 case ExpType.EXP_FUN_BYTESIZEOF:
                     return ir.GetSegmentByteSize(_left);
             }
-            throw new Exception("runtime");
+            throw new Exception("runtime unknow error");
         }
 
         internal bool TryGetExpValue(byte[] buff, ref double value, IUnpackRunExp ir)
@@ -126,10 +126,10 @@ namespace FrameIO.Runtime
                 case ExpType.EXP_REF_SEGMENT:
                     return ir.TryGetSegmentValue(buff, ref value, _left);
                 case ExpType.EXP_FUN_BYTESIZEOF:
-                    throw new Exception("runtime");
+                    throw new Exception("runtime 错误使用bytesizeof");
                     //return ir.TryGetSegmentByteSize(buff, ref value, _left);
             }
-            throw new Exception("runtime");
+            throw new Exception("runtime unknow error");
         }
 
         //const byte EXP_NUMBER = 1;
