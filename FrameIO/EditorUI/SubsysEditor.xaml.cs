@@ -47,6 +47,7 @@ namespace FrameIO.Main
             _fUpdateTimerAc.Tick += delegate { UpdateTimerAc(); };
         }
 
+        //更新动作关联字段名选择
         private void UpdateTimerAc()
         {
             var s = acGrid.SelectionCell.Row;
@@ -62,7 +63,7 @@ namespace FrameIO.Main
             }
         }
 
-
+        //更新通道参数名选择
         private void UpdateTimerCh()
         {
             var s = chGrid.SelectionCell.Row;
@@ -75,24 +76,34 @@ namespace FrameIO.Main
             }
         }
 
+        //启动通道选择更新
         private void StartUpdateCh(object sender, RoutedEventArgs e)
         {
             _fUpdateTimerCh.Start();
         }
 
+        //停止通道选择更新
         private void StopUpdateCh(object sender, RoutedEventArgs e)
         {
             _fUpdateTimerCh.Stop();
         }
 
+        //启动action选择更新
         private void StartUpdateAc(object sender, RoutedEventArgs e)
         {
             _fUpdateTimerAc.Start();
         }
 
+        //停止action选择更新
         private void StopUpdateAc(object sender, RoutedEventArgs e)
         {
             _fUpdateTimerAc.Stop();
+        }
+
+        //更新属性类型列表
+        private void UpdatePropertyTypeList(object sender, RoutedEventArgs e)
+        {
+            //HACK 1111 更新属性类型下拉
         }
     }
 }

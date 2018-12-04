@@ -11,7 +11,7 @@ namespace FrameIO.Main
     {
         public string Name { get; set; }
         public string Notes { get; set; }
-        public syspropertytype PropertyType { get; set; } = syspropertytype.SYSPT_UINT;
+        public syspropertytype PropertyType { get; set; } = syspropertytype.SYSPT_UINT; //HACK 1111 修改类型为string
         public bool IsArray { get; set; }
         public int Syid { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;

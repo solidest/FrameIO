@@ -18,7 +18,7 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Grid.RowSpan="2" Header="分系统属性" Margin="3,3,10,3">
-            <p:DataGrid ItemsSource="{Binding Propertys}" AutoInsert="False">
+            <p:DataGrid ItemsSource="{Binding Propertys}" AutoInsert="False" GotFocus="UpdatePropertyTypeList">
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="2*"  Header="名称"/>
                     <p:ColumnDefinition PropertyName="PropertyType" Width="2*"  Header="数据类型"/>
