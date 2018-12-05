@@ -68,7 +68,7 @@ namespace FrameIO.Main
             var ret = new List<string>();
             foreach(var p in props)
             {
-                if (p.IsBaseType() || IsEnum(p.Name))
+                if (p.IsBaseType() || IsEnum(p.PropertyType))
                     ret.Add(p.Name);
                 else
                     ret.AddRange(GetSubPropertyList(p.PropertyType,p.Name));
