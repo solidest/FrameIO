@@ -1,7 +1,7 @@
 ﻿
 namespace <%project%>
 {
-    enum <%enumname%>
+    public enum <%enumname%>
     {
         <%enumlist%>
     }
