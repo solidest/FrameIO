@@ -38,21 +38,6 @@ enum systitemtype
 	SYSI_ACTION
 };
 
-//系统属性类型
-enum syspropertytype
-{
-	SYSPT_BOOL = 1,
-	SYSPT_BYTE,
-	SYSPT_SBYTE,
-	SYSPT_USHORT,
-	SYSPT_SHORT,
-	SYSPT_UINT,
-	SYSPT_INT,
-	SYSPT_ULONG,
-	SYSPT_LONG,
-	SYSPT_FLOAT,
-	SYSPT_DOUBLE
-};
 
 //通道类型
 enum syschanneltype
@@ -265,9 +250,9 @@ struct ACTION
 struct SYSPROPERTY
 {
 	NOTE  * notes;
-	syspropertytype protype;
+	int protype;
 	int namesyid;
-	bool isarray;
+	int arraycount;
 	struct SYSPROPERTY * nextsysproperty;
 } ;
 
@@ -361,7 +346,7 @@ SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NO
 SEGMENT* append_segment(SEGMENT* list, SEGMENT* lastitem);
 FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes);
 
-SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray, NOTE* notes);
+SYSPROPERTY* new_sysproperty(int namesyid, int protype, int arraycount, NOTE* notes);
 CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* oplist, NOTE* notes);
 CHANNELOPTION* new_channeloption(int namesyid, int valuesyid, NOTE* notes);
 CHANNELOPTION* append_channeloption(CHANNELOPTION* list, CHANNELOPTION* lastitem);

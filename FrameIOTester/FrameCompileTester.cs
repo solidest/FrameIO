@@ -398,5 +398,50 @@ namespace FrameIO.Tester
         }
 
 
+        //测试子系统引用
+        [TestMethod]
+        public void TestSubSysRef()
+        {
+            var sys1 = new test_refsubsys.SYS1();
+            var sys2 = new test_refsubsys.SYS2();
+
+            sys1.InitialChannelCH1(null);
+            sys2.InitialChannelCHA(null);
+
+            sys2.CHA.Open();
+            sys1.CH1.Open();
+
+            sys1.PROPERTYa.Value = test_refsubsys.emt.em2;
+            sys1.PROPERTYb.Value = -2;
+            sys1.subProperty.PROPERTYc.Value = 3;
+            sys1.subProperty.PROPERTYd.Value = -4.5;
+            sys1.subProperty.PROPERTYe.Add(new test_refsubsys.Parameter<bool?>() { Value = true });
+            sys1.subProperty.PROPERTYe.Add(new test_refsubsys.Parameter<bool?>() { Value = true });
+            sys1.empropertys.Add(new test_refsubsys.Parameter<test_refsubsys.emt?>() { Value = test_refsubsys.emt.em3  });
+            sys1.empropertys.Add(new test_refsubsys.Parameter<test_refsubsys.emt?>() { Value = test_refsubsys.emt.em3  });
+
+            sys1.SendData();
+            sys2.RecvData();
+
+            Assert.IsTrue(sys2.PROPERTY2a.Value == test_refsubsys.emt.em2);
+            Assert.IsTrue(sys2.PROPERTY2b.Value == -2);
+            Assert.IsTrue(sys2.subProperty.PROPERTYc.Value == 3);
+            Assert.IsTrue(sys2.subProperty.PROPERTYd.Value == -4.5);
+            Assert.IsTrue((bool)sys2.subProperty.PROPERTYe[0].Value);
+            Assert.IsTrue((bool)sys2.subProperty.PROPERTYe[1].Value);
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[2].Value); //以下为默认值
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[3].Value);
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[4].Value);
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[5].Value);
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[6].Value);
+            Assert.IsFalse((bool)sys2.subProperty.PROPERTYe[7].Value);
+            Assert.IsTrue(sys2.empropertys[0].Value == test_refsubsys.emt.em3);
+            Assert.IsTrue(sys2.empropertys[1].Value == test_refsubsys.emt.em3);
+
+            sys1.CH1.Close();
+            sys2.CHA.Close();
+
+        }
+
     }
 }

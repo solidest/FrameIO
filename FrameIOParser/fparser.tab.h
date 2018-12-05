@@ -159,7 +159,6 @@ union YYSTYPE
 	segpropertytype segproptype;
 	segpropertyvaluetype segprovtype;
 	segmenttype segtype;
-	syspropertytype sysptype;
 	syschanneltype syschtype;
 	actioniotype iotype;
 
@@ -181,7 +180,7 @@ union YYSTYPE
 	NOTE* notelist;
 
 
-#line 185 "fparser.tab.h" /* yacc.c:1913  */
+#line 184 "fparser.tab.h" /* yacc.c:1913  */
 };
 
 typedef union YYSTYPE YYSTYPE;

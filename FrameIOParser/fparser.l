@@ -65,17 +65,6 @@ int utf8len = 0;
 "block"					{ return T_BLOCK; }
 "text"					{ return T_TEXT; }
 
-"bool"					{ return T_BOOL; }
-"byte"					{ return T_BYTE; }
-"sbyte"					{ return T_SBYTE; }
-"ushort"				{ return T_USHORT; }
-"short"					{ return T_SHORT; }
-"uint"					{ return T_UINT; }
-"int"					{ return T_INT; }
-"ulong"					{ return T_ULONG; }
-"long"					{ return T_LONG; }
-"float"					{ return T_FLOAT; }
-"double"				{ return T_DOUBLE; }
 
 "send"					{ return T_SEND; }
 "on"					{ return T_ON; }

@@ -22,13 +22,15 @@ namespace FrameIO.Main
     /// </summary>
     public partial class SubsysEditor : UserControl
     {
+        private IOProject _proj;
         private Subsys _sys;
         private DispatcherTimer _fUpdateTimerCh;
         private DispatcherTimer _fUpdateTimerAc;
         private ObservableCollection<Frame> _frms;
-        public SubsysEditor(Subsys sys, ObservableCollection<Frame> frms)
+        public SubsysEditor(Subsys sys, ObservableCollection<Frame> frms, IOProject proj)
         {
             _sys = sys;
+            _proj = proj;
 
             InitializeComponent();
             DataContext = _sys;
@@ -36,8 +38,8 @@ namespace FrameIO.Main
 
             acGrid.ColumnDefinitions[2].ItemsSource = _sys.Channels;
             acGrid.ColumnDefinitions[3].ItemsSource = frms;
-            acOpGrid.ColumnDefinitions[1].ItemsSource = _sys.Propertys;
-  
+
+
             _fUpdateTimerCh = new DispatcherTimer();
             _fUpdateTimerCh.Interval = TimeSpan.FromSeconds(0.3);
             _fUpdateTimerCh.Tick += delegate { UpdateTimerCh(); };
@@ -57,9 +59,18 @@ namespace FrameIO.Main
             {
                 acOpGrid.ItemsSource = _sys.Actions[s].LiteMaps;
                 if (_frms.Where(p => p.Name == _sys.Actions[s].FrameName).Count() > 0)
+                {
                     acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(_sys.Actions[s].FrameName, _frms);
+                    acOpGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyList(_sys.Propertys);
+                }
                 else
+                {
                     acOpGrid.ColumnDefinitions[0].ItemsSource = null;
+                    acOpGrid.ColumnDefinitions[1].ItemsSource = null;
+
+                }
+
+
             }
         }
 
@@ -103,7 +114,8 @@ namespace FrameIO.Main
         //更新属性类型列表
         private void UpdatePropertyTypeList(object sender, RoutedEventArgs e)
         {
-            //HACK 1111 更新属性类型下拉
+            propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyTypeList(_sys.Name);
         }
+
     }
 }

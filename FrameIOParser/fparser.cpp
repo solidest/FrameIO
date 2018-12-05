@@ -163,13 +163,13 @@ FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes)
 
 
 
-SYSPROPERTY* new_sysproperty(int namesyid, syspropertytype protype, bool isarray, NOTE* notes)
+SYSPROPERTY* new_sysproperty(int namesyid, int protype, int arraycount, NOTE* notes)
 {
 	auto ret = new SYSPROPERTY;
 	ret->namesyid = namesyid;
 	ret->protype = protype;
 	ret->notes = notes;
-	ret->isarray = isarray;
+	ret->arraycount = arraycount;
 	ret->nextsysproperty = NULL;
 	return ret;
 }

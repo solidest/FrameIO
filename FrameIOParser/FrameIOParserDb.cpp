@@ -117,7 +117,7 @@ FrameIOParserDb::FrameIOParserDb()
 		m_fio_sys_channel_option_stmt = NULL;
 	}
 
-	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_sys_property (projectid, sysid, namesyid, propertytype, isarray) VALUES(:projectid, :sysid, :namesyid, :propertytype, :isarray);", -1, &m_fio_sys_property_stmt, NULL);
+	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_sys_property (projectid, sysid, namesyid, propertytype, arraycount) VALUES(:projectid, :sysid, :namesyid, :propertytype, :arraycount);", -1, &m_fio_sys_property_stmt, NULL);
 	if (res != SQLITE_OK)
 	{
 		m_fio_sys_property_stmt = NULL;
@@ -485,7 +485,7 @@ int FrameIOParserDb::SaveSysProperty(SYSPROPERTY* pt, int sysid)
 		sqlite3_bind_int(m_fio_sys_property_stmt, 2, sysid);
 		sqlite3_bind_int(m_fio_sys_property_stmt, 3, pt->namesyid);
 		sqlite3_bind_int(m_fio_sys_property_stmt, 4, pt->protype);
-		sqlite3_bind_int(m_fio_sys_property_stmt, 5, pt->isarray? 1:0);
+		sqlite3_bind_int(m_fio_sys_property_stmt, 5, pt->arraycount);
 		int rc = sqlite3_step(m_fio_sys_property_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW)) return -1;
 		sqlite3_reset(m_fio_sys_property_stmt);
@@ -632,9 +632,6 @@ int FrameIOParserDb::SaveFrameExp(EXPVALUE* exp, int proid, int* expid)
 
 	return 0;
 }
-
-
-
 
 //±£´æ×¢ÊÍÐÅÏ¢
 int FrameIOParserDb::SaveNotes(NOTE* notes, int forid)

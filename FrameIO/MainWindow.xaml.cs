@@ -1038,9 +1038,10 @@ namespace FrameIO.Main
                 var mb = new Binding("Name") { Mode = BindingMode.OneWay, Source = sys };
                 ti.SetBinding(HeaderedContentControl.HeaderProperty, mb);
             }
-            ti.Content = new SubsysEditor(sys, _project.FrameList);
+            ti.Content = new SubsysEditor(sys, _project.FrameList, _project);
             tbPages.SelectedItem = ti;
         }
+
 
 
         #endregion

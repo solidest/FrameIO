@@ -119,6 +119,24 @@
     <Compile Include="..\..\FrameIOTest\test_oneof\SYS2.cs">
       <Link>Test_OneOf\SYS2.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\CHILD.cs">
+      <Link>Test_subsysref\CHILD.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\emt.cs">
+      <Link>Test_subsysref\emt.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\frame.cs">
+      <Link>Test_subsysref\frame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\Parameter.cs">
+      <Link>Test_subsysref\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\SYS1.cs">
+      <Link>Test_subsysref\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_refsubsys\SYS2.cs">
+      <Link>Test_subsysref\SYS2.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\test_validate\frame.cs">
       <Link>Test_validate\frame.cs</Link>
     </Compile>

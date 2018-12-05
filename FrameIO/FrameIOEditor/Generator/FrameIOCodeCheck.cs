@@ -19,6 +19,8 @@ namespace FrameIO.Main
 
         static private Dictionary<Frame, Dictionary<string, Frame>> FrameSegmentList {  get;  set; }
 
+        static private List<string> _proptypelist;
+
         static private void Reset()
         {
             LastErrorInfo = "";
@@ -48,6 +50,7 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
+            _proptypelist = _pj.GetPropertyTypeList("");
 
             CheckEnumSysName();
             CheckFrames();
@@ -65,12 +68,22 @@ namespace FrameIO.Main
             {
                 CheckSubsysName(sys);
 
+                foreach (var pt in sys.Propertys)
+                    CheckProperty(pt);
+
                 foreach(var ch in sys.Channels)
                     CheckChannel(ch);
 
                 foreach (var ac in sys.Actions)
                     CheckAction(ac, sys);
             }
+        }
+
+        //检查属性
+        static private void CheckProperty(SubsysProperty pt)
+        {
+            if(!_proptypelist.Contains(pt.PropertyType))
+                AddErrorInfo(pt.Syid, "分系统属性类型错误");
         }
 
         //检查通道
@@ -287,8 +300,8 @@ namespace FrameIO.Main
                 {
                     if (map.FrameSegName != "" && !IsContainSegment(map.FrameSegName, ac.FrameName)) 
                         AddErrorInfo(map.Syid, "引用的数据帧字段不正确");
-                    if (!map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p => p.Name == map.SysPropertyName).Count() == 0)
-                        AddErrorInfo(map.Syid, "引用的分系统属性不正确");
+                    //HACK if (!map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p => p.Name == map.SysPropertyName).Count() == 0)
+                    //    AddErrorInfo(map.Syid, "引用的分系统属性不正确");
                 }
             }
         }

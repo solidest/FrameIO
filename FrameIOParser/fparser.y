@@ -33,7 +33,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 	segpropertytype segproptype;
 	segpropertyvaluetype segprovtype;
 	segmenttype segtype;
-	syspropertytype sysptype;
 	syschanneltype syschtype;
 	actioniotype iotype;
 
@@ -76,7 +75,6 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 
 %type <sysitemlist> systemitemlist
 %type <sysitem> systemitem sysproperty channel action
-%type <sysptype> sysprotype
 %type <choplist> channeloptionlist channeloption
 %type <syschtype> channeltype
 %type <optionvalue> channeloptionvalue
@@ -144,23 +142,10 @@ systemitem:
 ;
 
 sysproperty:
-	notelist sysprotype T_ID ';'										{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, FALSE, $1)); }
-	| notelist sysprotype '[' ']' T_ID ';'								{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, TRUE, $1)); }
+	notelist T_ID T_ID ';'											{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, 0, $1)); }
+	| notelist T_ID '[' ']' T_ID ';'								{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, 1, $1)); }
 ;
 
-sysprotype:
-	T_BOOL																	{ $$ = SYSPT_BOOL; }
-	| T_BYTE																{ $$ = SYSPT_BYTE; }
-	| T_SBYTE																{ $$ = SYSPT_SBYTE; }
-	| T_USHORT																{ $$ = SYSPT_USHORT; }
-	| T_SHORT																{ $$ = SYSPT_SHORT; }
-	| T_UINT																{ $$ = SYSPT_UINT; }
-	| T_INT																	{ $$ = SYSPT_INT; }
-	| T_ULONG																{ $$ = SYSPT_ULONG; }
-	| T_LONG																{ $$ = SYSPT_LONG; }
-	| T_FLOAT																{ $$ = SYSPT_FLOAT; }
-	| T_DOUBLE																{ $$ = SYSPT_DOUBLE; }
-;
 
 channel: 
 	notelist T_CHANNEL T_ID ':' channeltype '{' channeloptionlist notelist '}'	{ $$ = new_sysitem(SYSI_CHANNEL, new_syschannel($3, $5, $7, $1)); }
@@ -206,7 +191,9 @@ actionmaplist:																			{ $$ = NULL; }
 
 actionmap:
 	notelist T_ID ':' T_ID ';'															{ $$ = new_actionmap($2, $4, $1); }
+	| notelist T_ID ':' T_UNION_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
 	| notelist T_UNION_ID ':' T_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
+	| notelist T_UNION_ID ':' T_UNION_ID ';'											{ $$ = new_actionmap($2, $4, $1); }
 	| notelist T_AT_USER																{ $$ = new_actionmap(0, $2, $1); }
 ;
 

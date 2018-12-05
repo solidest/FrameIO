@@ -169,39 +169,41 @@ namespace FrameIO.Main
         //整数字段
         private static string GetSegmentGettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
         {
+            return "";
             //public bool? SegmentA { get => _gettor.GetBool(1); }
-            var ty = GetSegmentType(seg.BitCount, seg.Signed);
-            if (seg.Repeated.IsIntOne())
-                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
-            else
-                return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+            //var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            //if (seg.Repeated.IsIntOne())
+            //    return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+            //else
+            //    return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
         }
 
         //小数字段
         private static string GetSegmentGettor(FrameSegmentReal seg, string fullname, Dictionary<string, ushort> symbols)
         {
+            return "";
             //public bool? SegmentA { get => _gettor.GetBool(1); }
-            var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
-            if (seg.Repeated.IsIntOne())
-                return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
-            else
-                return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+            //var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
+            //if (seg.Repeated.IsIntOne())
+            //    return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
+            //else
+            //    return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", GetTypeName(ty), seg.Name, GetGetorName(ty), symbols[fullname]);
         }
 
-        private static syspropertytype GetSegmentType(int bitcount, bool isSigned)
-        {
-            if (bitcount == 1)
-                return syspropertytype.SYSPT_BOOL;
-            else if (bitcount > 1 && bitcount <= 8)
-                return isSigned ? syspropertytype.SYSPT_SBYTE : syspropertytype.SYSPT_BYTE;
-            else if (bitcount > 8 && bitcount <= 16)
-                return isSigned ? syspropertytype.SYSPT_SHORT : syspropertytype.SYSPT_USHORT;
-            else if (bitcount > 16 && bitcount <= 32)
-                return isSigned ? syspropertytype.SYSPT_INT : syspropertytype.SYSPT_UINT;
-            else if (bitcount > 32 && bitcount <= 64)
-                return isSigned ? syspropertytype.SYSPT_LONG : syspropertytype.SYSPT_ULONG;
-            return 0;
-        }
+        //private static syspropertytype GetSegmentType(int bitcount, bool isSigned)
+        //{
+        //    if (bitcount == 1)
+        //        return syspropertytype.SYSPT_BOOL;
+        //    else if (bitcount > 1 && bitcount <= 8)
+        //        return isSigned ? syspropertytype.SYSPT_SBYTE : syspropertytype.SYSPT_BYTE;
+        //    else if (bitcount > 8 && bitcount <= 16)
+        //        return isSigned ? syspropertytype.SYSPT_SHORT : syspropertytype.SYSPT_USHORT;
+        //    else if (bitcount > 16 && bitcount <= 32)
+        //        return isSigned ? syspropertytype.SYSPT_INT : syspropertytype.SYSPT_UINT;
+        //    else if (bitcount > 32 && bitcount <= 64)
+        //        return isSigned ? syspropertytype.SYSPT_LONG : syspropertytype.SYSPT_ULONG;
+        //    return 0;
+        //}
 
 
         #endregion
@@ -295,23 +297,25 @@ namespace FrameIO.Main
         //整数字段
         private static string GetSegmentSettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
         {
+            return "";
             //public bool? SegmentA { set => _settor.SetSegmentValue(2, value); }
-            var ty = GetSegmentType(seg.BitCount, seg.Signed);
-            if (seg.Repeated.IsIntOne())
-                return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
-            else
-                return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            //var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            //if (seg.Repeated.IsIntOne())
+            //    return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            //else
+            //    return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
         }
 
         //小数字段
         private static string GetSegmentSettor(FrameSegmentReal seg, string fullname, Dictionary<string, ushort> symbols)
         {
+            return "";
             //public bool? SegmentA { get => _gettor.GetBool(1); }
-            var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
-            if (seg.Repeated.IsIntOne())
-                return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
-            else
-                return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            //var ty = seg.IsDouble ? syspropertytype.SYSPT_DOUBLE : syspropertytype.SYSPT_FLOAT;
+            //if (seg.Repeated.IsIntOne())
+            //    return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
+            //else
+            //    return string.Format("public {0}?[] {1} {{ set => _settor.SetSegmentValue({2}, value); }}", GetTypeName(ty), seg.Name, symbols[fullname]);
         }
 
         #endregion
@@ -433,14 +437,14 @@ namespace FrameIO.Main
             var decl = new List<string>();
             foreach (var pro in sys.Propertys)
             {
-                if (pro.IsArray)
-                {
-                    decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
-                }
-                else
-                {
-                    decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetTypeName(pro.PropertyType), pro.Name));
-                }
+                //if (pro.IsArray)
+                //{
+                //    //decl.Add(string.Format("public ObservableCollection<Parameter<{0}?>> {1} {{ get; set; }} = new ObservableCollection<Parameter<{0}?>>();", GetTypeName(pro.PropertyType), pro.Name));
+                //}
+                //else
+                //{
+                //    //decl.Add(string.Format("public Parameter<{0}?> {1} {{ get; set;}} = new Parameter<{0}?>();", GetTypeName(pro.PropertyType), pro.Name));
+                //}
             }
             ReplaceText(code, "propertydeclare", decl, 2);
         }
@@ -507,7 +511,7 @@ namespace FrameIO.Main
                 else if (ProIsArray(sys, setor.SysPropertyName))
                 {
                     getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
-                    getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
+                    //getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
                 }
                 else
                     getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName, setor.FrameSegName));
@@ -582,7 +586,8 @@ namespace FrameIO.Main
             foreach (var p in sys.Propertys)
             {
                 if (p.Name == proname)
-                    return p.IsArray;
+                    return true;
+                    //return p.IsArray;
             }
             return false;
         }
@@ -597,79 +602,79 @@ namespace FrameIO.Main
             return "Get_";
         }
 
-        static private syspropertytype GetProType(Subsys sys, string proname)
+        static private string GetProType(Subsys sys, string proname)
         {
             foreach (var p in sys.Propertys)
             {
                 if (p.Name == proname)
                     return p.PropertyType;
             }
-            return 0;
+            return "";
         }
 
         //取值函数名称
-        static private string GetGetorName(syspropertytype ty)
+        static private string GetGetorName(string ty)
         {
             switch (ty)
             {
-                case syspropertytype.SYSPT_BOOL:
+                case "bool":
                     return "GetBool";
-                case syspropertytype.SYSPT_BYTE:
+                case "byte":
                     return "GetByte";
-                case syspropertytype.SYSPT_SBYTE:
+                case "sbyte":
                     return "GetSByte";
-                case syspropertytype.SYSPT_SHORT:
+                case "short":
                     return "GetShort";
-                case syspropertytype.SYSPT_USHORT:
+                case "ushort":
                     return "GetUShort";
-                case syspropertytype.SYSPT_INT:
+                case "int":
                     return "GetInt";
-                case syspropertytype.SYSPT_UINT:
+                case "uint":
                     return "GetUInt";
-                case syspropertytype.SYSPT_LONG:
+                case "long":
                     return "GetLong";
-                case syspropertytype.SYSPT_ULONG:
+                case "ulong":
                     return "GetULong";
-                case syspropertytype.SYSPT_FLOAT:
+                case "float":
                     return "GetFloat";
-                case syspropertytype.SYSPT_DOUBLE:
+                case "double":
                     return "GetDouble";
             }
-            Debug.Assert(false);
+            //Debug.Assert(false);
             return "";
         }
 
-        //类型名称
-        static public string GetTypeName(syspropertytype ty)
-        {
-            switch (ty)
-            {
-                case syspropertytype.SYSPT_BOOL:
-                    return "bool";
-                case syspropertytype.SYSPT_BYTE:
-                    return "byte";
-                case syspropertytype.SYSPT_SBYTE:
-                    return "sbyte";
-                case syspropertytype.SYSPT_SHORT:
-                    return "short";
-                case syspropertytype.SYSPT_USHORT:
-                    return "ushort";
-                case syspropertytype.SYSPT_INT:
-                    return "int";
-                case syspropertytype.SYSPT_UINT:
-                    return "uint";
-                case syspropertytype.SYSPT_LONG:
-                    return "long";
-                case syspropertytype.SYSPT_ULONG:
-                    return "ulong";
-                case syspropertytype.SYSPT_FLOAT:
-                    return "float";
-                case syspropertytype.SYSPT_DOUBLE:
-                    return "double";
-            }
-            Debug.Assert(false);
-            return "";
-        }
+        ////类型名称
+        //static public string GetTypeName(syspropertytype ty)
+        //{
+        //    switch (ty)
+        //    {
+        //        case syspropertytype.SYSPT_BOOL:
+        //            return "bool";
+        //        case syspropertytype.SYSPT_BYTE:
+        //            return "byte";
+        //        case syspropertytype.SYSPT_SBYTE:
+        //            return "sbyte";
+        //        case syspropertytype.SYSPT_SHORT:
+        //            return "short";
+        //        case syspropertytype.SYSPT_USHORT:
+        //            return "ushort";
+        //        case syspropertytype.SYSPT_INT:
+        //            return "int";
+        //        case syspropertytype.SYSPT_UINT:
+        //            return "uint";
+        //        case syspropertytype.SYSPT_LONG:
+        //            return "long";
+        //        case syspropertytype.SYSPT_ULONG:
+        //            return "ulong";
+        //        case syspropertytype.SYSPT_FLOAT:
+        //            return "float";
+        //        case syspropertytype.SYSPT_DOUBLE:
+        //            return "double";
+        //    }
+        //    Debug.Assert(false);
+        //    return "";
+        //}
 
         //生成代码文件
         static private void CreateFile(string fname, StringBuilder content)

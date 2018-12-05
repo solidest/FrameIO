@@ -75,21 +75,21 @@ namespace FrameIO.Main
         SYSI_ACTION
     };
 
-    //系统属性类型
-    public enum syspropertytype
-    {
-        SYSPT_BOOL = 1,
-        SYSPT_BYTE,
-        SYSPT_SBYTE,
-        SYSPT_USHORT,
-        SYSPT_SHORT,
-        SYSPT_UINT,
-        SYSPT_INT,
-        SYSPT_ULONG,
-        SYSPT_LONG,
-        SYSPT_FLOAT,
-        SYSPT_DOUBLE
-    };
+    ////系统属性类型
+    //public enum syspropertytype
+    //{
+    //    SYSPT_BOOL = 1,
+    //    SYSPT_BYTE,
+    //    SYSPT_SBYTE,
+    //    SYSPT_USHORT,
+    //    SYSPT_SHORT,
+    //    SYSPT_UINT,
+    //    SYSPT_INT,
+    //    SYSPT_ULONG,
+    //    SYSPT_LONG,
+    //    SYSPT_FLOAT,
+    //    SYSPT_DOUBLE
+    //};
 
     //通道类型
     public enum syschanneltype

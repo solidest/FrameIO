@@ -92,7 +92,8 @@ CREATE TABLE fio_sys_channel (projectid INTEGER, sysid INTEGER, namesyid INTEGER
 CREATE TABLE fio_sys_channel_option (projectid INTEGER, channelid INTEGER, nameid INTEGER, valuesyid INTEGER);
 
 -- Table: fio_sys_property
-CREATE TABLE fio_sys_property (projectid INTEGER, sysid INTEGER, namesyid INTEGER, propertytype INTEGER, isarray INTEGER);
+CREATE TABLE fio_sys_property ( projectid INTEGER, sysid INTEGER, namesyid INTEGER, propertytype INTEGER, arraycount INTEGER);
+
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
@@ -303,17 +304,17 @@ PRAGMA foreign_keys = on;
         private ObservableCollection<SubsysProperty> LoadSubsysProperty(int ssid)
         {
             var ret = new ObservableCollection<SubsysProperty>();
-            var tb = _db.ExecuteQuery("SELECT namesyid, sy.symbol name, propertytype, isarray FROM fio_sys_property pt LEFT JOIN fio_symbol sy ON pt.namesyid=sy.rowid WHERE pt.sysid="
+            var tb = _db.ExecuteQuery("SELECT namesyid, sy.symbol name, sy2.symbol propertytype, arraycount FROM fio_sys_property pt LEFT JOIN fio_symbol sy ON pt.namesyid=sy.rowid LEFT JOIN fio_symbol sy2 ON pt.propertytype=sy2.rowid WHERE pt.sysid="
                + ssid.ToString());
             foreach (DataRow r in tb.Rows)
             {
                 var syid = Convert.ToInt32(r["namesyid"]);
                 var sp = new SubsysProperty()
                 {
-                    IsArray = Convert.ToInt32(r["isarray"]) == 0 ? false : true,
+                    IsArray = Convert.ToInt32(r["arraycount"])>0,
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                    PropertyType = (syspropertytype)Convert.ToInt32(r["propertytype"]),
+                    PropertyType = r["propertytype"].ToString(),
                     Syid = syid
                 };
                 if (_checkSemantics && ret.Where(p => p.Name == sp.Name).Count() > 0)
