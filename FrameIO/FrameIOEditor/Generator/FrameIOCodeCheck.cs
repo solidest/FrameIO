@@ -120,17 +120,17 @@ namespace FrameIO.Main
             switch (chtype)
             {
                 case syschanneltype.SCHT_COM:
-                    return new string[4] { "baudrate", "parity", "databits", "stopbits" }; 
+                    return new string[5] { "baudrate", "parity", "databits", "stopbits", "waittimeout" }; 
                 case syschanneltype.SCHT_CAN:
                     return new string[9] { "devtype", "devind", "channelind", "baudrate", "acccode", "accmark", "mode", "filter", "waittimeout" };
                 case syschanneltype.SCHT_TCPSERVER:
-                    return new string[1] { "port" };
+                    return new string[2] { "port", "waittimeout" };
                 case syschanneltype.SCHT_TCPCLIENT:
-                    return new string[1] { "port" };
+                    return new string[2] { "port", "waittimeout" };
                 case syschanneltype.SCHT_UDP:
-                    return new string[2] { "localport", "remoteport" }; 
+                    return new string[3] { "localport", "remoteport", "waittimeout" }; 
                 case syschanneltype.SCHT_DIO:
-                    return new string[3] { "deviceno", "channelidx", "minvalue" };
+                    return new string[4] { "deviceno", "channelidx", "minvalue", "waittimeout" };
             }
             return new string[0];
         }
