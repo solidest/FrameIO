@@ -69,8 +69,8 @@ namespace FrameIO.Driver
             Acccode = System.Convert.ToUInt32(config["acccode"]);
             Accmark= System.Convert.ToUInt32(config["accmark"]);
 
-            if (config.ContainsKey("receivetimeout"))
-                ReceiveTimeOut= (ushort)Convert.ToInt32(config["receivetimeout"]);
+            if (config.ContainsKey("waittimeout"))
+                ReceiveTimeOut= (ushort)Convert.ToInt32(config["waittimeout"]);
         }
         #endregion
         //设备号

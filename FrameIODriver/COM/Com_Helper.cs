@@ -58,8 +58,8 @@ namespace FrameIO.Driver
             rs232.StopBits = (System.IO.Ports.StopBits)Convert.ToInt32(config["stopbits"]);
             rs232.Parity = (System.IO.Ports.Parity)Convert.ToInt32(config["parity"]);
 
-            if(config.ContainsKey("receivetimeout"))
-                ReceiveTimeOut= Convert.ToInt32(config["receivetimeout"]);
+            if(config.ContainsKey("waittimeout"))
+                ReceiveTimeOut= Convert.ToInt32(config["waittimeout"]);
 
         }
 

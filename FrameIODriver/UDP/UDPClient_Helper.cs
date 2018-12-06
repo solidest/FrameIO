@@ -29,8 +29,8 @@ namespace FrameIO.Driver
 
                 UdpClient.Client.Bind(localEndPoint);
 
-                if (config.ContainsKey("receivetimeout"))
-                    ReceiveTimeOut = Convert.ToInt32(config["receivetimeout"]);
+                if (config.ContainsKey("waittimeout"))
+                    ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
                 UdpClient.Client.ReceiveTimeout= ReceiveTimeOut;
 
             }
