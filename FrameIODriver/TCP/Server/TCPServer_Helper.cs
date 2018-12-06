@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrameIO.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -113,7 +114,7 @@ namespace FrameIO.Driver
             }
             catch (Exception)
             {
-                throw new Exception("接收数据异常:");
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "接收数据超时!");
             }
         }
         private void SendData(IAsyncResult ar)

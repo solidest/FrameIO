@@ -16,29 +16,29 @@ namespace test_udp_receivetimeout
         public void InitialChannelCH_UDP_SEND(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.153");
+            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.148");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8007);
-            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.153");
+            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.148");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8008);
-            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
+            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             CH_UDP_SEND = FrameIOFactory.GetChannel(ChannelTypeEnum.UDP, ops);
         }
  
         public void InitialChannelCH_UDP_RECV(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.153");
+            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.148");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8008);
-            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.153");
+            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.148");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8007);
-            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
+            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             CH_UDP_RECV = FrameIOFactory.GetChannel(ChannelTypeEnum.UDP, ops);
         }
 
 
-        public Parameter<uint?> head { get; set;} = new Parameter<uint?>();
-        public Parameter<uint?> len { get; set;} = new Parameter<uint?>();
-        public Parameter<uint?> end { get; set;} = new Parameter<uint?>();
+        public Parameter<uint?> head { get; private set;} = new Parameter<uint?>();
+        public Parameter<uint?> len { get; private set;} = new Parameter<uint?>();
+        public Parameter<uint?> end { get; private set;} = new Parameter<uint?>();
 
         //异常处理接口
         private void HandleFrameIOError(FrameIOException ex)

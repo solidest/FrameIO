@@ -16,26 +16,26 @@ namespace test_tcp_receivetimeout
         public void InitialChannelCHS(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.153");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.148");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
-            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.153");
-            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
+            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.148");
+            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             CHS = FrameIOFactory.GetChannel(ChannelTypeEnum.TCPSERVER, ops);
         }
  
         public void InitialChannelCHC(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.153");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.148");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
-            if (!ops.Contains("receivetimeout")) ops.SetOption("receivetimeout", 5000);
+            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             CHC = FrameIOFactory.GetChannel(ChannelTypeEnum.TCPCLIENT, ops);
         }
 
 
-        public Parameter<uint?> len { get; set;} = new Parameter<uint?>();
-        public Parameter<uint?> end { get; set;} = new Parameter<uint?>();
-        public Parameter<uint?> head { get; set;} = new Parameter<uint?>();
+        public Parameter<uint?> len { get; private set;} = new Parameter<uint?>();
+        public Parameter<uint?> end { get; private set;} = new Parameter<uint?>();
+        public Parameter<uint?> head { get; private set;} = new Parameter<uint?>();
 
         //异常处理接口
         private void HandleFrameIOError(FrameIOException ex)

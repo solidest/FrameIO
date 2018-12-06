@@ -10,7 +10,7 @@ namespace test_udp_receivetimeout
 {
     public class FrameBase
     {
-        protected static void InitialBase(){}
+
         static FrameBase()
         {
             var config = string.Concat(
@@ -27,7 +27,31 @@ namespace test_udp_receivetimeout
                     }
                 }
             }
+
+            var symbols = string.Concat(
+                "H4sIAAAAAAAEAOVUzUrDQBDemDRNqdVXyMFjCK32xx56kDZYUUox2ksJdBtG",
+                "XbpJdLMR4mP4iCI+gIiIFHS3bKGnnhSUzh5md77ZYWa+2UUaQuhLiNRSDLl5",
+                "0vw85RC53YRSCDlJ4tQ9hhgYCd0eWRgwyyf747FyvDyJea3p2FEaJoySqWOP",
+                "gKXCrVN3q3I5djejPGPQiSHjDFPHHmZTSsJTyC+SGcSdaauFG2GjWWsf1KF6",
+                "2A6cZXCfMxJf/2zwwBB1FlUcq5tEt5gBs/o4vfHJA1TEzRGmGQwxYSnSkW49",
+                "rmuK0t5dhinh+TLepParHQqsl3VJrdbwr7kaB6Zgq7QlKZMbXQ6qPP1FTuQr",
+                "KsoMkXxKMnH9eSNYMubiH9mMUuXs6TPIC/eyHKTtCKILC8o/RQ/mi//UlKNa",
+                "vGI4Av9c+1D2LWSWhH1b2d2+d9TT3hWoI7MswPISPPMG2pvCDGRWVjFv0NNe",
+                "FVZA5q7ALIXtlb8B+CoeDdcFAAA=");
+            using (var compressStream = new MemoryStream(Convert.FromBase64String(symbols)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        FrameIO.Runtime.FrameIOFactory.InitializeSymbols(resultStream.ToArray());
+                    }
+                }
+            }
         }
+
+        protected static void InitialBase(){}
     }
 
         
