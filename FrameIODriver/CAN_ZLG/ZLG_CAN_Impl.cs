@@ -65,8 +65,8 @@ namespace FrameIO.Driver
 
             Filter = (Byte)config["filter"];
             Mode = (Byte)config["mode"];
-            if (config.ContainsKey("receivetimeout"))
-                ReceiveTimeOut = Convert.ToInt32(config["receivetimeout"]);
+            if (config.ContainsKey("waittimeout"))
+                ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
         }
 
         #endregion

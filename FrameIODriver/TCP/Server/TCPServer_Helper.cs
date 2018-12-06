@@ -33,8 +33,8 @@ namespace FrameIO.Driver
                 listenerPort = Convert.ToInt32(config["port"]);
                 clientIp = "" + config["clientip"];
 
-                if(config.ContainsKey("receivetimeout"))
-                    ReceiveTimeOut = Convert.ToInt32(config["receivetimeout"]);
+                if(config.ContainsKey("waittimeout"))
+                    ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
 
                 IPAddress ip = IPAddress.Parse(listenerIp);
                 serverEPoint = new IPEndPoint(ip, listenerPort);

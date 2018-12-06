@@ -41,8 +41,8 @@ namespace FrameIO.Driver
 
                     client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                    if(config.ContainsKey("receivetimeout"))
-                        ReceiveTimeOut= Convert.ToInt32(config["receivetimeout"]);
+                    if(config.ContainsKey("waittimeout"))
+                        ReceiveTimeOut= Convert.ToInt32(config["waittimeout"]);
                     client.ReceiveTimeout = ReceiveTimeOut;
                 }
                 catch
