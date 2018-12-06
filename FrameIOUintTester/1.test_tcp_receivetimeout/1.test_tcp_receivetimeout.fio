@@ -1,0 +1,40 @@
+//项目:1.test_tcp
+project test_tcp_receivetimeout {
+	//受控对象
+	system test_tcp_receivetimeout {
+		uint len;
+		uint end;
+		uint head;
+
+		channel CHS : tcpserver {
+			serverip = "192.168.0.153";
+			port = 8007;
+			clientip = "192.168.0.153";
+			receivetimeout=5000;
+		}
+		channel CHC : tcpclient {
+			serverip = "192.168.0.153";
+			port = 8007;
+			receivetimeout=5000;
+		}
+
+		action A_Send : send frameSR on CHS {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+		action A_Recv : recv frameSR on CHC {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD;
+		integer LEN;
+		integer END;
+	}
+
+}

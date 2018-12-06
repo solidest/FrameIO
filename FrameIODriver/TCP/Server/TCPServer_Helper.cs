@@ -16,6 +16,7 @@ namespace FrameIO.Driver
         private Int32 listenerPort;
         private String clientIp;
         private IPEndPoint serverEPoint = null;
+        private int ReceiveTimeOut = 5000;
 
 
         public static Dictionary<string, Socket> clients = new Dictionary<string, Socket>();
@@ -25,9 +26,15 @@ namespace FrameIO.Driver
         {
             if (client == null)
             {
+                if (!config.ContainsKey("serverip") || !config.ContainsKey("port") || !config.ContainsKey("clientip") )
+                    throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化TCP Client", "缺少初始化配置参数!");
+
                 listenerIp = "" + config["serverip"];
                 listenerPort = Convert.ToInt32(config["port"]);
                 clientIp = "" + config["clientip"];
+
+                if(config.ContainsKey("receivetimeout"))
+                    ReceiveTimeOut = Convert.ToInt32(config["receivetimeout"]);
 
                 IPAddress ip = IPAddress.Parse(listenerIp);
                 serverEPoint = new IPEndPoint(ip, listenerPort);
@@ -44,6 +51,7 @@ namespace FrameIO.Driver
                     IsRunning = true;
                     serverTemp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     serverTemp.Bind(serverEPoint);
+                    serverTemp.ReceiveTimeout = ReceiveTimeOut;
                     serverTemp.Listen(1);
                 }
                 foreach(var c in clients)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using FrameIO.Interface;
 
@@ -49,8 +50,16 @@ namespace FrameIO.Driver
             }
             UInt32 pulNumberofRead = 0;
             Int32 nRet = 0;
+            Stopwatch watcher = new Stopwatch();
+            watcher.Start();
             while (pulNumberofRead <= 0)
             {
+                if (watcher.ElapsedMilliseconds > ReceiveTimeOut)
+                {
+                    watcher.Stop();
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "研华CAN接口", "接收数据超时!");
+                }
+
                 System.Threading.Thread.Sleep(1);
                 nRet = DevCan.acCanRead(msgRead, (UInt32)msgRead.Length, ref pulNumberofRead);
 

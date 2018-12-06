@@ -1,6 +1,7 @@
 ﻿using FrameIO.Interface;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -48,8 +49,18 @@ namespace FrameIO.Driver
         private Byte[] ReadBlock(int len)
         {
             Byte[] buff = new byte[len];
+            Stopwatch watcher = new Stopwatch();
+            watcher.Start();
             while (Com.RS232.BytesToRead < len)
+            {
+                if (watcher.ElapsedMilliseconds > Com.ReceiveTimeOut)
+                {
+                    watcher.Stop();
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "接收串口数据", "数据接收超时！");
+                }
+                    
                 System.Threading.Thread.Sleep(1);
+            }
 
             Com.RS232.Read(buff, 0, len);
             return buff;

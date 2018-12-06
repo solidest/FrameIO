@@ -19,11 +19,14 @@ namespace FrameIO.Driver
         private  Exception socketexception;
         private  System.Threading.ManualResetEvent TimeoutObject = new System.Threading.ManualResetEvent(false);
         private int timeoutMSec = 1000;
+        private int ReceiveTimeOut = 5000;
 
         public Socket InitClient(Dictionary<string, object> config)
         {
             if (client == null)
             {
+                if(!config.ContainsKey("serverip")|| !config.ContainsKey("port") )
+                    throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化TCP Client", "缺少初始化配置参数!");
                 try
                 {
                     string host = "" + config["serverip"];
@@ -37,6 +40,10 @@ namespace FrameIO.Driver
                     ipe = new IPEndPoint(ip, port);
 
                     client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                    if(config.ContainsKey("receivetimeout"))
+                        ReceiveTimeOut= Convert.ToInt32(config["receivetimeout"]);
+                    client.ReceiveTimeout = ReceiveTimeOut;
                 }
                 catch
                 {

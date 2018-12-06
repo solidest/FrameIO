@@ -11,29 +11,27 @@ namespace FrameIO.Driver
     public class UDPHelper
     {
         public UdpClient UdpClient = null;
-        private string localIP = "127.0.0.1";
-        private string remoteIP = "127.0.0.1";
-        private int localPort = 8008;
-        private int remotePort = 8009;
-
         private IPEndPoint localEndPoint = null; 
         public IPEndPoint remoteEndPoint = null;
+        private int ReceiveTimeOut = 5000;
 
         public UdpClient InitClient(Dictionary<string,object> config)
         {
             if (UdpClient == null)
             {
-                //                 IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("" +config["localip"]), Convert.ToInt32(config["localport"]));
-                //                 client = new Socket(ipep.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-                //                 client.ExclusiveAddressUse = false;
-                //                 client.Bind(ipep);
-                // 
-                //                 remoteEp = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
+                if(!config.ContainsKey("localip") || !config.ContainsKey("localport") || !config.ContainsKey("remoteip") || !config.ContainsKey("remoteport"))
+                {
+                    throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化UDP", "缺少初始化配置参数!");
+                }
                 UdpClient = new UdpClient();
                 localEndPoint = new IPEndPoint(IPAddress.Parse("" + config["localip"]), Convert.ToInt32(config["localport"]));
                 remoteEndPoint = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
 
                 UdpClient.Client.Bind(localEndPoint);
+
+                if (config.ContainsKey("receivetimeout"))
+                    ReceiveTimeOut = Convert.ToInt32(config["receivetimeout"]);
+                UdpClient.Client.ReceiveTimeout= ReceiveTimeOut;
 
             }
             return UdpClient;
@@ -57,8 +55,14 @@ namespace FrameIO.Driver
             var p = remoteEndPoint;
             if (p == null)
                 p = new System.Net.IPEndPoint(System.Net.IPAddress.Any, 0);
-
-            return UdpClient.Receive(ref p); 
+            try
+            {
+                return UdpClient.Receive(ref p);
+            }catch(Exception )
+            {
+                throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.RecvErr, "接收UDP消息", "接收UDP消息超时");
+            }
+            
         }
     }
 }
