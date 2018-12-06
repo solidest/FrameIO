@@ -7,18 +7,18 @@ project test_udp_receivetimeout {
 		uint end;
 
 		channel CH_UDP_SEND : udp {
-			localip = "192.168.0.153";
+			localip = "192.168.0.148";
 			localport = 8007;
-			remoteip = "192.168.0.153";
+			remoteip = "192.168.0.148";
 			remoteport = 8008;
-			receivetimeout = 5000;
+			waittimeout = 5000;
 		}
 		channel CH_UDP_RECV : udp {
-			localip = "192.168.0.153";
+			localip = "192.168.0.148";
 			localport = 8008;
-			remoteip = "192.168.0.153";
+			remoteip = "192.168.0.148";
 			remoteport = 8007;
-			receivetimeout = 5000;
+			waittimeout = 5000;
 		}
 
 		action A_Send : send frameSR on CH_UDP_SEND {

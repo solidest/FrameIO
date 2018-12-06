@@ -68,48 +68,57 @@ namespace FrameIO.Driver
 
             int dataLeft = len;
             int start = 0;
-            while (dataLeft > 0)
+            try
             {
-                if(buffExtraDataLen != 0)
+                while (dataLeft > 0)
                 {
-                    if(buffExtraDataLen > dataLeft)
+                    if (buffExtraDataLen != 0)
                     {
-                        Array.Copy(buffExtra, 0, buff, 0, dataLeft);
-                        Array.Copy(buffExtra, buffExtraDataLen - dataLeft, buffExtra, 0, buffExtraDataLen - dataLeft);
-                        buffExtraDataLen = buffExtraDataLen - dataLeft;
-                        start += dataLeft;
-                        dataLeft -= dataLeft;
-                        wanttoRecv = false;
-                    }
-                    else
-                    {
-                        Array.Copy(buffExtra, 0, buff, 0, buffExtraDataLen);
-                        start += buffExtraDataLen;
-                        dataLeft -= buffExtraDataLen;
-                        if (dataLeft > 0)
-                            wanttoRecv = true;
-                        else
+                        if (buffExtraDataLen > dataLeft)
+                        {
+                            Array.Copy(buffExtra, 0, buff, 0, dataLeft);
+                            Array.Copy(buffExtra, buffExtraDataLen - dataLeft, buffExtra, 0, buffExtraDataLen - dataLeft);
+                            buffExtraDataLen = buffExtraDataLen - dataLeft;
+                            start += dataLeft;
+                            dataLeft -= dataLeft;
                             wanttoRecv = false;
+                        }
+                        else
+                        {
+                            Array.Copy(buffExtra, 0, buff, 0, buffExtraDataLen);
+                            start += buffExtraDataLen;
+                            dataLeft -= buffExtraDataLen;
+                            if (dataLeft > 0)
+                                wanttoRecv = true;
+                            else
+                                wanttoRecv = false;
+                        }
+                    }
+                    if (wanttoRecv)
+                    {
+                        var readData = UDPClient.ReceiveMsg();
+
+                        if (readData.Length > len - start)
+                        {
+                            Array.Copy(readData, 0, buff, start, len - start);
+                            buffExtraDataLen = readData.Length - (len - start);
+                            Array.Copy(readData, len - start, buffExtra, 0, buffExtraDataLen);
+
+                        }
+                        else
+                            Array.Copy(readData, 0, buff, start, readData.Length);
+
+                        start += readData.Length;
+                        dataLeft -= readData.Length;
                     }
                 }
-                if(wanttoRecv)
-                {
-                    var readData = UDPClient.ReceiveMsg();
-
-                    if (readData.Length > len - start)
-                    {
-                        Array.Copy(readData, 0, buff, start, len - start);
-                        buffExtraDataLen = readData.Length - (len - start);
-                        Array.Copy(readData, len - start, buffExtra, 0, buffExtraDataLen);
-
-                    }else
-                        Array.Copy(readData, 0, buff, start, readData.Length);
-
-                    start += readData.Length;
-                    dataLeft -= readData.Length;
-                }
+                return buff;
             }
-            return buff;
+            catch (Exception)
+            {
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "UDP客户端", "接收数据超时!");
+            }
+
         }
         private byte[] ReadBlock(int len)
         {
