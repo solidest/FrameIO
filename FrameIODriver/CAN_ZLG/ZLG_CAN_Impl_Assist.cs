@@ -26,6 +26,8 @@ namespace FrameIO.Driver
         private Byte RemoteFlag = 0;
         private Byte ExternFlag = 0;
 
+        private int ReceiveTimeOut = 5000;
+
 
 
 

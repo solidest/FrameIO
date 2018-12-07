@@ -1,0 +1,80 @@
+//项目:6.test_can
+project test_can_yh {
+	//受控对象
+	system testcan {
+		byte len;
+		byte id;
+		byte data1;
+		byte data2;
+		byte data3;
+		byte data4;
+		byte data5;
+		byte data6;
+		byte data7;
+		byte data8;
+
+		channel CH_CAN1 : can {
+			vendor = "yh";
+			channelind = 1;
+			baudrate = 125;
+			acccode = 0xffffffff;
+			accmark = 0xffffffff;
+			mode = 1;
+			filter = 1;
+			waittimeout = 3000;
+		}
+		channel CH_CAN2 : can {
+			vendor = "yh";
+			channelind = 2;
+			baudrate = 125;
+			acccode = 0xffffffff;
+			accmark = 0xffffffff;
+			mode = 1;
+			filter = 1;
+			waittimeout = 3000;
+		}
+
+		action A_Send : send Frame_Std on CH_CAN1 {
+			LEN : len;
+			ID : id;
+			DATA1 : data1;
+			DATA2 : data2;
+			DATA3 : data3;
+			DATA4 : data4;
+			DATA5 : data5;
+			DATA6 : data6;
+			DATA7 : data7;
+			DATA8 : data8;
+		}
+		action A_Recv : send Frame_Std on CH_CAN2 {
+			LEN : len;
+			ID : id;
+			DATA1 : data1;
+			DATA2 : data2;
+			DATA3 : data3;
+			DATA4 : data4;
+			DATA5 : data5;
+			DATA6 : data6;
+			DATA7 : data7;
+			DATA8 : data8;
+		}
+	}
+
+	//数据帧
+	frame Frame_Std {
+		integer LEN bitcount=4 value=8;
+		integer H1 bitcount=2;
+		integer FRAMETYPE bitcount=1;
+		integer FRAMEFORMAT bitcount=1;
+		integer ID bitcount=16;
+		integer DATA1 bitcount=8;
+		integer DATA2 bitcount=8;
+		integer DATA3 bitcount=8;
+		integer DATA4 bitcount=8;
+		integer DATA5 bitcount=8;
+		integer DATA6 bitcount=8;
+		integer DATA7 bitcount=8;
+		integer DATA8 bitcount=8;
+	}
+
+}

@@ -53,6 +53,7 @@ namespace FrameIO.Runtime
                     {
                         var chcan = new FrameIO.Driver.YH_CAN_Impl();
                         //chcan.InitConfig(ch.DicOption);
+                        chcan.InitConfig(ops);
                         return chcan;
                     }
                     else if (ops["vendor"].ToString() == "zy")

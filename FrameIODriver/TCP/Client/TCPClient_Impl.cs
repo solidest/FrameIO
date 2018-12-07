@@ -50,15 +50,22 @@ namespace FrameIO.Driver
             int dataleft = len;
             int start = 0;
             NetworkStream netStream = new NetworkStream(TCPClient.client);
-
-            while(dataleft>0)
+            try
             {
-                int recv = netStream.Read(buff, start, dataleft);
-                start += recv;
-                dataleft -= recv;
+                while (dataleft > 0)
+                {
+                    int recv = netStream.Read(buff, start, dataleft);
+                    start += recv;
+                    dataleft -= recv;
 
+                }
+                return buff;
             }
-            return buff;
+            catch(Exception)
+            {
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP客户端", "接收数据超时!");
+            }
+
         }
         public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
         {

@@ -44,6 +44,12 @@ namespace FrameIO.Driver
 
         void IFrameStream.InitConfig(Dictionary<string, object> config)
         {
+            if (!config.ContainsKey("devtype") || !config.ContainsKey("devInd") 
+                || !config.ContainsKey("channelind") || !config.ContainsKey("baudrate")
+                || !config.ContainsKey("waittimeout") || !config.ContainsKey("filter")
+                || !config.ContainsKey("acccode") || !config.ContainsKey("accmark"))
+                throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化广州致远CAN接口", "缺少初始化配置参数!");
+
             m_devtype = (uint)config["devtype"];
             m_devind = (UInt32)config["devInd"];
             m_canind = (UInt32)config["channelind"];
@@ -59,6 +65,8 @@ namespace FrameIO.Driver
 
             Filter = (Byte)config["filter"];
             Mode = (Byte)config["mode"];
+            if (config.ContainsKey("waittimeout"))
+                ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
         }
 
         #endregion
@@ -69,8 +77,15 @@ namespace FrameIO.Driver
             //TODO 
             UInt32 res = new UInt32();
             res = Wrapor.VCI_GetReceiveNum(m_devtype, m_devind, m_canind);
+            Stopwatch watcher = new Stopwatch();
+            watcher.Start();
             while (res == 0)
             {
+                if(watcher.ElapsedMilliseconds> ReceiveTimeOut)
+                {
+                    watcher.Stop();
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.SendErr, "广州致远CAN接口", "接收数据超时!");
+                }
                 System.Threading.Thread.Sleep(1);
                 res = Wrapor.VCI_GetReceiveNum(m_devtype, m_devind, m_canind);
             }
