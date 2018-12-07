@@ -579,11 +579,11 @@ namespace FrameIO.Main
                     getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
                 else if (SegIsArray(ac.FrameName, setor.FrameSegName))
                 {
-                    getlist.Add(string.Format("{0}.Clear();",setor.SysPropertyName));
+                    //getlist.Add(string.Format("int _count_{0} = {0}.Count;   if (_count > data.{1}.Length) _count = data.{1}.Length;", setor.SysPropertyName, setor.FrameSegName));
                     if (_pj.IsEnum(GetProType(sys, setor.SysPropertyName)))
-                        getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(({2})data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetProType(sys, setor.SysPropertyName)));
+                        getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = ({2})data.{1}[i];", setor.SysPropertyName, setor.FrameSegName, GetProType(sys, setor.SysPropertyName)));
                     else
-                        getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetProType(sys,setor.SysPropertyName)));
+                        getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = data.{1}[i];", setor.SysPropertyName, setor.FrameSegName));
                 }
                 else
                 {

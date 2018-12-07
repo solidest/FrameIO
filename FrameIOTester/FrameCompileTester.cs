@@ -404,11 +404,16 @@ namespace FrameIO.Tester
         {
             var sys1 = new test_refsubsys.SYS1();
             var sys2 = new test_refsubsys.SYS2();
+            for (int i = 0; i < 8; i++)
+                sys2.subProperty.PROPERTYe.Add(new test_refsubsys.Parameter<bool?>());
+            for (int i = 0; i < 2; i++)
+                sys2.empropertys.Add(new test_refsubsys.Parameter<test_refsubsys.emt?>());
 
             sys1.InitialChannelCH1(null);
             sys2.InitialChannelCHA(null);
 
             sys2.CHA.Open();
+            
             sys1.CH1.Open();
 
             sys1.PROPERTYa.Value = test_refsubsys.emt.em2;
@@ -422,6 +427,7 @@ namespace FrameIO.Tester
 
             sys1.SendData();
             sys2.RecvData();
+
 
             Assert.IsTrue(sys2.PROPERTY2a.Value == test_refsubsys.emt.em2);
             Assert.IsTrue(sys2.PROPERTY2b.Value == -2);

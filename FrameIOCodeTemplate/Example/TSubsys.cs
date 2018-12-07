@@ -75,8 +75,8 @@ namespace PROJECT1
             {
                 var gettor = new TFrameGettor(CH1.ReadFrame(TFrameGettor.Unpacker));
                 PROPERTYA.Value = gettor.SegmentA;
-                PROPERTYB.Clear();
-                for (int i = 0; i < gettor.SegmentD.Length; i++) PROPERTYB.Add(new Parameter<int?>(gettor.SegmentD[i]));
+                //int _count = PROPERTYB.Count;   if (_count > gettor.SegmentD.Length) _count = gettor.SegmentD.Length;
+                for (int i = 0; i < Helper.GetMin(PROPERTYB.Count, gettor.SegmentD.Length); i++) PROPERTYB[i].Value = gettor.SegmentD[i];
                 //PowerSupplies[0].SetpointCurrent.Value = gettor.SegmentD.SetpointCurrent;
 
             }
