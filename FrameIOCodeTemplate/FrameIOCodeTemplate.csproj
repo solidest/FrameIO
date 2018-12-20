@@ -89,6 +89,7 @@
     <None Include="..\FrameIO\x64\Debug\Template\TSystem.cst">
       <Link>TSystem.cst</Link>
     </None>
+    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
