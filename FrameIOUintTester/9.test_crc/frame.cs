@@ -10,12 +10,12 @@ namespace test_crc
 {
     public class FrameBase
     {
-        protected static void InitialBase(){}
+
         static FrameBase()
         {
             var config = string.Concat(
-                "H4sIAAAAAAAEAGNjYARCJgZcgIWRiYEZic8DVM0KpB0dIHxUmpGBFyoPAMPh",
-                "htVYAAAA");
+                "H4sIAAAAAAAEAGNjYARCJgZcgIWJiYEZic8DVM0KpB0bIHxUmpGBFyoPACPd",
+                "iChYAAAA");
 
             using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
             {
@@ -28,7 +28,31 @@ namespace test_crc
                     }
                 }
             }
+
+            var symbols = string.Concat(
+                "H4sIAAAAAAAEAOVUzUrDQBDemDRNqdVXyMFjCK32xx56kDZYUUox2ksJdBtG",
+                "XbpJdLMR4mP4iCI+gIiIFHS3bKGnnhSUzh5md77ZYWa+2UUaQuhLiNRSDLl5",
+                "0vw85RC53YRSCDlJ4tQ9hhgYCd0eWRgwyyf747FyvDyJea3p2FEaJoySqWOP",
+                "gKXCrVN3q3I5djejPGPQiSHjDFPHHmZTSsJTyC+SGcSdaauFG2GjWWsf1KF6",
+                "2A6cZXCfMxJf/2zwwBB1FlUcq5tEt5gBs/o4vfHJA1TEzRGmGQwxYSnSkW49",
+                "rmuK0t5dhinh+TLepParHQqsl3VJrdbwr7kaB6Zgq7QlKZMbXQ6qPP1FTuQr",
+                "KsoMkXxKMnH9eSNYMubiH9mMUuXs6TPIC/eyHKTtCKILC8o/RQ/mi//UlKNa",
+                "vGI4Av9c+1D2LWSWhH1b2d2+d9TT3hWoI7MswPISPPMG2pvCDGRWVjFv0NNe",
+                "FVZA5q7ALIXtlb8B+CoeDdcFAAA=");
+            using (var compressStream = new MemoryStream(Convert.FromBase64String(symbols)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        FrameIO.Runtime.FrameIOFactory.InitializeSymbols(resultStream.ToArray());
+                    }
+                }
+            }
         }
+
+        protected static void InitialBase(){}
     }
 
         
@@ -46,9 +70,9 @@ namespace test_crc
             _gettor = gettor;
         }
 
-        public ushort? HEAD { get => _gettor.GetUShort(2); }
-        public ushort? LEN { get => _gettor.GetUShort(3); }
-        public ushort? END { get => _gettor.GetUShort(4); }
+        public uint? HEAD { get => _gettor.GetUInt(2); }
+        public uint? LEN { get => _gettor.GetUInt(3); }
+        public uint? END { get => _gettor.GetUInt(4); }
     }
     public class frameSRSettor : FrameBase
     {
@@ -69,9 +93,9 @@ namespace test_crc
             _settor = packer;
         }
 
-        public ushort? HEAD { set => _settor.SetSegmentValue(2, value); }
-        public ushort? LEN { set => _settor.SetSegmentValue(3, value); }
-        public ushort? END { set => _settor.SetSegmentValue(4, value); }     
+        public uint? HEAD { set => _settor.SetSegmentValue(2, value); }
+        public uint? LEN { set => _settor.SetSegmentValue(3, value); }
+        public uint? END { set => _settor.SetSegmentValue(4, value); }     
     }
 
 }
