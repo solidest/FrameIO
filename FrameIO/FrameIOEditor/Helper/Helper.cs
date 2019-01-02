@@ -27,6 +27,43 @@ namespace FrameIO.Main
             return ret;
         }
 
+        //转换整数字段类型到属性类型
+        public static string ConvertISegType2ProType(int bitcount, bool isSigned)
+        {
+            if (bitcount == 1)
+                return "bool";
+            else if (bitcount > 1 && bitcount <= 8)
+                return isSigned ? "sbyte" : "byte";
+            else if (bitcount > 8 && bitcount <= 16)
+                return isSigned ? "short" : "ushort";
+            else if (bitcount > 16 && bitcount <= 32)
+                return isSigned ? "int" : "uint";
+            else if (bitcount > 32 && bitcount <= 64)
+                return isSigned ? "long" : "ulong";
+            return "";
+        }
+
+        //转换字段类型到属性类型
+        public static string ConvertSegType2ProType(FrameSegmentBase seg)
+        {
+            var ret = "";
+            var t = seg.GetType();
+            if(t == typeof(FrameSegmentInteger))
+            {
+                var iseg = (FrameSegmentInteger)seg;
+                ret = ConvertISegType2ProType(iseg.BitCount, iseg.Signed);
+            }
+            else if(t ==typeof(FrameSegmentReal))
+            {
+                var rseg = (FrameSegmentReal)seg;
+                if (rseg.IsDouble)
+                    ret = "double";
+                else
+                    ret = "float";
+            }
+            return ret;
+        }
+
         private static void AddSegName(Frame frm, List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist=null)
         {
             if (segnames.Count > 1000) return;

@@ -19,6 +19,18 @@ namespace FrameIO.Main
         public ObservableCollection<SubsysProperty> Propertys { get; set; } = new ObservableCollection<SubsysProperty>();
 
 
+        public void AddProperty(string name, string protype, bool isArray)
+        {
+            if (protype == "") return;
+            Propertys.Add(new SubsysProperty()
+            {
+                Name = name,
+                IsArray = isArray,
+                PropertyType = protype
+            });
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

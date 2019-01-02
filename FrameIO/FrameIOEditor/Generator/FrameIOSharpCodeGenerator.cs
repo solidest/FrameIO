@@ -187,7 +187,7 @@ namespace FrameIO.Main
         private static string GetSegmentGettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
         {
             //public bool? SegmentA { get => _gettor.GetBool(1); }
-            var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            var ty = Helper.ConvertISegType2ProType(seg.BitCount, seg.Signed);
             if (seg.Repeated.IsIntOne())
                 return string.Format("public {0}? {1} {{ get => _gettor.{2}({3}); }}", ty, seg.Name, GetGetorName(ty), symbols[fullname] );
             else
@@ -205,20 +205,7 @@ namespace FrameIO.Main
                 return string.Format("public {0}?[] {1} {{ get {{ if (_{1} == null) _{1} = _gettor.{2}Array({3}); return _{1}; }} }} private {0}?[] _{1};", ty, seg.Name, GetGetorName(ty), symbols[fullname]);
         }
 
-        private static string GetSegmentType(int bitcount, bool isSigned)
-        {
-            if (bitcount == 1)
-                return "bool";
-            else if (bitcount > 1 && bitcount <= 8)
-                return isSigned ? "sbyte" : "byte";
-            else if (bitcount > 8 && bitcount <= 16)
-                return isSigned ? "short" : "ushort";
-            else if (bitcount > 16 && bitcount <= 32)
-                return isSigned ? "int" : "uint";
-            else if (bitcount > 32 && bitcount <= 64)
-                return isSigned ? "long" : "ulong";
-            return "";
-        }
+      
 
         private static bool SegIsArray(string framename, string segname)
         {
@@ -252,7 +239,7 @@ namespace FrameIO.Main
                         if(seg.Name == segname && (seg.GetType() == typeof(FrameSegmentInteger)))
                         {
                             var segi = (FrameSegmentInteger)seg;
-                            return GetSegmentType(segi.BitCount, segi.Signed);
+                            return Helper.ConvertISegType2ProType(segi.BitCount, segi.Signed);
                         }
                     }
                 }
@@ -353,7 +340,7 @@ namespace FrameIO.Main
         private static string GetSegmentSettor(FrameSegmentInteger seg, string fullname, Dictionary<string, ushort> symbols)
         {
             //public bool? SegmentA { set => _settor.SetSegmentValue(2, value); }
-            var ty = GetSegmentType(seg.BitCount, seg.Signed);
+            var ty = Helper.ConvertISegType2ProType(seg.BitCount, seg.Signed);
             if (seg.Repeated.IsIntOne())
                 return string.Format("public {0}? {1} {{ set => _settor.SetSegmentValue({2}, value); }}", ty, seg.Name, symbols[fullname]);
             else
@@ -458,9 +445,6 @@ namespace FrameIO.Main
                     case actioniotype.AIO_RECV:
                         actionrecvcode.Append(GetRecvActionCode(sys, ac));
                         break;
-                    //case actioniotype.AIO_RECVLOOP:
-                        //HACK recvloop
-                        //break;
                     default:
                         break;
                 }

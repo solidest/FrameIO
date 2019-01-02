@@ -301,8 +301,6 @@ namespace FrameIO.Main
                 {
                     if (map.FrameSegName != "" && !IsContainSegment(map.FrameSegName, ac.FrameName)) 
                         AddErrorInfo(map.Syid, "引用的数据帧字段不正确");
-                    //HACK if (!map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p => p.Name == map.SysPropertyName).Count() == 0)
-                    //    AddErrorInfo(map.Syid, "引用的分系统属性不正确");
                 }
             }
         }

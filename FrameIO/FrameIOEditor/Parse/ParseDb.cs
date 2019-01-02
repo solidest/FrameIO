@@ -661,8 +661,12 @@ PRAGMA foreign_keys = on;
 
         private void LoadInnerSubSys(string name, ObservableCollection<FrameSegmentBase> seglist)
         {
+            if (_pj.InnerSubsysList.Where(p => p.Name == name).Count() > 0) return;
             var isb = new InnerSubsys(name);
-            //HACK
+            foreach(var seg in seglist)
+            {
+                isb.AddProperty(seg.Name, Helper.ConvertSegType2ProType(seg), !seg.Repeated.IsIntOne());
+            }
             _pj.InnerSubsysList.Add(isb);
         }
 

@@ -61,13 +61,14 @@ FrameIO更新记录
 ###版本3.6
 
 ####需更新内容
+5. 命名空间允许自定义，project名称允许有 .
+
 1. 增加c++版本
 2. 子协议支持数组
 3. 分系统的数组类型的属性，可根据与数据帧的映射关系自动推导长度并初始化
 4. 从通道中读取数据时，先找到匹配的数据帧帧头再开始解析
-5. 命名空间允许自定义，project名称允许有 .
 6. oneof 字段里允许有空的 frame
-7. Channel 能否增加 IsOpen 属性
+7. Channel增加 IsOpen 属性
 8. 生成的代码，发送和接收frame能否把所有异常都 catch?
 9. Parameter 类能否增加 ValueChanged 事件？
 10. Parameter类里触发 PropertyChanged 的代码似乎不是推荐写法
