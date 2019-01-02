@@ -33,6 +33,11 @@ namespace FrameIO.Main
         [JsonProperty]
         public ObservableCollection<OneOfMap> OneOfCaseList { get; set; } = new ObservableCollection<OneOfMap>();
 
+        [VisibleBy(nameof(UsedType), BlockSegType.DefFrame)]
+        [Category("Other")]
+        [JsonProperty]
+        public string SubSys { get; set; }
+
         public override void AppendSegmentCode(StringBuilder code)
         {
             code.AppendFormat("block {0} type=", Name);

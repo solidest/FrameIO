@@ -15,6 +15,7 @@ namespace FrameIO.Main
         public string Name { get; set; }
         public int Syid { get; set; }
         public string Notes { get; set; }
+        public string SubSys { get; set; }
 
         public override string ToString()
         {

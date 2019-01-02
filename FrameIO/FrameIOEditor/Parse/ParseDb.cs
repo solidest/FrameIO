@@ -456,6 +456,7 @@ PRAGMA foreign_keys = on;
                 if(innersubsysname != "")
                 {
                     LoadInnerSubSys(innersubsysname, fr.Segments);
+                    fr.SubSys = innersubsysname;
                 }
             }
             return ret;
@@ -723,6 +724,7 @@ PRAGMA foreign_keys = on;
                         var innersys = GetSymbol(Convert.ToInt32(r["subsysid"]));
                         if (innersys != "" && bseg.UsedType== BlockSegType.DefFrame)
                         {
+                            bseg.SubSys = innersys;
                             LoadInnerSubSys(innersys, bseg.DefineSegments);
                         }
                             
