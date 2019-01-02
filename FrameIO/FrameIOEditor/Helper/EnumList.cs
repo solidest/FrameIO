@@ -143,7 +143,8 @@ namespace FrameIO.Main
         SEGP_MIN,
         SEGP_CHECK,
         SEGP_CHECKRANGE_BEGIN,
-        SEGP_CHECKRANGE_END
+        SEGP_CHECKRANGE_END,
+        SEGP_MATCH
     };
 
     //字段属性值类型

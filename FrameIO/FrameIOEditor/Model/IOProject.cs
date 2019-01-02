@@ -13,6 +13,7 @@ namespace FrameIO.Main
         public string Name { get; set; }
         public string Notes { get; set; }
         public ObservableCollection<Subsys> SubsysList { get; set; } = new ObservableCollection<Subsys>();
+        public ObservableCollection<InnerSubsys> InnerSubsysList { get; set; } = new ObservableCollection<InnerSubsys>();
 
         [JsonProperty]
         public ObservableCollection<Frame> FrameList { get; set; } = new ObservableCollection<Frame>();
@@ -30,7 +31,7 @@ namespace FrameIO.Main
             _projectid = projectid;
         }
 
-        public List<string> GetPropertyTypeList(string owner)
+        public List<string> GetPropertyTypeList()
         {
             var ret = new List<string>();
             ret.Add("bool");
@@ -45,10 +46,9 @@ namespace FrameIO.Main
             ret.Add("float");
             ret.Add("double");
 
-            foreach (var subs in SubsysList)
+            foreach (var subs in InnerSubsysList)
             {
-                if (subs.Propertys.Count > 0 && subs.Actions.Count == 0 && subs.Channels.Count == 0 && subs.Name != owner)
-                    ret.Add(subs.Name);
+                ret.Add(subs.Name);
             }
 
             foreach (var ename in EnumdefList)

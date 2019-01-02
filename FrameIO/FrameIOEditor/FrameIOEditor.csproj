@@ -80,6 +80,7 @@
     <Compile Include="Model\FrameSegmentReal.cs" />
     <Compile Include="ModelSummary\FrameSegmentSummary.cs" />
     <Compile Include="Model\FrameSegmentText.cs" />
+    <Compile Include="Model\InnerSubSys.cs" />
     <Compile Include="Model\IOProject.cs" />
     <Compile Include="Model\SubSys.cs" />
     <Compile Include="Model\SubSysAction.cs" />

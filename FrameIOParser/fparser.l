@@ -52,6 +52,8 @@ int utf8len = 0;
 ","						{ return yytext[0]; }
 
 
+"subsys"				{ return T_SUBSYS; }
+
 "project"				{ return T_PROJECT; }
 "system"				{ return T_SYSTEM; }
 "frame"					{ return T_FRAME; }
@@ -80,6 +82,7 @@ int utf8len = 0;
       
 "signed"				{ return T_SIGNED; }
 "bitcount"				{ return T_BITCOUNT; }
+"match"					{ return T_MATCH; }
 "value"					{ return T_VALUE; }
 "repeated"				{ return T_REPEATED; }
 "byteorder"				{ return T_BYTEORDER; }

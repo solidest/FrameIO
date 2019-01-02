@@ -53,7 +53,7 @@ CREATE TABLE fio_enum_item (projectid INTEGER, enumid INTEGER, namesyid INTEGER,
 CREATE TABLE fio_error (projectid INTEGER, errorcode INTEGER, firstsyid INTEGER, lastsyid INTEGER);
 
 -- Table: fio_frame
-CREATE TABLE fio_frame (projectid INTEGER, namesyid INTEGER);
+CREATE TABLE fio_frame (projectid INTEGER, namesyid INTEGER, subsysid INTEGER);
 
 -- Table: fio_frame_exp
 CREATE TABLE fio_frame_exp (projectid INTEGER, propertyid INTEGER, op INTEGER, leftid INTEGER, rightid INTEGER, valuesyid INTEGER);
@@ -62,7 +62,7 @@ CREATE TABLE fio_frame_exp (projectid INTEGER, propertyid INTEGER, op INTEGER, l
 CREATE TABLE fio_frame_oneof (projectid INTEGER, proertyid INTEGER, itemsyid INTEGER, framesyid INTEGER);
 
 -- Table: fio_frame_segment
-CREATE TABLE fio_frame_segment (projectid INTEGER, frameid INTEGER, namesyid INTEGER, segmenttype INTEGER);
+CREATE TABLE fio_frame_segment (projectid INTEGER, frameid INTEGER, namesyid INTEGER, segmenttype INTEGER, subsysid INTEGER);
 
 -- Table: fio_frame_segment_property
 CREATE TABLE fio_frame_segment_property (projectid INTEGER, segmentid INTEGER, proname INTEGER, vtype INTEGER, ivalue INTEGER, pvalue INTEGER);
@@ -428,6 +428,7 @@ PRAGMA foreign_keys = on;
         //取symbol
         private string GetSymbol(int syid)
         {
+            if (syid == 0) return "";
             return _db.ExecuteQuery("SELECT symbol FROM fio_symbol WHERE rowid=" + syid.ToString()).Rows[0][0].ToString();
         }
 
@@ -435,7 +436,7 @@ PRAGMA foreign_keys = on;
         private ObservableCollection<Frame> LoadFrame(int projectid)
         {
             var ret = new ObservableCollection<Frame>();
-            var tb = _db.ExecuteQuery("SELECT fr.rowid, namesyid, sy.symbol FROM fio_frame fr LEFT JOIN fio_symbol sy ON fr.namesyid=sy.rowid WHERE fr.namesyid>0 AND fr.projectid="
+            var tb = _db.ExecuteQuery("SELECT fr.rowid, namesyid, sy.symbol, fr.subsysid FROM fio_frame fr LEFT JOIN fio_symbol sy ON fr.namesyid=sy.rowid WHERE fr.namesyid>0 AND fr.projectid="
                + projectid.ToString());
             foreach (DataRow r in tb.Rows)
             {
@@ -451,6 +452,11 @@ PRAGMA foreign_keys = on;
                     AddError(Convert.ToInt32(r["namesyid"]), 9);
                 }
                 ret.Add(fr);
+                var innersubsysname = GetSymbol(Convert.ToInt32(r["subsysid"]));
+                if(innersubsysname != "")
+                {
+                    LoadInnerSubSys(innersubsysname, fr.Segments);
+                }
             }
             return ret;
         }
@@ -495,6 +501,9 @@ PRAGMA foreign_keys = on;
                         break;
                     case segpropertytype.SEGP_CHECKRANGE_END:
                         seg.CheckRangeEnd = pro.ivalue;
+                        break;
+                    case segpropertytype.SEGP_MATCH:
+                        seg.Match = pro.ivalue;
                         break;
                     case segpropertytype.SEGP_TOENUM:
                         seg.ToEnum = pro.ivalue;
@@ -627,9 +636,9 @@ PRAGMA foreign_keys = on;
                     //case segpropertytype.SEGP_BYTESIZE:
                     //    seg.ByteSize = GetExp(pro.proid, null, null);
                     //    break;
-                    //case segpropertytype.SEGP_REPEATED:
-                    //    seg.Repeated = GetExp(pro.proid, null, null);
-                    //    break;
+                    case segpropertytype.SEGP_REPEATED:
+                        seg.Repeated = GetExp(pro.proid, null, null);
+                        break;
                     default:
                         AddError(pro.ivsyid > 0 ? pro.ivsyid : pro.segsyid, 12);
                         break;
@@ -648,11 +657,19 @@ PRAGMA foreign_keys = on;
             public segpropertyvaluetype vtype { get; set; }
         }
 
+
+        private void LoadInnerSubSys(string name, ObservableCollection<FrameSegmentBase> seglist)
+        {
+            var isb = new InnerSubsys(name);
+            //HACK
+            _pj.InnerSubsysList.Add(isb);
+        }
+
         //加载数据帧字段
         private ObservableCollection<FrameSegmentBase> LoadSegments(int frameid)
         {
             var ret = new ObservableCollection<FrameSegmentBase>();
-            var tb = _db.ExecuteQuery("SELECT sg.rowid, namesyid, segmenttype, sy.symbol segname FROM fio_frame_segment sg LEFT JOIN fio_symbol sy ON sg.namesyid=sy.rowid WHERE sg.frameid="
+            var tb = _db.ExecuteQuery("SELECT sg.rowid, namesyid, segmenttype, sy.symbol segname, sg.subsysid FROM fio_frame_segment sg LEFT JOIN fio_symbol sy ON sg.namesyid=sy.rowid WHERE sg.frameid="
                 + frameid.ToString());
             foreach(DataRow r in tb.Rows)
             {
@@ -703,6 +720,12 @@ PRAGMA foreign_keys = on;
                         var bseg = new FrameSegmentBlock();
                         LoadSegProBlock(segid, bseg, pros);
                         seg = bseg;
+                        var innersys = GetSymbol(Convert.ToInt32(r["subsysid"]));
+                        if (innersys != "" && bseg.UsedType== BlockSegType.DefFrame)
+                        {
+                            LoadInnerSubSys(innersys, bseg.DefineSegments);
+                        }
+                            
                         break;
                 }
                 seg.Name = r["segname"].ToString();
@@ -713,6 +736,7 @@ PRAGMA foreign_keys = on;
                     AddError(syid, 10);
                 }
                 ret.Add(seg);
+
             }
             return ret;
         }

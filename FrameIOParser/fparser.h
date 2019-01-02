@@ -91,7 +91,9 @@ enum segpropertytype
 	SEGP_MIN,
 	SEGP_CHECK,
 	SEGP_CHECKRANGE_BEGIN,
-	SEGP_CHECKRANGE_END
+	SEGP_CHECKRANGE_END,
+	SEGP_MATCH,
+	SEGP_SUBSYS
 };
 
 //字段属性值类型
@@ -191,6 +193,7 @@ struct SEGMENT
 	segmenttype segtype;
 	NOTE  * notes;
 	int namesyid;
+	int subsysid;
 	SEGPROPERTY* segpropertylist;
 	struct SEGMENT * nextsegment;
 } ;
@@ -201,6 +204,7 @@ struct FRAME
 	int namesyid;
 	NOTE  * notes;
 	SEGMENT *seglist;
+	int subsysid;
 	struct FRAME * nextframe;
 } ;
 
@@ -342,9 +346,9 @@ SEGPROPERTY* new_segproperty(segpropertytype segprotype, segpropertyvaluetype se
 SEGPROPERTY* append_segproperty(SEGPROPERTY* segprolist, SEGPROPERTY* lassegpro);
 ONEOFITEM* new_oneofitem(int enumitemsyid, int framesyid);
 ONEOFITEM* append_oneofitem(ONEOFITEM* list, ONEOFITEM* lastitem);
-SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NOTE* notes);
+SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NOTE* notes, int subsysid);
 SEGMENT* append_segment(SEGMENT* list, SEGMENT* lastitem);
-FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes);
+FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes, int subsysid);
 
 SYSPROPERTY* new_sysproperty(int namesyid, int protype, int arraycount, NOTE* notes);
 CHANNEL* new_syschannel(int namesyid, syschanneltype chtype, CHANNELOPTION* oplist, NOTE* notes);

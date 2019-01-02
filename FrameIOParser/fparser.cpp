@@ -124,7 +124,7 @@ ONEOFITEM* append_oneofitem(ONEOFITEM* list, ONEOFITEM* lastitem)
 	return list;
 }
 
-SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NOTE* notes)
+SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NOTE* notes, int subsysid)
 {
 	auto ret = new SEGMENT;
 	ret->namesyid = namesyid;
@@ -132,6 +132,7 @@ SEGMENT* new_segment(segmenttype segtype, int namesyid, SEGPROPERTY* prolist, NO
 	ret->segpropertylist = prolist;
 	ret->notes = notes;
 	ret->nextsegment = NULL;
+	ret->subsysid = subsysid;
 	return ret;
 }
 
@@ -150,13 +151,14 @@ SEGMENT* append_segment(SEGMENT* list, SEGMENT* lastitem)
 	return list;
 }
 
-FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes)
+FRAME* new_frame(int namesyid, SEGMENT* seglist, NOTE* notes, int subsysid)
 {
 	auto ret = new FRAME;
 	ret->namesyid = namesyid;
 	ret->seglist = seglist;
 	ret->notes = notes;
 	ret->nextframe = NULL;
+	ret->subsysid = subsysid;
 	return ret;
 }
 

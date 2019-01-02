@@ -17,6 +17,10 @@
 				<Span begin="\\" end="." />
 			</RuleSet>
 		</Span>
+
+    <Keywords foreground="Blue">
+      <Word>subsys</Word>
+    </Keywords>
 		
 		<Keywords fontWeight="bold" foreground="DarkBlue">
       <Word>project</Word>
@@ -66,6 +70,7 @@
       <Word>value</Word>
       <Word>signed</Word>
       <Word>bitcount</Word>
+      <Word>match</Word>
       <Word>other</Word>
       <Word>repeated</Word>
       <Word>byteorder</Word>

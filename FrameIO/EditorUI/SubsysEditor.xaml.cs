@@ -114,7 +114,7 @@ namespace FrameIO.Main
         //更新属性类型列表
         private void UpdatePropertyTypeList(object sender, RoutedEventArgs e)
         {
-            propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyTypeList(_sys.Name);
+            propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyTypeList();
         }
 
     }

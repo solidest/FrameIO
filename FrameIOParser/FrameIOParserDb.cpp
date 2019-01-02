@@ -57,13 +57,13 @@ FrameIOParserDb::FrameIOParserDb()
 		m_fio_enum_item_stmt = NULL;
 	}
 
-	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame (projectid, namesyid) VALUES(:projectid, :namesyid);", -1, &m_fio_frame_stmt, NULL);
+	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame (projectid, namesyid, subsysid) VALUES(:projectid, :namesyid, :subsysid);", -1, &m_fio_frame_stmt, NULL);
 	if (res != SQLITE_OK)
 	{
 		m_fio_frame_stmt = NULL;
 	}
 
-	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_segment (projectid, frameid, namesyid, segmenttype) VALUES(:projectid, :frameid, :namesyid, :segmenttype);", -1, &m_fio_frame_segment_stmt, NULL);
+	res = sqlite3_prepare_v2(m_pDB, "INSERT INTO fio_frame_segment (projectid, frameid, namesyid, segmenttype, subsysid) VALUES(:projectid, :frameid, :namesyid, :segmenttype, :subsysid);", -1, &m_fio_frame_segment_stmt, NULL);
 	if (res != SQLITE_OK)
 	{
 		m_fio_frame_segment_stmt = NULL;
@@ -503,6 +503,7 @@ int FrameIOParserDb::SaveFrame(FRAME* frm, int* frmid)
 	{
 		sqlite3_bind_int(m_fio_frame_stmt, 1, m_projectid);
 		sqlite3_bind_int(m_fio_frame_stmt, 2, frm->namesyid);
+		sqlite3_bind_int(m_fio_frame_stmt, 3, frm->subsysid);
 		int rc = sqlite3_step(m_fio_frame_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW))
 		{
@@ -530,6 +531,7 @@ int FrameIOParserDb::SaveFrameSegment(SEGMENT* seglist, int frmid)
 		sqlite3_bind_int(m_fio_frame_segment_stmt, 2, frmid);
 		sqlite3_bind_int(m_fio_frame_segment_stmt, 3, seglist->namesyid);
 		sqlite3_bind_int(m_fio_frame_segment_stmt, 4, seglist->segtype);
+		sqlite3_bind_int(m_fio_frame_segment_stmt, 5, seglist->subsysid);
 		int rc = sqlite3_step(m_fio_frame_segment_stmt);
 		if ((rc != SQLITE_DONE) && (rc != SQLITE_ROW))
 		{

@@ -55,6 +55,7 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 
 }
 
+%token T_MATCH T_SUBSYS
 %token T_PROJECT T_SYSTEM T_FRAME T_CHANNEL T_ENUM T_ACTION T_THIS
 %token T_INTEGER T_REAL T_BLOCK T_TEXT
 %token T_BOOL T_BYTE T_SBYTE T_USHORT T_SHORT T_UINT T_INT T_ULONG T_LONG T_FLOAT T_DOUBLE T_STRING
@@ -68,6 +69,8 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %token T_CRC16_CCITT T_CRC16_CCITT_FALSE T_CRC16_X25 T_CRC16_XMODEM T_CRC16_DNP T_CRC32 T_CRC32_MPEG_2 T_CRC64 T_CRC64_WE
 
 %token <symbol> VALUE_STRING VALUE_INT VALUE_REAL T_ID T_NOTE T_UNION_ID T_AT_USER
+
+%type <symbol> setsubsys
 
 %type <project> project 
 %type <pitem> projectitem frame enumcfg system
@@ -114,7 +117,8 @@ int fyyerror(YYSTYPE yylval, class FrameIOParserDb* db, const char* msg)
 %%
 
 project:
-	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist		{ $$ = new_project($3, $5, $1); db->SaveProject($$); free_project($$); $$=NULL; }
+	notelist T_PROJECT T_ID '{' projectitemlist notelist '}' notelist				{ $$ = new_project($3, $5, $1); db->SaveProject($$); free_project($$); $$=NULL; }
+	| notelist T_PROJECT T_UNION_ID '{' projectitemlist notelist '}' notelist		{ $$ = new_project($3, $5, $1); db->SaveProject($$); free_project($$); $$=NULL; }
 ;
 
 projectitemlist:															{ $$ = NULL; }
@@ -142,8 +146,8 @@ systemitem:
 ;
 
 sysproperty:
-	notelist T_ID T_ID ';'											{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, 0, $1)); }
-	| notelist T_ID '[' ']' T_ID ';'								{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, 1, $1)); }
+	notelist T_ID T_ID ';'														{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, 0, $1)); }
+	| notelist T_ID '[' ']' T_ID ';'											{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, 1, $1)); }
 ;
 
 
@@ -199,7 +203,7 @@ actionmap:
 
 
 frame: 
-	notelist T_FRAME T_ID '{' framesegmentlist notelist '}'								{ $$ = new_projectitem(PI_FRAME, new_frame($3, $5, $1)); }
+	notelist setsubsys T_FRAME T_ID '{' framesegmentlist notelist '}'					{ $$ = new_projectitem(PI_FRAME, new_frame($4, $6, $1, $2)); }
 ;
 
 framesegmentlist:																		{ $$ = NULL; }
@@ -207,7 +211,7 @@ framesegmentlist:																		{ $$ = NULL; }
 ;
 
 framesegment:
-	notelist framesegmenttype T_ID framesegmentpropertylist ';'							{ $$ = new_segment($2, $3, $4, $1); }
+	notelist setsubsys framesegmenttype T_ID framesegmentpropertylist ';'				{ $$ = new_segment($3, $4, $5, $1, $2); }
 ;
 
 framesegmenttype:
@@ -250,6 +254,7 @@ framesegmentpropertyboolvalue:
 framesegmentpropertyint:
 	T_BITCOUNT																			{ $$ = SEGP_BITCOUNT; }
 	| T_ALIGNEDLEN																		{ $$ = SEGP_ALIGNEDLEN; }
+	| T_MATCH																			{ $$ = SEGP_MATCH; }
 ;
 
 framesegmentpropertyconst:
@@ -359,6 +364,9 @@ notelist:																		{ $$ = NULL; }
 ;
 
 
+setsubsys:																		{ $$ = NULL; }
+	| '[' T_SUBSYS ':' T_ID ']'													{ $$ = $4; }
+;
 
 %%
 

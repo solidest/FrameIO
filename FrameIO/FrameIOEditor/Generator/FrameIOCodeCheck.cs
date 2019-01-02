@@ -50,7 +50,7 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
-            _proptypelist = _pj.GetPropertyTypeList("");
+            _proptypelist = _pj.GetPropertyTypeList();
 
             CheckEnumSysName();
             CheckFrames();
@@ -387,10 +387,10 @@ namespace FrameIO.Main
             //数据帧没有字段
             foreach(var frm in _pj.FrameList)
             {
-                if (frm.Segments == null || frm.Segments.Count == 0)
-                    AddErrorInfo(frm.Syid, "数据帧字段不能为空");
-                else
-                    CheckFrameSegment(frm);
+                //if (frm.Segments == null || frm.Segments.Count == 0)
+                //    AddErrorInfo(frm.Syid, "数据帧字段不能为空");
+                //else
+                CheckFrameSegment(frm);
                 
             }
 
@@ -418,11 +418,14 @@ namespace FrameIO.Main
                 p = p.Parent;
             }
             var newfref = new FrameRef() { Parent = parent, TheFrm = reffrm };
+
             foreach(var subfrm in FrameSegmentList[reffrm].Where(pp=>pp.Value!=null))
             {
                 if (CircleFrameRef(newfref, subfrm.Value))
                     return true;
             }
+
+
             return false;
         }
 

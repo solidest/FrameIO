@@ -52,6 +52,10 @@ namespace FrameIO.Main
         [JsonProperty]
         public string ToEnum { get; set; } = null;
 
+        [Category("Other")]
+        [JsonProperty]
+        public string Match { get; set; } = "";
+
         public override void AppendSegmentCode(StringBuilder code)
         {
             code.Append(string.Format("integer {0}", Name));
