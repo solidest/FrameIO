@@ -39,9 +39,10 @@ namespace FrameIO.Driver
             Wrapor.VCI_InitCAN(m_devtype, m_devind, m_canind, ref Init_Config);
             Wrapor.VCI_StartCAN(m_devtype, m_devind, m_canind);
 
-            return true;
+            IsOpen = true;
+            return IsOpen;
         }
-
+        public bool IsOpen { get; set; } = false;
         void IFrameStream.InitConfig(Dictionary<string, object> config)
         {
             if (!config.ContainsKey("devtype") || !config.ContainsKey("devInd") 

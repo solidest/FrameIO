@@ -16,12 +16,10 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
-            //             if (TCPServer.server != null)
-            //                 return true;
-            // 
-            //             return false;
-            return TCPServer.Open();
+            IsOpen= TCPServer.Open();
+            return IsOpen;
         }
+        public bool IsOpen { get; set; } = false;
 
         public void InitConfig(Dictionary<string, object> config)
         {

@@ -15,10 +15,13 @@ namespace FrameIO.Driver
         public bool Open()
         {
             if (!Com.Open())
-                return false;
-            return true;
+                IsOpen = false;
+            else
+                IsOpen = true;
+                
+            return IsOpen;
         }
-
+        public bool IsOpen { get; set; } = false;
         public void InitConfig(Dictionary<string, object> config)
         {
             Com = new ComHelper();
