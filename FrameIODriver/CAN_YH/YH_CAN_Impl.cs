@@ -22,10 +22,10 @@ namespace FrameIO.Driver
             if (!SetAccCode()) return false;
             if (!EnterWorkMode()) return false;
 
-            IsOpen = true;
-            return IsOpen;
+            DeviceIsOpen = true;
+            return DeviceIsOpen;
         }
-        public bool IsOpen { get; set; } = false;
+        public bool DeviceIsOpen { get; set; } = false;
         public void Close()
         {
             Int32 nRet = DevCan.acCanClose();
@@ -168,6 +168,11 @@ namespace FrameIO.Driver
         public void BeginWriteFrameList(IFramePack[] p, int len, AsyncWriteCallback callback, object AsyncState)
         {
             BeginWriteFrameListImpl(p, len, callback, AsyncState);        
+        }
+
+        public bool IsOpen()
+        {
+            return DeviceIsOpen;
         }
 
         #endregion

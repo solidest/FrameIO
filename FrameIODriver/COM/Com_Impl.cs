@@ -15,13 +15,13 @@ namespace FrameIO.Driver
         public bool Open()
         {
             if (!Com.Open())
-                IsOpen = false;
+                DeviceIsOpen = false;
             else
-                IsOpen = true;
+                DeviceIsOpen = true;
                 
-            return IsOpen;
+            return DeviceIsOpen;
         }
-        public bool IsOpen { get; set; } = false;
+        public bool DeviceIsOpen { get; set; } = false;
         public void InitConfig(Dictionary<string, object> config)
         {
             Com = new ComHelper();
@@ -120,6 +120,16 @@ namespace FrameIO.Driver
         public void BeginWriteFrameList(IFramePack[] p, int len, AsyncWriteCallback callback, object AsyncState)
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
+        }
+
+        bool IsOpen()
+        {
+            return DeviceIsOpen;
+        }
+
+        bool IFrameStream.IsOpen()
+        {
+            return DeviceIsOpen;
         }
 
 
