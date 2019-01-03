@@ -21,7 +21,7 @@ namespace FrameIO.Main
 
         [Browsable(false)]
         [JsonProperty]
-        public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = null;
+        public ObservableCollection<FrameSegmentBase> DefineSegments { get; set; } = new ObservableCollection<FrameSegmentBase>();
 
         [VisibleBy(nameof(UsedType), BlockSegType.OneOf)]
         [Category("Data")]
@@ -40,6 +40,10 @@ namespace FrameIO.Main
 
         public override void AppendSegmentCode(StringBuilder code)
         {
+            if (UsedType == BlockSegType.DefFrame && SubSys != null && SubSys.Length > 0)
+            {
+                code.AppendFormat("[subsys: {0}]\n\t\t", SubSys);
+            }
             code.AppendFormat("block {0} type=", Name);
             switch (UsedType)
             {
@@ -47,23 +51,28 @@ namespace FrameIO.Main
                     code.Append(RefFrameName);
                     break;
                 case BlockSegType.DefFrame:
-                    code.Append("{{");
+                    code.Append("{\n");
                     foreach (var seg in DefineSegments)
-                        seg.AppendSegmentCode(code);
-                    code.Append("}}");
+                    {
+                         code.Append("\t\t\t");
+                         seg.AppendSegmentCode(code);
+                        code.Append("\n");
+                    }
+                    code.Append("\t\t}");
                     break;
                 case BlockSegType.OneOf:
-                    code.AppendFormat("oneof({0}){{", OneOfBySegment.Length==0?"_":OneOfBySegment);
+                    code.AppendFormat("oneof({0}){{\n", OneOfBySegment.Length==0?"_":OneOfBySegment);
                     int i = -1;
                     foreach(var oi in OneOfCaseList)
                     {
                         i++;
-                        code.AppendFormat(" {0} : {1}{2}", oi.EnumItem.Length==0?"_": oi.EnumItem, oi.FrameName.Length==0?"_": oi.FrameName, i==OneOfCaseList.Count-1?"":",");
+                        code.AppendFormat("\t\t\t {0} : {1}{2}\n", oi.EnumItem.Length==0?"_": oi.EnumItem, oi.FrameName.Length==0?"_": oi.FrameName, i==OneOfCaseList.Count-1?"":",");
                     }
-                    code.Append("}" );
+                    code.Append("\t\t}" );
                     break;
             }
             code.Append(";");
+
         }
     }
 

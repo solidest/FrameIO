@@ -9,11 +9,26 @@ namespace FrameIO.Main
 {
     public class SubsysProperty : INotifyPropertyChanged
     {
+        private string _len;
         public string Name { get; set; }
         public string Notes { get; set; }
-        //public syspropertytype PropertyType { get; set; } = syspropertytype.SYSPT_UINT; //HACK 1111 修改类型为string
+
         public string PropertyType { get; set; }
         public bool IsArray { get; set; }
+        public string ArrayLen
+        {
+            get
+            {
+                if (IsArray)
+                    return _len;
+                else
+                    return "";
+            }
+            set
+            {
+                if (IsArray) _len = value;
+            }
+        }
         public int Syid { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 

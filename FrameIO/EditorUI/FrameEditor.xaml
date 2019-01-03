@@ -7,13 +7,18 @@
              xmlns:local="clr-namespace:FrameIO.Main"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Name="mgrid">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="0"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Name="gp" Header="数据帧字段列表" Margin="3">
-            <p:DataGrid ItemsSource="{Binding Segs}" Name="segGrid" AutoInsert="False" GotFocus="StartUpdate" LostFocus="StopUpdate">
+            <p:DataGrid ItemsSource="{Binding Segs}" Name="segGrid" AutoInsert="False" 
+                        MouseUp="UpdateMainTimer" KeyUp="UpdateMainTimer" >
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称"/>
                     <p:ColumnDefinition PropertyName="SegType" Width="2*" Header="字段类型"/>
@@ -22,10 +27,22 @@
             </p:DataGrid>
         </GroupBox>
 
-        <GroupBox Grid.Column="1"  Header="字段设置" Margin="3" Padding="2">
+        <GroupBox Grid.Column="1" Grid.RowSpan="2" Header="字段设置" Margin="3" Padding="2">
             <p:PropertyGrid Name="proGrid" FontWeight="Normal"
                     TabVisibility="Collapsed"/>
         </GroupBox>
+        <GroupBox Grid.Row="1" Name="gpsub" Header="子系统数据帧-字段列表" Margin="3">
+            <p:DataGrid ItemsSource="{Binding Segs}" Name="subsegGrid" AutoInsert="False" 
+                        MouseUp="UpdateSubTimer" KeyUp="UpdateSubTimer" >
+                <p:DataGrid.ColumnDefinitions>
+                    <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称"/>
+                    <p:ColumnDefinition PropertyName="SubSegType" Width="2*" Header="字段类型"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注"/>
+                </p:DataGrid.ColumnDefinitions>
+            </p:DataGrid>
+        </GroupBox>
+
+
 
     </Grid>
 </UserControl>

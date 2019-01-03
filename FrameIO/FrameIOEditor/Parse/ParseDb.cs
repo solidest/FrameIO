@@ -309,9 +309,13 @@ PRAGMA foreign_keys = on;
             foreach (DataRow r in tb.Rows)
             {
                 var syid = Convert.ToInt32(r["namesyid"]);
+                var ci = Convert.ToInt32(r["arraycount"]);
+                var cs = ci > 0 ? GetSymbol(ci) : "0";
+          
                 var sp = new SubsysProperty()
                 {
-                    IsArray = Convert.ToInt32(r["arraycount"])>0,
+                    ArrayLen = cs,
+                    IsArray = ci >= 0,
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
                     PropertyType = r["propertytype"].ToString(),

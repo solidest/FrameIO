@@ -60,6 +60,10 @@ namespace FrameIO.Main
                 if (frm.Name == null || frm.Name.Length == 0) continue;
 
                 AppendNotes(code, frm.Notes, 1);
+                if(frm.SubSys!=null && frm.SubSys.Length>0)
+                {
+                    code.Append(string.Format("\t[subsys: {0}]" + Environment.NewLine, frm.SubSys));
+                }
                 code.Append(string.Format("\tframe {0} {{" + Environment.NewLine, frm.Name));
                 foreach(var seg in frm.Segments)
                 {
@@ -88,7 +92,7 @@ namespace FrameIO.Main
                 {
                     if (pro.Name == null || pro.Name.Length == 0) continue;
                     AppendNotes(code, pro.Notes, 2);
-                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, pro.PropertyType, pro.IsArray? "[]" : "", pro.Name);
+                    code.AppendFormat("\t\t{0}{1} {2};"+Environment.NewLine, pro.PropertyType, pro.IsArray? ("[" + pro.ArrayLen + "]") : "", pro.Name);
                 }
 
                 code.Append(Environment.NewLine);

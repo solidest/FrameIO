@@ -70,6 +70,7 @@
     <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\ExpConverter.cs" />
     <Compile Include="Helper\Helper.cs" />
+    <Compile Include="Helper\HelperClass.cs" />
     <Compile Include="Helper\IOutText.cs" />
     <Compile Include="Model\Enumdef.cs" />
     <Compile Include="Model\EnumdefItem.cs" />

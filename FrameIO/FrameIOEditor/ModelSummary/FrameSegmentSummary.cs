@@ -68,7 +68,14 @@ namespace FrameIO.Main
         Integer,
         Real,
         Frame,
-        OneOf
+        OneOf,
+        SubSys
+    }
+
+    public enum SubSegmentType
+    {
+        Integer,
+        Real
     }
 
     public class FrameSegmentSummary : INotifyPropertyChanged
@@ -77,6 +84,7 @@ namespace FrameIO.Main
         public FrameSegmentBase _seg;
         public ObservableCollection<FrameSegmentBase> _segs;
         public SegmentType _type;
+        private SubSegmentType _subtype;
         public event PropertyChangedEventHandler PropertyChanged;
 
 
@@ -93,10 +101,19 @@ namespace FrameIO.Main
             if (seg.GetType() == typeof(FrameSegmentBlock))
             {
                 var se = (FrameSegmentBlock)seg;
-                if (se.UsedType == BlockSegType.RefFrame)
-                    _type = SegmentType.Frame;
-                else if (se.UsedType == BlockSegType.OneOf)
-                    _type = SegmentType.OneOf;
+                switch(se.UsedType)
+                {
+                    case BlockSegType.RefFrame:
+                        _type = SegmentType.Frame;
+                        break;
+                    case BlockSegType.OneOf:
+                        _type = SegmentType.OneOf;
+                        break;
+
+                    case BlockSegType.DefFrame:
+                        _type = SegmentType.SubSys;
+                        break;
+                }
             }
             _seg = seg;
             _segs = parent;
@@ -106,6 +123,33 @@ namespace FrameIO.Main
         public string Name { get => _seg.Name; set { _seg.Name = value; } }
 
         public SegmentType SegType { get => _type; set { ChangedType(value); } }
+        public SubSegmentType SubSegType {
+            get
+            {
+                if (SegType == SegmentType.Integer)
+                    return SubSegmentType.Integer;
+                else
+                    return SubSegmentType.Real;
+            }
+
+            set
+            {
+                if(value ==  SubSegmentType.Integer)
+                    ChangedType( SegmentType.Integer);
+                else
+                    ChangedType(SegmentType.Real);
+            }
+        }
+
+        public FrameSegmentSummaryList GetSubSegs()
+        {
+            if(_type == SegmentType.SubSys)
+            {
+                var bseg = (FrameSegmentBlock)_seg;
+                return new FrameSegmentSummaryList(bseg.DefineSegments);
+            }
+            return null;
+        }
 
         private void ChangedType(SegmentType t)
         {
@@ -130,6 +174,11 @@ namespace FrameIO.Main
                     var bseg = new FrameSegmentBlock();
                     bseg.UsedType = BlockSegType.OneOf;
                     seg = bseg;
+                    break;
+                case SegmentType.SubSys:
+                    var dseg = new FrameSegmentBlock();
+                    dseg.UsedType = BlockSegType.DefFrame;
+                    seg = dseg;
                     break;
             }
             seg.Name = _seg.Name;

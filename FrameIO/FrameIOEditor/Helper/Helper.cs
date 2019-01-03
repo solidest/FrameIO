@@ -14,7 +14,7 @@ namespace FrameIO.Main
     {
 
         //取数据帧基础字段名
-        public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist = null)
+        public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist = null, bool containSubsys = false)
         {
             var ret = new List<string>();
             var frms = pjfrms.Where(p => p.Name == name);
@@ -22,7 +22,7 @@ namespace FrameIO.Main
             var frm = frms.First();
             foreach (var seg in frm.Segments)
             {
-                AddSegName(frm, ret, "", seg, pjfrms, oneoflist);
+                AddSegName(frm, ret, "", seg, pjfrms, oneoflist, containSubsys);
             }
             return ret;
         }
@@ -64,7 +64,7 @@ namespace FrameIO.Main
             return ret;
         }
 
-        private static void AddSegName(Frame frm, List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist=null)
+        private static void AddSegName(Frame frm, List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist=null, bool containSubsys = false)
         {
             if (segnames.Count > 1000) return;
             var ty = seg.GetType();
@@ -76,15 +76,27 @@ namespace FrameIO.Main
             {
                 var mypre = (pre == "" ? "" : (pre + ".")) + seg.Name;
                 var bseg = (FrameSegmentBlock)seg;
+
                 switch (bseg.UsedType)
                 {
                     case BlockSegType.RefFrame:
                         {
+                            var subname = GetSubSysNameFrom(bseg.RefFrameName, pjfrms);
+                            if(containSubsys && subname != "")
+                            {
+                                segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
+                                return;
+                            }
                             var mylist = GetFrameSegmentsName(bseg.RefFrameName, pjfrms, oneoflist);
                             segnames.AddRange(mylist.Select(p => mypre + "." + p));
                             return;
                         }
                     case BlockSegType.DefFrame:
+                        if(containSubsys && bseg.SubSys != null && bseg.SubSys.Length > 0)
+                        {
+                            segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
+                            return;
+                        }
                         foreach (var myseg in bseg.DefineSegments)
                             AddSegName(frm, segnames, mypre, myseg, pjfrms, oneoflist);
                         return;
@@ -92,20 +104,29 @@ namespace FrameIO.Main
                         foreach (var item in bseg.OneOfCaseList)
                         {
                             var itempre = mypre + "." + item.EnumItem;
-                            var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
-                            segnames.AddRange(mylist.Select(p => itempre + "." + p));
+                            var subname = GetSubSysNameFrom(item.FrameName, pjfrms);
+                            if (containSubsys && subname != "")
+                            {
+                                segnames.Add(itempre);
+                            }
+                            else
+                            {
+                                var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
+                                segnames.AddRange(mylist.Select(p => itempre + "." + p));
+                            }
+
                         }
                         if (oneoflist != null)
                         {
                             var refsegs = frm.Segments.Where(p => p.Name == bseg.OneOfBySegment);
-                            if (refsegs == null) break;
+                            if (refsegs == null || refsegs.Count()==0) break;
                             var refseg = refsegs.First();
-                            if (refseg != null && refseg.GetType()==typeof(FrameSegmentInteger))
+                            if (refseg != null && refseg.GetType() == typeof(FrameSegmentInteger))
                             {
-                                var iseg =(FrameSegmentInteger)refseg;
+                                var iseg = (FrameSegmentInteger)refseg;
                                 if (iseg.ToEnum != null && iseg.ToEnum.Length >= 0)
                                 {
-                                    var ooh = new OneOfHelper() { ByEnum = iseg.ToEnum, BySegname = (pre == "" ? "" : (pre + "."))  + bseg.OneOfBySegment };
+                                    var ooh = new OneOfHelper() { ByEnum = iseg.ToEnum, BySegname = (pre == "" ? "" : (pre + ".")) + bseg.OneOfBySegment };
                                     foreach (var item in bseg.OneOfCaseList)
                                     {
                                         var itempre = mypre + "." + item.EnumItem;
@@ -216,5 +237,15 @@ namespace FrameIO.Main
             return GetUInt64FromByte(buff, bitStart) & ((x!=0) ? (~(ulong)0>>(sizeof(ulong)*8-x)):(ulong)0);
         }
 
+
+        //取数据帧对应的子系统名称
+        public static string GetSubSysNameFrom(string name, ICollection<Frame> pjfrms)
+        {
+            var f = pjfrms.Where(p => p.Name == name);
+            if (f.Count() == 0) return "";
+            var fr = f.First();
+            if (fr.SubSys == null || fr.SubSys.Length == 0) return "";
+            return fr.SubSys;
+        }
     }
 }

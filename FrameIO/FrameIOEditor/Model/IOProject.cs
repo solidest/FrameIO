@@ -58,6 +58,33 @@ namespace FrameIO.Main
             return ret;
         }
 
+        public List<SelectItem> GetPropertySelectTypeList()
+        {
+            var ret = new List<SelectItem>();
+            ret.Add(new SelectItem("bool", "bool"));
+            ret.Add(new SelectItem("byte", "byte"));
+            ret.Add(new SelectItem("sbyte", "sbyte"));
+            ret.Add(new SelectItem("short", "short"));
+            ret.Add(new SelectItem("ushort", "ushort"));
+            ret.Add(new SelectItem("int", "int"));
+            ret.Add(new SelectItem("uint", "uint"));
+            ret.Add(new SelectItem("long", "long"));
+            ret.Add(new SelectItem("ulong", "ulong"));
+            ret.Add(new SelectItem("float", "float"));
+            ret.Add(new SelectItem("double", "double"));
+
+            foreach (var subs in InnerSubsysList)
+            {
+                ret.Add(new SelectItem("[subsys] " + subs.Name , subs.Name));
+            }
+
+            foreach (var ename in EnumdefList)
+            {
+                ret.Add(new SelectItem( "[enum] " + ename.Name, ename.Name));
+            }
+            return ret;
+        }
+
         public bool IsEnum(string name)
         {
             return EnumdefList.Where(p => p.Name == name).Count() > 0;
@@ -88,6 +115,30 @@ namespace FrameIO.Main
                     ret.Add(parentname + "." + p.Name);
             }
             return ret;
+        }
+
+        public void UpdateSubSys()
+        {
+            InnerSubsysList.Clear();
+            foreach(var fr in FrameList)
+            {
+                if (fr.SubSys != null && fr.SubSys.Length > 0)
+                    InnerSubsysList.Add(new InnerSubsys(fr.SubSys));
+                else
+                {
+                    foreach(var seg in fr.Segments)
+                    {
+                        if(seg.GetType() == typeof(FrameSegmentBlock))
+                        {
+                            var bseg = (FrameSegmentBlock)seg;
+                            if(bseg.UsedType== BlockSegType.DefFrame && bseg.SubSys!=null && bseg.SubSys.Length>0)
+                            {
+                                InnerSubsysList.Add(new InnerSubsys(bseg.SubSys));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     }

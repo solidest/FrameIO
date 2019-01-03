@@ -146,8 +146,9 @@ systemitem:
 ;
 
 sysproperty:
-	notelist T_ID T_ID ';'														{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, 0, $1)); }
-	| notelist T_ID '[' ']' T_ID ';'											{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, 1, $1)); }
+	notelist T_ID T_ID ';'														{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($3, $2, -1, $1)); }
+	| notelist T_ID '[' ']' T_ID ';'											{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($5, $2, 0, $1)); }
+	| notelist T_ID '[' VALUE_INT ']' T_ID ';'									{ $$ = new_sysitem(SYSI_PROPERTY, new_sysproperty($6, $2, $4, $1)); }
 ;
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,8 @@ namespace FrameIO.Main
     {
         private Frame _frm;
         private FrameSegmentSummaryList _segs;
-        private DispatcherTimer _fUpdateTimer;
+        private FrameSegmentSummaryList _subsegs;
+
         public FrameEditor(Frame frm)
         {
             _frm = frm;
@@ -33,30 +35,47 @@ namespace FrameIO.Main
             InitializeComponent();
             DataContext = _segs;
 
-            _fUpdateTimer = new DispatcherTimer();
-            _fUpdateTimer.Interval = TimeSpan.FromSeconds(0.3);
-            _fUpdateTimer.Tick += delegate { UpdateTimer(); };
         }
 
-        private void UpdateTimer()
+        private void UpdateMainTimer(object sender, RoutedEventArgs e)
         {
             var s = segGrid.SelectionCell.Row;
             if (s < 0 || _segs.Segs.Count==0)
                 proGrid.SelectedObject = null;
             else
             {
+                if (_segs.Segs[s].SegType == SegmentType.SubSys)
+                {
+                    if(mgrid.RowDefinitions[1].Height.Value==0) mgrid.RowDefinitions[1].Height = new GridLength(260, GridUnitType.Pixel);
+                    var subsegs = _segs.Segs[s].GetSubSegs();
+                    if(_subsegs != subsegs)
+                    {
+                        _subsegs = subsegs;
+                        subsegGrid.DataContext = _subsegs;
+                    }
+
+                }
+                else
+                {
+                    mgrid.RowDefinitions[1].Height = new GridLength(0, GridUnitType.Pixel);
+                    _subsegs = null;
+                    subsegGrid.DataContext = null;
+                }
+
                 proGrid.SelectedObject = _segs.Segs[s]._seg;
             }
         }
 
-        private void StopUpdate(object sender, RoutedEventArgs e)
+        private void UpdateSubTimer(object sender, RoutedEventArgs e)
         {
-            _fUpdateTimer.Stop();
+            var s = subsegGrid.SelectionCell.Row;
+            if (s < 0 || _subsegs==null || _subsegs.Segs.Count == 0)
+                proGrid.SelectedObject = null;
+            else
+            {
+                proGrid.SelectedObject = _subsegs.Segs[s]._seg;
+            }
         }
 
-        private void StartUpdate(object sender, RoutedEventArgs e)
-        {
-            _fUpdateTimer.Start();
-        }
     }
 }

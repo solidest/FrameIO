@@ -24,8 +24,7 @@ namespace FrameIO.Main
     {
         private IOProject _proj;
         private Subsys _sys;
-        private DispatcherTimer _fUpdateTimerCh;
-        private DispatcherTimer _fUpdateTimerAc;
+
         private ObservableCollection<Frame> _frms;
         public SubsysEditor(Subsys sys, ObservableCollection<Frame> frms, IOProject proj)
         {
@@ -37,20 +36,13 @@ namespace FrameIO.Main
             _frms = frms;
 
             acGrid.ColumnDefinitions[2].ItemsSource = _sys.Channels;
+            acGrid.ColumnDefinitions[2].SelectedValuePath = "Name";
             acGrid.ColumnDefinitions[3].ItemsSource = frms;
-
-
-            _fUpdateTimerCh = new DispatcherTimer();
-            _fUpdateTimerCh.Interval = TimeSpan.FromSeconds(0.3);
-            _fUpdateTimerCh.Tick += delegate { UpdateTimerCh(); };
-
-            _fUpdateTimerAc = new DispatcherTimer();
-            _fUpdateTimerAc.Interval = TimeSpan.FromSeconds(0.3);
-            _fUpdateTimerAc.Tick += delegate { UpdateTimerAc(); };
+            acGrid.ColumnDefinitions[3].SelectedValuePath = "Name";
         }
 
         //更新动作关联字段名选择
-        private void UpdateTimerAc()
+        private void UpdateTimerAc(object sender, RoutedEventArgs e)
         {
             var s = acGrid.SelectionCell.Row;
             if (s < 0 || _sys.Actions.Count==0)
@@ -60,8 +52,9 @@ namespace FrameIO.Main
                 acOpGrid.ItemsSource = _sys.Actions[s].LiteMaps;
                 if (_frms.Where(p => p.Name == _sys.Actions[s].FrameName).Count() > 0)
                 {
-                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(_sys.Actions[s].FrameName, _frms);
+                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(_sys.Actions[s].FrameName, _frms, null, true);
                     acOpGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyList(_sys.Propertys);
+
                 }
                 else
                 {
@@ -69,13 +62,11 @@ namespace FrameIO.Main
                     acOpGrid.ColumnDefinitions[1].ItemsSource = null;
 
                 }
-
-
             }
         }
 
         //更新通道参数名选择
-        private void UpdateTimerCh()
+        private void UpdateTimerCh(object sender, RoutedEventArgs e)
         {
             var s = chGrid.SelectionCell.Row;
             if (s < 0 || _sys.Channels.Count==0)
@@ -87,34 +78,15 @@ namespace FrameIO.Main
             }
         }
 
-        //启动通道选择更新
-        private void StartUpdateCh(object sender, RoutedEventArgs e)
-        {
-            _fUpdateTimerCh.Start();
-        }
-
-        //停止通道选择更新
-        private void StopUpdateCh(object sender, RoutedEventArgs e)
-        {
-            _fUpdateTimerCh.Stop();
-        }
-
-        //启动action选择更新
-        private void StartUpdateAc(object sender, RoutedEventArgs e)
-        {
-            _fUpdateTimerAc.Start();
-        }
-
-        //停止action选择更新
-        private void StopUpdateAc(object sender, RoutedEventArgs e)
-        {
-            _fUpdateTimerAc.Stop();
-        }
 
         //更新属性类型列表
         private void UpdatePropertyTypeList(object sender, RoutedEventArgs e)
         {
-            propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyTypeList();
+            _proj.UpdateSubSys();
+            propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertySelectTypeList();
+            propGrid.ColumnDefinitions[1].SelectedValuePath = "SelectValue";
+            propGrid.ColumnDefinitions[1].DisplayMemberPath = "SelectName";
+            propGrid.ColumnDefinitions[1].ItemsSourceProperty = "SelectValue";
         }
 
     }

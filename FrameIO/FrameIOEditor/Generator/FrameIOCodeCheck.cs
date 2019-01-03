@@ -50,6 +50,7 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
+            _pj.UpdateSubSys();
             _proptypelist = _pj.GetPropertyTypeList();
 
             CheckEnumSysName();
@@ -475,7 +476,11 @@ namespace FrameIO.Main
                         }
                         segns.Add(bseg.Name, null);
                         foreach (var mys in mysegs)
-                            segns.Add(bseg.Name + "." + mys.Value, null);
+                        {
+                            
+                            segns.Add(bseg.Name + "." + mys.Key, null);
+
+                        }
                         return;
                     }
 
