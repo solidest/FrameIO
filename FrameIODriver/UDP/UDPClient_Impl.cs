@@ -15,11 +15,13 @@ namespace FrameIO.Driver
         public bool Open()
         {
             if (UDPClient.UdpClient != null)
-                return true;
+                IsOpen = true;
+            else
+                IsOpen = false;
 
-            return false;
+            return IsOpen;
         }
-
+        public bool IsOpen { get; set; } = false;
         public void InitConfig(Dictionary<string, object> config)
         {
             UDPClient = new UDPHelper();

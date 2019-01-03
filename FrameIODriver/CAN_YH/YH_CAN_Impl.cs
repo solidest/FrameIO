@@ -22,9 +22,10 @@ namespace FrameIO.Driver
             if (!SetAccCode()) return false;
             if (!EnterWorkMode()) return false;
 
-            return true;
+            IsOpen = true;
+            return IsOpen;
         }
-
+        public bool IsOpen { get; set; } = false;
         public void Close()
         {
             Int32 nRet = DevCan.acCanClose();
