@@ -15,7 +15,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
-using FrameIO.Interface;
 using System.Windows.Data;
 
 namespace FrameIO.Main
