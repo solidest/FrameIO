@@ -64,6 +64,7 @@ namespace FrameIO.Main
             return ret;
         }
 
+        //添加字段名称
         private static void AddSegName(Frame frm, List<string> segnames, string pre, FrameSegmentBase seg, ICollection<Frame> pjfrms, List<OneOfHelper> oneoflist=null, bool containSubsys = false)
         {
             if (segnames.Count > 1000) return;
@@ -100,6 +101,7 @@ namespace FrameIO.Main
                         foreach (var myseg in bseg.DefineSegments)
                             AddSegName(frm, segnames, mypre, myseg, pjfrms, oneoflist);
                         return;
+
                     case BlockSegType.OneOf:
                         foreach (var item in bseg.OneOfCaseList)
                         {
@@ -130,10 +132,11 @@ namespace FrameIO.Main
                                     foreach (var item in bseg.OneOfCaseList)
                                     {
                                         var itempre = mypre + "." + item.EnumItem;
-                                        var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
+                                        var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist, true);
                                         var mysegs = mylist.Select(p => itempre + "." + p);
                                         var ooih = new OneOfItemHelper() { ItemName = item.EnumItem == "other" ? "default" : ooh.ByEnum + "." + item.EnumItem };
                                         ooih.Segmens.AddRange(mysegs);
+                                        ooih.Segmens.Add(itempre);
                                         ooh.Items.Add(ooih);
                                     }
                                     oneoflist.Add(ooh);

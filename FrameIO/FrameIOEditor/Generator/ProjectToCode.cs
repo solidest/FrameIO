@@ -134,7 +134,7 @@ namespace FrameIO.Main
                         code.Append("\t\t\t" + map);
 
                     var oneoflist = new List<Helper.OneOfHelper>();
-                    var nms = Helper.GetFrameSegmentsName(ac.FrameName, pj.FrameList, oneoflist);
+                    var segnames = Helper.GetFrameSegmentsName(ac.FrameName, pj.FrameList, oneoflist);
                     foreach(var ofl in oneoflist)
                     {
                         var pros = ac.Maps.Where(p => p.FrameSegName == ofl.BySegname);
@@ -142,8 +142,8 @@ namespace FrameIO.Main
                             ofl.ByProperty = pros.First().SysPropertyName;
                     }
 
-                    //字段映射
-                    if(nms.Count==0 || oneoflist.Count==0)
+                    //无需swith case
+                    if(segnames.Count==0 || oneoflist.Count==0)
                     {
                         foreach (var mp in ac.LiteMaps)
                         {
@@ -153,8 +153,10 @@ namespace FrameIO.Main
                             code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
                         }
                     }
+                    //需要switch case
                     else
                     {
+                        //备份
                         var bkmap = new List<SubsysActionMap>();
                         bkmap.AddRange(ac.LiteMaps);
 
@@ -169,6 +171,7 @@ namespace FrameIO.Main
 
                             foreach (var casesegs in ofi.Items)
                             {
+                                //分支前缀
                                 var needsmaps = bkmap.Where(p => casesegs.Segmens.Contains(p.FrameSegName));
                                 if(needsmaps.Count()>0)
                                 {
@@ -263,5 +266,6 @@ namespace FrameIO.Main
             }
             return "";
         }
+
     }
 }
