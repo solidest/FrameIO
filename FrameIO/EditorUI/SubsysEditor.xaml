@@ -31,7 +31,7 @@
         </GroupBox>
         <GroupBox Grid.Column="1" Header="通道配置" Margin="3,3,3,10">
             <p:DataGrid Name="chGrid" ItemsSource="{Binding Channels}" 
-                IsAutoFillEnabled="True" Background="MistyRose" AutoInsert="False" 
+                Background="MistyRose" AutoInsert="False" 
                 LostFocus="UpdateSelChannel">
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="1*" Header="通道名称" CanSort="False"/>
@@ -52,7 +52,7 @@
 
         <GroupBox Grid.Column="1" Grid.Row="1" Header="动作配置" Margin="3,10,3,3">
             <p:DataGrid ItemsSource="{Binding Actions}" Name="acGrid" Background="Seashell" AutoInsert="False" 
-                LostFocus="UpdateSelAction" >
+                  LostFocus="UpdateSelAction" >
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name"  Width="2*" Header="名称" CanSort="False"/>
                     <p:ColumnDefinition PropertyName="IOType"  Width="2*" Header="动作类型" CanSort="False"/>
@@ -62,17 +62,16 @@
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>
-
+        
         <GroupBox Grid.Column="2" Grid.Row="1" Header="动作参数关联" Margin="3,10,3,3">
-            <p:DataGrid Name="acOpGrid" Background="Seashell" AutoInsert="False"
-                        GotFocus="UpdateSelAction" >
+            <p:DataGrid Name="actionMapGrid" Background="Seashell" AutoInsert="False"
+                          GotFocus="UpdateSelAction" >
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="FrameSegName" Width="1*" Header="数据帧字段" CanSort="False"/>
                     <p:ColumnDefinition PropertyName="SysPropertyName" Width="1*" Header="关联属性" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>
-
 
     </Grid>
 </UserControl>

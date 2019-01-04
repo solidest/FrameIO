@@ -50,6 +50,7 @@ namespace FrameIO.Main
             var bbd2 = new Binding() { Path = new PropertyPath("SelectedChannel"), Source = this, Mode = BindingMode.OneWayToSource };
             chGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectedItemsProperty, bbd);
             chGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectionCellProperty, bbd2);
+
         }
 
         public Object SelectedAction
@@ -75,25 +76,32 @@ namespace FrameIO.Main
             _updating = true;
             var sels = acGrid.SelectedItems;
             SubsysAction sel = null;
-            if(sels != null)
+            if (sels != null)
             {
                 foreach (SubsysAction sell in sels)
                     sel = sell;
             }
+            else if(_sys.Actions.Count>0)
+            {
+                sel = _sys.Actions[0];
+            }
+
             if (sel == null)
-                acOpGrid.ItemsSource = null;
+            {
+                actionMapGrid.ItemsSource = null;
+            }
             else
             {
-                acOpGrid.ItemsSource = sel.LiteMaps;
+                actionMapGrid.ItemsSource = sel.LiteMaps;
                 if (_frms.Where(p => p.Name == sel.FrameName).Count() > 0)
                 {
-                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, null, true);
-                    acOpGrid.ColumnDefinitions[1].ItemsSource = _sys.Propertys.Select(p=>p.Name);
+                    actionMapGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, null, true);
+                    actionMapGrid.ColumnDefinitions[1].ItemsSource = _sys.Propertys.Select(p => p.Name);
                 }
                 else
                 {
-                    acOpGrid.ColumnDefinitions[0].ItemsSource = null;
-                    acOpGrid.ColumnDefinitions[1].ItemsSource = null;
+                    actionMapGrid.ColumnDefinitions[0].ItemsSource = null;
+                    actionMapGrid.ColumnDefinitions[1].ItemsSource = null;
                 }
             }
             _updating = false;
