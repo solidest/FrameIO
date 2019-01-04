@@ -90,34 +90,34 @@ namespace FrameIO.Main
             return EnumdefList.Where(p => p.Name == name).Count() > 0;
         }
 
-        public List<string> GetPropertyList(ObservableCollection<SubsysProperty> props)
-        {
-            var ret = new List<string>();
-            foreach(var p in props)
-            {
-                if (p.IsBaseType() || IsEnum(p.PropertyType))
-                    ret.Add(p.Name);
-                else
-                    ret.AddRange(GetSubPropertyList(p.PropertyType,p.Name));
-            }
-            return ret;
-        }
+        //public List<string> GetPropertyList(ObservableCollection<SubsysProperty> props)
+        //{
+        //    var ret = new List<string>();
+        //    foreach(var p in props)
+        //    {
+        //        if (p.IsBaseType() || IsEnum(p.PropertyType))
+        //            ret.Add(p.Name);
+        //        else
+        //            ret.AddRange(GetSubPropertyList(p.PropertyType,p.Name));
+        //    }
+        //    return ret;
+        //}
 
-        private List<string> GetSubPropertyList(string sysname, string parentname)
-        {
-            var ret = new List<string>();
-            var fsubsys = SubsysList.Where(p => p.Name == sysname);
-            if (fsubsys.Count() == 0) return ret;
-            var subsys = fsubsys.First();
-            foreach(var p in subsys.Propertys)
-            {
-                if (p.IsBaseType() || IsEnum(p.Name))
-                    ret.Add(parentname + "." + p.Name);
-            }
-            return ret;
-        }
+        //private List<string> GetSubPropertyList(string sysname, string parentname)
+        //{
+        //    var ret = new List<string>();
+        //    var fsubsys = SubsysList.Where(p => p.Name == sysname);
+        //    if (fsubsys.Count() == 0) return ret;
+        //    var subsys = fsubsys.First();
+        //    foreach(var p in subsys.Propertys)
+        //    {
+        //        if (p.IsBaseType() || IsEnum(p.Name))
+        //            ret.Add(parentname + "." + p.Name);
+        //    }
+        //    return ret;
+        //}
 
-        public void UpdateSubSys()
+        public void UpdateChildSys()
         {
             InnerSubsysList.Clear();
             foreach(var fr in FrameList)

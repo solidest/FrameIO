@@ -24,6 +24,7 @@ namespace FrameIO.Main
     {
         private IOProject _proj;
         private Subsys _sys;
+        private bool _updating = false;
 
         private ObservableCollection<Frame> _frms;
         public SubsysEditor(Subsys sys, ObservableCollection<Frame> frms, IOProject proj)
@@ -70,6 +71,8 @@ namespace FrameIO.Main
         //更新动作关联字段名选择
         private void UpdateActionSel()
         {
+            if (_updating) return;
+            _updating = true;
             var sels = acGrid.SelectedItems;
             SubsysAction sel = null;
             if(sels != null)
@@ -85,8 +88,7 @@ namespace FrameIO.Main
                 if (_frms.Where(p => p.Name == sel.FrameName).Count() > 0)
                 {
                     acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, null, true);
-                    acOpGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyList(_sys.Propertys);
-
+                    acOpGrid.ColumnDefinitions[1].ItemsSource = _sys.Propertys.Select(p=>p.Name);
                 }
                 else
                 {
@@ -94,11 +96,14 @@ namespace FrameIO.Main
                     acOpGrid.ColumnDefinitions[1].ItemsSource = null;
                 }
             }
+            _updating = false;
         }
 
         //更新通道参数名选择
         private void UpdateChannelSel()
         {
+            if (_updating) return;
+            _updating = true;
             var sels = chGrid.SelectedItems;
             SubsysChannel sel = null;
             if (sels != null)
@@ -113,17 +118,21 @@ namespace FrameIO.Main
                 chOpGrid.ItemsSource = sel.Options;
                 chOpGrid.ColumnDefinitions[0].ItemsSource = FrameIOCodeCheck.GetChannelOptionName(sel.ChannelType);
             }
+            _updating = false;
         }
 
 
         //更新属性类型列表
         private void UpdatePropertyTypeList(object sender, RoutedEventArgs e)
         {
-            _proj.UpdateSubSys();
+            if (_updating) return;
+            _updating = true;
+            _proj.UpdateChildSys();
             propGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertySelectTypeList();
             propGrid.ColumnDefinitions[1].SelectedValuePath = "SelectValue";
             propGrid.ColumnDefinitions[1].DisplayMemberPath = "SelectName";
             propGrid.ColumnDefinitions[1].ItemsSourceProperty = "SelectValue";
+            _updating = false;
         }
 
         private void UpdateSelChannel(object sender, RoutedEventArgs e)

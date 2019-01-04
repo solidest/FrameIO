@@ -50,7 +50,7 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
-            _pj.UpdateSubSys();
+            _pj.UpdateChildSys();
             _proptypelist = _pj.GetPropertyTypeList();
 
             CheckEnumSysName();
