@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <GroupBox Name="gp" Header="数据帧字段列表" Margin="3">
             <p:DataGrid ItemsSource="{Binding Segs}" Name="segGrid" AutoInsert="False" 
-                        >
+                        LostFocus="LeaveSegGrid">
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称" CanSort="False"/>
                     <p:ColumnDefinition PropertyName="SegType" Width="2*" Header="字段类型" CanSort="False"/>
@@ -32,7 +32,7 @@
                     TabVisibility="Collapsed"/>
         </GroupBox>
         <GroupBox Grid.Row="1" Name="gpsub" Header="子系统数据帧-字段列表" Margin="3">
-            <p:DataGrid ItemsSource="{Binding Segs}" Name="subsegGrid" AutoInsert="False" >
+            <p:DataGrid ItemsSource="{Binding Segs}" Name="subsegGrid" AutoInsert="False" LostFocus="LeaveSubsegGrid">
                 <p:DataGrid.ColumnDefinitions>
                     <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称" CanSort="False"/>
                     <p:ColumnDefinition PropertyName="SubSegType" Width="2*" Header="字段类型" CanSort="False"/>

@@ -130,5 +130,14 @@ namespace FrameIO.Main
             subsegGrid.DataContext = _subsegssummary;
         }
 
+        private void LeaveSubsegGrid(object sender, RoutedEventArgs e)
+        {
+            UpdateSubSelectSeg();
+        }
+
+        private void LeaveSegGrid(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectSeg();
+        }
     }
 }
