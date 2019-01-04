@@ -28,6 +28,14 @@ namespace FrameIO.Run
             _o = o;
         }
 
+        #region --RunInfo--
+
+        //当前字段
+        internal SegRunBase CurrentSegRun { get; private set; }
+
+
+        #endregion
+
 
         #region --SegValue--
 
@@ -81,23 +89,6 @@ namespace FrameIO.Run
         }
 
 
-        //查找Object，如果没有则创建
-        private JObject LookUpObject(string[] segs)
-        {
-            var ret = _o;
-            for (int i = 0; i < segs.Length - 1; i++)
-            {
-                if (ret.ContainsKey(segs[i]))
-                    ret = (JObject)ret[segs[i]];
-                else
-                {
-                    var n = new JObject();
-                    ret.Add(segs[i], n);
-                    ret = n;
-                }
-            }
-            return ret;
-        }
 
 
         #endregion
@@ -120,11 +111,7 @@ namespace FrameIO.Run
             if (segs.Length > 1) o = FindObject(segs);
             var arr = (JArray)o[segs[segs.Length - 1]];
             var ret = new List<FrameObject>(arr.Count);
-            foreach (JObject jo in arr)
-            {
-                ret.Add(new FrameObject(jo));
-            }
-            return ret;
+            return arr.Select(p=>new FrameObject((JObject)p));
         }
 
         public bool GetBool(string segname)
@@ -307,6 +294,16 @@ namespace FrameIO.Run
         }
 
 
+    #endregion
+
+        #region --Helper--
+
+        public override string ToString()
+        {
+            return _o.ToString();
+        }
+
+        //查找已经存在的Object
         private JObject FindObject(string[] segs)
         {
             var ret = _o;
@@ -315,13 +312,23 @@ namespace FrameIO.Run
             return ret;
         }
 
-    #endregion
 
-        #region --Helper--
-
-        public string ToString()
+        //查找Object，如果没有则创建
+        private JObject LookUpObject(string[] segs)
         {
-            return _o.ToString();
+            var ret = _o;
+            for (int i = 0; i < segs.Length - 1; i++)
+            {
+                if (ret.ContainsKey(segs[i]))
+                    ret = (JObject)ret[segs[i]];
+                else
+                {
+                    var n = new JObject();
+                    ret.Add(segs[i], n);
+                    ret = n;
+                }
+            }
+            return ret;
         }
 
         #endregion

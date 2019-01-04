@@ -50,15 +50,16 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
-            _pj.UpdateChildSys();
             _proptypelist = _pj.GetPropertyTypeList();
 
-            CheckEnumSysName();
+            CheckNameRepeated();
             CheckFrames();
             CheckSubsys();
 
             return ErrorList.Count==0;
         }
+
+
 
 
         #region --检查分系统--
@@ -80,6 +81,7 @@ namespace FrameIO.Main
             }
         }
 
+
         //检查属性
         static private void CheckProperty(SubsysProperty pt)
         {
@@ -87,6 +89,8 @@ namespace FrameIO.Main
                 AddErrorInfo(pt.Syid, "分系统属性类型错误");
         }
 
+        #region --通道--
+        
         //检查通道
         static private void CheckChannel(SubsysChannel ch)
         {
@@ -286,6 +290,8 @@ namespace FrameIO.Main
             if (!Helper.ValidateIsInt(v))
                 AddErrorInfo(syid, "必须设置为整数值");
         }
+        #endregion
+        
 
         //检查动作
         static private void CheckAction(SubsysAction ac, Subsys sys)
@@ -378,15 +384,28 @@ namespace FrameIO.Main
             }
         }
 
-        //检查枚举与分系统是否重名
-        static private void CheckEnumSysName()
+        //检查一级对象是否重名
+        static private void CheckNameRepeated()
         {
-            foreach(var em in _pj.EnumdefList)
+            //foreach(var em in _pj.EnumdefList)
+            //{
+            //    foreach (var sys in _pj.SubsysList)
+            //        if (em.Name == sys.Name)
+            //            AddErrorInfo(sys.Syid, "分系统定义与枚举定义重名");
+            //}
+
+            var names = new List<Tuple<string, int>>();
+            names.AddRange(_pj.EnumdefList.Select(p => new Tuple<string, int>(p.Name, p.Syid)));
+            names.AddRange(_pj.InnerSubsysList.Select(p => new Tuple<string, int>(p.Name, p.Syid)));
+            names.AddRange(_pj.SubsysList.Select(p => new Tuple<string, int>(p.Name, p.Syid)));
+            foreach(var t in names)
             {
-                foreach (var sys in _pj.SubsysList)
-                    if (em.Name == sys.Name)
-                        AddErrorInfo(sys.Syid, "分系统定义与枚举定义重名");
+                if(names.Where(p=>p.Item1==t.Item1).Count()>1)
+                {
+                    AddErrorInfo(t.Item2, "名称重复");
+                }
             }
+
         }
 
 

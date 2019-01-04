@@ -16,7 +16,11 @@ namespace FrameIO.Main
             AddPropertys(seglist);
         }
         public string Name { get; set; }
+
         public string Notes { get; set; }
+
+        public int Syid { get; set; }
+
         public ObservableCollection<SubsysProperty> Propertys { get; set; } = new ObservableCollection<SubsysProperty>();
 
 
