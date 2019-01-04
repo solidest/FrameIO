@@ -129,76 +129,86 @@ namespace FrameIO.Main
                     AppendNotes(code, ac.Notes, 2);
                     code.AppendFormat("\t\taction {0} : {1} {2} on {3} {{" + Environment.NewLine, ac.Name, GetActionTypeName(ac.IOType), ac.FrameName.Length>0? ac.FrameName:"_", ac.ChannelName.Length>0 ? ac.ChannelName:"_");
 
-                    //用户开始代码
+                    //开始位置的用户代码
                     foreach (var map in ac.BeginCodes)
                         code.Append("\t\t\t" + map);
 
-                    var oneoflist = new List<Helper.OneOfHelper>();
-                    var nms = Helper.GetFrameSegmentsName(ac.FrameName, pj.FrameList, oneoflist);
-                    foreach(var ofl in oneoflist)
-                    {
-                        var pros = ac.Maps.Where(p => p.FrameSegName == ofl.BySegname);
-                        if (pros != null && pros.Count() > 0)
-                            ofl.ByProperty = pros.First().SysPropertyName;
-                    }
+                    //var oneoflist = new List<Helper.OneOfHelper>();
+                    //var nms = Helper.GetFrameSegmentsName(ac.FrameName, pj.FrameList, oneoflist);
+                    //foreach(var ofl in oneoflist)
+                    //{
+                    //    var pros = ac.Maps.Where(p => p.FrameSegName == ofl.BySegname);
+                    //    if (pros != null && pros.Count() > 0)
+                    //        ofl.ByProperty = pros.First().SysPropertyName;
+                    //}
 
                     //字段映射
-                    if(nms.Count==0 || oneoflist.Count==0)
+                    foreach (var mp in ac.LiteMaps)
                     {
-                        foreach (var mp in ac.LiteMaps)
-                        {
-                            if (mp.FrameSegName == null || mp.FrameSegName.Length == 0) continue;
-                            if (mp.SysPropertyName == null || mp.SysPropertyName.Length == 0) continue;
-                            AppendNotes(code, mp.Notes, 3);
-                            code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
-                        }
+                        if (mp.FrameSegName == null || mp.FrameSegName.Length == 0) continue;
+                        if (mp.SysPropertyName == null || mp.SysPropertyName.Length == 0) continue;
+                        AppendNotes(code, mp.Notes, 3);
+                        code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
                     }
-                    else
-                    {
-                        var bkmap = new List<SubsysActionMap>();
-                        bkmap.AddRange(ac.LiteMaps);
 
-                        //switch case 分支
-                        foreach (var ofi in oneoflist)
-                        {
-                            if (ac.IOType == actioniotype.AIO_SEND && ofi.ByProperty.Length == 0) continue;
-                            if(ac.IOType == actioniotype.AIO_SEND)
-                                code.AppendFormat("\t\t\t@switch(({0}){1}.Value) {{" + Environment.NewLine, ofi.ByEnum, ofi.ByProperty);
-                            else
-                                code.AppendFormat("\t\t\t@switch(({0})data.{1}) {{" + Environment.NewLine,ofi.ByEnum,  ofi.BySegname);
+                    //if (nms.Count==0 || oneoflist.Count==0)
+                    //{
+                    //    foreach (var mp in ac.LiteMaps)
+                    //    {
+                    //        if (mp.FrameSegName == null || mp.FrameSegName.Length == 0) continue;
+                    //        if (mp.SysPropertyName == null || mp.SysPropertyName.Length == 0) continue;
+                    //        AppendNotes(code, mp.Notes, 3);
+                    //        code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    var bkmap = new List<SubsysActionMap>();
+                    //    bkmap.AddRange(ac.LiteMaps);
 
-                            foreach (var casesegs in ofi.Items)
-                            {
-                                var needsmaps = bkmap.Where(p => casesegs.Segmens.Contains(p.FrameSegName));
-                                if(needsmaps.Count()>0)
-                                {
-                                    var needmaps = new List<SubsysActionMap>();
-                                    needmaps.AddRange(needsmaps);
-                                    code.AppendFormat("\t\t\t@{0}{1}:" + Environment.NewLine, casesegs.ItemName=="default"?"":"case ", casesegs.ItemName);
-                                    foreach(var needmap in needmaps)
-                                    {
-                                        if (needmap.FrameSegName == null || needmap.FrameSegName.Length == 0) continue;
-                                        if (needmap.SysPropertyName == null || needmap.SysPropertyName.Length == 0) continue;
-                                        AppendNotes(code, needmap.Notes, 3);
-                                        code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, needmap.FrameSegName, needmap.SysPropertyName);
-                                        bkmap.Remove(needmap);
-                                    }
-                                    code.Append("\t\t\t@break;" + Environment.NewLine);
-                                }
-                            }
+                    //    //switch case 分支
+                    //    foreach (var ofi in oneoflist)
+                    //    {
+                    //        if (ac.IOType == actioniotype.AIO_SEND && ofi.ByProperty.Length == 0) continue;
+                    //        if(ac.IOType == actioniotype.AIO_SEND)
+                    //            code.AppendFormat("\t\t\t@switch(({0}){1}.Value) {{" + Environment.NewLine, ofi.ByEnum, ofi.ByProperty);
+                    //        else
+                    //            code.AppendFormat("\t\t\t@switch(({0})data.{1}) {{" + Environment.NewLine,ofi.ByEnum,  ofi.BySegname);
 
-                            code.Append("\t\t\t@}" + Environment.NewLine);
-                        }
+                    //        foreach (var casesegs in ofi.Items)
+                    //        {
+                    //            var needsmaps = bkmap.Where(p => casesegs.Segmens.Contains(p.FrameSegName));
+                    //            if(needsmaps.Count()>0)
+                    //            {
+                    //                var needmaps = new List<SubsysActionMap>();
+                    //                needmaps.AddRange(needsmaps);
+                    //                code.AppendFormat("\t\t\t@{0}{1}:" + Environment.NewLine, casesegs.ItemName=="default"?"":"case ", casesegs.ItemName);
+                    //                foreach(var needmap in needmaps)
+                    //                {
+                    //                    if (needmap.FrameSegName == null || needmap.FrameSegName.Length == 0) continue;
+                    //                    if (needmap.SysPropertyName == null || needmap.SysPropertyName.Length == 0) continue;
+                    //                    AppendNotes(code, needmap.Notes, 3);
+                    //                    code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, needmap.FrameSegName, needmap.SysPropertyName);
+                    //                    bkmap.Remove(needmap);
+                    //                }
+                    //                code.Append("\t\t\t@break;" + Environment.NewLine);
+                    //            }
+                    //        }
 
-                        foreach (var mp in bkmap)
-                        {
-                            if (mp.FrameSegName == null || mp.FrameSegName.Length == 0) continue;
-                            if (mp.SysPropertyName == null || mp.SysPropertyName.Length == 0) continue;
-                            AppendNotes(code, mp.Notes, 3);
-                            code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
-                        }
+                    //        code.Append("\t\t\t@}" + Environment.NewLine);
+                    //    }
 
-                    }
+                    //    foreach (var mp in bkmap)
+                    //    {
+                    //        if (mp.FrameSegName == null || mp.FrameSegName.Length == 0) continue;
+                    //        if (mp.SysPropertyName == null || mp.SysPropertyName.Length == 0) continue;
+                    //        AppendNotes(code, mp.Notes, 3);
+                    //        code.AppendFormat("\t\t\t{0} : {1};" + Environment.NewLine, mp.FrameSegName, mp.SysPropertyName);
+                    //    }
+
+                    //}
+
+
                     //用户结尾代码
                     foreach (var map in ac.EndCodes)
                         code.Append("\t\t\t" + map);

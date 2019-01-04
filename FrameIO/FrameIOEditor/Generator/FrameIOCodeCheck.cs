@@ -300,20 +300,35 @@ namespace FrameIO.Main
                 var frm = fms.First();
                 foreach(var map in ac.Maps)
                 {
-                    if (map.FrameSegName != "" && !IsContainSegment(map.FrameSegName, ac.FrameName)) 
+                    if (map.SysPropertyName != "" && !map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p=>p.Name==map.SysPropertyName).Count()==0)
+                    {
+                        AddErrorInfo(map.Syid, "引用的分系统属性不正确");
+                    }
+                    if (map.FrameSegName != "" && !CheckSegInMap(map.FrameSegName, ac.FrameName))
+                    {
                         AddErrorInfo(map.Syid, "引用的数据帧字段不正确");
+                    }
+
                 }
             }
         }
 
-        //引用的字段是否为数值字段
-        static private bool IsContainSegment(string segname, string frmname)
+
+        //是否包含引用的字段
+        static private bool CheckSegInMap(string segname, string frmname)
         {
             var frms = _pj.FrameList.Where(p => p.Name == frmname);
             var frm = frms.First();
             if (frm == null) return false;
             var segs = FrameSegmentList[frm];
-            if (segs.Keys.Contains(segname)) return true;
+            if (segs.Keys.Contains(segname))
+            {
+                var fr = segs[segname];
+                if (fr != null)
+                    return fr.SubSysName != null && fr.SubSysName.Length > 0;       //引用数据帧是否可以直接赋值
+                else
+                    return true;
+            }
 
             var nms = segname.Split('.');
             int imy = -1;
@@ -335,11 +350,9 @@ namespace FrameIO.Main
             var refn = nms[imy + 1];
             for (int ii = imy + 2; ii < nms.Length; ii++)
                 refn = refn + "." + nms[ii];
-            return IsContainSegment(refn, findfrm.Name);
+            return CheckSegInMap(refn, findfrm.Name);
         }
 
-
-     
 
         //检查分系统成员名称重复问题
         static private void CheckSubsysName(Subsys sys)
@@ -473,14 +486,13 @@ namespace FrameIO.Main
                                 AddErrorInfo(sg.Syid, "block 字段无法嵌套使用");
                             else
                                 CheckSegment(sg, mysegs, null);
-                        }
+                        }                        
                         segns.Add(bseg.Name, null);
                         foreach (var mys in mysegs)
                         {
-                            
                             segns.Add(bseg.Name + "." + mys.Key, null);
-
                         }
+
                         return;
                     }
 

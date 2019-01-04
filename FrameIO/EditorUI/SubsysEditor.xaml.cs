@@ -95,7 +95,7 @@ namespace FrameIO.Main
                 actionMapGrid.ItemsSource = sel.LiteMaps;
                 if (_frms.Where(p => p.Name == sel.FrameName).Count() > 0)
                 {
-                    actionMapGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, null, true);
+                    actionMapGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, true);
                     actionMapGrid.ColumnDefinitions[1].ItemsSource = _sys.Propertys.Select(p => p.Name);
                 }
                 else
