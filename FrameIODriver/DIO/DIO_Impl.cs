@@ -15,8 +15,10 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
+            DeviceIsOpen = isOpen;
             return isOpen;
         }
+        public bool DeviceIsOpen { get; set; } = false;
 
         public void InitConfig(Dictionary<string, object> config)
         {
@@ -80,6 +82,11 @@ namespace FrameIO.Driver
         public void BeginWriteFrameList(IFramePack[] p, int len, AsyncWriteCallback callback, object AsyncState)
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsOpen()
+        {
+            return DeviceIsOpen;
         }
 
 

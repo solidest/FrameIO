@@ -39,10 +39,10 @@ namespace FrameIO.Driver
             Wrapor.VCI_InitCAN(m_devtype, m_devind, m_canind, ref Init_Config);
             Wrapor.VCI_StartCAN(m_devtype, m_devind, m_canind);
 
-            IsOpen = true;
-            return IsOpen;
+            DeviceIsOpen = true;
+            return DeviceIsOpen;
         }
-        public bool IsOpen { get; set; } = false;
+        public bool DeviceIsOpen { get; set; } = false;
         void IFrameStream.InitConfig(Dictionary<string, object> config)
         {
             if (!config.ContainsKey("devtype") || !config.ContainsKey("devInd") 
@@ -175,6 +175,11 @@ namespace FrameIO.Driver
         {
             BeginWriteFrameListImpl(p, len, callback, AsyncState);
 
+        }
+
+        public bool IsOpen()
+        {
+            return DeviceIsOpen;
         }
 
 

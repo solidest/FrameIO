@@ -15,7 +15,11 @@ namespace FrameIO.Interface
         /// </summary>
         /// <returns>打开成功返回true，失败返回false</returns>
         bool Open();
-
+        /// <summary>
+        /// 设备是否打开
+        /// </summary>
+        /// <returns>打开成功返回true，失败返回false</returns>
+        bool IsOpen();
         /// <summary>
         /// 初始化设备参数
         /// </summary>

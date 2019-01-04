@@ -15,13 +15,13 @@ namespace FrameIO.Driver
         public bool Open()
         {
             if (UDPClient.UdpClient != null)
-                IsOpen = true;
+                DeviceIsOpen = true;
             else
-                IsOpen = false;
+                DeviceIsOpen = false;
 
-            return IsOpen;
+            return DeviceIsOpen;
         }
-        public bool IsOpen { get; set; } = false;
+        public bool DeviceIsOpen { get; set; } = false;
         public void InitConfig(Dictionary<string, object> config)
         {
             UDPClient = new UDPHelper();
@@ -196,6 +196,11 @@ namespace FrameIO.Driver
         public void BeginWriteFrameList(IFramePack[] p, int len, AsyncWriteCallback callback, object AsyncState)
         {
             BeginWriteFrameList(p, len, callback, AsyncState);
+        }
+
+        public bool IsOpen()
+        {
+            return DeviceIsOpen;
         }
 
 
