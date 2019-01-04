@@ -6,7 +6,8 @@
              xmlns:p="clr-namespace:PropertyTools.Wpf;assembly=PropertyTools.Wpf"
              xmlns:local="clr-namespace:FrameIO.Main"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             GotFocus="UpdatePropertyTypeList">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -18,57 +19,55 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Grid.RowSpan="2" Header="分系统属性" Margin="3,3,10,3">
-            <p:DataGrid Name="propGrid" ItemsSource="{Binding Propertys}" AutoInsert="False" GotFocus="UpdatePropertyTypeList">
+            <p:DataGrid Name="propGrid" ItemsSource="{Binding Propertys}" AutoInsert="False" >
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name" Width="2*"  Header="名称"/>
-                    <p:ColumnDefinition PropertyName="PropertyType" Width="2*"  Header="数据类型"/>
-                    <p:ColumnDefinition HorizontalAlignment="Center" PropertyName="IsArray" Width="1*" Header="数组"/>
-                    <p:ColumnDefinition HorizontalAlignment="Center" PropertyName="ArrayLen" Width="1*" Header="长度"/>
-                    <p:ColumnDefinition PropertyName="Notes" Width="2*" Header="备注"/>
+                    <p:ColumnDefinition PropertyName="Name" Width="2*"  Header="名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="PropertyType" Width="2*"  Header="数据类型" CanSort="False"/>
+                    <p:ColumnDefinition HorizontalAlignment="Center" PropertyName="IsArray" Width="1*" Header="数组" CanSort="False"/>
+                    <p:ColumnDefinition HorizontalAlignment="Center" PropertyName="ArrayLen" Width="1*" Header="长度" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="2*" Header="备注" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>      
         </GroupBox>
         <GroupBox Grid.Column="1" Header="通道配置" Margin="3,3,3,10">
             <p:DataGrid Name="chGrid" ItemsSource="{Binding Channels}" 
-                MouseUp="UpdateTimerCh" KeyUp="UpdateTimerCh" LostFocus="UpdateTimerCh" 
-                IsAutoFillEnabled="True" Background="MistyRose" AutoInsert="False">
+                IsAutoFillEnabled="True" Background="MistyRose" AutoInsert="False" >
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name" Width="1*" Header="通道名称"/>
-                    <p:ColumnDefinition PropertyName="ChannelType" Width="1*" Header="通道类型"/>
+                    <p:ColumnDefinition PropertyName="Name" Width="1*" Header="通道名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="ChannelType" Width="1*" Header="通道类型" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>            
         </GroupBox>
 
         <GroupBox Grid.Column="2" Header="通道参数" Margin="3,3,3,10">
             <p:DataGrid Background="MistyRose" AutoInsert="False"
-                Name="chOpGrid" GotFocus="UpdateTimerCh" >
+                Name="chOpGrid" GotFocus="UpdateSelChannel">
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name" Width="1*"  Header="参数名称"/>
-                    <p:ColumnDefinition PropertyName="OptionValue"  Width="1*"  Header="参数值"/>
+                    <p:ColumnDefinition PropertyName="Name" Width="1*"  Header="参数名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="OptionValue"  Width="1*"  Header="参数值" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>
 
         <GroupBox Grid.Column="1" Grid.Row="1" Header="动作配置" Margin="3,10,3,3">
             <p:DataGrid ItemsSource="{Binding Actions}" Name="acGrid"        
-                Background="Seashell" AutoInsert="False" 
-                MouseUp="UpdateTimerAc" KeyUp="UpdateTimerAc" LostFocus="UpdateTimerAc">
+                Background="Seashell" AutoInsert="False" >
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name"  Width="2*" Header="名称"/>
-                    <p:ColumnDefinition PropertyName="IOType"  Width="2*" Header="动作类型"/>
-                    <p:ColumnDefinition PropertyName="ChannelName"  Width="2*" Header="通道"/>
-                    <p:ColumnDefinition PropertyName="FrameName"  Width="2*" Header="数据帧"/>
-                    <p:ColumnDefinition PropertyName="Notes"  Width="3*" Header="备注"/>
+                    <p:ColumnDefinition PropertyName="Name"  Width="2*" Header="名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="IOType"  Width="2*" Header="动作类型" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="ChannelName"  Width="2*" Header="通道" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="FrameName"  Width="2*" Header="数据帧" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="Notes"  Width="3*" Header="备注" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>
 
         <GroupBox Grid.Column="2" Grid.Row="1" Header="动作参数关联" Margin="3,10,3,3">
-            <p:DataGrid Name="acOpGrid" GotFocus="UpdateTimerAc"
+            <p:DataGrid Name="acOpGrid" GotFocus="UpdateSelAction"
                 Background="Seashell" AutoInsert="False">
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="FrameSegName" Width="1*" Header="数据帧字段"/>
-                    <p:ColumnDefinition PropertyName="SysPropertyName" Width="1*" Header="关联属性"/>
+                    <p:ColumnDefinition PropertyName="FrameSegName" Width="1*" Header="数据帧字段" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="SysPropertyName" Width="1*" Header="关联属性" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>

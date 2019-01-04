@@ -460,7 +460,7 @@ PRAGMA foreign_keys = on;
                 if(innersubsysname != "")
                 {
                     LoadInnerSubSys(innersubsysname, fr.Segments);
-                    fr.SubSys = innersubsysname;
+                    fr.SubSysName = innersubsysname;
                 }
             }
             return ret;
@@ -666,12 +666,7 @@ PRAGMA foreign_keys = on;
         private void LoadInnerSubSys(string name, ObservableCollection<FrameSegmentBase> seglist)
         {
             if (_pj.InnerSubsysList.Where(p => p.Name == name).Count() > 0) return;
-            var isb = new InnerSubsys(name);
-            foreach(var seg in seglist)
-            {
-                isb.AddProperty(seg.Name, Helper.ConvertSegType2ProType(seg), !seg.Repeated.IsIntOne());
-            }
-            _pj.InnerSubsysList.Add(isb);
+            _pj.InnerSubsysList.Add(new InnerSubsys(name, seglist));
         }
 
         //加载数据帧字段
@@ -732,7 +727,7 @@ PRAGMA foreign_keys = on;
                         var innersys = GetSymbol(Convert.ToInt32(r["subsysid"]));
                         if (innersys != "" && bseg.UsedType== BlockSegType.DefFrame)
                         {
-                            bseg.SubSys = innersys;
+                            bseg.SubSysName = innersys;
                             LoadInnerSubSys(innersys, bseg.DefineSegments);
                         }
                             

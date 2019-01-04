@@ -92,7 +92,7 @@ namespace FrameIO.Main
                             return;
                         }
                     case BlockSegType.DefFrame:
-                        if(containSubsys && bseg.SubSys != null && bseg.SubSys.Length > 0)
+                        if(containSubsys && bseg.SubSysName != null && bseg.SubSysName.Length > 0)
                         {
                             segnames.Add((pre == "" ? "" : (pre + ".")) + seg.Name);
                             return;
@@ -244,8 +244,8 @@ namespace FrameIO.Main
             var f = pjfrms.Where(p => p.Name == name);
             if (f.Count() == 0) return "";
             var fr = f.First();
-            if (fr.SubSys == null || fr.SubSys.Length == 0) return "";
-            return fr.SubSys;
+            if (fr.SubSysName == null || fr.SubSysName.Length == 0) return "";
+            return fr.SubSysName;
         }
     }
 }

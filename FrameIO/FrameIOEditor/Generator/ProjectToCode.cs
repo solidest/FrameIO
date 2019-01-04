@@ -60,9 +60,9 @@ namespace FrameIO.Main
                 if (frm.Name == null || frm.Name.Length == 0) continue;
 
                 AppendNotes(code, frm.Notes, 1);
-                if(frm.SubSys!=null && frm.SubSys.Length>0)
+                if(frm.SubSysName!=null && frm.SubSysName.Length>0)
                 {
-                    code.Append(string.Format("\t[subsys: {0}]" + Environment.NewLine, frm.SubSys));
+                    code.Append(string.Format("\t[subsys: {0}]" + Environment.NewLine, frm.SubSysName));
                 }
                 code.Append(string.Format("\tframe {0} {{" + Environment.NewLine, frm.Name));
                 foreach(var seg in frm.Segments)

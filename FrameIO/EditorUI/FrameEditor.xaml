@@ -18,11 +18,11 @@
         </Grid.ColumnDefinitions>
         <GroupBox Name="gp" Header="数据帧字段列表" Margin="3">
             <p:DataGrid ItemsSource="{Binding Segs}" Name="segGrid" AutoInsert="False" 
-                        MouseUp="UpdateMainTimer" KeyUp="UpdateMainTimer" >
+                        >
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称"/>
-                    <p:ColumnDefinition PropertyName="SegType" Width="2*" Header="字段类型"/>
-                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注"/>
+                    <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="SegType" Width="2*" Header="字段类型" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>
@@ -32,12 +32,11 @@
                     TabVisibility="Collapsed"/>
         </GroupBox>
         <GroupBox Grid.Row="1" Name="gpsub" Header="子系统数据帧-字段列表" Margin="3">
-            <p:DataGrid ItemsSource="{Binding Segs}" Name="subsegGrid" AutoInsert="False" 
-                        MouseUp="UpdateSubTimer" KeyUp="UpdateSubTimer" >
+            <p:DataGrid ItemsSource="{Binding Segs}" Name="subsegGrid" AutoInsert="False" >
                 <p:DataGrid.ColumnDefinitions>
-                    <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称"/>
-                    <p:ColumnDefinition PropertyName="SubSegType" Width="2*" Header="字段类型"/>
-                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注"/>
+                    <p:ColumnDefinition PropertyName="Name" Width="2*" Header="字段名称" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="SubSegType" Width="2*" Header="字段类型" CanSort="False"/>
+                    <p:ColumnDefinition PropertyName="Notes" Width="3*" Header="备注" CanSort="False"/>
                 </p:DataGrid.ColumnDefinitions>
             </p:DataGrid>
         </GroupBox>

@@ -10,24 +10,32 @@ namespace FrameIO.Main
 {
     public class InnerSubsys : INotifyPropertyChanged
     {
-        public InnerSubsys(string name)
+        public InnerSubsys(string name, ObservableCollection<FrameSegmentBase> seglist)
         {
             Name = name;
+            AddPropertys(seglist);
         }
         public string Name { get; set; }
         public string Notes { get; set; }
         public ObservableCollection<SubsysProperty> Propertys { get; set; } = new ObservableCollection<SubsysProperty>();
 
 
-        public void AddProperty(string name, string protype, bool isArray)
+        //添加子系统字段 来自数据帧字段
+        private void AddPropertys(ObservableCollection<FrameSegmentBase> seglist)
         {
-            if (protype == "") return;
-            Propertys.Add(new SubsysProperty()
+            foreach (var seg in seglist)
             {
-                Name = name,
-                IsArray = isArray,
-                PropertyType = protype
-            });
+                var protype = Helper.ConvertSegType2ProType(seg);
+                if (protype == "") continue;
+                var len = Helper.ValidateIsInt(seg.Repeated.ConstStr) ? seg.Repeated.ConstStr : "";
+                Propertys.Add(new SubsysProperty()
+                {
+                    Name = seg.Name,
+                    IsArray = !seg.Repeated.IsIntOne(),
+                    PropertyType = protype,
+                    ArrayLen = len
+                });
+            }
         }
 
 

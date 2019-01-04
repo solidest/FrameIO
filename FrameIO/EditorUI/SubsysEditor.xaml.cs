@@ -39,20 +39,52 @@ namespace FrameIO.Main
             acGrid.ColumnDefinitions[2].SelectedValuePath = "Name";
             acGrid.ColumnDefinitions[3].ItemsSource = frms;
             acGrid.ColumnDefinitions[3].SelectedValuePath = "Name";
+
+            var bd = new Binding() { Path = new PropertyPath("SelectedAction"), Source = this, Mode = BindingMode.OneWayToSource };
+            var bd2 = new Binding() { Path = new PropertyPath("SelectedAction"), Source = this, Mode = BindingMode.OneWayToSource };
+            acGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectedItemsProperty, bd);
+            acGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectionCellProperty, bd2);
+
+            var bbd = new Binding() { Path = new PropertyPath("SelectedChannel"), Source = this, Mode = BindingMode.OneWayToSource };
+            var bbd2 = new Binding() { Path = new PropertyPath("SelectedChannel"), Source = this, Mode = BindingMode.OneWayToSource };
+            chGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectedItemsProperty, bbd);
+            chGrid.SetBinding(PropertyTools.Wpf.DataGrid.SelectionCellProperty, bbd2);
+        }
+
+        public Object SelectedAction
+        {
+            set
+            {
+                UpdateActionSel();
+            }
+        }
+
+        public Object SelectedChannel
+        {
+            set
+            {
+                UpdateChannelSel();
+            }
         }
 
         //更新动作关联字段名选择
-        private void UpdateTimerAc(object sender, RoutedEventArgs e)
+        private void UpdateActionSel()
         {
-            var s = acGrid.SelectionCell.Row;
-            if (s < 0 || _sys.Actions.Count==0)
+            var sels = acGrid.SelectedItems;
+            SubsysAction sel = null;
+            if(sels != null)
+            {
+                foreach (SubsysAction sell in sels)
+                    sel = sell;
+            }
+            if (sel == null)
                 acOpGrid.ItemsSource = null;
             else
             {
-                acOpGrid.ItemsSource = _sys.Actions[s].LiteMaps;
-                if (_frms.Where(p => p.Name == _sys.Actions[s].FrameName).Count() > 0)
+                acOpGrid.ItemsSource = sel.LiteMaps;
+                if (_frms.Where(p => p.Name == sel.FrameName).Count() > 0)
                 {
-                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(_sys.Actions[s].FrameName, _frms, null, true);
+                    acOpGrid.ColumnDefinitions[0].ItemsSource = Helper.GetFrameSegmentsName(sel.FrameName, _frms, null, true);
                     acOpGrid.ColumnDefinitions[1].ItemsSource = _proj.GetPropertyList(_sys.Propertys);
 
                 }
@@ -60,21 +92,26 @@ namespace FrameIO.Main
                 {
                     acOpGrid.ColumnDefinitions[0].ItemsSource = null;
                     acOpGrid.ColumnDefinitions[1].ItemsSource = null;
-
                 }
             }
         }
 
         //更新通道参数名选择
-        private void UpdateTimerCh(object sender, RoutedEventArgs e)
+        private void UpdateChannelSel()
         {
-            var s = chGrid.SelectionCell.Row;
-            if (s < 0 || _sys.Channels.Count==0)
+            var sels = chGrid.SelectedItems;
+            SubsysChannel sel = null;
+            if (sels != null)
+            {
+                foreach (SubsysChannel sell in sels)
+                    sel = sell;
+            }
+            if (sel == null)
                 chOpGrid.ItemsSource = null;
             else
             {
-                chOpGrid.ItemsSource = _sys.Channels[s].Options;
-                chOpGrid.ColumnDefinitions[0].ItemsSource = FrameIOCodeCheck.GetChannelOptionName(_sys.Channels[s].ChannelType);
+                chOpGrid.ItemsSource = sel.Options;
+                chOpGrid.ColumnDefinitions[0].ItemsSource = FrameIOCodeCheck.GetChannelOptionName(sel.ChannelType);
             }
         }
 
@@ -89,5 +126,14 @@ namespace FrameIO.Main
             propGrid.ColumnDefinitions[1].ItemsSourceProperty = "SelectValue";
         }
 
+        private void UpdateSelChannel(object sender, RoutedEventArgs e)
+        {
+            UpdateChannelSel();
+        }
+
+        private void UpdateSelAction(object sender, RoutedEventArgs e)
+        {
+            UpdateActionSel();
+        }
     }
 }

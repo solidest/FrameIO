@@ -36,13 +36,13 @@ namespace FrameIO.Main
         [VisibleBy(nameof(UsedType), BlockSegType.DefFrame)]
         [Category("Other")]
         [JsonProperty]
-        public string SubSys { get; set; }
+        public string SubSysName { get; set; }
 
         public override void AppendSegmentCode(StringBuilder code)
         {
-            if (UsedType == BlockSegType.DefFrame && SubSys != null && SubSys.Length > 0)
+            if (UsedType == BlockSegType.DefFrame && SubSysName != null && SubSysName.Length > 0)
             {
-                code.AppendFormat("[subsys: {0}]\n\t\t", SubSys);
+                code.AppendFormat("[subsys: {0}]\n\t\t", SubSysName);
             }
             code.AppendFormat("block {0} type=", Name);
             switch (UsedType)

@@ -14,6 +14,7 @@ namespace FrameIO.Main
     {
         public ObservableCollection<FrameSegmentSummary> Segs { get; private set; }
         private ObservableCollection<FrameSegmentBase> _segs;
+        public FrameSegmentSummary SelectedSeg{ get; set;}
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -29,6 +30,7 @@ namespace FrameIO.Main
             }
             Segs.CollectionChanged += ChangedSegment;
         }
+
 
         //集合发生改变
         private void ChangedSegment(object sender, NotifyCollectionChangedEventArgs e)
@@ -141,12 +143,12 @@ namespace FrameIO.Main
             }
         }
 
-        public FrameSegmentSummaryList GetSubSegs()
+        public ObservableCollection<FrameSegmentBase> GetSubSegs()
         {
             if(_type == SegmentType.SubSys)
             {
                 var bseg = (FrameSegmentBlock)_seg;
-                return new FrameSegmentSummaryList(bseg.DefineSegments);
+                return bseg.DefineSegments;
             }
             return null;
         }

@@ -70,6 +70,7 @@ namespace FrameIO.Main
             if (ValidateCheck != CheckType.None) code.AppendFormat(" check={0}", GetCheckName(ValidateCheck));
             if (CheckRangeBegin != null && CheckRangeBegin.Length>0) code.AppendFormat(" checkrange=({0},{1})", CheckRangeBegin, CheckRangeEnd);
             if (ToEnum != null && ToEnum.Length>0) code.AppendFormat(" toenum={0}", ToEnum);
+            if (Match != null && Match.Length>0) code.AppendFormat(" match={0}", Match);
 
             code.Append(";" );
         }

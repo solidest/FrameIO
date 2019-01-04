@@ -122,22 +122,23 @@ namespace FrameIO.Main
             InnerSubsysList.Clear();
             foreach(var fr in FrameList)
             {
-                if (fr.SubSys != null && fr.SubSys.Length > 0)
-                    InnerSubsysList.Add(new InnerSubsys(fr.SubSys));
-                else
+                if (fr.SubSysName != null && fr.SubSysName.Length > 0)
                 {
-                    foreach(var seg in fr.Segments)
+                    InnerSubsysList.Add(new InnerSubsys(fr.SubSysName, fr.Segments));
+                }
+
+                foreach(var seg in fr.Segments)
+                {
+                    if(seg.GetType() == typeof(FrameSegmentBlock))
                     {
-                        if(seg.GetType() == typeof(FrameSegmentBlock))
+                        var bseg = (FrameSegmentBlock)seg;
+                        if(bseg.UsedType== BlockSegType.DefFrame && bseg.SubSysName!=null && bseg.SubSysName.Length>0)
                         {
-                            var bseg = (FrameSegmentBlock)seg;
-                            if(bseg.UsedType== BlockSegType.DefFrame && bseg.SubSys!=null && bseg.SubSys.Length>0)
-                            {
-                                InnerSubsysList.Add(new InnerSubsys(bseg.SubSys));
-                            }
+                            InnerSubsysList.Add(new InnerSubsys(bseg.SubSysName, bseg.DefineSegments));
                         }
                     }
                 }
+
             }
         }
 
