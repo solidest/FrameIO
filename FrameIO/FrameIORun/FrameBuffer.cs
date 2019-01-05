@@ -9,7 +9,9 @@ namespace FrameIO.Run
     //二进制缓冲流
     internal class FrameBuffer
     {
-        //当前内存中的比特位置
+
+
+        //当前内存流的比特位置
         internal int CurrentBitPos { get; private set; }
 
 
@@ -25,8 +27,11 @@ namespace FrameIO.Run
 
         }
 
-        
+        //写入浮点数
+        internal void WriteDouble(double d)
+        {
 
+        }
 
     }
 }

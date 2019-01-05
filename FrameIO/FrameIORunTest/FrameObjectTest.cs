@@ -98,6 +98,7 @@ namespace FrameIORunTest
             fo.SetValue("x1.v3.b3.s9", 1256);
             Assert.IsTrue(fo.GetInt("x1.v3.b3.s9")==1256);
             Assert.IsTrue(fo.GetObject("x1.v3.b3").GetInt("s9") == 1256);
+
         }
     }
 }

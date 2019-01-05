@@ -186,6 +186,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="readme.md" />
+    <None Include="v3.6_Update.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

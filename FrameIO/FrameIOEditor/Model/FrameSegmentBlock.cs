@@ -44,7 +44,9 @@ namespace FrameIO.Main
             {
                 code.AppendFormat("[subsys: {0}]\n\t\t", SubSysName);
             }
-            code.AppendFormat("block {0} type=", Name);
+            var repstr = Repeated.IsIntOne() ? "" : string.Format(" repeated={0}", Repeated.ToString());
+
+            code.AppendFormat("block {0}{1} type=", Name, repstr);
             switch (UsedType)
             {
                 case BlockSegType.RefFrame:

@@ -648,22 +648,22 @@ namespace FrameIO.Main
             throw new Exception("unknow");
         }
 
-            private static long GetEnumItemValue(Enumdef em, string itname)
+        private static long GetEnumItemValue(Enumdef em, string itname)
+        {
+            int i = 0;
+            long ret = -1;
+            var n = "";
+            do
             {
-                int i = 0;
-                long ret = -1;
-                var n = "";
-                do
-                {
-                    n = em.ItemsList[i].Name;
-                    var v = em.ItemsList[i].ItemValue;
-                    ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
-                    i += 1;
-                    if (i == em.ItemsList.Count) break;
-                } while (n != itname);
-                return ret;
+                n = em.ItemsList[i].Name;
+                var v = em.ItemsList[i].ItemValue;
+                ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
+                i += 1;
+                if (i == em.ItemsList.Count) break;
+            } while (n != itname);
+            return ret;
 
-            }
+        }
 
             ////查找上一个字段
             //private static string FindPreiousSegment(FrameSegmentBase who, IList<FrameSegmentBase> brother)
