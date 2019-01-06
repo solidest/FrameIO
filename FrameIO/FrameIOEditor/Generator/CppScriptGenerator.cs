@@ -6,51 +6,42 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    //c# 代码生成驱动
-    public class SharpScriptGenerator : ScriptGenerator
+    public class CppScriptGenerator : ScriptGenerator
     {
-
-        public SharpScriptGenerator(IOProject pj, IOutText tout) : base(pj, tout)
+        public CppScriptGenerator(IOProject pj, IOutText tout) : base(pj, tout)
         {
 
         }
 
-        protected override string Token => "cs";
-        protected override string FramesFileName => "Frames";
-        protected override string DefaultExtension { get => "cs";}
+        protected override string Token => throw new NotImplementedException();
+
+        protected override string FramesFileName => throw new NotImplementedException();
+
+        protected override string DefaultExtension => throw new NotImplementedException();
 
         protected override void CreateShareFile()
         {
-            return;
+            throw new NotImplementedException();
         }
-
 
         protected override StringBuilder GetEnumFileContent(Enumdef em)
         {
-            var ret = new StringBuilder();
-
-            return ret;
+            throw new NotImplementedException();
         }
 
         protected override StringBuilder GetFramesFileContent(IList<string> framesjson)
         {
-            var ret = new StringBuilder();
-
-            return ret;
+            throw new NotImplementedException();
         }
 
         protected override StringBuilder GetInnerSubsysFileContent(InnerSubsys innersys)
         {
-            var ret = new StringBuilder();
-
-            return ret;
+            throw new NotImplementedException();
         }
 
         protected override StringBuilder GetSubsysFileContent(Subsys subsys)
         {
-            var ret = new StringBuilder();
-
-            return ret;
+            throw new NotImplementedException();
         }
     }
 }

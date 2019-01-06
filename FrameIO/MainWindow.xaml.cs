@@ -649,10 +649,13 @@ namespace FrameIO.Main
             }
             else
             {
+                ScriptGenerator scriptor = null;
                 if (e.Parameter.ToString() == "csharp")
-                    FrameIOSharpCodeGenerator.GenerateSharpCodeFile(_project, this);
+                    //FrameIOSharpCodeGenerator.GenerateSharpCodeFile(_project, this);
+                    scriptor = new SharpScriptGenerator(_project, this);
                 else if (e.Parameter.ToString() == "cpp")
-                    FrameIOCppCodeGenerator.GenerateCppCodeFile(_project, this);
+                    scriptor = new CppScriptGenerator(_project, this);
+                scriptor.GenerateScriptFile();
             }
         }
 

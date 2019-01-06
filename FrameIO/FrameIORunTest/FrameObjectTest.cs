@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.IO;
 
 namespace FrameIORunTest
 {
@@ -40,6 +41,16 @@ namespace FrameIORunTest
 }";
 
         #endregion
+
+        [TestMethod]
+        public void XRunTestReadFrameJson()
+        {
+            var json = File.ReadAllText("C:\\Kiyun\\FrameIOTest\\of_cs\\Frames.cs");
+
+            var frm = FramesRun.LoadFromJson(json);
+
+        }
+
 
 
         [TestMethod]

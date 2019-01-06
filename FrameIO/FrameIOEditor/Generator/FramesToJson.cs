@@ -10,47 +10,63 @@ namespace FrameIO.Main
     //将数据帧信息转换为Json
     public class Frames2Json
     {
+        internal const string FRAMELIST_TOKEN = "FrameList";
+        internal const string SEGMENTLIST_TOKEN = "SegmentList";
+        internal const string SEGMENTTYPE_TOKEN = "SegmentType";
+        internal const string ONEOFLIST_TOKEN = "OneOfList";
+
+        internal const string HEADERMATCH_TOKEN = "Match";
+        internal const string HEADERMATCHLEN_TOKEN = "MatchBytesLen";
+        internal const string ARRAYLEN_TOKEN = "ArrayLength";
+        internal const string ONEOFBYSEGMENT_TOKEN = "DependOnSegment";
+        internal const string ONEOFBYVALUE_TOKEN = "DependValue";
+
+        internal const string EXPSIZEOF_TOKEN = "BytesSizeOf";
+        internal const string EXPADD_TOKEN = "Calc_Add";
+        internal const string EXPSUB_TOKEN = "Calc_Sub";
+        internal const string EXPMUL_TOKEN = "Calc_Mul";
+        internal const string EXPDIV_TOKEN = "Calc_Div";
+
+        internal const string BITCOUNT_TOKEN = "BitCount";
+        internal const string BYTEORDERT_TOKEN = "ByteOrder";
+        internal const string ENCODED_TOKEN = "Encoded";
+        internal const string VALUE_TOKEN = "Value";
+        internal const string SIGNED_TOKEN = "Signed";
+        internal const string MINVALUE_TOKEN = "MinValue";
+        internal const string MAXVALUE_TOKEN = "MaxValue";
+        internal const string CHECKTYPE_TOKEN = "CheckType";
+        internal const string CHECKFROM_TOKEN = "CheckFrom";
+        internal const string CHECKTO_TOKEN = "CheckTo";
+        internal const string REALTYPE_TOKEN = "RealType";
+        internal const string FLOAT_TOKEN = "Float";
+        internal const string DOUBLE_TOKEN = "Double";
+
         private IList<Frame> _frms;
         private IList<Enumdef> _ems;
-        private JArray _jfrms;
-        private const string TYPE_TOKEN = "$type";
-        private const string NAME_TOKEN = "Name";
-        private const string HEADERMATCH_TOKEN = "Match";
-        private const string HEADERMATCHLEN_TOKEN = "MatchBytesLen";
-        private const string SEGMENTLIST_TOKEN = "SegmentList";
-        private const string EXPTYPE_TOKEN = "ExpressionType";
-        private const string EXPVALUE_TOKEN = "ExpressionValue";
-        private const string EXPLEFT_TOKEN = "ExpLeft";
-        private const string EXPRIGHT_TOKEN = "ExpRight";
-        private const string ARRAYLEN_TOKEN = "ArrayLength";
-        private const string ONEOFBYSEGMENT_TOKEN = "DependOnSegment";
-        private const string ONEOFBYVALUE_TOKEN = "DependValue";
-        private const string ONEOFITEMLIST_TOKEN = "OneOfItemList";
-
-        private const string BITCOUNT_TOKEN = "BitCount";
-        private const string BYTEORDERT_TOKEN = "ByteOrder";
-        private const string ENCODED_TOKEN = "Encoded";
-        private const string VALUE_TOKEN = "Value";
-        private const string SIGNED_TOKEN = "Signed";
-        private const string MINVALUE_TOKEN = "MinValue";
-        private const string MAXVALUE_TOKEN = "MaxValue";
-        private const string CHECKTYPE_TOKEN = "CheckType";
-        private const string CHECKFROM_TOKEN = "CheckFrom";
-        private const string CHECKTO_TOKEN = "CheckTo";
-        private const string REALTYPE_TOKEN = "RealType";
-        private const string FLOAT_TOKEN = "float";
-        private const string DOUBLE_TOKEN = "double";
+        private JObject _jfrms;
+        private IList<Subsys> _subsys;
 
 
-        public Frames2Json(IList<Frame> frms, IList<Enumdef> ems)
+        public Frames2Json(IOProject pj)
         {
-            _frms = frms;
-            _ems = ems;
-            _jfrms = new JArray();
-            foreach(var frm in frms)
+            _frms = pj.FrameList;
+            _ems = pj.EnumdefList;
+            _subsys = pj.SubsysList;
+
+            _jfrms = new JObject();
+
+            var jfrms = new JArray();
+            foreach(var frm in _frms)
             {
-                _jfrms.Add(Frame2JObject(frm));
+                if(IsUsedBySys(frm))
+                {
+                    var o = new JObject();
+                    o.Add(frm.Name, Frame2JObject(frm));
+                    jfrms.Add(o);
+                }
             }
+            _jfrms.Add(FRAMELIST_TOKEN, jfrms);
+
         }
 
         //获取全部数据帧的json字符串
@@ -59,51 +75,68 @@ namespace FrameIO.Main
             return _jfrms.ToString();
         }
 
-        //转换数据帧为json对象
+        //转换数据帧为json属性
         private JObject Frame2JObject(Frame frm)
         {
-            var ret = GetNewJObject(FrametIOType.Frame, frm.Name);
+            var o = new JObject();
 
-            var fseg = GetHeaderSegment(frm.Segments.First());
+            var fseg = GetHeaderSegment(frm.Segments);
             if (fseg != null && fseg.Match!=null && fseg.Match.Length>0 && fseg.BitCount>=8 && fseg.BitCount%8==0)
             {
-                ret.Add(HEADERMATCH_TOKEN, Convert.ToInt64(fseg.Match));
-                ret.Add(HEADERMATCHLEN_TOKEN, fseg.BitCount / 8);
+                o.Add(HEADERMATCH_TOKEN, Convert.ToInt64(fseg.Match));
+                o.Add(HEADERMATCHLEN_TOKEN, fseg.BitCount / 8);
             }
 
-            ret.Add(SEGMENTLIST_TOKEN, Segments2JArray(frm.Segments));
+            o.Add(SEGMENTLIST_TOKEN, Segments2JArray(frm.Segments));
 
+            return o;
+        }
+
+
+        //转字段组为json数组
+        private JArray Segments2JArray(IList<FrameSegmentBase> segs)
+        {
+            var ret = new JArray();
+            foreach (var seg in segs)
+            {
+                var o = new JObject();
+                o.Add(seg.Name, Segment2JObject(seg, segs));
+                ret.Add(o);
+            }
             return ret;
         }
 
-        #region --字段处理--
-
-        //转字段为json对象
+        //转字段为json属性
         private JObject Segment2JObject(FrameSegmentBase seg, IList<FrameSegmentBase> segs)
         {
             var t = seg.GetType();
+            JObject o = null;
             if (t == typeof(FrameSegmentInteger))
-                return Segment2JObject((FrameSegmentInteger)seg);
+                o = IntegerSegment2JObject((FrameSegmentInteger)seg);
             else if (t == typeof(FrameSegmentReal))
-                return Segment2JObject((FrameSegmentReal)seg);
+                o = RealSegment2JObject((FrameSegmentReal)seg);
             else if (t == typeof(FrameSegmentBlock))
-                return Segment2JObject((FrameSegmentBlock)seg, segs);
-
-            throw new Exception("unknow");
+                o = BlockSegment2JObject((FrameSegmentBlock)seg, segs);
+            if(o == null) throw new Exception("unknow");
+            return o;
         }
 
+
+        #region --字段处理--
+
+
         //转整数字段为json对象
-        private JObject Segment2JObject(FrameSegmentInteger seg)
+        private JObject IntegerSegment2JObject(FrameSegmentInteger seg)
         {
             var isarray = !seg.Repeated.IsIntOne();
-            var ret = GetNewJObject(isarray ? FrametIOType.SegIntegerArray : FrametIOType.SegInteger, seg.Name);
-            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JObject(seg.Repeated));
+            var ret = GetNewSegJObject(isarray ? SegmentTypeEnum.SegIntegerArray : SegmentTypeEnum.SegInteger, seg.Name);
+            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JToken(seg.Repeated));
             
             ret.Add(SIGNED_TOKEN, seg.Signed);
             ret.Add(BITCOUNT_TOKEN ,seg.BitCount);
             ret.Add(BYTEORDERT_TOKEN, seg.ByteOrder.ToString());
             ret.Add(ENCODED_TOKEN, seg.Encoded.ToString());
-            if(seg.Value!=null) ret.Add(VALUE_TOKEN, Exp2JObject(seg.Value));
+            if(seg.Value!=null) ret.Add(VALUE_TOKEN, Exp2JToken(seg.Value));
 
             if(seg.ValidateMin!=null && seg.ValidateMin.Length>0)
                 ret.Add(MINVALUE_TOKEN, Helper.ValidateIsInt(seg.ValidateMin) ? Convert.ToInt64(seg.ValidateMin) : Convert.ToDouble(seg.ValidateMin));
@@ -120,16 +153,16 @@ namespace FrameIO.Main
         }
 
         //转小数字段为json对象
-        private JObject Segment2JObject(FrameSegmentReal seg)
+        private JObject RealSegment2JObject(FrameSegmentReal seg)
         {
             var isarray = !seg.Repeated.IsIntOne();
-            var ret = GetNewJObject(isarray ? FrametIOType.SegRealArray : FrametIOType.SegReal, seg.Name);
-            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JObject(seg.Repeated));
+            var ret = GetNewSegJObject(isarray ? SegmentTypeEnum.SegRealArray : SegmentTypeEnum.SegReal, seg.Name);
+            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JToken(seg.Repeated));
 
             ret.Add(REALTYPE_TOKEN, seg.IsDouble? DOUBLE_TOKEN:FLOAT_TOKEN);
             ret.Add(BYTEORDERT_TOKEN, seg.ByteOrder.ToString());
             ret.Add(ENCODED_TOKEN, seg.Encoded.ToString());
-            if (seg.Value != null) ret.Add(VALUE_TOKEN, Exp2JObject(seg.Value));
+            if (seg.Value != null) ret.Add(VALUE_TOKEN, Exp2JToken(seg.Value));
 
            
             if (seg.ValidateMin != null && seg.ValidateMin.Length > 0)
@@ -141,7 +174,7 @@ namespace FrameIO.Main
         }
 
         //转block字段为json对象
-        private JObject Segment2JObject(FrameSegmentBlock seg, IList<FrameSegmentBase> segs)
+        private JObject BlockSegment2JObject(FrameSegmentBlock seg, IList<FrameSegmentBase> segs)
         {
             JObject ret = null;
             var isarray = !seg.Repeated.IsIntOne();
@@ -149,37 +182,25 @@ namespace FrameIO.Main
             switch (seg.UsedType)
             {
                 case BlockSegType.RefFrame:
-                    ret = GetNewJObject(isarray ? FrametIOType.SegBlockArray : FrametIOType.SegBlock, seg.Name);
+                case BlockSegType.DefFrame:
+                    ret = GetNewSegJObject(isarray ? SegmentTypeEnum.SegGroupArray : SegmentTypeEnum.SegGroup, seg.Name);
                     ret.Add(SEGMENTLIST_TOKEN, Segments2JArray(seg.DefineSegments));
                     break;
-                case BlockSegType.DefFrame:
-                    ret = GetNewJObject(isarray ? FrametIOType.SegBlockArray : FrametIOType.SegBlock, seg.Name);
-                    ret.Add(SEGMENTLIST_TOKEN, Segments2JArray(FindFrame(seg.RefFrameName)));
-                    break;
+
                 case BlockSegType.OneOf:
-                    ret = GetNewJObject(isarray ? FrametIOType.SegOneOfGroupArray : FrametIOType.SegOneOfGroup, seg.Name);
+                    ret = GetNewSegJObject(isarray ? SegmentTypeEnum.SegOneOfGroupArray : SegmentTypeEnum.SegOneOfGroup, seg.Name);
                     ret.Add(ONEOFBYSEGMENT_TOKEN, seg.OneOfBySegment);
-                    ret.Add(ONEOFITEMLIST_TOKEN, OneOfItems2JArray(seg.OneOfCaseList, ((FrameSegmentInteger)segs.Where(p => p.Name == seg.OneOfBySegment).First()).ToEnum));
+                    ret.Add(ONEOFLIST_TOKEN, OneOfItems2JArray(seg.OneOfCaseList, ((FrameSegmentInteger)segs.Where(p => p.Name == seg.OneOfBySegment).First()).ToEnum));
                     break;
                 default:
                     throw new Exception("unknow");
             }
 
-            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JObject(seg.Repeated));
+            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JToken(seg.Repeated));
             return ret;
 
         }
 
-        //转字段组为json数组
-        private JArray Segments2JArray(IList<FrameSegmentBase> segs)
-        {
-            var ret = new JArray();
-            foreach (var seg in segs)
-            {
-                ret.Add(Segment2JObject(seg, segs));
-            }
-            return ret;
-        }
 
         //转OneOf列表为Json数组
         private JArray OneOfItems2JArray(IList<OneOfMap> items, string emName)
@@ -187,27 +208,37 @@ namespace FrameIO.Main
             var ret = new JArray();
             foreach (var it in items)
             {
-                ret.Add(OneOfItem2JObject(it, emName));
+                var o = new JObject();
+                o.Add(ONEOFBYVALUE_TOKEN, GetEnumItemValue(emName, it.EnumItem));
+                o.Add(SEGMENTLIST_TOKEN, Segments2JArray(FindSegmentsOfFrame(it.FrameName)));
+                var oo = new JObject();
+                oo.Add(it.EnumItem, o);
+                ret.Add(oo);
             }
             return ret;
         }
 
-        //转OneOf项为Json对象
-        private JObject OneOfItem2JObject(OneOfMap item, string emName)
-        {
-            var ret = GetNewJObject(FrametIOType.SegOneOfItem, item.EnumItem);
-            ret.Add(ONEOFBYVALUE_TOKEN, GetEnumItemValue(emName, item.EnumItem));
-            ret.Add(SEGMENTLIST_TOKEN, Segments2JArray(FindFrame(item.FrameName)));
-            return ret;
-
-        }
 
         #endregion
 
 
         #region --Helper--
 
+        //数据帧是否被分系统使用
+        private bool IsUsedBySys(Frame frm)
+        {
+            //HACK
+            return true;
+            return _subsys.Where(p => p.Actions.Where(a => a.FrameName == frm.Name).Count() > 0).Count() > 0;
+        }
+
+
         //找到数据帧头
+        private FrameSegmentInteger GetHeaderSegment(IList<FrameSegmentBase> segs)
+        {
+            if (segs == null || segs.Count == 0) return null;
+            return GetHeaderSegment(segs.First());
+        }
 
         private FrameSegmentInteger GetHeaderSegment(FrameSegmentBase seg)
         {
@@ -222,10 +253,10 @@ namespace FrameIO.Main
                 switch (bseg.UsedType)
                 {
                     case BlockSegType.RefFrame:
-                        return GetHeaderSegment(FindFrame(bseg.RefFrameName).First());
+                        return GetHeaderSegment(FindSegmentsOfFrame(bseg.RefFrameName));
 
                     case BlockSegType.DefFrame:
-                        return GetHeaderSegment(bseg.DefineSegments.First());
+                        return GetHeaderSegment(bseg.DefineSegments);
 
                 }
             }
@@ -234,50 +265,78 @@ namespace FrameIO.Main
         }
 
         //查找数据帧
-        private IList<FrameSegmentBase> FindFrame(string name)
+        private IList<FrameSegmentBase> FindSegmentsOfFrame(string name)
         {
             return _frms.Where(p => p.Name == name).First().Segments;
         }
 
         //表达式转Json
-        private JObject Exp2JObject(Exp ep)
+        private JToken Exp2JToken(Exp ep)
         {
-            var ret = GetNewJObject(FrametIOType.Expression, null);
-            ret.Add(EXPTYPE_TOKEN, ep.Op.ToString());
             switch (ep.Op)
             {
                 case exptype.EXP_INT:
-                    ret.Add(EXPVALUE_TOKEN, Convert.ToInt64(ep.ConstStr));
-                    break;
+                    return new JValue(Convert.ToInt64(ep.ConstStr));
 
                 case exptype.EXP_REAL:
-                    ret.Add(EXPVALUE_TOKEN, Convert.ToDouble(ep.ConstStr));
-                    break;
+                    return new JValue(Convert.ToDouble(ep.ConstStr));
 
                 case exptype.EXP_ID:
+                    return new JValue(ep.ConstStr);
+
                 case exptype.EXP_BYTESIZEOF:
-                    ret.Add(EXPVALUE_TOKEN, ep.ConstStr);
-                    break;
+                    {
+                        var o = new JObject();
+                        o.Add(EXPSIZEOF_TOKEN, ep.ConstStr);
+                        return o;
+                    }
 
                 case exptype.EXP_ADD:
+                    {
+                        var o = new JObject();
+                        o.Add(EXPADD_TOKEN, GetCaclArray(ep));
+                        return o;
+                    }
+
                 case exptype.EXP_SUB:
+                    {
+                        var o = new JObject();
+                        o.Add(EXPSUB_TOKEN, GetCaclArray(ep));
+                        return o;
+                    }
+
                 case exptype.EXP_MUL:
+                    {
+                        var o = new JObject();
+                        o.Add(EXPMUL_TOKEN, GetCaclArray(ep));
+                        return o;
+                    }
+
                 case exptype.EXP_DIV:
-                    ret.Add(EXPLEFT_TOKEN, Exp2JObject(ep.LeftExp));
-                    ret.Add(EXPRIGHT_TOKEN, Exp2JObject(ep.RightExp));
-                    break;
-                default:
-                    break;
+                    {
+                        var o = new JObject();
+                        o.Add(EXPDIV_TOKEN, GetCaclArray(ep));
+                        return o;
+                    }
             }
+            throw new Exception("unknow");
+        }
+
+        //取计算参数数组
+        private JArray GetCaclArray(Exp ep)
+        {
+            var ret = new JArray();
+            ret.Add(Exp2JToken(ep.LeftExp));
+            ret.Add(Exp2JToken(ep.RightExp));
             return ret;
         }
 
-        //创建新json对象
-        private JObject GetNewJObject(FrametIOType t, string name)
+        //创建新json属性
+        private JObject GetNewSegJObject(SegmentTypeEnum t, string name)
         {
             var ret = new JObject();
-            ret.Add(TYPE_TOKEN, t.ToString());
-            if (name != null && name.Length > 0) ret.Add(NAME_TOKEN, name);
+            ret.Add(SEGMENTTYPE_TOKEN, t.ToString());
+            //ret.Add(NAME_TOKEN, name);
             return ret;
         }
 
@@ -299,19 +358,17 @@ namespace FrameIO.Main
             return ret;
         }
 
-        enum FrametIOType
+        private enum SegmentTypeEnum
         {
-            Frame,
             SegInteger,
             SegIntegerArray,
             SegReal,
             SegRealArray,
-            SegBlock,
-            SegBlockArray,
+            SegGroup,
+            SegGroupArray,
             SegOneOfGroup,
             SegOneOfGroupArray,
-            SegOneOfItem,
-            Expression
+            SegOneOfItem
         }
 
         #endregion

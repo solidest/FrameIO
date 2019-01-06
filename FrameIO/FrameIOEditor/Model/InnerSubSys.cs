@@ -31,7 +31,7 @@ namespace FrameIO.Main
             {
                 var protype = Helper.ConvertSegType2ProType(seg);
                 if (protype == "") continue;
-                var len = Helper.ValidateIsInt(seg.Repeated.ConstStr) ? seg.Repeated.ConstStr : "";
+                var len = seg.Repeated.IsConst() ? ((long)seg.Repeated.GetConstValue()).ToString() : "";
                 Propertys.Add(new SubsysProperty()
                 {
                     Name = seg.Name,

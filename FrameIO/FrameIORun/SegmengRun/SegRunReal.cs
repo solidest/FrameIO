@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,20 +8,54 @@ using System.Threading.Tasks;
 namespace FrameIO.Run
 {
     //小数字段
-    internal class SegRunReal : SegRunBase
+    internal class SegRunReal : SegRunValue
     {
-        internal override string Name => throw new NotImplementedException();
+        private bool _isdouble;
+        private ByteOrderTypeEnum _byteorder;
+        private EncodedTypeEnum _encoded;
+        private IExpRun _value;
+        private Validete _valid = new Validete();
 
-        internal override SegRunContainer Parent => throw new NotImplementedException();
+        internal override SegRunContainer Parent { get; set; }
+        internal override SegRunBase Next { get; set; }
+        internal override SegRunBase Previous { get; set; }
+        internal override SegRunBase First { get; set; }
+        internal override SegRunBase Last { get; set; }
+        internal override SegRunContainer Root { get; set; }
+        internal override string Name { get; set; }
+        internal override int BitLen { get => _isdouble?64:32; }
 
-        internal override SegRunBase Next => throw new NotImplementedException();
 
-        internal override SegRunBase Previous => throw new NotImplementedException();
+        //从json加载内容
+        static internal SegRunReal LoadFromJson(JObject o, string name, SegRunContainer parent)
+        {
+            var ret = new SegRunReal();
+            ret.Parent = parent;
+            ret.Name = name;
+            ret.FillFromJson(o);
+            return ret;
+        }
 
-        internal override SegRunBase First => throw new NotImplementedException();
+        protected internal override void FillFromJson(JObject o)
+        {
+            _isdouble = (o[REALTYPE_TOKEN].Value<string>() == DOUBLE_TOKEN);
+            _encoded = Helper.GetEncoded(o);
+            _byteorder = Helper.GetByteOrder(o);
+            _value = Helper.GetValueExp(o);
+            _valid.AddMaxValidate(o);
+            _valid.AddMinValidate(o);
+        }
 
-        internal override SegRunBase Last => throw new NotImplementedException();
+        internal override ulong GetBuffer(JValue value)
+        {
+            throw new NotImplementedException();
+            //HACK
+        }
 
-        internal override SegRunContainer Root => throw new NotImplementedException();
+        internal override SegRunBase Pack(FramePackBuffer buff, JToken value)
+        {
+            throw new NotImplementedException();
+            //HACK
+        }
     }
 }

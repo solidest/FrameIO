@@ -60,6 +60,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generator\CppScriptGenerator.cs" />
     <Compile Include="Generator\FrameCompileJson.cs" />
     <Compile Include="Generator\FrameCompileBytes.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />

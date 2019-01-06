@@ -37,7 +37,7 @@ namespace FrameIO.Run
         #endregion
 
 
-        #region --SegValue--
+        #region --SetValue--
 
 
         //设置数值型字段
@@ -70,7 +70,7 @@ namespace FrameIO.Run
             var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = LookUpObject(segs);
-            o.Add(new JProperty(segs[segs.Length - 1], ovalue._o));
+            o.Add(segs[segs.Length - 1], ovalue._o);
         }
 
 

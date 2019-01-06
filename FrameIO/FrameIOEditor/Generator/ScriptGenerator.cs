@@ -21,14 +21,14 @@ namespace FrameIO.Main
         {
             _pj = pj;
             _out = tout;
-            _jframes = new Frames2Json(_pj.FrameList, _pj.EnumdefList);
+            _jframes = new Frames2Json(_pj);
         }
 
         #region --abstract--
 
-        protected abstract string Token { get; set; }
-        protected abstract string FrameFileName { get; set; }
-        protected abstract string DefaultExtension { get; set; }
+        protected abstract string Token { get; }
+        protected abstract string FramesFileName { get; }
+        protected abstract string DefaultExtension { get; }
         protected abstract void CreateShareFile();
         protected abstract StringBuilder GetFramesFileContent(IList<string> framesjson);
         protected abstract StringBuilder GetEnumFileContent(Enumdef em);
@@ -52,7 +52,7 @@ namespace FrameIO.Main
                 CreateShareFile();
 
                 //生成数据帧文件
-                CreateFile(FrameFileName, GetFramesFileContent(ToBase64List(_jframes.GetJsonString())));
+                CreateFile(FramesFileName, GetFramesFileContent(ToBase64List(_jframes.GetJsonString())));
 
                 //生成枚举
                 foreach (var emdef in _pj.EnumdefList)

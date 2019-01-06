@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,18 +10,53 @@ namespace FrameIO.Run
     //OneOf分组
     internal class SegRunOneOfGroup : SegRunContainer
     {
-        internal override string Name => throw new NotImplementedException();
+        private SegRunInteger _byseg;
 
-        internal override SegRunContainer Parent => throw new NotImplementedException();
+        protected internal override string ItemsListToken => ONEOFLIST_TOKEN;
 
-        internal override SegRunBase Next => throw new NotImplementedException();
+        internal override SegRunContainer Parent {  get; set;  }
+        internal override SegRunBase Next {  get; set;  }
+        internal override SegRunBase Previous {  get; set;  }
+        internal override SegRunBase First {  get; set;  }
+        internal override SegRunBase Last {  get; set;  }
+        internal override SegRunContainer Root {  get; set;  }
 
-        internal override SegRunBase Previous => throw new NotImplementedException();
+        #region --Initial--
 
-        internal override SegRunBase First => throw new NotImplementedException();
+        //从json加载内容
+        static internal SegRunOneOfGroup LoadFromJson(JObject o, string name, SegRunContainer parent)
+        {
+            var ret = new SegRunOneOfGroup();
+            ret.Name = name;
+            ret.Parent = parent;
+            ret.FillFromJson(o);
+            return ret;
+        }
 
-        internal override SegRunBase Last => throw new NotImplementedException();
+        internal protected override void FillFromJson(JObject o)
+        {
+            base.FillFromJson(o);
+            _byseg = (SegRunInteger)Parent[o[ONEOFBYSEGMENT_TOKEN].Value<string>()];
+        }
 
-        internal override SegRunContainer Root => throw new NotImplementedException();
+        protected internal override SegmentTypeEnum GetItemType(JObject o)
+        {
+            return SegmentTypeEnum.SegOneOfItem;
+        }
+
+        #endregion
+
+
+        #region --Pack--
+
+        internal override SegRunBase Pack(FramePackBuffer buff, JToken value)
+        {
+            
+            return Next;
+        }
+
+
+
+        #endregion
     }
 }

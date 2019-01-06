@@ -86,7 +86,6 @@ namespace FrameIO.Main
         public FrameSegmentBase _seg;
         public ObservableCollection<FrameSegmentBase> _segs;
         public SegmentType _type;
-        private SubSegmentType _subtype;
         public event PropertyChangedEventHandler PropertyChanged;
 
 

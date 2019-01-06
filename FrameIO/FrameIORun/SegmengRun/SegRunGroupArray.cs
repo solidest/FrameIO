@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-    //整数数组
-    internal class SegRunIntegerArray : SegRunInteger
+    //字段组 数组
+    internal class SegRunGroupArray : SegRunGroup
     {
         private IExpRun _arrlen;
 
-
         #region --Initial--
 
-//从json加载内容
-        new static internal SegRunIntegerArray LoadFromJson(JObject o, string name, SegRunContainer parent)
+        //从json加载内容
+        new static internal SegRunGroupArray LoadFromJson(JObject o, string name, SegRunContainer parent)
         {
-            var ret = new SegRunIntegerArray();
+            var ret = new SegRunGroupArray();
             ret.Parent = parent;
             ret.Name = name;
             ret.FillFromJson(o);
@@ -32,7 +31,6 @@ namespace FrameIO.Run
         }
 
         #endregion
-        
 
 
         #region --Pack--
@@ -40,7 +38,7 @@ namespace FrameIO.Run
         internal override SegRunBase Pack(FramePackBuffer buff, JToken value)
         {
             var vs = (value?.Value<JArray>()) ?? new JArray();
-            for (int i = 0; i < Helper.GetInt(_arrlen, value, this); i++)
+            for(int i=0; i < Helper.GetInt(_arrlen, value, this); i++)
             {
                 base.Pack(buff, i < vs.Count ? vs[i] : null);
             }
@@ -50,8 +48,9 @@ namespace FrameIO.Run
 
 
 
-        #endregion
 
+
+        #endregion
 
     }
 }
