@@ -77,7 +77,7 @@ namespace FrameIO.Run
         {
             if(_value != null)
             {
-                return new JValue(_value.GetLong(_value.IsConst ? null : new ExpRunCtx(buff, parent, Parent)));
+                return new JValue(_value.GetLong(parent, Parent));
             }
             else if(_check != null)
             {

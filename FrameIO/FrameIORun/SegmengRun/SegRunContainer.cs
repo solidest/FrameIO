@@ -42,7 +42,7 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public abstract int GetItemBitLen(IFrameWriteBuffer buff, JObject parent);
+        public abstract int GetItemBitLen(JObject parent);
         public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent);
 
 
@@ -51,19 +51,19 @@ namespace FrameIO.Run
             return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent);
         }
 
-        public override int GetBitLen(IFrameWriteBuffer buff, JObject parent)
+        public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(buff, parent) : GetItemBitLen(buff, parent);
+            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent);
         }
 
         #endregion
 
         #region --UnPack--
 
-        public abstract bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent);
-        public override bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public abstract bool TryGetItemBitLen(ref int len, JObject parent);
+        public override bool TryGetBitLen(ref int len, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(buff, ref len, parent) : TryGetItemBitLen(buff, ref len, parent);
+            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent);
         }
 
 

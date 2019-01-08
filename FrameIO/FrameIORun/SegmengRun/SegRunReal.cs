@@ -68,15 +68,7 @@ namespace FrameIO.Run
 
         internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
-            double d = 0;
-            if (_value != null)
-            {
-                if (_value.IsConst)
-                    d = _value.GetDouble(null);
-                else
-                    d = _value.GetDouble(new ExpRunCtx(buff, parent, Parent));
-            }
-
+            double d = _value?.GetDouble(parent, Parent) ?? 0;
             return new JValue(d);
         }
 

@@ -50,7 +50,6 @@
     <Compile Include="FrameObject.cs" />
     <Compile Include="Helper\CRCHelper.cs" />
     <Compile Include="Helper\Enums.cs" />
-    <Compile Include="Helper\ExpRunCtx.cs" />
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\IExpRun.cs" />
     <Compile Include="Helper\IValidate.cs" />

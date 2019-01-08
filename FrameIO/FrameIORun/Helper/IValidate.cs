@@ -158,9 +158,11 @@ namespace FrameIO.Run
 
         public ulong GetCheckResult(IFrameWriteBuffer buff, JObject vParent, SegRunContainer segParent)
         {
-            var ctx = new ExpRunCtx(buff, vParent, segParent);
+            //var ctx = new ExpRunCtx(buff, vParent, segParent);
 
-            return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), ctx.GetStartPos(_begin_seg), ctx.GetEndPos(_end_seg));
+            //return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), ctx.GetStartPos(_begin_seg), ctx.GetEndPos(_end_seg));
+            //HACK
+            return 0;
         }
     }
 

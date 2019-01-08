@@ -9,8 +9,8 @@ namespace FrameIO.Run
 {
     internal interface ISegArrayable : ISegRun
     {
-        bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent);
-        int GetItemBitLen(IFrameWriteBuffer buff, JObject parent);
+        bool TryGetItemBitLen(ref int len, JObject parent);
+        int GetItemBitLen(JObject parent);
         ISegRun PackItem(IFrameWriteBuffer buff, JObject parent);
         bool IsArray { get; }
     }
@@ -29,7 +29,7 @@ namespace FrameIO.Run
         public ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
             var vs = parent?[_item.Name]?.Value<JArray>();
-            var len = _arrLen.GetLong(_arrLen.IsConst ? null : new ExpRunCtx(buff, parent, _item.Parent));
+            var len = _arrLen.GetLong(parent, _item.Parent);
 
             for (int i = 0; i < len; i++)
             {
@@ -41,27 +41,27 @@ namespace FrameIO.Run
         }
 
 
-        public int GetBitLen(IFrameWriteBuffer buff, JObject parent)
+        public int GetBitLen(JObject parent)
         {
-            int len = (int)_arrLen.GetLong(_arrLen.IsConst ? null : new ExpRunCtx(buff, parent, _item.Parent));
+            int len = (int)_arrLen.GetLong(parent, _item.Parent);
 
-            return _item.GetItemBitLen(buff, parent) * len;
+            return _item.GetItemBitLen(parent) * len;
         }
 
-        public bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public bool TryGetBitLen(ref int len, JObject parent)
         {
             long myLen = 0;
             if (_arrLen.IsConst)
-                myLen = _arrLen.GetLong(null);
+                myLen = _arrLen.GetLong(parent, _item.Parent);
             else
             {
-                if (!_arrLen.TryGetLong(new ExpRunCtx(buff, parent, _item.Parent), ref myLen))
+                if (!_arrLen.TryGetLong(parent, _item.Parent, ref myLen))
                     return false;
             }
 
             for (int i = 0; i < myLen; i++)
             {
-                if (!_item.TryGetItemBitLen(buff, ref len, parent))
+                if (!_item.TryGetItemBitLen(ref len, parent))
                     return false;
             }
 

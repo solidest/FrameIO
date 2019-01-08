@@ -44,7 +44,7 @@ namespace FrameIO.Run
 
 
         //取位长度
-        int GetBitLen(IFrameWriteBuffer buff, JObject parent);
+        int GetBitLen(JObject parent);
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace FrameIO.Run
 
 
         //尝试取字段长度
-        bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent);
+        bool TryGetBitLen(ref int len, JObject parent);
 
 
 
@@ -110,11 +110,11 @@ namespace FrameIO.Run
         public SegRunFrame Root { get; set; }
 
 
-        public abstract int GetBitLen(IFrameWriteBuffer buff, JObject parent);
+        public abstract int GetBitLen(JObject parent);
 
         public abstract ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
 
-        public abstract bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent);
+        public abstract bool TryGetBitLen(ref int len, JObject parent);
 
         protected abstract void InitialFromJson(JObject o);
 

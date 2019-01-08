@@ -52,12 +52,12 @@ namespace FrameIO.Run
         }
 
         //取位长
-        public override int GetBitLen(IFrameWriteBuffer buff, JObject parent)
+        public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(buff, parent) : GetItemBitLen(buff, parent);
+            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent);
         }
 
-        public int GetItemBitLen(IFrameWriteBuffer buff, JObject parent)
+        public int GetItemBitLen(JObject parent)
         {
             return BitLen;
         }
@@ -67,12 +67,12 @@ namespace FrameIO.Run
         #region --UnPack--
 
         //尝试取比特位长
-        public override bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public override bool TryGetBitLen(ref int len, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(buff, ref len, parent) : TryGetItemBitLen(buff, ref len, parent);
+            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent);
         }
 
-        public bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public bool TryGetItemBitLen(ref int len, JObject parent)
         {
             len += BitLen;
             return true;

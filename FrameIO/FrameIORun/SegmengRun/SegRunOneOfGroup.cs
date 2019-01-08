@@ -47,11 +47,11 @@ namespace FrameIO.Run
         #region --UnPack--
 
 
-        public override bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public override bool TryGetItemBitLen(ref int len, JObject parent)
         {
             var select = GetOneItem( parent);
             if (select == null) return false;
-            return select.TryGetBitLen(buff, ref len, parent[Name].Value<JObject>());
+            return select.TryGetBitLen( ref len, parent[Name].Value<JObject>());
         }
 
         #endregion
@@ -59,10 +59,10 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public override int GetItemBitLen(IFrameWriteBuffer buff, JObject parent)
+        public override int GetItemBitLen(JObject parent)
         {
             var select = GetOneItem(parent);
-            return select.GetBitLen(buff, parent?[Name].Value<JObject>());
+            return select.GetBitLen(parent?[Name].Value<JObject>());
         }
 
         public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)

@@ -46,7 +46,7 @@ namespace FrameIO.Run
             return Next;
         }
 
-        public override int GetItemBitLen(IFrameWriteBuffer buff, JObject parent)
+        public override int GetItemBitLen(JObject parent)
         {
             var my = parent?[Name]?.Value<JObject>();
             int ret = 0;
@@ -54,7 +54,7 @@ namespace FrameIO.Run
             var p = First;
             while (p != null)
             {
-                ret += p.GetBitLen(buff, my);
+                ret += p.GetBitLen(my);
                 p = p.Next;
             }
             return ret;
@@ -65,14 +65,14 @@ namespace FrameIO.Run
 
         #region --UnPack--
 
-        public override bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
+        public override bool TryGetItemBitLen(ref int len, JObject parent)
         {
             var my = parent?[Name]?.Value<JObject>();
 
             var p = First;
             while (p != null)
             {
-                if (!TryGetBitLen(buff, ref len, my)) return false;
+                if (!TryGetBitLen(ref len, my)) return false;
                 p = p.Next;
             }
             return true;
