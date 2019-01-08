@@ -10,7 +10,8 @@ namespace FrameIO.Run
    
     interface IValidate
     {
-        bool Valid(SegRunBase seg);
+        bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value);
+        string ErrorInfo { get; }
     }
 
     internal class Validete 
@@ -24,31 +25,44 @@ namespace FrameIO.Run
             _vs.Add(v);
         }
 
-        public void AddMaxValidate(JObject o)
+        public SegmentMaxValidator AddMaxValidate(JToken max)
         {
-            //HACK
+            if (max == null) return null;
+            var v = new SegmentMaxValidator(max.Value<double>());
+            _vs.Add(v);
+            return v;
         }
 
-        public void AddMinValidate(JObject o)
+        public SegmentMinValidator AddMinValidate(JToken min)
         {
-            //HACK
+            if (min == null) return null;
+            var v = new SegmentMinValidator(min.Value<double>());
+            _vs.Add(v);
+            return v;
+        }
+
+        public SegmentCheckValidator AddCheckValidate(JToken checktype, JToken begin, JToken end)
+        {
+            if (checktype == null) return null;
+            var v = new SegmentCheckValidator(Helper.GetCheckType(checktype), begin?.Value<string>(), end?.Value<string>());
+            _vs.Add(v);
+            return v;
 
         }
 
-        public void AddCheckValidate(JObject o)
-        {
-            //HACK
-
-        }
-
-        public bool Valid(SegRunBase seg)
+        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
         {
             if (_vs == null) return true;
+            bool ret = true;
             foreach(var v in _vs)
             {
-                if (!v.Valid(seg)) return false;
+                if (!v.Valid(buff, seg, value))
+                {
+                    seg.LogError(Interface.FrameIOErrorType.RecvErr, v.ErrorInfo);
+                    ret = false;
+                }
             }
-            return true;
+            return ret;
         }
     }
 
@@ -64,15 +78,25 @@ namespace FrameIO.Run
             _max = maxv;
         }
 
-        public bool Valid(SegRunBase seg)
-        {
-            throw new NotImplementedException();
-        }
+        public string ErrorInfo { get; set; }
 
-        //internal bool Valid(double value)
-        //{
-        //    return (value <= _max);
-        //}
+        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        {
+            bool ret = false;
+            switch (value.Type)
+            {
+                case JTokenType.Integer:
+                    ret = (value.Value<long>() <= _max);
+                    break;
+
+                case JTokenType.Float:
+                    ret = (value.Value<double>() <= _max);
+                    break;
+                    
+            }
+            if (!ret) ErrorInfo = "超过最大值";
+            return ret;
+        }
     }
 
     //最小值验证
@@ -84,15 +108,25 @@ namespace FrameIO.Run
             _min = minv;
         }
 
-        public bool Valid(SegRunBase seg)
-        {
-            throw new NotImplementedException();
-        }
+        public string ErrorInfo { get; set; }
 
-        //internal bool Valid(double value)
-        //{
-        //    return (value >= _min);
-        //}
+        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        {
+            bool ret = false;
+            switch (value.Type)
+            {
+                case JTokenType.Integer:
+                    ret = (value.Value<long>() >= _min);
+                    break;
+
+                case JTokenType.Float:
+                    ret = (value.Value<double>() >= _min);
+                    break;
+
+            }
+            if (!ret) ErrorInfo = "小于最小值";
+            return false;
+        }
     }
 
 
@@ -100,27 +134,33 @@ namespace FrameIO.Run
     //校验值验值
     internal class SegmentCheckValidator : IValidate
     {
-        //private byte _checktype;
+        private CheckTypeEnum _checktype;
+        private string _begin_seg;
+        private string _end_seg;
 
-        //public ushort ChecekBeginSegIdx { get; }
-        //public ushort ChecekEndSegIdx { get; }
-        //public SegmentCheckValidator(byte checktype, ushort checkbeing, ushort checkend, ushort next_idx) : base(next_idx, ValidateType.Check)
-        //{
-        //    _checktype = checktype;
-        //    ChecekBeginSegIdx = checkbeing;
-        //    ChecekEndSegIdx = checkend;
-        //}
+        public string ErrorInfo { get; set; }
 
-
-        //internal ulong GetCheckValue(byte[] buff, int beginpos, int endpos)
-        //{
-        //    if (endpos <= beginpos) return 0;
-        //    return CRCHelper.GetCheckValue(_checktype, buff, beginpos, endpos);
-        //}
-
-        public bool Valid(SegRunBase seg)
+        public SegmentCheckValidator(CheckTypeEnum checktype, string beginSeg, string endSeg)
         {
-            throw new NotImplementedException();
+            _checktype = checktype;
+            _begin_seg = beginSeg;
+            _end_seg = endSeg;
+        }
+
+        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        {
+
+            var res = GetCheckResult(buff, value.Parent.Value<JObject>(), seg.Parent);
+            var ret = (value.Value<ulong>() == res);
+            if (!ret) ErrorInfo = "校验失败";
+            return ret;
+        }
+
+        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunContainer segParent)
+        {
+            var ctx = new ExpRunCtx(buff, vParent, segParent);
+
+            return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), ctx.GetStartPos(_begin_seg), ctx.GetEndPos(_end_seg));
         }
     }
 

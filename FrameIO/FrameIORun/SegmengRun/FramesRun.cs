@@ -19,7 +19,7 @@ namespace FrameIO.Run
         }
 
         //从json字符串加载全部数据帧
-        public static FramesRun LoadFromJson(string json)
+        public static FramesRun InitialFromJson(string json)
         {
             var jfrms = JObject.Parse(json)[SegRunBase.FRAMELIST_TOKEN].Value<JArray>();
             var ret = new FramesRun();
@@ -27,7 +27,7 @@ namespace FrameIO.Run
             {
                 var p = (JProperty)vo.First;
                 var o = p.Value.Value<JObject>();
-                ret._frms.Add(p.Name, SegRunFrame.LoadFromJson(o, p.Name));
+                ret._frms.Add(p.Name, SegRunFrame.NewFrame(o, p.Name));
             }
 
             return ret;

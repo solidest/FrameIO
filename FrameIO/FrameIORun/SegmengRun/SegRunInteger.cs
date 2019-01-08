@@ -16,58 +16,88 @@ namespace FrameIO.Run
         private EncodedTypeEnum _encoded;
         private IExpRun _value;
         private Validete _valid = new Validete();
+        private SegmentCheckValidator _check;
 
-        internal override SegRunContainer Parent { get; set; }
-        internal override SegRunBase Next { get; set; }
-        internal override SegRunBase Previous {  get; set;  }
-        internal override SegRunBase First {  get; set;  }
-        internal override SegRunBase Last {  get; set;  }
-        internal override SegRunContainer Root {  get; set;  }
-        internal override string Name { get; set; }
+
         internal override int BitLen { get => _bitcount; }
 
         #region --Initial--
 
-        //从json加载内容
-        static internal SegRunInteger LoadFromJson(JObject o, string name, SegRunContainer parent)
+        //从json初始化
+        static public SegRunInteger NewSegInteger(JObject o, string name, bool isArray)
         {
             var ret = new SegRunInteger();
             ret.Name = name;
-            ret.Parent = parent;
-            ret.FillFromJson(o);
+            ret.InitialFromJson(o);
+            if (isArray) ret.InitialArray(o);
             return ret;
         }
 
-        protected internal override void FillFromJson(JObject o)
+        protected override void InitialFromJson(JObject o)
         {
             _signed = o[SIGNED_TOKEN].Value<bool>();
             _bitcount = o[BITCOUNT_TOKEN].Value<int>();
             _encoded = Helper.GetEncoded(o);
             _byteorder = Helper.GetByteOrder(o);
-            _value = Helper.GetValueExp(o);
-            _valid.AddMaxValidate(o);
-            _valid.AddMinValidate(o);
-            _valid.AddCheckValidate(o);
+            _value = Helper.GetExp(o[VALUE_TOKEN]);
+            _valid.AddMaxValidate(o[MAXVALUE_TOKEN]);
+            _valid.AddMinValidate(o[MINVALUE_TOKEN]);
+            _check = _valid.AddCheckValidate(o[CHECKTYPE_TOKEN], o[CHECKFROM_TOKEN], o[CHECKTO_TOKEN] );
         }
+
 
 
         #endregion
 
-
         #region --Pack--
 
 
-        internal override ulong GetBuffer(JValue value)
+        internal override ulong GetRaw(IFrameBuffer buff, JValue jv)
         {
-            throw new NotImplementedException();
-            //HACK
+            ulong ret = 0;
+
+            if(_signed)
+            {
+                ret = ConvertToRaw(jv.Value<long>());
+            }
+            else
+            {
+                ret = jv.Value<ulong>();
+            }
+
+            if (_byteorder == ByteOrderTypeEnum.Big)
+            {
+                ret = GetBigOrder(ret);
+            }
+
+            return ret;
         }
 
-        internal override SegRunBase Pack(FramePackBuffer buff, JToken value)
+        internal override JValue GetAutoValue(IFrameBuffer buff, JObject parent)
         {
+            if(_value != null)
+            {
+                return new JValue(_value.GetLong(_value.IsConst ? null : new ExpRunCtx(buff, parent, Parent)));
+            }
+            else if(_check != null)
+            {
+                return new JValue(_check.GetCheckResult(buff, parent, Parent));
+            }
+            return new JValue(0);
+        }
 
-            buff.DoWriteValue(this, value?.Value<JValue>());
-            return Next;
+        #endregion
+
+        #region --Helper--
+
+        internal ulong ConvertToRaw(long v)
+        {
+            if (v >= 0) return (ulong)v;
+
+            var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
+            if (_encoded != EncodedTypeEnum.Primitive) uv = (_encoded == EncodedTypeEnum.Complement ? GetComplement(uv) : GetInversion(uv));
+            return uv;
+
         }
 
 

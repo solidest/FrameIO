@@ -10,22 +10,35 @@ namespace FrameIO.Run
     //One of 的字段组 case分支
     internal class SegRunOneOfItem : SegRunGroup
     {
-        private long _byvalue;
+        private long? _byvalue;
+
+        #region --Initial--
 
         //从json加载内容
-        new static internal SegRunOneOfItem LoadFromJson(JObject o, string name, SegRunContainer parent)
+        static public SegRunOneOfItem NewOneOfItem(JObject o, string name)
         {
             var ret = new SegRunOneOfItem();
             ret.Name = name;
-            ret.Parent = parent;
-            ret.FillFromJson(o);
+            ret.InitialFromJson(o);
             return ret;
         }
 
-        internal protected override void FillFromJson(JObject o)
+        protected override void InitialFromJson(JObject o)
         {
-            base.FillFromJson(o);
-            _byvalue = o[ONEOFBYVALUE_TOKEN].Value<long>();
+            base.InitialFromJson(o);
+            _byvalue = o[ONEOFBYVALUE_TOKEN].Value<long?>();
         }
+
+        #endregion
+
+        #region --Helper--
+
+        internal protected bool IsDefault { get => _byvalue == null; }
+
+        internal protected long ByValue { get => _byvalue??0;  }
+
+
+        #endregion
+
     }
 }

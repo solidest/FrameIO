@@ -1,28 +1,24 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
     //运行时字段的容器
-    internal abstract class SegRunContainer : SegRunBase
+    internal abstract class SegRunContainer : SegRunBase, ISegArrayable
     {
-        private Dictionary<string, SegRunBase> _segs;
-        internal override string Name { get; set; }
+        private Dictionary<string, ISegRun> _segs;
 
         internal abstract protected string ItemsListToken { get; }
+
         internal abstract protected SegmentTypeEnum GetItemType(JObject o);
 
         internal SegRunContainer()
         {
-            _segs = new Dictionary<string, SegRunBase>();
+            _segs = new Dictionary<string, ISegRun>();
         }
 
-
-        internal SegRunBase this[string segname]
+        internal ISegRun this[string segname]
         {
             get
             {
@@ -31,11 +27,54 @@ namespace FrameIO.Run
         }
 
 
+        #region --Array--
+
+        private SegRunArrayWrapper _arr;
+        public bool IsArray { get; private set; } = false;
+
+        protected void InitialArray(JObject o)
+        {
+            IsArray = true;
+            _arr = new SegRunArrayWrapper(this, o);
+        }
+
+        #endregion
+
+        #region --Pack--
+
+        public abstract int GetItemBitLen(IFrameBuffer buff, JObject parent);
+        public abstract ISegRun PackItem(IFrameBuffer buff, JObject parent);
+
+
+        public override ISegRun Pack(IFrameBuffer buff, JObject parent)
+        {
+            return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent);
+        }
+
+        public override int GetBitLen(IFrameBuffer buff, JObject parent)
+        {
+            return IsArray ? _arr.GetBitLen(buff, parent) : GetItemBitLen(buff, parent);
+        }
+
+        #endregion
+
+        #region --UnPack--
+
+        public abstract bool TryGetItemBitLen(IFrameBuffer buff, ref int len, JObject parent);
+        public override bool TryGetBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        {
+            return IsArray ? _arr.TryGetBitLen(buff, ref len, parent) : TryGetItemBitLen(buff, ref len, parent);
+        }
+
+
+        #endregion
+
+
         #region --Initial--
 
-        //从json填充字段列表
+        //从json初始化字段列表
 
-        internal protected override void FillFromJson(JObject o)
+        protected override void InitialFromJson(JObject o)
         {
             var segs = o[ItemsListToken].Value<JArray>();
             foreach (JObject seg in segs)
@@ -46,31 +85,31 @@ namespace FrameIO.Run
                 switch (t)
                 {
                     case SegmentTypeEnum.SegInteger:
-                        AddItem(pseg.Name, SegRunInteger.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunInteger.NewSegInteger(oseg, pseg.Name, false));
                         break;
                     case SegmentTypeEnum.SegIntegerArray:
-                        AddItem(pseg.Name, SegRunIntegerArray.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunInteger.NewSegInteger(oseg, pseg.Name, true));
                         break;
                     case SegmentTypeEnum.SegReal:
-                        AddItem(pseg.Name, SegRunReal.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunReal.NewSegReal(oseg, pseg.Name, false));
                         break;
                     case SegmentTypeEnum.SegRealArray:
-                        AddItem(pseg.Name, SegRunRealArray.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunReal.NewSegReal(oseg, pseg.Name, true));
                         break;
                     case SegmentTypeEnum.SegGroup:
-                        AddItem(pseg.Name, SegRunGroup.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunGroup.NewSegGroup(oseg, pseg.Name, false));
                         break;
                     case SegmentTypeEnum.SegGroupArray:
-                        AddItem(pseg.Name, SegRunGroupArray.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunGroup.NewSegGroup(oseg, pseg.Name, true));
                         break;
                     case SegmentTypeEnum.SegOneOfGroup:
-                        AddItem(pseg.Name, SegRunOneOfGroup.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunOneOfGroup.NewOneOfGroup(oseg, pseg.Name, false));
                         break;
                     case SegmentTypeEnum.SegOneOfGroupArray:
-                        AddItem(pseg.Name, SegRunOneOfGroupArray.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunOneOfGroup.NewOneOfGroup(oseg, pseg.Name, true));
                         break;
                     case SegmentTypeEnum.SegOneOfItem:
-                        AddItem(pseg.Name, SegRunOneOfItem.LoadFromJson(oseg, pseg.Name, this));
+                        AddItem(pseg.Name, SegRunOneOfItem.NewOneOfItem(oseg, pseg.Name));
                         break;
                     default:
                         throw new Exception("unknow");
@@ -87,6 +126,7 @@ namespace FrameIO.Run
         {
             _segs.Add(name, seg);
             seg.Root = Root;
+            seg.Parent = this;
 
             if (First == null)
             {
@@ -96,10 +136,11 @@ namespace FrameIO.Run
             else
             {
                 seg.Previous = Last;
-                Last.Next = seg;
+                ((SegRunBase)Last).Next = seg;
                 Last = seg;
             }
         }
+
 
         #endregion
 

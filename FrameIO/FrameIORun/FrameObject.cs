@@ -28,14 +28,6 @@ namespace FrameIO.Run
             _o = o;
         }
 
-        #region --RunInfo--
-
-        //当前字段
-        internal SegRunBase CurrentSegRun { get; private set; }
-
-
-        #endregion
-
 
         #region --SetValue--
 

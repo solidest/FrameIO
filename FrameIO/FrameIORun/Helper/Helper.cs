@@ -11,6 +11,8 @@ namespace FrameIO.Run
     {
         static internal IExpRun GetExp(JToken t)
         {
+            if (t == null) return null;
+
             switch (t.Type)
             {
                 case JTokenType.Object:
@@ -41,11 +43,7 @@ namespace FrameIO.Run
 
         }
 
-        static internal int GetInt(IExpRun ir, JToken vseg, SegRunBase seg)
-        {
-            if (ir.IsConst) return (int)ir.GetLong(null);
-            return (int)ir.GetLong(new ExpRunCtx(vseg, seg));
-        }
+
 
         static internal ByteOrderTypeEnum GetByteOrder(JObject o)
         {
@@ -57,13 +55,11 @@ namespace FrameIO.Run
             return (EncodedTypeEnum)Enum.Parse(typeof(EncodedTypeEnum), o[SegRunBase.ENCODED_TOKEN].Value<string>());
         }
 
-        static internal IExpRun GetValueExp(JObject o)
+        static internal CheckTypeEnum GetCheckType(JToken v)
         {
-            if (o.ContainsKey(SegRunBase.VALUE_TOKEN))
-                return GetExp(o[SegRunBase.VALUE_TOKEN]);
-            else
-                return new ExpNone();
+            return (CheckTypeEnum)Enum.Parse(typeof(CheckTypeEnum), v.Value<string>());
         }
+
 
     }
 }

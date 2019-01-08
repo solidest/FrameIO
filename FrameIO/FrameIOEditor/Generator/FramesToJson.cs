@@ -209,7 +209,10 @@ namespace FrameIO.Main
             foreach (var it in items)
             {
                 var o = new JObject();
-                o.Add(ONEOFBYVALUE_TOKEN, GetEnumItemValue(emName, it.EnumItem));
+                if (it.EnumItem != "other")
+                    o.Add(ONEOFBYVALUE_TOKEN, GetEnumItemValue(emName, it.EnumItem));
+                else
+                    o.Add(ONEOFBYVALUE_TOKEN, JValue.CreateNull());
                 o.Add(SEGMENTLIST_TOKEN, Segments2JArray(FindSegmentsOfFrame(it.FrameName)));
                 var oo = new JObject();
                 oo.Add(it.EnumItem, o);
@@ -227,8 +230,8 @@ namespace FrameIO.Main
         //数据帧是否被分系统使用
         private bool IsUsedBySys(Frame frm)
         {
-            //HACK
-            return true;
+            //HACK IsUsedBySys
+            //return true;
             return _subsys.Where(p => p.Actions.Where(a => a.FrameName == frm.Name).Count() > 0).Count() > 0;
         }
 

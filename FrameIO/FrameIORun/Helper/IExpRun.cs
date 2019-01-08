@@ -30,6 +30,18 @@ namespace FrameIO.Run
         {
             return _v;
         }
+
+        public bool TryGetDouble(IExpRunCtx ctx, ref double v)
+        {
+            v = _v;
+            return true;
+        }
+
+        public bool TryGetLong(IExpRunCtx ctx, ref long v)
+        {
+            v = _v;
+            return true;
+        }
     }
 
     internal class ExpDoubleValue : IExpRun
@@ -56,6 +68,18 @@ namespace FrameIO.Run
         {
             return (long)_v;
         }
+
+        public bool TryGetDouble(IExpRunCtx ctx, ref double v)
+        {
+            v = _v;
+            return true;
+        }
+
+        public bool TryGetLong(IExpRunCtx ctx, ref long v)
+        {
+            v = (long)_v;
+            return true;
+        }
     }
 
     internal class ExpStringValue : IExpRun
@@ -81,6 +105,16 @@ namespace FrameIO.Run
         public long GetLong(IExpRunCtx ctx)
         {
             return ctx.GetLong(_v);
+        }
+
+        public bool TryGetDouble(IExpRunCtx ctx, ref double v)
+        {
+            return ctx.TryGetDouble(_v, ref v);
+        }
+
+        public bool TryGetLong(IExpRunCtx ctx, ref long v)
+        {
+            return ctx.TryGetLong(_v, ref v);
         }
     }
 
@@ -123,6 +157,30 @@ namespace FrameIO.Run
         {
             return (long)GetDouble(ctx);
         }
+
+        public bool TryGetDouble(IExpRunCtx ctx, ref double v)
+        {
+            double d1=0, d2=0;
+            if (_left.TryGetDouble(ctx, ref d1) && _right.TryGetDouble(ctx, ref d2))
+            {
+                v = d1 + d2;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryGetLong(IExpRunCtx ctx, ref long v)
+        {
+            double d = 0;
+            if( TryGetDouble(ctx, ref d))
+            {
+                v = (long)d;
+                return true;
+            }
+
+            return false;
+        }
     }
 
     internal class ExpByteSizeOf : IExpRun
@@ -147,26 +205,20 @@ namespace FrameIO.Run
         {
             return IsThis ? ctx.GetSizeOfThis() : ctx.GetSizeOfSegment(_seg);
         }
-    }
 
-    internal class ExpNone : IExpRun
-    {
-        public bool IsConst => throw new NotImplementedException();
-
-        public bool IsIntOne => throw new NotImplementedException();
-
-        public bool IsThis => throw new NotImplementedException();
-
-        public double GetDouble(IExpRunCtx ctx)
+        public bool TryGetDouble(IExpRunCtx ctx, ref double v)
         {
-            return 0;
+            v = GetDouble(ctx);
+            return true;
         }
 
-        public long GetLong(IExpRunCtx ctx)
+        public bool TryGetLong(IExpRunCtx ctx, ref long v)
         {
-            return 0;
+            v = GetLong(ctx);
+            return true;
         }
     }
+
 
     //表达式接口
     internal interface IExpRun
@@ -177,6 +229,9 @@ namespace FrameIO.Run
 
         long GetLong(IExpRunCtx ctx);
         double GetDouble(IExpRunCtx ctx);
+
+        bool TryGetLong(IExpRunCtx ctx, ref long v);
+        bool TryGetDouble(IExpRunCtx ctx, ref double v);
     }
 
     //表达式执行环境接口
@@ -185,42 +240,16 @@ namespace FrameIO.Run
         long GetLong(string id);
         double GetDouble(string id);
 
+        bool TryGetLong(string id, ref long v);
+        bool TryGetDouble(string id, ref double v);
+
+        int GetStartPos(string seg);
+        int GetEndPos(string seg);
+
         int GetSizeOfSegment(string seg);
         int GetSizeOfThis();
     }
 
-    internal class ExpRunCtx : IExpRunCtx
-    {
-        private JToken _vseg;
-        private SegRunBase _seg;
-
-        public ExpRunCtx(JToken vseg, SegRunBase seg)
-        {
-            _seg = seg;
-            _vseg = vseg;
-        }
-
-
-        public double GetDouble(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public long GetLong(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetSizeOfSegment(string seg)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetSizeOfThis()
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     //计算类型
     internal enum ExpCalcType

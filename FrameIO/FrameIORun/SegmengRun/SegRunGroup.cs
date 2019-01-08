@@ -12,23 +12,16 @@ namespace FrameIO.Run
     {
         protected internal override string ItemsListToken => SEGMENTLIST_TOKEN;
 
-        internal override SegRunContainer Parent { get; set; }
-        internal override SegRunBase Next { get; set; }
-        internal override SegRunBase Previous { get; set; }
-        internal override SegRunBase First { get; set; }
-        internal override SegRunBase Last { get; set; }
-        internal override SegRunContainer Root { get; set; }
-        internal override string Name { get; set; }
 
         #region --Initial--
 
          //从json加载内容
-        static internal SegRunGroup LoadFromJson(JObject o, string name, SegRunContainer parent)
+        static internal SegRunGroup NewSegGroup(JObject o, string name, bool isArray)
         {
             var ret = new SegRunGroup();
-            ret.Parent = parent;
             ret.Name = name;
-            ret.FillFromJson(o);
+            ret.InitialFromJson(o);
+            if (isArray) ret.InitialArray(o);
             return ret;
         }
 
@@ -38,23 +31,55 @@ namespace FrameIO.Run
         }
 
         #endregion
-      
+
 
         #region --Pack--
 
-        internal override SegRunBase Pack(FramePackBuffer buff, JToken value)
+        public override ISegRun PackItem(IFrameBuffer buff, JObject parent)
         {
-            var v = (value?.Value<JObject>())?? new JObject();
+            var my = parent?[Name]?.Value<JObject>();
             var seg = First;
             while (seg != null)
             {
-                seg = seg.Pack(buff, v[seg.Name]);
+                seg = seg.Pack(buff, my);
             }
             return Next;
         }
 
+        public override int GetItemBitLen(IFrameBuffer buff, JObject parent)
+        {
+            var my = parent?[Name]?.Value<JObject>();
+            int ret = 0;
+
+            var p = First;
+            while (p != null)
+            {
+                ret += p.GetBitLen(buff, my);
+                p = p.Next;
+            }
+            return ret;
+        }
+
+        #endregion
+
+
+        #region --UnPack--
+
+        public override bool TryGetItemBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        {
+            var my = parent?[Name]?.Value<JObject>();
+
+            var p = First;
+            while (p != null)
+            {
+                if (!TryGetBitLen(buff, ref len, my)) return false;
+                p = p.Next;
+            }
+            return true;
+        }
 
 
         #endregion
+
     }
 }
