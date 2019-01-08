@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FrameBuffer\FrameBuffer.cs" />
+    <Compile Include="FrameBuffer\SliceReader.cs" />
     <Compile Include="FrameObject.cs" />
     <Compile Include="Helper\CRCHelper.cs" />
     <Compile Include="Helper\Enums.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="Helper\Helper.cs" />
     <Compile Include="Helper\IExpRun.cs" />
     <Compile Include="Helper\IValidate.cs" />
-    <Compile Include="FrameBuffer\Slice.cs" />
+    <Compile Include="FrameBuffer\SliceWriter.cs" />
     <Compile Include="FrameBuffer\IFrameBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmengRun\FramesRun.cs" />

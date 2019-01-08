@@ -9,33 +9,40 @@ using System.Threading.Tasks;
 namespace FrameIO.Run
 {
     //二进制缓冲流
-    internal class FrameBuffer : IFrameBuffer
+    internal class FrameBuffer : IFrameWriteBuffer
     {
         private MemoryStream _cach;
-        private Slice _odd;
+        private SliceWriter _odd;
+        private SliceReader _sr;
         private Dictionary<object, int> _pos;
 
         public FrameBuffer()
         {
             _cach = new MemoryStream();
-            _odd = Slice.Empty;
+            _odd = SliceWriter.Empty;
+            _sr = new SliceReader(null);
             _pos = new Dictionary<object, int>();
         }
 
         #region --For Pack-- 
 
         //写入到缓冲
-        public void Write(Slice s, object token)
+        public void Write(ulong rawValue, int bitLen, object token)
         {
-            _odd = _odd.WriteAppend(_cach, s);
-            if(token!=null) _pos.Add(token, GetBytePos());
+            _odd = _odd.WriteAppend(_cach, SliceWriter.GetSlice(rawValue, bitLen));
+            _pos.Add(token, GetBytePos());
         }
 
         #endregion
 
         #region --For Unpack--
 
-        //添加
+        //添加数据
+        public void Append(byte[] cach)
+        {
+            _sr.FlushNew(cach);
+            _cach.Write(cach, 0, cach.Length);
+        }
 
         #endregion
 
@@ -56,6 +63,11 @@ namespace FrameIO.Run
         public byte[] GetBuffer()
         {
             return _cach.GetBuffer();
+        }
+
+        public ulong Read(int bitLen, object token)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

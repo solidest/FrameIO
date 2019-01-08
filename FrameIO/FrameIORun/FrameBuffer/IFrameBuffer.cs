@@ -8,7 +8,21 @@ namespace FrameIO.Run
 {
     interface IFrameBuffer
     {
-        void Write(Slice s, object token);
+
+    }
+
+    interface IFrameWriteBuffer
+    {
+        void Write(ulong rawValue, int bitLen, object token);
+
+        int GetPos(object token);
+
+        byte[] GetBuffer();
+    }
+
+    interface IFrameReadBuffer
+    {
+        ulong Read(int bitLen, object token);
 
         int GetPos(object token);
 

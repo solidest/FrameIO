@@ -52,7 +52,7 @@ namespace FrameIO.Run
         #region --Pack--
 
 
-        internal override ulong GetRaw(IFrameBuffer buff, JValue jv)
+        internal override ulong GetRaw(IFrameWriteBuffer buff, JValue jv)
         {
             ulong ret = 0;
 
@@ -73,7 +73,7 @@ namespace FrameIO.Run
             return ret;
         }
 
-        internal override JValue GetAutoValue(IFrameBuffer buff, JObject parent)
+        internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
             if(_value != null)
             {

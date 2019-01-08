@@ -9,9 +9,9 @@ namespace FrameIO.Run
 {
     internal interface ISegArrayable : ISegRun
     {
-        bool TryGetItemBitLen(IFrameBuffer buff, ref int len, JObject parent);
-        int GetItemBitLen(IFrameBuffer buff, JObject parent);
-        ISegRun PackItem(IFrameBuffer buff, JObject parent);
+        bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent);
+        int GetItemBitLen(IFrameWriteBuffer buff, JObject parent);
+        ISegRun PackItem(IFrameWriteBuffer buff, JObject parent);
         bool IsArray { get; }
     }
 
@@ -26,7 +26,7 @@ namespace FrameIO.Run
             _item = item;
         }
 
-        public ISegRun Pack(IFrameBuffer buff, JObject parent)
+        public ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
             var vs = parent?[_item.Name]?.Value<JArray>();
             var len = _arrLen.GetLong(_arrLen.IsConst ? null : new ExpRunCtx(buff, parent, _item.Parent));
@@ -41,14 +41,14 @@ namespace FrameIO.Run
         }
 
 
-        public int GetBitLen(IFrameBuffer buff, JObject parent)
+        public int GetBitLen(IFrameWriteBuffer buff, JObject parent)
         {
             int len = (int)_arrLen.GetLong(_arrLen.IsConst ? null : new ExpRunCtx(buff, parent, _item.Parent));
 
             return _item.GetItemBitLen(buff, parent) * len;
         }
 
-        public bool TryGetBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        public bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
         {
             long myLen = 0;
             if (_arrLen.IsConst)

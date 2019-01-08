@@ -35,7 +35,7 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public override ISegRun PackItem(IFrameBuffer buff, JObject parent)
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)
         {
             var my = parent?[Name]?.Value<JObject>();
             var seg = First;
@@ -46,7 +46,7 @@ namespace FrameIO.Run
             return Next;
         }
 
-        public override int GetItemBitLen(IFrameBuffer buff, JObject parent)
+        public override int GetItemBitLen(IFrameWriteBuffer buff, JObject parent)
         {
             var my = parent?[Name]?.Value<JObject>();
             int ret = 0;
@@ -65,7 +65,7 @@ namespace FrameIO.Run
 
         #region --UnPack--
 
-        public override bool TryGetItemBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        public override bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
         {
             var my = parent?[Name]?.Value<JObject>();
 

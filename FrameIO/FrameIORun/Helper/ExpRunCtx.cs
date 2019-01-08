@@ -9,9 +9,9 @@ namespace FrameIO.Run
     {
         private JObject _vParent;
         private SegRunContainer _segParent;
-        private IFrameBuffer _buff;
+        private IFrameWriteBuffer _buff;
 
-        public ExpRunCtx(IFrameBuffer buff, JObject vParent, SegRunContainer segParent)
+        public ExpRunCtx(IFrameWriteBuffer buff, JObject vParent, SegRunContainer segParent)
         {
             _vParent = vParent;
             _segParent = segParent;

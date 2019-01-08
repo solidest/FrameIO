@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-    internal class Slice
+    internal class SliceWriter
     {
         private ulong _v;
         private int _bytesLen;
@@ -45,7 +45,7 @@ namespace FrameIO.Run
         #region --Operation--
 
         //追加写入
-        public Slice WriteAppend(MemoryStream buff, Slice s)
+        public SliceWriter WriteAppend(MemoryStream buff, SliceWriter s)
         {
             if (IsEmpty) return WriteSlice(buff, s);
 
@@ -62,7 +62,7 @@ namespace FrameIO.Run
         }
 
         //将Slice写入内存流
-        public static Slice WriteSlice(MemoryStream buff, Slice s)
+        public static SliceWriter WriteSlice(MemoryStream buff, SliceWriter s)
         {
             if (s._bytesLen == 0) return s;
             buff.Write(BitConverter.GetBytes(s._v), 0, s._bytesLen);
@@ -73,12 +73,12 @@ namespace FrameIO.Run
 
         #region --Initial--
 
-        private Slice()
+        private SliceWriter()
         {
             
         }
 
-        private Slice(ulong v, int bitlen)
+        private SliceWriter(ulong v, int bitlen)
         {
             _v = v;
             _bytesLen = bitlen / 8;
@@ -89,7 +89,7 @@ namespace FrameIO.Run
 
         #region --Helper--
 
-        public Slice TheOdd()
+        public SliceWriter TheOdd()
         {
             if (_bitOddLen == 0) return Empty;
             return GetSlice((TheValue >> (_bytesLen * 8)), _bitOddLen);
@@ -102,17 +102,17 @@ namespace FrameIO.Run
             _bytesLen = 0;
         }
 
-        static Slice()
+        static SliceWriter()
         {
-            Empty = new Slice();
+            Empty = new SliceWriter();
         }
 
-        public static Slice Empty { get;  private set; }
+        public static SliceWriter Empty { get;  private set; }
 
-        public static Slice GetSlice(ulong v, int bitlen)
+        public static SliceWriter GetSlice(ulong v, int bitlen)
         {
             if (bitlen == 0) return Empty;
-            return new Slice(v, bitlen);
+            return new SliceWriter(v, bitlen);
         }
 
         #endregion

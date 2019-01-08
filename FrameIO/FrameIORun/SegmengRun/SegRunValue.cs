@@ -13,10 +13,10 @@ namespace FrameIO.Run
         internal abstract int BitLen { get;}
 
         //取字段的内存流
-        internal abstract ulong GetRaw(IFrameBuffer buff, JValue v);
+        internal abstract ulong GetRaw(IFrameWriteBuffer buff, JValue v);
 
         //取自动计算值
-        internal abstract JValue GetAutoValue(IFrameBuffer buff, JObject parent);
+        internal abstract JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent);
 
         #region --Array--
 
@@ -34,12 +34,12 @@ namespace FrameIO.Run
         #region --Pack--
 
         //打包
-        public override ISegRun Pack(IFrameBuffer buff, JObject parent)
+        public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
             return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent);
         }
 
-        public ISegRun PackItem(IFrameBuffer buff, JObject parent)
+        public ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)
         {
             var v = parent?[Name]?.Value<JValue>();
             if(v==null)
@@ -47,17 +47,17 @@ namespace FrameIO.Run
                 v = GetAutoValue(buff, parent);
                 parent?.Add(Name, v);
             }
-            buff.Write(Slice.GetSlice(GetRaw(buff, v), BitLen), parent?[Name]);
+            buff.Write(GetRaw(buff, v), BitLen, v);
             return Next;
         }
 
         //取位长
-        public override int GetBitLen(IFrameBuffer buff, JObject parent)
+        public override int GetBitLen(IFrameWriteBuffer buff, JObject parent)
         {
             return IsArray ? _arr.GetBitLen(buff, parent) : GetItemBitLen(buff, parent);
         }
 
-        public int GetItemBitLen(IFrameBuffer buff, JObject parent)
+        public int GetItemBitLen(IFrameWriteBuffer buff, JObject parent)
         {
             return BitLen;
         }
@@ -67,12 +67,12 @@ namespace FrameIO.Run
         #region --UnPack--
 
         //尝试取比特位长
-        public override bool TryGetBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        public override bool TryGetBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
         {
             return IsArray ? _arr.TryGetBitLen(buff, ref len, parent) : TryGetItemBitLen(buff, ref len, parent);
         }
 
-        public bool TryGetItemBitLen(IFrameBuffer buff, ref int len, JObject parent)
+        public bool TryGetItemBitLen(IFrameReadBuffer buff, ref int len, JObject parent)
         {
             len += BitLen;
             return true;

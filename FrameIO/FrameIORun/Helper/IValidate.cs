@@ -10,7 +10,7 @@ namespace FrameIO.Run
    
     interface IValidate
     {
-        bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value);
+        bool Valid(IFrameWriteBuffer buff, SegRunValue seg, JToken value);
         string ErrorInfo { get; }
     }
 
@@ -50,7 +50,7 @@ namespace FrameIO.Run
 
         }
 
-        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        public bool Valid(IFrameWriteBuffer buff, SegRunValue seg, JToken value)
         {
             if (_vs == null) return true;
             bool ret = true;
@@ -80,7 +80,7 @@ namespace FrameIO.Run
 
         public string ErrorInfo { get; set; }
 
-        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        public bool Valid(IFrameWriteBuffer buff, SegRunValue seg, JToken value)
         {
             bool ret = false;
             switch (value.Type)
@@ -110,7 +110,7 @@ namespace FrameIO.Run
 
         public string ErrorInfo { get; set; }
 
-        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        public bool Valid(IFrameWriteBuffer buff, SegRunValue seg, JToken value)
         {
             bool ret = false;
             switch (value.Type)
@@ -147,7 +147,7 @@ namespace FrameIO.Run
             _end_seg = endSeg;
         }
 
-        public bool Valid(IFrameBuffer buff, SegRunValue seg, JToken value)
+        public bool Valid(IFrameWriteBuffer buff, SegRunValue seg, JToken value)
         {
 
             var res = GetCheckResult(buff, value.Parent.Value<JObject>(), seg.Parent);
@@ -156,7 +156,7 @@ namespace FrameIO.Run
             return ret;
         }
 
-        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunContainer segParent)
+        public ulong GetCheckResult(IFrameWriteBuffer buff, JObject vParent, SegRunContainer segParent)
         {
             var ctx = new ExpRunCtx(buff, vParent, segParent);
 
