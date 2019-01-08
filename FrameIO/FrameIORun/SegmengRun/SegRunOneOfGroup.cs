@@ -59,8 +59,8 @@ namespace FrameIO.Run
                 else
                     parent.Add(Name, ov);
             }
-            select.UnPack(buff, ov, ov?[select.Name].Value<JObject>());
-            return Next;
+            var ret = select.UnPack(buff, ov, ov?[select.Name].Value<JObject>());
+            return ret??Next;
         }
 
         public override bool TryGetItemBitLen(ref int len, JObject parent)

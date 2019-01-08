@@ -81,7 +81,7 @@ namespace FrameIO.Run
                 p = p.UnPack(buff, my, my[p.Name]);
             }
 
-            return Next;
+            return p??Next;
         }
 
         public abstract bool TryGetItemBitLen(ref int len, JObject parent);
