@@ -35,13 +35,12 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            var my = parent?[Name]?.Value<JObject>();
             var seg = First;
             while (seg != null)
             {
-                seg = seg.Pack(buff, my);
+                seg = seg.Pack(buff, theValue.Value<JObject>());
             }
             return Next;
         }

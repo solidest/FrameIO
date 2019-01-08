@@ -55,5 +55,6 @@ namespace FrameIO.Run
 
 
         public bool IsEmpty { get => ( _bitOdd == 0 && _bytePos == (_cach?.Length??0)); }
+        public int NotReadBitLen { get => (_cach.Length - _bytePos) * 8 - _bitOdd;  }
     }
 }

@@ -50,11 +50,12 @@ namespace FrameIO.Run
 
         #region --For UnPack--
 
+        //解包
+        ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue);
+
 
         //尝试取字段长度
         bool TryGetBitLen(ref int len, JObject parent);
-
-
 
         #endregion
 
@@ -126,6 +127,9 @@ namespace FrameIO.Run
                 pos.Insert(0, p.Name + ".");
             throw new Interface.FrameIOException(type, pos.ToString(), info);
         }
+
+        public abstract ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue);
+
 
     }
 

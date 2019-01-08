@@ -75,5 +75,17 @@ namespace FrameIO.Run
         #endregion
 
 
+        #region --UnPack--
+
+        internal override object FromRaw(ulong v)
+        {
+            //HACK
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+
+
     }
 }

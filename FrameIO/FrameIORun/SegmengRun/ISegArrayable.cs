@@ -11,7 +11,8 @@ namespace FrameIO.Run
     {
         bool TryGetItemBitLen(ref int len, JObject parent);
         int GetItemBitLen(JObject parent);
-        ISegRun PackItem(IFrameWriteBuffer buff, JObject parent);
+        ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue);
+        ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer);
         bool IsArray { get; }
     }
 
@@ -34,12 +35,40 @@ namespace FrameIO.Run
             for (int i = 0; i < len; i++)
             {
                 var vsi = i < (vs?.Count ?? 0) ? vs[i].Value<JObject>() : null;
-                _item.PackItem(buff, vsi);
+                _item.PackItem(buff, parent, vsi);
             }
 
             return _item.Next;
         }
 
+        public ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue)
+        {
+            JArray my = theValue?.Value<JArray>();
+            var len = _arrLen.GetLong(parent, _item.Parent);
+            int repeated = 0;
+
+            if(my == null)
+            {
+                my = new JArray();
+                parent.Add(_item.Name, my);
+            }
+            else
+            {
+                repeated = buff.LoadRepeated(my);
+            }
+
+            for (int i=repeated; i<len; i++)
+            {
+                if (!buff.CanRead) break;
+                _item.UnPackItem(buff, parent,i<my.Count?my[i]:null, my);
+                repeated = i;
+            }
+            if (repeated == len - 1)
+                return _item.Next;
+            else
+                return _item;
+
+        }
 
         public int GetBitLen(JObject parent)
         {

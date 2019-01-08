@@ -47,6 +47,22 @@ namespace FrameIO.Run
         #region --UnPack--
 
 
+        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
+        {
+            var select = GetOneItem(parent);
+            JObject ov = theValue?.Value<JObject>();
+            if(ov == null)
+            {
+                ov = new JObject();
+                if (mycontainer != null)
+                    mycontainer.Add(ov);
+                else
+                    parent.Add(Name, ov);
+            }
+            select.UnPack(buff, ov, ov?[select.Name].Value<JObject>());
+            return Next;
+        }
+
         public override bool TryGetItemBitLen(ref int len, JObject parent)
         {
             var select = GetOneItem( parent);
@@ -65,12 +81,13 @@ namespace FrameIO.Run
             return select.GetBitLen(parent?[Name].Value<JObject>());
         }
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
             var select = GetOneItem(parent);
-            select.Pack(buff, parent?[select.Name].Value<JObject>());
+            select.Pack(buff, theValue?[select.Name].Value<JObject>());
             return Next;
         }
+
 
         #endregion
 
@@ -92,10 +109,6 @@ namespace FrameIO.Run
             }
             return null;
         }
-
-
-
-
 
         #endregion
     }

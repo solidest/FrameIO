@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 namespace FrameIO.Run
 {
     //二进制缓冲流
-    internal class FrameBuffer : IFrameWriteBuffer
+    internal class FrameBuffer : IFrameWriteBuffer, IFrameReadBuffer
     {
         private MemoryStream _cach;
         private SliceWriter _odd;
         private SliceReader _sr;
         private Dictionary<object, int> _pos;
+        private Dictionary<object, int> _repeateds;
+
+        public bool CanRead => !_sr.IsEmpty;
 
         public FrameBuffer()
         {
@@ -22,20 +25,21 @@ namespace FrameIO.Run
             _odd = SliceWriter.Empty;
             _sr = new SliceReader(null);
             _pos = new Dictionary<object, int>();
+            _repeateds = new Dictionary<object, int>();
         }
 
-        #region --For Pack-- 
+        #region --Writer-- 
 
         //写入到缓冲
         public void Write(ulong rawValue, int bitLen, object token)
         {
+            _pos.Add(token,(int)_cach.Position*8 + _odd.BitLen);
             _odd = _odd.WriteAppend(_cach, SliceWriter.GetSlice(rawValue, bitLen));
-            _pos.Add(token, GetBytePos());
         }
 
         #endregion
 
-        #region --For Unpack--
+        #region --Reader--
 
         //添加数据
         public void Append(byte[] cach)
@@ -44,20 +48,22 @@ namespace FrameIO.Run
             _cach.Write(cach, 0, cach.Length);
         }
 
+        public ulong Read(int bitLen, object token)
+        {
+            _pos.Add(token, (int)_cach.Position * 8 - _sr.NotReadBitLen);
+            return _sr.ReadBits(bitLen);
+        }
+
         #endregion
 
         #region --Helper--
 
-        //当前字节位置
-        public int GetBytePos()
-        {
-            if(!_odd.IsEmpty) throw new Exception("runtime 数据帧字段未能整字节对齐");
-            return (int)_cach.Position;
-        }
 
-        public int GetPos(object token)
+        public int GetBytePos(object token)
         {
-            return _pos[token];
+            var bitpos =  _pos[token];
+            if(bitpos%8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
+            return bitpos / 8;
         }
 
         public byte[] GetBuffer()
@@ -65,10 +71,19 @@ namespace FrameIO.Run
             return _cach.GetBuffer();
         }
 
-        public ulong Read(int bitLen, object token)
+        public void SaveRepeated(object token, int index)
         {
-            throw new NotImplementedException();
+            if (_repeateds.ContainsKey(token))
+                _repeateds[token] = index;
+            else
+                _repeateds.Add(token, index);
         }
+
+        public int LoadRepeated(object token)
+        {
+            return _repeateds[token];
+        }
+
 
         #endregion
 

@@ -14,6 +14,7 @@ namespace FrameIO.Run
 
         //取字段的内存流
         internal abstract ulong GetRaw(IFrameWriteBuffer buff, JValue v);
+        internal abstract object FromRaw(ulong v);
 
         //取自动计算值
         internal abstract JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent);
@@ -36,20 +37,19 @@ namespace FrameIO.Run
         //打包
         public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
-            return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent);
+            return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent, parent?[Name]);
         }
 
-        public ISegRun PackItem(IFrameWriteBuffer buff, JObject parent)
+        public ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            var v = parent?[Name]?.Value<JValue>();
-            if(v==null)
+            if (theValue == null)
             {
-                v = GetAutoValue(buff, parent);
-                parent?.Add(Name, v);
+                theValue = GetAutoValue(buff, parent);
             }
-            buff.Write(GetRaw(buff, v), BitLen, v);
+            buff.Write(GetRaw(buff, (JValue)theValue), BitLen, theValue);
             return Next;
         }
+
 
         //取位长
         public override int GetBitLen(JObject parent)
@@ -65,6 +65,25 @@ namespace FrameIO.Run
         #endregion
 
         #region --UnPack--
+
+        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue)
+        {
+            return IsArray ? _arr.UnPack(buff, parent, parent[Name]) : UnPackItem(buff, parent, parent[Name], null);
+        }
+
+
+        public ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
+        {
+            var vt = (JValue)theValue ?? (new JValue(0));
+            var raw = buff.Read(BitLen, vt);
+            vt.Value = FromRaw(raw);
+            if (mycontainer != null)
+                mycontainer.Add(vt);
+            else
+                parent.Add(Name, vt);
+            return Next;
+        }
+
 
         //尝试取比特位长
         public override bool TryGetBitLen(ref int len, JObject parent)

@@ -75,6 +75,7 @@ namespace FrameIO.Run
 
         internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
+            if (IsArray) return new JValue(0);
             if(_value != null)
             {
                 return new JValue(_value.GetLong(parent, Parent));
@@ -85,6 +86,17 @@ namespace FrameIO.Run
             }
             return new JValue(0);
         }
+
+        #endregion
+
+        #region --UnPack--
+
+        internal override object FromRaw(ulong v)
+        {
+            //HACK  
+            throw new NotImplementedException();
+        }
+
 
         #endregion
 
