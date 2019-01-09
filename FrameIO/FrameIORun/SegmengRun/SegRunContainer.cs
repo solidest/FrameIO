@@ -40,10 +40,12 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --Pack--
+        #region --Pack && UnPack--
 
-        public abstract int GetItemBitLen(JObject parent);
+        public abstract int GetItemBitLen(JObject parent, JToken theValu);
+        public abstract bool TryGetItemBitLen(ref int len, JObject parent, JToken theValu);
         public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue);
+        public abstract ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer);
 
         public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
@@ -56,38 +58,12 @@ namespace FrameIO.Run
 
         public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent);
+            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent[Name]);
         }
 
-        #endregion
-
-        #region --UnPack--
-
-        public virtual ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
-        {
-            var my = theValue?.Value<JObject>();
-            if(my == null)
-            {
-                my = new JObject();
-                if (mycontainer == null)
-                    parent.Add(Name, my);
-                else
-                    mycontainer.Add(my);
-            }
-
-            var p = First;
-            while(p!=null && buff.CanRead)
-            {
-                p = p.UnPack(buff, my, my[p.Name]);
-            }
-
-            return p??Next;
-        }
-
-        public abstract bool TryGetItemBitLen(ref int len, JObject parent);
         public override bool TryGetBitLen(ref int len, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent);
+            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent, parent?[Name]);
         }
 
 

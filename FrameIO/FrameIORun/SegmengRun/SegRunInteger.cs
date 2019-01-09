@@ -93,8 +93,22 @@ namespace FrameIO.Run
 
         internal override object FromRaw(ulong v)
         {
-            //HACK  
-            throw new NotImplementedException();
+            
+            if (_byteorder == ByteOrderTypeEnum.Big)
+            {
+                v = GetBigOrder(v);
+            }
+
+            if (_encoded != EncodedTypeEnum.Primitive)
+            {
+                v = (_encoded == EncodedTypeEnum.Complement ? GetComplement(v) : GetInversion(v));
+            }
+
+            if (_signed)
+                return BitConverter.ToInt64(BitConverter.GetBytes(v), 0);
+            else
+                return BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
+
         }
 
 

@@ -57,14 +57,19 @@ namespace FrameIO.Run
         //尝试取字段长度
         bool TryGetBitLen(ref int len, JObject parent);
 
+
         #endregion
 
+        //记录错误信息
+        void LogError(Interface.FrameIOErrorType type, string info);
 
     }
 
     //运行时字段的基类
     internal abstract class  SegRunBase : ISegRun
     {
+
+        #region --Const Token--
         internal const string FRAMELIST_TOKEN = "FrameList";
         internal const string SEGMENTLIST_TOKEN = "SegmentList";
         internal const string SEGMENTTYPE_TOKEN = "SegmentType";
@@ -95,6 +100,8 @@ namespace FrameIO.Run
         internal const string REALTYPE_TOKEN = "RealType";
         internal const string FLOAT_TOKEN = "Float";
         internal const string DOUBLE_TOKEN = "Double";
+
+        #endregion
 
         public string Name { get; set; }
 

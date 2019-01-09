@@ -54,10 +54,10 @@ namespace FrameIO.Run
         //取位长
         public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent);
+            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent?[Name]);
         }
 
-        public int GetItemBitLen(JObject parent)
+        public int GetItemBitLen(JObject parent, JToken theValue)
         {
             return BitLen;
         }
@@ -88,10 +88,10 @@ namespace FrameIO.Run
         //尝试取比特位长
         public override bool TryGetBitLen(ref int len, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent);
+            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent, parent?[Name]);
         }
 
-        public bool TryGetItemBitLen(ref int len, JObject parent)
+        public bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
         {
             len += BitLen;
             return true;

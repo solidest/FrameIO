@@ -45,15 +45,14 @@ namespace FrameIO.Run
             return Next;
         }
 
-        public override int GetItemBitLen(JObject parent)
+        public override int GetItemBitLen(JObject parent, JToken theValue)
         {
-            var my = parent?[Name]?.Value<JObject>();
             int ret = 0;
 
             var p = First;
             while (p != null)
             {
-                ret += p.GetBitLen(my);
+                ret += p.GetBitLen(theValue?.Value<JObject>());
                 p = p.Next;
             }
             return ret;
@@ -64,14 +63,34 @@ namespace FrameIO.Run
 
         #region --UnPack--
 
-        public override bool TryGetItemBitLen(ref int len, JObject parent)
+        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
         {
-            var my = parent?[Name]?.Value<JObject>();
+            var my = theValue?.Value<JObject>();
+            if (my == null)
+            {
+                my = new JObject();
+                if (mycontainer == null)
+                    parent.Add(Name, my);
+                else
+                    mycontainer.Add(my);
+            }
+
+            var p = First;
+            while (p != null && buff.CanRead)
+            {
+                p = p.UnPack(buff, my, my[p.Name]);
+            }
+
+            return p ?? Next;
+        }
+
+        public override bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
+        {
 
             var p = First;
             while (p != null)
             {
-                if (!TryGetBitLen(ref len, my)) return false;
+                if (!TryGetBitLen(ref len, theValue?.Value<JObject>())) return false;
                 p = p.Next;
             }
             return true;

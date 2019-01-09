@@ -43,6 +43,25 @@ namespace FrameIO.Run
 
 
 
+        #region --Pack--
+
+        public override int GetItemBitLen(JObject parent, JToken theValue)
+        {
+            var select = GetOneItem(parent);
+            return select.GetItemBitLen(theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+        }
+
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
+        {
+            var select = GetOneItem(parent);
+            select.PackItem(buff, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+            return Next;
+        }
+
+
+        #endregion
+
+
 
         #region --UnPack--
 
@@ -50,47 +69,27 @@ namespace FrameIO.Run
         public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
         {
             var select = GetOneItem(parent);
-            JObject ov = theValue?.Value<JObject>();
-            if(ov == null)
+            JObject myov = theValue?.Value<JObject>();
+            if(myov == null)
             {
-                ov = new JObject();
+                myov = new JObject();
                 if (mycontainer != null)
-                    mycontainer.Add(ov);
+                    mycontainer.Add(myov);
                 else
-                    parent.Add(Name, ov);
+                    parent.Add(Name, myov);
             }
-            var ret = select.UnPack(buff, ov, ov?[select.Name].Value<JObject>());
+            var ret = select.UnPackItem(buff, myov, myov?[select.Name].Value<JObject>(), null);
             return ret??Next;
         }
 
-        public override bool TryGetItemBitLen(ref int len, JObject parent)
+        public override bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
         {
             var select = GetOneItem( parent);
             if (select == null) return false;
-            return select.TryGetBitLen( ref len, parent[Name].Value<JObject>());
+            return select.TryGetItemBitLen( ref len, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
         }
 
         #endregion
-
-
-        #region --Pack--
-
-        public override int GetItemBitLen(JObject parent)
-        {
-            var select = GetOneItem(parent);
-            return select.GetBitLen(parent?[Name].Value<JObject>());
-        }
-
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
-        {
-            var select = GetOneItem(parent);
-            select.Pack(buff, theValue?[select.Name].Value<JObject>());
-            return Next;
-        }
-
-
-        #endregion
-
 
         #region --Helper--
 
