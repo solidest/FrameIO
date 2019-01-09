@@ -77,7 +77,7 @@ namespace FrameIO.Run
         #endregion
 
 
-        #region --UnPack--
+        #region --Unpack--
 
         internal override object FromRaw(ulong v)
         {
@@ -96,6 +96,11 @@ namespace FrameIO.Run
             else
                 return BitConverter.ToSingle(BitConverter.GetBytes(v), 0);
 
+        }
+
+        protected override void DoValid(IFrameReadBuffer buff, SegRunValue seg, JToken value)
+        {
+            _valid.Valid(buff, seg, value);
         }
 
 

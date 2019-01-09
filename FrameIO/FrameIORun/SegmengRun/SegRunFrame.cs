@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,11 @@ namespace FrameIO.Run
     {
         public SegRunFrame()
         {
-            _matchlen = 0;
+            _matchByteLen = 0;
         }
 
-        private int _matchlen;
-        private long _matchvalue;
+        private int _matchByteLen;
+        private ulong _matchValue;
 
 
         #region --Initial--
@@ -40,11 +41,47 @@ namespace FrameIO.Run
         {
             if (o.ContainsKey(HEADERMATCH_TOKEN))
             {
-                _matchvalue = o[HEADERMATCH_TOKEN].Value<int>();
-                _matchlen = o[HEADERMATCHLEN_TOKEN].Value<int>();
+                _matchValue = o[HEADERMATCH_TOKEN].Value<ulong>();
+                _matchByteLen = o[HEADERMATCHLEN_TOKEN].Value<int>();
             }
             base.InitialFromJson(o);
         }
+
+        #endregion
+
+
+        #region --Helper--
+
+        public int GetFirstNeedBytes()
+        {
+            if (_matchByteLen > 0) return _matchByteLen;
+
+            int bitLen = 0;
+            ISegRun next = null;
+            GetNeedBitLen(ref bitLen, out next, null);
+            Debug.Assert(bitLen != 0);
+            if (bitLen % 8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
+            return bitLen / 8;
+        }
+
+        public bool IsMatch(byte[] header)
+        {
+            var bff = new byte[8];
+            for(int i=0; i<_matchByteLen; i++)
+            {
+                bff[i] = header[i];
+            }
+            return BitConverter.ToUInt64(bff, 0) == _matchValue;
+        }
+
+        public ISegRun UnpackFrom(ISegRun fromSeg, IFrameReadBuffer buff, JObject rootValue)
+        {
+            if (fromSeg == this)
+                return Unpack(buff, rootValue);
+            else
+                return fromSeg.Unpack(buff, null);
+        }
+
 
         #endregion
 

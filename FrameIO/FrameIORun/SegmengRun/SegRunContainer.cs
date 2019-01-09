@@ -14,7 +14,7 @@ namespace FrameIO.Run
         public abstract int GetItemBitLen(JObject parent, JToken theValu);
         public abstract bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue);
         public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue);
-        public abstract ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
+        public abstract ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
 
 
         internal SegRunContainer()
@@ -44,15 +44,15 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --Pack && UnPack--
+        #region --Pack && Unpack--
 
         public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
             return _isarr ? _arr.Pack(buff, parent) : PackItem(buff, parent, null, parent[Name]);
         }
-        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
+        public override ISegRun Unpack(IFrameReadBuffer buff, JObject parent)
         {
-            return _isarr ? _arr.UnPack(buff, parent) : UnPackItem(buff, parent, null, parent[Name]);
+            return _isarr ? _arr.Unpack(buff, parent) : UnpackItem(buff, parent, null, parent?[Name]);
         }
 
         public override int GetBitLen(JObject parent)
@@ -139,7 +139,6 @@ namespace FrameIO.Run
                 Last = seg;
             }
         }
-
 
         #endregion
 

@@ -15,29 +15,18 @@ namespace FrameIO.Run
     using System.Threading.Tasks;
 
 
-    public class FrameObject : Interface.ISegmentGettor
+    public class FrameObject
     {
-        internal FrameObject(string frameName)
+        JObject _o;
+        public FrameObject()
         {
-            RootValue = new JObject();
-            FrameName = frameName;
+            _o = new JObject();
         }
-
-        internal FrameObject(string frameName, JObject rootValue)
-        {
-            RootValue = rootValue;
-            FrameName = frameName;
-        }
-
-        internal string FrameName { get; private set; }
 
         private FrameObject(JObject o)
         {
-            RootValue = o;
-            FrameName = null;
+            _o = o;
         }
-
-        internal JObject RootValue { get; }
 
 
         #region --SetValue--
@@ -46,7 +35,7 @@ namespace FrameIO.Run
         //设置数值型字段
         public void SetValue(string segname, object value)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = LookUpObject(segs);
             o.Add(new JProperty(segs[segs.Length - 1], value));
@@ -57,7 +46,7 @@ namespace FrameIO.Run
         public void SetValueArray(string segname, IEnumerable values)
         {
             var vs = new JArray();
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = LookUpObject(segs);
             foreach (var ov in values)
@@ -70,10 +59,10 @@ namespace FrameIO.Run
         //设置对象字段
         public void SetObject(string segname, FrameObject ovalue)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = LookUpObject(segs);
-            o.Add(segs[segs.Length - 1], ovalue.RootValue);
+            o.Add(segs[segs.Length - 1], ovalue._o);
         }
 
 
@@ -81,12 +70,12 @@ namespace FrameIO.Run
         public void SetObjectArray(string segname, IEnumerable<FrameObject> ovalues)
         {
             var vs = new JArray();
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = LookUpObject(segs);
             foreach (var ov in ovalues)
             {
-                vs.Add(ov.RootValue);
+                vs.Add(ov._o);
             }
             o.Add(segs[segs.Length - 1], vs);
         }
@@ -100,7 +89,7 @@ namespace FrameIO.Run
 
         public FrameObject GetObject(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             o = (JObject)o[segs[segs.Length - 1]];
@@ -109,7 +98,7 @@ namespace FrameIO.Run
 
         public IEnumerable<FrameObject> GetObjectArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             var arr = (JArray)o[segs[segs.Length - 1]];
@@ -119,7 +108,7 @@ namespace FrameIO.Run
 
         public bool GetBool(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<bool>();
@@ -127,7 +116,7 @@ namespace FrameIO.Run
 
         public IEnumerable<bool> GetBoolArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<bool>();
@@ -135,7 +124,7 @@ namespace FrameIO.Run
 
         public byte GetByte(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<byte>();
@@ -143,7 +132,7 @@ namespace FrameIO.Run
 
         public IEnumerable<byte> GetByteArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<byte>();
@@ -151,7 +140,7 @@ namespace FrameIO.Run
 
         public sbyte GetSByte(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<sbyte>();
@@ -159,7 +148,7 @@ namespace FrameIO.Run
 
         public IEnumerable<sbyte> GetSByteArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<sbyte>();
@@ -167,7 +156,7 @@ namespace FrameIO.Run
 
         public short GetShort(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<short>();
@@ -175,7 +164,7 @@ namespace FrameIO.Run
 
         public IEnumerable<short> GetShortArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<short>();
@@ -183,7 +172,7 @@ namespace FrameIO.Run
 
         public ushort GetUShort(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<ushort>();
@@ -191,7 +180,7 @@ namespace FrameIO.Run
 
         public IEnumerable<ushort> GetUShortArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<ushort>();
@@ -199,7 +188,7 @@ namespace FrameIO.Run
 
         public int GetInt(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<int>();
@@ -207,7 +196,7 @@ namespace FrameIO.Run
 
         public IEnumerable<int> GetIntArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<int>();
@@ -215,7 +204,7 @@ namespace FrameIO.Run
 
         public uint GetUInt(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<uint>();
@@ -223,7 +212,7 @@ namespace FrameIO.Run
 
         public IEnumerable<uint> GetUIntArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<uint>();
@@ -231,7 +220,7 @@ namespace FrameIO.Run
 
         public long GetLong(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<long>();
@@ -239,7 +228,7 @@ namespace FrameIO.Run
 
         public IEnumerable<long> GetLongArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<long>();
@@ -247,7 +236,7 @@ namespace FrameIO.Run
 
         public ulong GetULong(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<ulong>();
@@ -255,7 +244,7 @@ namespace FrameIO.Run
 
         public IEnumerable<ulong> GetULongArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<ulong>();
@@ -263,7 +252,7 @@ namespace FrameIO.Run
 
         public float GetFloat(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<float>();
@@ -272,7 +261,7 @@ namespace FrameIO.Run
 
         public IEnumerable<float> GetFloatArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<float>();
@@ -281,7 +270,7 @@ namespace FrameIO.Run
 
         public double GetDouble(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<double>();
@@ -290,7 +279,7 @@ namespace FrameIO.Run
 
         public IEnumerable<double> GetDoubleArray(string segname)
         {
-            var o = RootValue;
+            var o = _o;
             var segs = segname.Split('.');
             if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<double>();
@@ -303,13 +292,13 @@ namespace FrameIO.Run
 
         public override string ToString()
         {
-            return RootValue.ToString();
+            return _o.ToString();
         }
 
         //查找已经存在的Object
         private JObject FindObject(string[] segs)
         {
-            var ret = RootValue;
+            var ret = _o;
             for (int i = 0; i < segs.Length - 1; i++)
                 ret = (JObject)ret[segs[i]];
             return ret;
@@ -319,7 +308,7 @@ namespace FrameIO.Run
         //查找Object，如果没有则创建
         private JObject LookUpObject(string[] segs)
         {
-            var ret = RootValue;
+            var ret = _o;
             for (int i = 0; i < segs.Length - 1; i++)
             {
                 if (ret.ContainsKey(segs[i]))
@@ -332,11 +321,6 @@ namespace FrameIO.Run
                 }
             }
             return ret;
-        }
-
-        public object GetFrameObject()
-        {
-            return RootValue;
         }
 
         #endregion

@@ -48,10 +48,10 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --For UnPack--
+        #region --For Unpack--
 
         //解包
-        ISegRun UnPack(IFrameReadBuffer buff, JObject parent);
+        ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
 
 
         //获取所需位长度
@@ -121,7 +121,7 @@ namespace FrameIO.Run
         protected abstract void InitialFromJson(JObject o);
 
         public abstract ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
-        public abstract ISegRun UnPack(IFrameReadBuffer buff, JObject parent);
+        public abstract ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
         public abstract int GetBitLen(JObject parent);
 
         public abstract bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);

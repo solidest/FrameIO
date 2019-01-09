@@ -13,7 +13,7 @@ namespace FrameIO.Run
         bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue);
         int GetItemBitLen(JObject parent, JToken theValue);
         ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue);
-        ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
+        ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
     }
 
     internal class SegRunArrayWrapper
@@ -40,10 +40,17 @@ namespace FrameIO.Run
             return _item.Next;
         }
 
-        public ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
+        public ISegRun Unpack(IFrameReadBuffer buff, JObject parent)
         {
-            var my = parent[_item.Name]?.Value<JArray>();
+            int repeated = 0;
+            if (parent == null)
+            {
+                var pos = (StopPosition)buff.StopPosition;
+                parent = pos.Parent;
+                repeated = pos.Index;
+            }
 
+            var my = parent[_item.Name]?.Value<JArray>();
             if(my == null)
             {
                 my = new JArray();
@@ -51,35 +58,19 @@ namespace FrameIO.Run
             }
 
             var len = _arrLen.GetLong(parent, _item.Parent);
-            int repeated = 0;
-
-            if (my == null)
-            {
-                my = new JArray();
-                parent.Add(_item.Name, my);
-            }
-            else
-            {
-                repeated = buff.LoadRepeated(my);
-            }
 
             for (int i=repeated; i<len; i++)
             {
-                repeated = i;
-                if (!buff.CanRead) break;
-                var ret = _item.UnPackItem(buff, parent, my, i<my.Count?my[i]:null);
+                if (!buff.CanRead)
+                {
+                    buff.StopPosition = new StopPosition() { Parent = parent, Index = repeated };
+                    return _item;
+                }
+                var ret = _item.UnpackItem(buff, parent, my, i<my.Count?my[i]:null);
                 Debug.Assert(ret == _item.Next);
             }
 
-            if (repeated == len - 1)
-            {
-                return _item.Next;
-            }
-            else
-            {
-                buff.SaveRepeated(my, repeated);
-                return _item;
-            }
+            return _item.Next;
 
         }
 

@@ -90,7 +90,7 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --UnPack--
+        #region --Unpack--
 
         internal override object FromRaw(ulong v)
         {
@@ -124,6 +124,12 @@ namespace FrameIO.Run
             var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
             if (_encoded != EncodedTypeEnum.Primitive) uv = (_encoded == EncodedTypeEnum.Complement ? GetComplement(uv) : GetInversion(uv));
             return uv;
+
+        }
+
+        protected override void DoValid(IFrameReadBuffer buff, SegRunValue seg, JToken value)
+        {
+            _valid.Valid(buff, seg, value);
 
         }
 

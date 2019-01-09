@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F4F37E33-C1D6-49D4-B05F-1B98A0395828}</ProjectGuid>
+    <ProjectGuid>{EEEF0D71-5A3A-4E46-AFFF-74CD55CFA394}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FrameIO.Run</RootNamespace>
-    <AssemblyName>FrameIORun</AssemblyName>
+    <AssemblyName>FrameIORunNet</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -45,34 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelOption.cs" />
-    <Compile Include="FrameBuffer\FrameRecvBuffer.cs" />
-    <Compile Include="FrameBuffer\FrameSendBuffer.cs" />
-    <Compile Include="FrameBuffer\SliceReader.cs" />
     <Compile Include="FrameObject.cs" />
-    <Compile Include="FramePacker.cs" />
-    <Compile Include="FrameUnPacker.cs" />
-    <Compile Include="Helper\CRCHelper.cs" />
-    <Compile Include="Helper\Enums.cs" />
-    <Compile Include="Helper\Helper.cs" />
-    <Compile Include="Helper\IExpRun.cs" />
-    <Compile Include="Helper\IValidate.cs" />
-    <Compile Include="FrameBuffer\SliceWriter.cs" />
-    <Compile Include="FrameBuffer\IFrameBuffer.cs" />
-    <Compile Include="Helper\StopPosition.cs" />
-    <Compile Include="IOChannel.cs" />
-    <Compile Include="IORunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SegmengRun\ISegRun.cs" />
-    <Compile Include="SegmengRun\ISegArrayable.cs" />
-    <Compile Include="SegmengRun\SegRunGroup.cs" />
-    <Compile Include="SegmengRun\SegRunContainer.cs" />
-    <Compile Include="SegmengRun\SegRunFrame.cs" />
-    <Compile Include="SegmengRun\SegRunInteger.cs" />
-    <Compile Include="SegmengRun\SegRunOneOfGroup.cs" />
-    <Compile Include="SegmengRun\SegRunOneOfItem.cs" />
-    <Compile Include="SegmengRun\SegRunReal.cs" />
-    <Compile Include="SegmengRun\SegRunValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FrameIODriver\FrameIODriver.csproj">

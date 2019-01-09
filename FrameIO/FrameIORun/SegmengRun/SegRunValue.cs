@@ -16,6 +16,7 @@ namespace FrameIO.Run
         //取字段的内存流
         internal abstract ulong GetRaw(IFrameWriteBuffer buff, JValue v);
         internal abstract object FromRaw(ulong v);
+        protected abstract void DoValid(IFrameReadBuffer buff, SegRunValue seg, JToken value);
 
         //取自动计算值
         internal abstract JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent);
@@ -67,18 +68,18 @@ namespace FrameIO.Run
 
         #endregion
 
-        #region --UnPack--
+        #region --Unpack--
 
-        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
+        public override ISegRun Unpack(IFrameReadBuffer buff, JObject parent)
         {
-            Debug.Assert(parent != null);
-            return _isarr ? _arr.UnPack(buff, parent) : UnPackItem(buff, parent, null, null);
+            return _isarr ? _arr.Unpack(buff, parent) : UnpackItem(buff, parent, null, null);
         }
 
 
-        public ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
+        public ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
-            Debug.Assert(parent != null && theValue == null);
+            if (parent == null) parent = ((StopPosition)buff.StopPosition).Parent;
+            Debug.Assert(theValue == null);
             var vt = new JValue(0);
             var raw = buff.Read(BitLen, vt);
             vt.Value = FromRaw(raw);
@@ -86,6 +87,7 @@ namespace FrameIO.Run
                 arr.Add(vt);
             else
                 parent.Add(Name, vt);
+            DoValid(buff, this, vt);
             return Next;
         }
 

@@ -71,10 +71,17 @@ namespace FrameIO.Run
         #endregion
 
 
-        #region --UnPack--
+        #region --Unpack--
 
-        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
+        public override ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
+            if(parent == null)
+            {
+                Debug.Assert(arr == null);
+                parent = ((StopPosition)buff.StopPosition).Parent;
+                theValue = parent[Name];
+            }
+
             var my = theValue?.Value<JObject>();
             if (my == null)
             {
@@ -86,12 +93,17 @@ namespace FrameIO.Run
             }
 
             var p = First;
-            while (p != null && buff.CanRead)
+            while (p != null)
             {
-                p = p.UnPack(buff, my);
+                if(!buff.CanRead)
+                {
+                    buff.StopPosition = new StopPosition() { Parent = parent };
+                    return p;
+                }
+                p = p.Unpack(buff, my);
             }
 
-            return p ?? Next;
+            return Next;
         }
 
         public override bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)

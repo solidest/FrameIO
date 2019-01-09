@@ -18,15 +18,13 @@ namespace FrameIO.Run
 
     interface IFrameReadBuffer
     {
-        void Append(byte[] cach);
 
         bool CanRead { get;  }
         ulong Read(int bitLen, object token);
 
         int GetBytePos(object token);
 
-        void SaveRepeated(object token, int index);
-        int LoadRepeated(object token);
+        object StopPosition { get; set; }
 
         byte[] GetBuffer();
     }
