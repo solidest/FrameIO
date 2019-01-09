@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +69,8 @@ namespace FrameIO.Run
 
         internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
-            double d = _value?.GetDouble(parent, Parent) ?? 0;
+            Debug.Assert(_value != null);
+            double d = _value.GetDouble(parent, Parent);
             return new JValue(d);
         }
 
