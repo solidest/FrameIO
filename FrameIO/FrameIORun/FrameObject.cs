@@ -11,8 +11,7 @@ namespace FrameIO.Run
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+
 
 
     public class FrameObject : Interface.ISegmentGettor
@@ -23,11 +22,6 @@ namespace FrameIO.Run
             FrameName = frameName;
         }
 
-        internal FrameObject(string frameName, JObject rootValue)
-        {
-            RootValue = rootValue;
-            FrameName = frameName;
-        }
 
         internal string FrameName { get; private set; }
 
@@ -334,7 +328,7 @@ namespace FrameIO.Run
             return ret;
         }
 
-        public object GetFrameObject()
+        public object RootObject()
         {
             return RootValue;
         }

@@ -15,7 +15,7 @@ namespace FrameIO.Run
         private int  _appendCount;
         private SegRunFrame _f;
         private ISegRun _segPos;
-        private FrameObject _rootv;
+        public FrameObject RootValue { get; private set; }
 
         internal FrameUnpacker(string frameName)
         {
@@ -23,7 +23,7 @@ namespace FrameIO.Run
             _segPos = _f;
             _b = new FrameRecvBuffer();
             _appendCount = 0;
-            _rootv = new FrameObject(frameName);
+            RootValue = new FrameObject(frameName);
         }
 
         public int FirstBlockSize => _f.GetFirstNeedBytes();
@@ -33,7 +33,7 @@ namespace FrameIO.Run
             if (_appendCount == 0 && !_f.IsMatch(buffer)) return FirstBlockSize;
             _appendCount += 1;
             _b.Append(buffer);
-            _segPos = _f.UnpackFrom(_segPos, _b, _rootv.RootValue);
+            _segPos = _f.UnpackFrom(_segPos, _b, RootValue.RootValue);
 
             if (_segPos == null) return 0;
 
@@ -50,7 +50,7 @@ namespace FrameIO.Run
 
         public ISegmentGettor Unpack()
         {
-            return _rootv;
+            return RootValue;
         }
 
     }

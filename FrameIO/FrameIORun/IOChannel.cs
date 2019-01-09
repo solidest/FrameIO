@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,6 @@ namespace FrameIO.Run
             _ch = ch;
             _ch.InitConfig(ops.Options);
         }
-
 
         public bool IsOpen { get => _ch.IsOpen(); }
 
@@ -42,7 +42,11 @@ namespace FrameIO.Run
 
         public FrameObject RecvFrame(string frameName)
         {
-            return (FrameObject)_ch.ReadFrame(new FrameUnpacker(frameName));
+            var res = new FrameUnpacker(frameName);
+            var o = _ch.ReadFrame(res);
+            Debug.Assert(o == res.RootValue);
+            return res.RootValue;
+
         }
     }
 }

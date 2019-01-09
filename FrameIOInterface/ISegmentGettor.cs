@@ -14,7 +14,7 @@ namespace FrameIO.Interface
         /// 获取子数据帧的数据读取接口
         /// </summary>
         /// <returns>解析后的数据帧对象</returns>
-        object GetFrameObject();
+        object RootObject();
     }
 
 }
