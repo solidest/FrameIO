@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,11 @@ namespace FrameIO.Run
         #region --Array--
 
         private SegRunArrayWrapper _arr;
-        public bool IsArray { get; private set; } = false;
+        private bool _isarr = false;
 
         protected void InitialArray(JObject o)
         {
-            IsArray = true;
+            _isarr = true;
             _arr = new SegRunArrayWrapper(this, o);
         }
 
@@ -37,24 +38,26 @@ namespace FrameIO.Run
         //打包
         public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
-            return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent, parent?[Name]);
+            return _isarr ? _arr.Pack(buff, parent) : PackItem(buff, parent, null, parent?[Name]);
         }
 
-        public ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
+        public ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
             if (theValue == null)
             {
                 theValue = GetAutoValue(buff, parent);
+                if (arr != null)
+                    arr.Add(theValue);
+                else
+                    parent.Add(theValue);
             }
             buff.Write(GetRaw(buff, (JValue)theValue), BitLen, theValue);
             return Next;
         }
 
-
-        //取位长
         public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent?[Name]);
+            return _isarr ? _arr.GetBitLen(parent) : BitLen;
         }
 
         public int GetItemBitLen(JObject parent, JToken theValue)
@@ -66,19 +69,21 @@ namespace FrameIO.Run
 
         #region --UnPack--
 
-        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue)
+        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
         {
-            return IsArray ? _arr.UnPack(buff, parent, parent[Name]) : UnPackItem(buff, parent, parent[Name], null);
+            Debug.Assert(parent != null);
+            return _isarr ? _arr.UnPack(buff, parent) : UnPackItem(buff, parent, null, null);
         }
 
 
-        public ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
+        public ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
-            var vt = (JValue)theValue ?? (new JValue(0));
+            Debug.Assert(parent != null && theValue == null);
+            var vt = new JValue(0);
             var raw = buff.Read(BitLen, vt);
             vt.Value = FromRaw(raw);
-            if (mycontainer != null)
-                mycontainer.Add(vt);
+            if (arr != null)
+                arr.Add(vt);
             else
                 parent.Add(Name, vt);
             return Next;
@@ -86,14 +91,15 @@ namespace FrameIO.Run
 
 
         //尝试取比特位长
-        public override bool TryGetBitLen(ref int len, JObject parent)
+        public override bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent, parent?[Name]);
+            return _isarr ? _arr.GetNeedBitLen(ref len, out next, parent) : GetItemNeedBitLen(ref len, out next, parent, parent?[Name]);
         }
 
-        public bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
+        public bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
         {
             len += BitLen;
+            next = Next;
             return true;
         }
 

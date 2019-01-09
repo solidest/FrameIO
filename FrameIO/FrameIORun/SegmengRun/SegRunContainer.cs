@@ -10,8 +10,12 @@ namespace FrameIO.Run
         private Dictionary<string, ISegRun> _segs;
 
         internal abstract protected string ItemsListToken { get; }
-
         internal abstract protected SegmentTypeEnum GetItemType(JObject o);
+        public abstract int GetItemBitLen(JObject parent, JToken theValu);
+        public abstract bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue);
+        public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue);
+        public abstract ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
+
 
         internal SegRunContainer()
         {
@@ -30,11 +34,11 @@ namespace FrameIO.Run
         #region --Array--
 
         private SegRunArrayWrapper _arr;
-        public bool IsArray { get; private set; } = false;
+        private bool _isarr  = false;
 
         protected void InitialArray(JObject o)
         {
-            IsArray = true;
+            _isarr = true;
             _arr = new SegRunArrayWrapper(this, o);
         }
 
@@ -42,28 +46,23 @@ namespace FrameIO.Run
 
         #region --Pack && UnPack--
 
-        public abstract int GetItemBitLen(JObject parent, JToken theValu);
-        public abstract bool TryGetItemBitLen(ref int len, JObject parent, JToken theValu);
-        public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue);
-        public abstract ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer);
-
         public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
-            return IsArray ? _arr.Pack(buff, parent) : PackItem(buff, parent, parent?[Name]);
+            return _isarr ? _arr.Pack(buff, parent) : PackItem(buff, parent, null, parent[Name]);
         }
-        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue)
+        public override ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
         {
-            return IsArray ? _arr.UnPack(buff, parent, parent[Name]) : UnPackItem(buff, parent, parent[Name], null);
+            return _isarr ? _arr.UnPack(buff, parent) : UnPackItem(buff, parent, null, parent[Name]);
         }
 
         public override int GetBitLen(JObject parent)
         {
-            return IsArray ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent[Name]);
+            return _isarr ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent[Name]);
         }
 
-        public override bool TryGetBitLen(ref int len, JObject parent)
+        public override bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent)
         {
-            return IsArray ? _arr.TryGetBitLen(ref len, parent) : TryGetItemBitLen(ref len, parent, parent?[Name]);
+            return _isarr ? _arr.GetNeedBitLen(ref len, out next, parent) : GetItemNeedBitLen(ref len, out next, parent, parent?[Name]);
         }
 
 

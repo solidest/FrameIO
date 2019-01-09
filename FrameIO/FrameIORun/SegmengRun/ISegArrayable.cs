@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,11 +10,10 @@ namespace FrameIO.Run
 {
     internal interface ISegArrayable : ISegRun
     {
-        bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue);
+        bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue);
         int GetItemBitLen(JObject parent, JToken theValue);
-        ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue);
-        ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer);
-        bool IsArray { get; }
+        ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue);
+        ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
     }
 
     internal class SegRunArrayWrapper
@@ -29,23 +29,31 @@ namespace FrameIO.Run
 
         public ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
         {
-            var vs = GetMyValues(parent);
+            int len = 0;
+            var vs = GetMyValues(parent, out len);
 
-            for (int i = 0; i < vs.Count; i++)
+            for (int i = 0; i < len; i++)
             {
-                _item.PackItem(buff, parent, vs[i]);
+                _item.PackItem(buff, parent, vs, i<vs.Count?vs[i]:null);
             }
 
             return _item.Next;
         }
 
-        public ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue)
+        public ISegRun UnPack(IFrameReadBuffer buff, JObject parent)
         {
-            JArray my = theValue?.Value<JArray>();
+            var my = parent[_item.Name]?.Value<JArray>();
+
+            if(my == null)
+            {
+                my = new JArray();
+                parent.Add(_item.Name, my);
+            }
+
             var len = _arrLen.GetLong(parent, _item.Parent);
             int repeated = 0;
 
-            if(my == null)
+            if (my == null)
             {
                 my = new JArray();
                 parent.Add(_item.Name, my);
@@ -57,61 +65,77 @@ namespace FrameIO.Run
 
             for (int i=repeated; i<len; i++)
             {
-                if (!buff.CanRead) break;
-                _item.UnPackItem(buff, parent,i<my.Count?my[i]:null, my);
                 repeated = i;
+                if (!buff.CanRead) break;
+                var ret = _item.UnPackItem(buff, parent, my, i<my.Count?my[i]:null);
+                Debug.Assert(ret == _item.Next);
             }
+
             if (repeated == len - 1)
+            {
                 return _item.Next;
+            }
             else
+            {
+                buff.SaveRepeated(my, repeated);
                 return _item;
+            }
 
         }
 
         public int GetBitLen(JObject parent)
         {
-            var vs = GetMyValues(parent);
+            int len = 0;
+            var vs = GetMyValues(parent, out len);
             int ret = 0;
-            for(int i=0; i<vs.Count; i++)
+            for(int i=0; i<len; i++)
             {
-                ret += _item.GetItemBitLen(parent, vs[i]);
+                ret += _item.GetItemBitLen(parent, i<vs.Count?vs[i]:null);
             }
             return ret;
         }
 
-        public bool TryGetBitLen(ref int len, JObject parent)
+        public bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent)
         {
+            next = _item;
             long repeated = 0;
             var vs = parent?[_item.Name]?.Value<JArray>();
-            if (!_arrLen.TryGetLong(parent, _item.Parent, ref repeated))
+            if (!_arrLen.HaveValue(parent, _item))
+            {
                 return false;
-
-            int mylen = 0;
+            }
 
             for (int i = 0; i < repeated; i++)
             {
-                if (!_item.TryGetItemBitLen(ref mylen, parent, vs?[i]))
+                int mylen = 0;
+                ISegRun nullnext = null;
+                if (!_item.GetItemNeedBitLen(ref mylen, out nullnext, parent, vs?[i]))
                 {
-                    len += mylen;
                     return false;
                 }
+                else
+                {
+                    len += mylen;
+                }
             }
-            len += mylen;
+
+            next = _item.Next;
             return true;
         }
 
-        private JArray GetMyValues(JObject parent)
+        private JArray GetMyValues(JObject parent, out int len)
         {
             var vs = parent?[_item.Name]?.Value<JArray>();
-            int len = (int)_arrLen.GetLong(parent, _item.Parent);
+            len = (int)_arrLen.GetLong(parent, _item.Parent);
 
             if (vs == null)
             {
-                _item.LogError(Interface.FrameIOErrorType.SendErr, "数组未初始化");
+                vs = new JArray();
+                parent.Add(_item.Name, vs);
             }
             else if (vs.Count != len)
             {
-                _item.LogError(Interface.FrameIOErrorType.SendErr, "数组初始化长度错误");
+                _item.LogError(Interface.FrameIOErrorType.SendErr, "数组长度错误");
             }
             return vs;
         }

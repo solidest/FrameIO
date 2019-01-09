@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,13 +49,14 @@ namespace FrameIO.Run
         public override int GetItemBitLen(JObject parent, JToken theValue)
         {
             var select = GetOneItem(parent);
-            return select.GetItemBitLen(theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+            return select.GetItemBitLen(theValue?.Value<JObject>(), theValue?[select.Name]?.Value<JObject>());
         }
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
+            Debug.Assert(theValue != null);
             var select = GetOneItem(parent);
-            select.PackItem(buff, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+            select.PackItem(buff, theValue.Value<JObject>(), null, theValue[select.Name]?.Value<JObject>());
             return Next;
         }
 
@@ -66,27 +68,28 @@ namespace FrameIO.Run
         #region --UnPack--
 
 
-        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
+        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
             var select = GetOneItem(parent);
             JObject myov = theValue?.Value<JObject>();
             if(myov == null)
             {
                 myov = new JObject();
-                if (mycontainer != null)
-                    mycontainer.Add(myov);
+                if (arr != null)
+                    arr.Add(myov);
                 else
                     parent.Add(Name, myov);
             }
-            var ret = select.UnPackItem(buff, myov, myov?[select.Name].Value<JObject>(), null);
+            var ret = select.UnPackItem(buff, myov, null, myov[select.Name]?.Value<JObject>());
             return ret??Next;
         }
 
-        public override bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
+        public override bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
         {
-            var select = GetOneItem( parent);
+            next = this;
+            var select = GetOneItem(parent);
             if (select == null) return false;
-            return select.TryGetItemBitLen( ref len, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+            return select.GetItemNeedBitLen( ref len, out next, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
         }
 
         #endregion

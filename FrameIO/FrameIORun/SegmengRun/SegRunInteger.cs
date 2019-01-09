@@ -75,7 +75,6 @@ namespace FrameIO.Run
 
         internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
-            if (IsArray) return new JValue(0);
             if(_value != null)
             {
                 return new JValue(_value.GetLong(parent, Parent));

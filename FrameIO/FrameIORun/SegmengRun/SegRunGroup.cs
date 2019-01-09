@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,12 +36,21 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
+        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
+            var my = theValue?.Value<JObject>();
+            if(my == null)
+            {
+                my = new JObject();
+                if (arr != null)
+                    arr.Add(my);
+                else
+                    parent.Add(Name, my);
+            }
             var seg = First;
             while (seg != null)
             {
-                seg = seg.Pack(buff, theValue.Value<JObject>());
+                seg = seg.Pack(buff, my);
             }
             return Next;
         }
@@ -48,11 +58,11 @@ namespace FrameIO.Run
         public override int GetItemBitLen(JObject parent, JToken theValue)
         {
             int ret = 0;
-
+            var my = theValue?.Value<JObject>();
             var p = First;
             while (p != null)
             {
-                ret += p.GetBitLen(theValue?.Value<JObject>());
+                ret += p.GetBitLen(my);
                 p = p.Next;
             }
             return ret;
@@ -63,36 +73,39 @@ namespace FrameIO.Run
 
         #region --UnPack--
 
-        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JToken theValue, JArray mycontainer)
+        public override ISegRun UnPackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
         {
             var my = theValue?.Value<JObject>();
             if (my == null)
             {
                 my = new JObject();
-                if (mycontainer == null)
-                    parent.Add(Name, my);
+                if (arr != null)
+                    arr.Add(my);
                 else
-                    mycontainer.Add(my);
+                    parent.Add(Name, my);
             }
 
             var p = First;
             while (p != null && buff.CanRead)
             {
-                p = p.UnPack(buff, my, my[p.Name]);
+                p = p.UnPack(buff, my);
             }
 
             return p ?? Next;
         }
 
-        public override bool TryGetItemBitLen(ref int len, JObject parent, JToken theValue)
+        public override bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
         {
-
             var p = First;
             while (p != null)
             {
-                if (!TryGetBitLen(ref len, theValue?.Value<JObject>())) return false;
+                if (!GetNeedBitLen(ref len, out next, theValue?.Value<JObject>()))
+                {
+                    return false;
+                }
                 p = p.Next;
             }
+            next = Next;
             return true;
         }
 

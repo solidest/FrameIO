@@ -51,11 +51,11 @@ namespace FrameIO.Run
         #region --For UnPack--
 
         //解包
-        ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue);
+        ISegRun UnPack(IFrameReadBuffer buff, JObject parent);
 
 
-        //尝试取字段长度
-        bool TryGetBitLen(ref int len, JObject parent);
+        //获取所需位长度
+        bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
 
 
         #endregion
@@ -118,13 +118,14 @@ namespace FrameIO.Run
         public SegRunFrame Root { get; set; }
 
 
-        public abstract int GetBitLen(JObject parent);
+        protected abstract void InitialFromJson(JObject o);
 
         public abstract ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
+        public abstract ISegRun UnPack(IFrameReadBuffer buff, JObject parent);
+        public abstract int GetBitLen(JObject parent);
 
-        public abstract bool TryGetBitLen(ref int len, JObject parent);
+        public abstract bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
 
-        protected abstract void InitialFromJson(JObject o);
 
         public virtual void LogError(Interface.FrameIOErrorType type, string info)
         {
@@ -135,7 +136,6 @@ namespace FrameIO.Run
             throw new Interface.FrameIOException(type, pos.ToString(), info);
         }
 
-        public abstract ISegRun UnPack(IFrameReadBuffer buff, JObject parent, JToken theValue);
 
 
     }
