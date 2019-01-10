@@ -32,6 +32,13 @@ namespace FrameIO.Run
             _odd = _odd.WriteAppend(_cach, SliceWriter.GetSlice(rawValue, bitLen));
         }
 
+        public void Write(byte[] buff, object token)
+        {
+            if(!_odd.IsEmpty) throw new Exception("runtime 数据帧字段未能整字节对齐");
+            _pos.Add(token, (int)_cach.Position * 8 + _odd.BitLen);
+            _cach.Write(buff, 0, buff.Length);
+        }
+
         //结束写入
         public byte[] Flush()
         {

@@ -11,19 +11,16 @@ namespace FrameIO.Run
     {
         private MemoryStream _cach;
         private SliceReader _sr;
-        private Dictionary<object, int> _repeateds;
+
         private Dictionary<object, int> _pos;
 
         public bool CanRead => !_sr.IsEmpty;
-
-        public object StopPosition { get; set; }
 
 
         public FrameRecvBuffer()
         {
             _cach = new MemoryStream();
             _sr = new SliceReader(null);
-            _repeateds = new Dictionary<object, int>();
             _pos = new Dictionary<object, int>();
         }
 
@@ -33,10 +30,18 @@ namespace FrameIO.Run
             _cach.Write(cach, 0, cach.Length);
         }
 
-        public ulong Read(int bitLen, object token)
+        public ulong ReadBits(int bitLen, object token)
         {
             _pos.Add(token, (int)_cach.Position * 8 - _sr.NotReadBitLen);
             return _sr.ReadBits(bitLen);
+        }
+
+       
+        public byte[] ReadBytes(int byteLen, object token)
+        {
+            _pos.Add(token, (int)_cach.Position * 8 - _sr.NotReadBitLen);
+            if (!_sr.CanReadBytes(byteLen)) throw new Exception("unknow");
+            return _sr.ReadBytes(byteLen);
         }
 
         public byte[] GetBuffer()
@@ -51,17 +56,6 @@ namespace FrameIO.Run
             return bitpos / 8;
         }
 
-        public void SaveRepeated(object token, int index)
-        {
-            if (_repeateds.ContainsKey(token))
-                _repeateds[token] = index;
-            else
-                _repeateds.Add(token, index);
-        }
 
-        public int LoadRepeated(object token)
-        {
-            return _repeateds[token];
-        }
     }
 }

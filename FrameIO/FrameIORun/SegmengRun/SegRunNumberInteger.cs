@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Run
 {
     //整数字段
-    internal class SegRunInteger : SegRunValue
+    internal class SegRunInteger : SegRunNumber
     {
         private bool _signed;
         private int _bitcount;
@@ -20,7 +20,7 @@ namespace FrameIO.Run
         private SegmentCheckValidator _check;
 
 
-        internal override int BitLen { get => _bitcount; }
+        public override int BitLen { get => _bitcount; }
 
         #region --Initial--
 
@@ -74,27 +74,13 @@ namespace FrameIO.Run
             return ret;
         }
 
-        internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
-        {
-            Debug.Assert(_value != null || _check!=null);
-            if (_value != null)
-            {
-                return new JValue(_value.GetLong(parent, Parent));
-            }
-            else if(_check != null)
-            {
-                return new JValue(_check.GetCheckResult(buff, parent, Parent));
-            }
-            return new JValue(0);
-        }
-
         #endregion
 
         #region --Unpack--
 
         internal override object FromRaw(ulong v)
         {
-            
+
             if (_byteorder == ByteOrderTypeEnum.Big)
             {
                 v = GetBigOrder(v);
@@ -112,7 +98,6 @@ namespace FrameIO.Run
 
         }
 
-
         #endregion
 
         #region --Helper--
@@ -127,11 +112,34 @@ namespace FrameIO.Run
 
         }
 
-        protected override void DoValid(IFrameReadBuffer buff, SegRunValue seg, JToken value)
+        protected override void DoValid(IFrameReadBuffer buff, SegRunNumber seg, JToken value)
         {
             _valid.Valid(buff, seg, value);
 
         }
+
+        public override JToken GetDefaultValue()
+        {
+            return new JValue(0);
+        }
+
+
+        public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
+        {
+
+            if (_value != null)
+            {
+                return new JValue(_value.GetLong(parent, Parent));
+            }
+            else if (_check != null)
+            {
+                return new JValue(_check.GetCheckResult(buff, parent, Parent));
+            }
+            LogError(Interface.FrameIOErrorType.SendErr, "未赋值");
+            return GetDefaultValue();
+        }
+
+
 
 
         #endregion

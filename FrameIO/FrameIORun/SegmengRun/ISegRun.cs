@@ -7,67 +7,80 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-
     internal interface ISegRun
     {
-        
-        #region --For Initial--
 
         //名称
         string Name { get; }
-
-        //父级容器
-        SegRunContainer Parent { get; }
-
-        //下一个兄弟
-        ISegRun Next { get; }
-
-        //上一个兄弟
-        ISegRun Previous { get; }
-
-        //第一个子字段
-        ISegRun First { get; }
-
-        //最后一个子字段
-        ISegRun Last { get; }
-
-        //根数据帧
-        SegRunFrame Root { get;  }
-
-
-        #endregion
-
-        #region --For Pack--
-
-        //打包
-        ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
-
-
-        //取位长度
         int GetBitLen(JObject parent);
-
-        #endregion
-
-        #region --For Unpack--
-
-        //解包
-        ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
-
-
-        //获取所需位长度
-        bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
-
-
-        #endregion
-
-        //记录错误信息
-        void LogError(Interface.FrameIOErrorType type, string info);
 
     }
 
+    //internal interface ISegRun
+    //{
+
+    //    #region --For Initial--
+
+
+    //    //父级容器
+    //    SegRunContainer Parent { get; }
+
+    //    //下一个兄弟
+    //    ISegRun Next { get; }
+
+    //    //上一个兄弟
+    //    ISegRun Previous { get; }
+
+    //    //第一个子字段
+    //    ISegRun First { get; }
+
+    //    //最后一个子字段
+    //    ISegRun Last { get; }
+
+    //    //根数据帧
+    //    SegRunFrame Root { get;  }
+
+
+    //    #endregion
+
+    //    #region --For Pack--
+
+    //    //打包
+    //    ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
+
+
+    //    //取位长度
+    //    int GetBitLen(JObject parent);
+
+    //    #endregion
+
+
+    //    //解包
+    //    ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
+
+
+    //    //获取所需位长度
+    //    bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
+
+    //    #region --For Unpack--
+
+    //    ISegRunValue GetFirstValueSeg();
+
+    //    #endregion
+
+    //    //记录错误信息
+    //    void LogError(Interface.FrameIOErrorType type, string info);
+
+    //}
+
     //运行时字段的基类
+
     internal abstract class  SegRunBase : ISegRun
     {
+        public abstract void Pack(IFrameWriteBuffer buff, JObject parent, JToken theValue);
+        public abstract JToken GetDefaultValue();
+        public abstract JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent);
+        public string Name { get; set; }
 
         #region --Const Token--
         internal const string FRAMELIST_TOKEN = "FrameList";
@@ -103,29 +116,34 @@ namespace FrameIO.Run
 
         #endregion
 
-        public string Name { get; set; }
+        public abstract bool IsArray { get; }
+
 
         public SegRunContainer Parent { get; set; }
 
-        public ISegRun Next { get; set; }
+        public SegRunBase Next { get; set; }
 
-        public ISegRun Previous { get; set; }
+        public SegRunBase Previous { get; set; }
 
-        public ISegRun First { get; set; }
+        public SegRunBase First { get; set; }
 
-        public ISegRun Last { get; set; }
+        public SegRunBase Last { get; set; }
 
-        public SegRunFrame Root { get; set; }
+        public SegRunBase Root { get; set; }
 
 
         protected abstract void InitialFromJson(JObject o);
 
-        public abstract ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
-        public abstract ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
+
+        //protected abstract SegRunBase Unpack(IFrameReadBuffer buff, JObject parent);
+
         public abstract int GetBitLen(JObject parent);
 
-        public abstract bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
+        //自上而下查找首个值字段 同时初始化所有parent
+        public abstract bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue);
 
+
+        //protected abstract bool GetNeedBitLen(ref int len, out SegRunBase next, JObject parent);
 
         public virtual void LogError(Interface.FrameIOErrorType type, string info)
         {
@@ -136,7 +154,14 @@ namespace FrameIO.Run
             throw new Interface.FrameIOException(type, pos.ToString(), info);
         }
 
-
+        static public JObject GetValueParent(JToken v)
+        {
+            if (v.Parent == null) return null;
+            if (v.Parent.Type == JTokenType.Array)
+                return v.Parent.Parent.Value<JObject>();
+            else
+                return v.Parent.Value<JObject>();
+        }
 
     }
 

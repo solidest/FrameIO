@@ -12,8 +12,11 @@ namespace FrameIO.Run
     internal class SegRunOneOfGroup : SegRunContainer
     {
         private string _byseg;
+        private IExpRun _arrLen;
 
         protected internal override string ItemsListToken => ONEOFLIST_TOKEN;
+
+        public override bool IsArray => _arrLen!=null;
 
 
         #region --Initial--
@@ -24,7 +27,7 @@ namespace FrameIO.Run
             var ret = new SegRunOneOfGroup();
             ret.Name = name;
             ret.InitialFromJson(o);
-            if (isArray) ret.InitialArray(o);
+            if (isArray) ret._arrLen = Helper.GetExp(o[ARRAYLEN_TOKEN]);
             return ret;
         }
 
@@ -43,23 +46,36 @@ namespace FrameIO.Run
         #endregion
 
 
-
         #region --Pack--
 
-        public override int GetItemBitLen(JObject parent, JToken theValue)
+        public override void Pack(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            var select = GetOneItem(parent);
+            if (_arrLen != null)
+            {
+                SegRunArray.Pack(_arrLen, PackItem, this, buff, parent, (JArray)theValue);
+            }
+            else
+                PackItem(buff, parent, theValue);
+
+        }
+
+        public override int GetBitLen(JObject parent)
+        {
+            return (_arrLen != null) ? SegRunArray.GetBitLen(_arrLen, GetItemBitLen, this, parent) : GetItemBitLen(parent, parent[Name]);
+        }
+
+        public int GetItemBitLen(JObject parent, JToken theValue)
+        {
+            var select = SelectedOneItem(parent);
             return select.GetItemBitLen(theValue?.Value<JObject>(), theValue?[select.Name]?.Value<JObject>());
         }
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue)
+        private void PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
             Debug.Assert(theValue != null);
-            var select = GetOneItem(parent);
-            select.PackItem(buff, theValue.Value<JObject>(), null, theValue[select.Name]?.Value<JObject>());
-            return Next;
+            var select = SelectedOneItem(parent);
+            select.Pack(buff, theValue.Value<JObject>(), theValue[select.Name]);
         }
-
 
         #endregion
 
@@ -67,39 +83,98 @@ namespace FrameIO.Run
 
         #region --Unpack--
 
-
-        public override ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
+        //自下而上 分支执行完毕
+        public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
         {
-            var select = GetOneItem(parent);
-            JObject myov = theValue?.Value<JObject>();
-            if(myov == null)
+            var myp = GetValueParent(ctxOfChild);
+
+            //分支循环
+            if (IsArray && ctxOfChild.Next != null)
             {
-                myov = new JObject();
-                if (arr != null)
-                    arr.Add(myov);
-                else
-                    parent.Add(Name, myov);
+                var select = SelectedOneItem(myp);
+                var next = (JObject)ctxOfChild.Next;
+                return select.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, next, next);
             }
-            var ret = select.UnpackItem(buff, myov, null, myov[select.Name]?.Value<JObject>());
-            return ret??Next;
+
+
+            //向兄弟传递
+            if (Next != null)
+            {
+                return Next.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, myp, myp[Next.Name]);
+            }
+
+            //向上传递
+            if (Parent == null)
+            {
+                firstSeg = null;
+                pc = null;
+                repeated = 0;
+                return true;
+            }
+            else
+                return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, myp);
         }
 
-        public override bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
+
+        //自上而下 进入分支
+        public override bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue)
         {
-            next = this;
-            var select = GetOneItem(parent);
-            if (select == null) return false;
-            return select.GetItemNeedBitLen( ref len, out next, theValue?.Value<JObject>(), theValue?[select.Name].Value<JObject>());
+            //无法继续
+            var select = SelectedOneItem(ctx);
+            if (select==null || IsArray && !_arrLen.CanCalc(ctx, this))
+            {
+                firstSeg = null;
+                pc = ctx;
+                repeated = 0;
+                return false;
+            }
+
+            //空白
+            if (First == null)
+            {
+                LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
+            }
+
+            //初始化自身
+            JObject myselect = null;
+
+            if (theValue == null)
+            {
+                var my = new JObject();
+                ctx.Add(Name, my);
+                if (IsArray)
+                {
+                    var arr = new JArray();
+                    for (int i = 0; i < _arrLen.GetInt(ctx, this); i++)
+                    {
+                        arr.Add(new JObject());
+                    }
+                    my.Add(select.Name, arr);
+                    myselect = (JObject)arr.First;
+                }
+                else
+                {
+                    myselect = new JObject();
+                    ctx.Add(Name, my);
+                    my.Add(select.Name, myselect);
+                }
+            }
+            else
+                myselect = (JObject)((JObject)theValue)[select.Name];
+
+            //向下查找
+            return select.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, (JObject)theValue, myselect);
         }
+
 
         #endregion
 
         #region --Helper--
 
-        private SegRunOneOfItem GetOneItem(JObject parent)
+        private SegRunOneOfItem SelectedOneItem(JObject ctx)
         {
-            if (parent == null || !parent.ContainsKey(_byseg)) return null;
-            var byv = parent[_byseg].Value<long>();
+            if (ctx == null || !ctx.ContainsKey(_byseg)) return null;
+            var byv = ctx[_byseg].Value<long>();
             var it = (SegRunOneOfItem)First;
             while(it!=null)
             {
@@ -111,6 +186,17 @@ namespace FrameIO.Run
             }
             return null;
         }
+
+        public override JToken GetDefaultValue()
+        {
+            return new JObject();
+        }
+
+        public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
+        {
+            return GetDefaultValue();
+        }
+
 
         #endregion
     }

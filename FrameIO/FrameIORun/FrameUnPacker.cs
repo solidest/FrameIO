@@ -9,43 +9,34 @@ using Newtonsoft.Json.Linq;
 
 namespace FrameIO.Run
 {
-    internal class FrameUnpacker : FrameIO.Interface.IFrameUnpack
+    internal class FrameUnpacker : IFrameUnpack
     {
         private FrameRecvBuffer _b;
         private int  _appendCount;
         private SegRunFrame _f;
-        private ISegRun _segPos;
-        public FrameObject RootValue { get; private set; }
+        private FrameSegValueQueue _qq;
+        public FrameObject RootValue { get; }
+
 
         internal FrameUnpacker(string frameName)
         {
+            RootValue = new FrameObject(frameName);
             _f = IORunner.GetFrame(frameName);
-            _segPos = _f;
+            _qq = new FrameSegValueQueue(_f, RootValue.RootValue);
             _b = new FrameRecvBuffer();
             _appendCount = 0;
-            RootValue = new FrameObject(frameName);
         }
 
-        public int FirstBlockSize => _f.GetFirstNeedBytes();
+
+        public int FirstBlockSize => _qq.FirstBytesLen;
 
         public int AppendBlock(byte[] buffer)
         {
             if (_appendCount == 0 && !_f.IsMatch(buffer)) return FirstBlockSize;
             _appendCount += 1;
             _b.Append(buffer);
-            _segPos = _f.UnpackFrom(_segPos, _b, RootValue.RootValue);
-
-            if (_segPos == null) return 0;
-
-            int needBitlen = 0;
-            ISegRun next = _segPos;
-            while(next != null)
-            {
-                _segPos.GetNeedBitLen(ref needBitlen, out next, null);
-            }
-            Debug.Assert(needBitlen != 0);
-            if(needBitlen%8!=0) throw new Exception("runtime 数据帧字段未能整字节对齐");
-            return needBitlen / 8;
+            _qq.Unpack(_b);
+            return _qq.GetNextBlockSize();
         }
 
         public ISegmentGettor Unpack()

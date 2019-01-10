@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FrameIO.Run
 {
     //小数字段
-    internal class SegRunReal : SegRunValue
+    internal class SegRunReal : SegRunNumber
     {
         private bool _isdouble;
         private ByteOrderTypeEnum _byteorder;
@@ -17,7 +17,7 @@ namespace FrameIO.Run
         private IExpRun _value;
         private Validete _valid = new Validete();
 
-        internal override int BitLen { get => _isdouble?64:32; }
+        public override int BitLen { get => _isdouble?64:32; }
 
         #region --Initial--
 
@@ -67,13 +67,6 @@ namespace FrameIO.Run
         }
 
 
-        internal override JValue GetAutoValue(IFrameWriteBuffer buff, JObject parent)
-        {
-            Debug.Assert(_value != null);
-            double d = _value.GetDouble(parent, Parent);
-            return new JValue(d);
-        }
-
         #endregion
 
 
@@ -98,9 +91,25 @@ namespace FrameIO.Run
 
         }
 
-        protected override void DoValid(IFrameReadBuffer buff, SegRunValue seg, JToken value)
+        protected override void DoValid(IFrameReadBuffer buff, SegRunNumber seg, JToken value)
         {
             _valid.Valid(buff, seg, value);
+        }
+
+        public override JToken GetDefaultValue()
+        {
+            return new JValue(0.0);
+        }
+
+        public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
+        {
+            if (_value == null)
+            {
+                LogError(Interface.FrameIOErrorType.SendErr, "未赋值");
+                return GetDefaultValue();
+            }
+            else
+                return new JValue(_value.GetDouble(parent, this));
         }
 
 

@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelOption.cs" />
+    <Compile Include="FrameBuffer\FrameSegValueQueue.cs" />
     <Compile Include="FrameBuffer\FrameRecvBuffer.cs" />
     <Compile Include="FrameBuffer\FrameSendBuffer.cs" />
     <Compile Include="FrameBuffer\SliceReader.cs" />
@@ -59,20 +60,21 @@
     <Compile Include="Helper\IValidate.cs" />
     <Compile Include="FrameBuffer\SliceWriter.cs" />
     <Compile Include="FrameBuffer\IFrameBuffer.cs" />
-    <Compile Include="Helper\StopPosition.cs" />
     <Compile Include="IOChannel.cs" />
     <Compile Include="IORunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SegmengRun\ISegRun.cs" />
     <Compile Include="SegmengRun\ISegArrayable.cs" />
+    <Compile Include="SegmengRun\SegRunValue.cs" />
     <Compile Include="SegmengRun\SegRunGroup.cs" />
     <Compile Include="SegmengRun\SegRunContainer.cs" />
     <Compile Include="SegmengRun\SegRunFrame.cs" />
-    <Compile Include="SegmengRun\SegRunInteger.cs" />
+    <Compile Include="SegmengRun\SegRunNumberInteger.cs" />
     <Compile Include="SegmengRun\SegRunOneOfGroup.cs" />
     <Compile Include="SegmengRun\SegRunOneOfItem.cs" />
-    <Compile Include="SegmengRun\SegRunReal.cs" />
-    <Compile Include="SegmengRun\SegRunValue.cs" />
+    <Compile Include="SegmengRun\SegRunNumberReal.cs" />
+    <Compile Include="SegmengRun\SegRunNumber.cs" />
+    <Compile Include="SegmengRun\SegRunBytes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FrameIODriver\FrameIODriver.csproj">

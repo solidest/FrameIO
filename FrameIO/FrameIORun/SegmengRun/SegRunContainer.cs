@@ -5,24 +5,20 @@ using System.Collections.Generic;
 namespace FrameIO.Run
 {
     //运行时字段的容器
-    internal abstract class SegRunContainer : SegRunBase, ISegArrayable
+    internal abstract class SegRunContainer : SegRunBase
     {
         private Dictionary<string, ISegRun> _segs;
 
         internal abstract protected string ItemsListToken { get; }
         internal abstract protected SegmentTypeEnum GetItemType(JObject o);
-        public abstract int GetItemBitLen(JObject parent, JToken theValu);
-        public abstract bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue);
-        public abstract ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue);
-        public abstract ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue);
 
 
-        internal SegRunContainer()
+        public SegRunContainer()
         {
             _segs = new Dictionary<string, ISegRun>();
         }
 
-        internal ISegRun this[string segname]
+        public ISegRun this[string segname]
         {
             get
             {
@@ -30,44 +26,16 @@ namespace FrameIO.Run
             }
         }
 
+        #region --Unpack--
 
-        #region --Array--
+        //public abstract void PrepareUnpack(ISegRun childSeg, JToken childValue, JContainer theValue, out JContainer nextValue);
+        //public abstract bool GetNextNeedUnpackValueSeg(out SegRunValue nextSeg, out int index, SegRunBase childSeg, JToken childValue);
 
-        private SegRunArrayWrapper _arr;
-        private bool _isarr  = false;
-
-        protected void InitialArray(JObject o)
-        {
-            _isarr = true;
-            _arr = new SegRunArrayWrapper(this, o);
-        }
-
-        #endregion
-
-        #region --Pack && Unpack--
-
-        public override ISegRun Pack(IFrameWriteBuffer buff, JObject parent)
-        {
-            return _isarr ? _arr.Pack(buff, parent) : PackItem(buff, parent, null, parent[Name]);
-        }
-        public override ISegRun Unpack(IFrameReadBuffer buff, JObject parent)
-        {
-            return _isarr ? _arr.Unpack(buff, parent) : UnpackItem(buff, parent, null, parent?[Name]);
-        }
-
-        public override int GetBitLen(JObject parent)
-        {
-            return _isarr ? _arr.GetBitLen(parent) : GetItemBitLen(parent, parent[Name]);
-        }
-
-        public override bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent)
-        {
-            return _isarr ? _arr.GetNeedBitLen(ref len, out next, parent) : GetItemNeedBitLen(ref len, out next, parent, parent?[Name]);
-        }
+        //子节点全部查找完毕，父节点继续查找下一数值字段
+        public abstract bool  LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild);
 
 
         #endregion
-
 
         #region --Initial--
 
@@ -117,7 +85,6 @@ namespace FrameIO.Run
         }
 
         #endregion
-
 
         #region --Helper--
 

@@ -37,7 +37,7 @@ namespace FrameIO.Run
                 case JTokenType.Float:
                     return new ExpDoubleValue(t.Value<double>());
                 case JTokenType.String:
-                    return new ExpStringValue(t.Value<string>());
+                    return new ExpIdValue(t.Value<string>());
             }
             throw new Exception("unknow");
 

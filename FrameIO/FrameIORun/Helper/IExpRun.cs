@@ -22,19 +22,24 @@ namespace FrameIO.Run
         public bool IsThis => false;
 
 
-        public double GetDouble(JObject vParent, ISegRun theSeg)
+        public double GetDouble(JObject ctx, ISegRun theSeg)
         {
             return _v;
         }
 
-        public long GetLong(JObject vParent, ISegRun theSeg)
+        public long GetLong(JObject ctx, ISegRun theSeg)
         {
             return _v;
         }
 
-        public bool HaveValue(JObject vParent, ISegRun theSeg)
+        public bool CanCalc(JObject ctx, ISegRun theSeg)
         {
             return true;
+        }
+
+        public int GetInt(JObject ctx, ISegRun theSeg)
+        {
+            return (int)_v;
         }
     }
 
@@ -54,29 +59,34 @@ namespace FrameIO.Run
         public bool IsThis => false;
 
 
-        public double GetDouble(JObject vParent, ISegRun theSeg)
+        public double GetDouble(JObject ctx, ISegRun theSeg)
         {
             return _v;
         }
 
-        public long GetLong(JObject vParent, ISegRun theSeg)
+        public long GetLong(JObject ctx, ISegRun theSeg)
         {
             return (long)_v;
         }
 
-        public bool HaveValue(JObject vParent, ISegRun theSeg)
+        public bool CanCalc(JObject ctx, ISegRun theSeg)
         {
             return true;
         }
+
+        public int GetInt(JObject ctx, ISegRun theSeg)
+        {
+            return (int)_v;
+        }
     }
 
-    internal class ExpStringValue : IExpRun
+    internal class ExpIdValue : IExpRun
     {
-        private string _v;
+        private string _id;
 
-        public ExpStringValue(string v)
+        public ExpIdValue(string v)
         {
-            _v = v;
+            _id = v;
         }
 
         public bool IsConst => false;
@@ -86,21 +96,25 @@ namespace FrameIO.Run
         public bool IsThis => false;
 
 
-        public double GetDouble(JObject vParent, ISegRun theSeg)
+        public double GetDouble(JObject ctx, ISegRun theSeg)
         {
-            return vParent[_v].Value<double>();
+            return ctx[_id].Value<double>();
         }
 
-        public long GetLong(JObject vParent, ISegRun theSeg)
+        public long GetLong(JObject ctx, ISegRun theSeg)
         {
-            return vParent[_v].Value<long>();
+            return ctx[_id].Value<long>();
         }
 
-        public bool HaveValue(JObject vParent, ISegRun theSeg)
+        public bool CanCalc(JObject ctx, ISegRun theSeg)
         {
-            return (vParent != null && vParent.ContainsKey(_v));
+            return (ctx != null && ctx.ContainsKey(_id));
         }
 
+        public int GetInt(JObject ctx, ISegRun theSeg)
+        {
+            return ctx[_id].Value<int>();
+        }
     }
 
     internal class ExpCalc : IExpRun
@@ -122,32 +136,36 @@ namespace FrameIO.Run
 
         public bool IsThis => false;
 
-        public double GetDouble(JObject vParent, ISegRun theSeg)
+        public double GetDouble(JObject ctx, ISegRun theSeg)
         {
             switch (_t)
             {
                 case ExpCalcType.EXP_ADD:
-                    return _left.GetDouble(vParent, theSeg) + _right.GetDouble(vParent, theSeg);
+                    return _left.GetDouble(ctx, theSeg) + _right.GetDouble(ctx, theSeg);
                 case ExpCalcType.EXP_SUB:
-                    return _left.GetDouble(vParent, theSeg) - _right.GetDouble(vParent, theSeg);
+                    return _left.GetDouble(ctx, theSeg) - _right.GetDouble(ctx, theSeg);
                 case ExpCalcType.EXP_MUL:
-                    return _left.GetDouble(vParent, theSeg) * _right.GetDouble(vParent, theSeg);
+                    return _left.GetDouble(ctx, theSeg) * _right.GetDouble(ctx, theSeg);
                 case ExpCalcType.EXP_DIV:
-                    return _left.GetDouble(vParent, theSeg) / _right.GetDouble(vParent, theSeg);
+                    return _left.GetDouble(ctx, theSeg) / _right.GetDouble(ctx, theSeg);
             }
             throw new Exception("unknow");
         }
 
-        public long GetLong(JObject vParent, ISegRun theSeg)
+        public long GetLong(JObject ctx, ISegRun theSeg)
         {
-            return (long)GetDouble(vParent, theSeg);
+            return (long)GetDouble(ctx, theSeg);
         }
 
-        public bool HaveValue(JObject vParent, ISegRun theSeg)
+        public bool CanCalc(JObject ctx, ISegRun theSeg)
         {
-            return _left.HaveValue(vParent, theSeg) && _right.HaveValue(vParent, theSeg);
+            return _left.CanCalc(ctx, theSeg) && _right.CanCalc(ctx, theSeg);
         }
-        
+
+        public int GetInt(JObject ctx, ISegRun theSeg)
+        {
+            return (int)GetDouble(ctx, theSeg);
+        }
     }
 
     internal class ExpByteSizeOf : IExpRun
@@ -160,25 +178,28 @@ namespace FrameIO.Run
         public bool IsConst => false;
 
         public bool IsIntOne => false;
-
         public bool IsThis => (_seg == "this");
 
-        public double GetDouble(JObject vParent, ISegRun theSeg)
+        public bool CanCalc(JObject ctx, ISegRun theSeg)
         {
-            return GetLong(vParent, theSeg);
+            return true;
         }
 
-        public long GetLong(JObject vParent, ISegRun theSeg)
+        public double GetDouble(JObject ctx, ISegRun theSeg)
         {
-            var len = theSeg.GetBitLen(vParent);
+            return GetLong(ctx, theSeg);
+        }
+
+        public int GetInt(JObject ctx, ISegRun theSeg)
+        {
+            var len = theSeg.GetBitLen(ctx);
             if (len % 8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
             return len / 8;
         }
 
-        public bool HaveValue(JObject vParent, ISegRun theSeg)
+        public long GetLong(JObject ctx, ISegRun theSeg)
         {
-            int len = 0;
-            return theSeg.GetNeedBitLen(ref len, out theSeg, vParent);
+            return GetInt(ctx, theSeg);
         }
 
     }
@@ -190,11 +211,10 @@ namespace FrameIO.Run
         bool IsConst { get; }
         bool IsIntOne { get; }
         bool IsThis { get; }
-
-        long GetLong(JObject vParent, ISegRun theSeg);
-        double GetDouble(JObject vParent, ISegRun theSeg);
-
-        bool HaveValue(JObject vParent, ISegRun theSeg);
+        bool CanCalc(JObject ctx, ISegRun theSeg);
+        long GetLong(JObject ctx, ISegRun theSeg);
+        int GetInt(JObject ctx, ISegRun theSeg);
+        double GetDouble(JObject ctx, ISegRun theSeg);
     }
 
     //计算类型

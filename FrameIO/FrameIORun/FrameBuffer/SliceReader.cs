@@ -53,8 +53,22 @@ namespace FrameIO.Run
             return ret;
         }
 
+        public byte[] ReadBytes(int byteLen)
+        {
+            if (_bytePos == 0 && _bitOdd == 0 && _cach.Length == byteLen)
+                return _cach;
+            //HACK read bytes
+            return null;
+        }
+
 
         public bool IsEmpty { get => ( _bitOdd == 0 && _bytePos == (_cach?.Length??0)); }
+
         public int NotReadBitLen { get => (_cach.Length - _bytePos) * 8 - _bitOdd;  }
+
+        public bool CanReadBytes(int byteLen)
+        {
+            return NotReadBitLen >= byteLen * 8;
+        }
     }
 }

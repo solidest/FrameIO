@@ -10,7 +10,7 @@ namespace FrameIO.Run
     interface IFrameWriteBuffer
     {
         void Write(ulong rawValue, int bitLen, object token);
-
+        void Write(byte[] buff, object token);
         int GetBytePos(object token);
 
         byte[] GetBuffer();
@@ -18,13 +18,13 @@ namespace FrameIO.Run
 
     interface IFrameReadBuffer
     {
-
         bool CanRead { get;  }
-        ulong Read(int bitLen, object token);
+
+        ulong ReadBits(int bitLen, object token);
+
+        byte[] ReadBytes(int byteLen, object token);
 
         int GetBytePos(object token);
-
-        object StopPosition { get; set; }
 
         byte[] GetBuffer();
     }

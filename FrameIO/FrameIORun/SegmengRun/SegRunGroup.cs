@@ -12,7 +12,9 @@ namespace FrameIO.Run
     internal class SegRunGroup : SegRunContainer
     {
         protected internal override string ItemsListToken => SEGMENTLIST_TOKEN;
+        public override bool IsArray  => _arrLen != null;
 
+        private IExpRun _arrLen;
 
         #region --Initial--
 
@@ -22,7 +24,7 @@ namespace FrameIO.Run
             var ret = new SegRunGroup();
             ret.Name = name;
             ret.InitialFromJson(o);
-            if (isArray) ret.InitialArray(o);
+            if(isArray) ret._arrLen = Helper.GetExp(o[ARRAYLEN_TOKEN]);
             return ret;
         }
 
@@ -36,33 +38,54 @@ namespace FrameIO.Run
 
         #region --Pack--
 
-        public override ISegRun PackItem(IFrameWriteBuffer buff, JObject parent, JArray arr, JToken theValue)
+        public override void Pack(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            var my = theValue?.Value<JObject>();
-            if(my == null)
+            if (_arrLen != null)
             {
-                my = new JObject();
-                if (arr != null)
-                    arr.Add(my);
-                else
-                    parent.Add(Name, my);
+                SegRunArray.Pack(_arrLen, PackItem, this, buff, parent, (JArray)theValue);
             }
+            else
+                PackItem(buff, parent, theValue);
+
+        }
+
+
+        private void PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
+        {
+            var my = (JObject)theValue;
             var seg = First;
             while (seg != null)
             {
-                seg = seg.Pack(buff, my);
+                var tv = my[seg.Name];
+                if(tv == null)
+                {
+                    tv = seg.GetAutoValue(buff, parent);
+                    my.Add(seg.Name, tv);
+                }
+                seg.Pack(buff, my, tv);
             }
-            return Next;
         }
 
-        public override int GetItemBitLen(JObject parent, JToken theValue)
+
+        public override JToken GetDefaultValue()
         {
+            return new JObject();
+        }
+
+        public override int GetBitLen(JObject parent)
+        {
+            return (_arrLen !=null) ? SegRunArray.GetBitLen(_arrLen, GetItemBitLen, this, parent) : GetItemBitLen(parent, parent[Name]);
+        }
+
+        public int GetItemBitLen(JObject parent, JToken theValue)
+        {
+            if (theValue == null) return 0;
             int ret = 0;
-            var my = theValue?.Value<JObject>();
+            
             var p = First;
             while (p != null)
             {
-                ret += p.GetBitLen(my);
+                ret += p.GetBitLen(parent);
                 p = p.Next;
             }
             return ret;
@@ -70,55 +93,202 @@ namespace FrameIO.Run
 
         #endregion
 
-
         #region --Unpack--
 
-        public override ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
+        //子节点完毕 查找下一个兄弟
+        public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
         {
-            if(parent == null)
+            var myp = GetValueParent(ctxOfChild);
+
+            //自身传递
+            if (IsArray && ctxOfChild.Next != null)
             {
-                Debug.Assert(arr == null);
-                parent = ((StopPosition)buff.StopPosition).Parent;
-                theValue = parent[Name];
+                return LookUpFirstValueSeg(out firstSeg, out pc, out repeated, myp, ctxOfChild.Next);
             }
 
-            var my = theValue?.Value<JObject>();
-            if (my == null)
+            //向兄弟传递
+            if(Next != null)
             {
-                my = new JObject();
-                if (arr != null)
-                    arr.Add(my);
-                else
-                    parent.Add(Name, my);
+                return Next.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, myp, myp[Next.Name]);
             }
 
-            var p = First;
-            while (p != null)
+            //向上传递
+            if (Parent == null)
             {
-                if(!buff.CanRead)
-                {
-                    buff.StopPosition = new StopPosition() { Parent = parent };
-                    return p;
-                }
-                p = p.Unpack(buff, my);
+                firstSeg = null;
+                pc = null;
+                repeated = 0;
+                return true;
             }
-
-            return Next;
+            else
+                return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, myp);
         }
 
-        public override bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
+
+        //自上而下查找
+        public override bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue)
         {
-            var p = First;
-            while (p != null)
+            //无法继续
+            if(IsArray && !_arrLen.CanCalc(ctx, this))
             {
-                if (!GetNeedBitLen(ref len, out next, theValue?.Value<JObject>()))
-                {
-                    return false;
-                }
-                p = p.Next;
+                firstSeg = null;
+                pc = ctx;
+                repeated = 0;
+                return false;
             }
-            next = Next;
-            return true;
+
+            //空白
+            if (First == null)
+            {
+                LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
+            }
+
+            //初始化自身
+            JObject my = null;
+
+            if (theValue == null)
+            {
+                if (IsArray)
+                {
+                    var arr = new JArray();
+                    for (int i = 0; i < _arrLen.GetInt(ctx, this); i++)
+                    {
+                        arr.Add(new JObject());
+                    }
+                    ctx.Add(Name, arr);
+                    my = (JObject)arr.First;
+                }
+                else
+                {
+                    my = new JObject();
+                    ctx?.Add(Name, theValue);
+                }
+            }
+            else
+                my = (JObject)theValue;
+
+            //向下查找
+            return First.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, my, my[First.Name]);
+        }
+
+
+        ////准备解包
+        //public override void PrepareUnpack(ISegRun childSeg, JToken childValue, JContainer theValue, out JContainer nextValue)
+        //{
+        //    if (theValue == null)
+        //    {
+        //        if(_arrLen!=null)
+        //            theValue = new JArray();
+        //        else
+        //            theValue = new JObject();
+        //        Parent?.PrepareUnpack(this, theValue, null, out nextValue);
+        //    }
+
+
+        //    if (_arrLen != null)
+        //    {
+        //        if (theValue == null)
+        //        {
+        //            theValue = new JArray();
+        //            Parent?.PrepareUnpack(this, theValue, null, out nextValue);
+        //        }
+        //        theValue.Add(childValue);
+        //        int len = _arrLen.GetInt(theValue.Parent?.Value<JObject>(), this);
+        //        nextValue = (((JArray)theValue).Count == len) ? null : theValue;
+
+        //    }
+        //    else
+        //    {
+        //        if(theValue == null)
+        //        {
+        //            theValue = new JObject();
+        //            Parent?.PrepareUnpack(this, theValue, null, out nextValue);
+        //        }
+
+        //        ((JObject)theValue).Add(childSeg.Name, childValue);
+        //        nextValue = (childSeg == Last) ? null : theValue;
+        //    }
+
+        //}
+
+        ////取下一个需要解包的值字段
+        //public override bool GetNextNeedUnpackValueSeg(out SegRunValue nextSeg, SegRunBase childSeg, JToken childValue)
+        //{
+        //    //体内循环
+        //    var seg = childSeg.Next;
+        //    while(seg != null)
+        //    {
+        //        if (!seg.LookUpFirstValueSeg(out nextSeg))
+        //            return false;
+        //        else
+        //        {
+        //            if (nextSeg != null)
+        //                return true;
+        //            else
+        //            {
+        //                seg = seg.Next;
+        //                continue;
+        //            }
+        //        }
+        //    }
+
+        //    //数组循环
+        //    if(_arrLen != null) return GetArrayNextValueSeg(out nextSeg, childValue);
+
+        //    //父级循环
+        //    return GetParentNextValueSeg(out nextSeg, GetValueParent(childValue.Parent));
+
+        //}
+
+        ////自身数组内找下一个需解包的值字段
+        //private bool GetArrayNextValueSeg(out SegRunValue nextSeg, JToken childValue)
+        //{
+        //    var arr = childValue.Parent.Value<JArray>();
+        //    var len = _arrLen.GetInt(GetValueParent(arr), this);
+
+        //}
+
+        ////跳转至父容器查找一个需解包的值字段
+        //private bool GetParentNextValueSeg(out SegRunValue nextSeg, JToken childValue)
+        //{
+        //    if (Parent == null)
+        //    {
+        //        nextSeg = null;
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return Parent.GetNextNeedUnpackValueSeg(out nextSeg, this, childValue.Parent);
+        //    }
+        //}
+
+        //public override bool LookUpFirstValueSeg(out SegRunValue nextSeg)
+        //{
+        //    var seg = First;
+        //    while (seg != null)
+        //    {
+        //        if (!seg.LookUpFirstValueSeg(out nextSeg))
+        //            return false;
+        //        else
+        //        {
+        //            if (nextSeg != null)
+        //                return true;
+        //            else
+        //            {
+        //                seg = seg.Next;
+        //                continue;
+        //            }
+        //        }
+        //    }
+
+        //    //空容器
+        //    nextSeg = null;
+        //    return true;
+        //}
+
+        public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
+        {
+            return GetDefaultValue();
         }
 
 
