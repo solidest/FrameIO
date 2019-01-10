@@ -135,15 +135,11 @@ namespace FrameIO.Run
         protected abstract void InitialFromJson(JObject o);
 
 
-        //protected abstract SegRunBase Unpack(IFrameReadBuffer buff, JObject parent);
-
         public abstract int GetBitLen(JObject parent);
 
         //自上而下查找首个值字段 同时初始化所有parent
         public abstract bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue);
 
-
-        //protected abstract bool GetNeedBitLen(ref int len, out SegRunBase next, JObject parent);
 
         public virtual void LogError(Interface.FrameIOErrorType type, string info)
         {

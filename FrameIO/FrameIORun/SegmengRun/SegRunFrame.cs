@@ -53,17 +53,6 @@ namespace FrameIO.Run
 
         #region --Helper--
 
-        //public int GetFirstNeedBytes()
-        //{
-        //    if (MatchHeaderBytesLen > 0) return MatchHeaderBytesLen;
-
-        //    int bitLen = 0;
-        //    ISegRun next = null;
-        //    GetNeedBitLen(ref bitLen, out next, null);
-        //    Debug.Assert(bitLen != 0);
-        //    if (bitLen % 8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
-        //    return bitLen / 8;
-        //}
 
         public bool IsMatch(byte[] header)
         {
@@ -75,13 +64,6 @@ namespace FrameIO.Run
             return BitConverter.ToUInt64(bff, 0) == _matchValue;
         }
 
-        //public ISegRun UnpackFrom(ISegRun fromSeg, IFrameReadBuffer buff, JObject rootValue)
-        //{
-        //    if (fromSeg == this)
-        //        return Unpack(buff, rootValue);
-        //    else
-        //        return fromSeg.Unpack(buff, null);
-        //}
 
         #endregion
 

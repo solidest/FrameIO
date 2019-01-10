@@ -28,9 +28,6 @@ namespace FrameIO.Run
 
         #region --Unpack--
 
-        //public abstract void PrepareUnpack(ISegRun childSeg, JToken childValue, JContainer theValue, out JContainer nextValue);
-        //public abstract bool GetNextNeedUnpackValueSeg(out SegRunValue nextSeg, out int index, SegRunBase childSeg, JToken childValue);
-
         //子节点全部查找完毕，父节点继续查找下一数值字段
         public abstract bool  LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild);
 

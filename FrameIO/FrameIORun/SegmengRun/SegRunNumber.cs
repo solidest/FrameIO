@@ -60,55 +60,6 @@ namespace FrameIO.Run
             return v;
         }
 
-        //public JValue PrepareUnpack(JContainer theParent, out JContainer nextParent)
-        //{
-        //    var ret = GetDefaultValue();
-        //    Parent.PrepareUnpack(this, ret, theParent, out nextParent);
-        //    return (JValue)ret;
-        //}
-
-        //public void Unpack(IFrameReadBuffer buff, JValue theValue)
-        //{
-        //    var raw = buff.ReadBits(BitLen, theValue);
-        //    theValue.Value = FromRaw(raw);
-        //}
-
-
-        //public override ISegRun Unpack(IFrameReadBuffer buff, JObject parent)
-        //{
-        //    return _isarr ? _arr.Unpack(buff, parent) : UnpackItem(buff, parent, null, null);
-        //}
-
-
-        //public ISegRun UnpackItem(IFrameReadBuffer buff, JObject parent, JArray arr, JToken theValue)
-        //{
-        //    if (parent == null) parent = ((StopPosition)buff.StopPosition).Parent;
-        //    Debug.Assert(theValue == null);
-        //    var vt = new JValue(0);
-        //    var raw = buff.ReadBits(BitLen, vt);
-        //    vt.Value = FromRaw(raw);
-        //    if (arr != null)
-        //        arr.Add(vt);
-        //    else
-        //        parent.Add(Name, vt);
-        //    DoValid(buff, this, vt);
-        //    return Next;
-        //}
-
-
-        ////尝试取比特位长
-        //public override bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent)
-        //{
-        //    return _isarr ? _arr.GetNeedBitLen(ref len, out next, parent) : GetItemNeedBitLen(ref len, out next, parent, parent?[Name]);
-        //}
-
-        //public bool GetItemNeedBitLen(ref int len, out ISegRun next, JObject parent, JToken theValue)
-        //{
-        //    len += BitLen;
-        //    next = Next;
-        //    return true;
-        //}
-
         #endregion
 
         #region --Helper--
@@ -142,13 +93,6 @@ namespace FrameIO.Run
             }
             return BitConverter.ToUInt64(newv, 0);
         }
-
-
-        //public override bool LookUpFirstValueSeg(out SegRunValue nextSeg)
-        //{
-        //    nextSeg = this;
-        //    return true;
-        //}
 
         #endregion
 
