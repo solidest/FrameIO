@@ -35,8 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -60,7 +61,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generator\CppScriptGenerator.cs" />
+    <Compile Include="Generator\ScriptCppGenerator.cs" />
     <Compile Include="Generator\FrameCompileJson.cs" />
     <Compile Include="Generator\FrameCompileBytes.cs" />
     <Compile Include="Generator\FrameIOCodeCheck.cs" />
@@ -69,7 +70,8 @@
     <Compile Include="Generator\FramesToJson.cs" />
     <Compile Include="Generator\ProjectToCode.cs" />
     <Compile Include="Generator\ScriptGenerator.cs" />
-    <Compile Include="Generator\SharpScriptGenerator.cs" />
+    <Compile Include="Generator\ScriptSharpGenerator.cs" />
+    <Compile Include="Helper\Config.cs" />
     <Compile Include="Helper\EnumList.cs" />
     <Compile Include="Helper\Exp.cs" />
     <Compile Include="Helper\ExpConverter.cs" />

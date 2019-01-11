@@ -58,6 +58,7 @@ namespace FrameIO.Main
             {
                 Title = "FrameIO - " +  Path.GetFileNameWithoutExtension(value);
                 __file = value;
+                FioConfig.LastFile = value;
             }
         }
 
@@ -284,11 +285,19 @@ namespace FrameIO.Main
             {
                 mainPanelBorder.Margin = new Thickness(0);
             }
+
+            //打开上次文件
+            FioConfig.LoadConfig(this);
+            if(FioConfig.LastFile != null && File.Exists(FioConfig.LastFile))
+            {
+                OpenProject(FioConfig.LastFile);
+            }
         }
 
         //窗口关闭之前
         private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            FioConfig.SaveConfig(this);
             if(_lastprojectid>0)
             {
                 _db.DeleteProject(_lastprojectid);
@@ -654,7 +663,7 @@ namespace FrameIO.Main
                     //FrameIOSharpCodeGenerator.GenerateSharpCodeFile(_project, this);
                     scriptor = new SharpScriptGenerator(_project, this);
                 else if (e.Parameter.ToString() == "cpp")
-                    scriptor = new CppScriptGenerator(_project, this);
+                    scriptor = new SharpScriptGenerator(_project, this);
                 scriptor.GenerateScriptFile();
             }
         }
@@ -698,14 +707,19 @@ namespace FrameIO.Main
             };
             if (ofd.ShowDialog() == true && ofd.FileName != FileName)
             {
-                tbPages.Items.Clear();
-                FileName = ofd.FileName;
-                edCode.Text = File.ReadAllText(FileName);
-                ResetCodeState();
-                OutText(string.Format("信息：打开文件【{0}】", FileName), true);
+                OpenProject(ofd.FileName);
             }
             UpdateEditMode();
             e.Handled = true;
+        }
+
+        private void OpenProject(string fileName)
+        {
+            tbPages.Items.Clear();
+            FileName = fileName;
+            edCode.Text = File.ReadAllText(FileName);
+            ResetCodeState();
+            OutText(string.Format("信息：打开文件【{0}】", FileName), true);
         }
 
         //新建

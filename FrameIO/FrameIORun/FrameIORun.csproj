@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelOption.cs" />
+    <Compile Include="Helper\ChannelOption.cs" />
     <Compile Include="FrameBuffer\FrameSegValueQueue.cs" />
     <Compile Include="FrameBuffer\FrameRecvBuffer.cs" />
     <Compile Include="FrameBuffer\FrameSendBuffer.cs" />
@@ -85,6 +85,9 @@
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

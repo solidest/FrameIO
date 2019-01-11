@@ -7,7 +7,7 @@
     <ProjectGuid>{EEEF0D71-5A3A-4E46-AFFF-74CD55CFA394}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FrameIO.Run</RootNamespace>
+    <RootNamespace>FrameIO.RunNet</RootNamespace>
     <AssemblyName>FrameIORunNet</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,8 +45,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrameObject.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Template_cs\TEnum.cs" />
+    <None Include="..\x64\Debug\Template_bak\TChannelInitial.cst">
+      <Link>Other\TChannelInitial.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TEnum.cst">
+      <Link>Other\TEnum.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TFrame.cst">
+      <Link>Other\TFrame.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TInnerClassGettor.cst">
+      <Link>Other\TInnerClassGettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TInnerClassSettor.cst">
+      <Link>Other\TInnerClassSettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TParameter.cst">
+      <Link>Other\TParameter.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TRecvAction.cst">
+      <Link>Other\TRecvAction.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TRecvLoopAction.cst">
+      <Link>Other\TRecvLoopAction.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSegmentGettor.cst">
+      <Link>Other\TSegmentGettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSegmentSettor.cst">
+      <Link>Other\TSegmentSettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSendAction.cst">
+      <Link>Other\TSendAction.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSwitchClassGettor.cst">
+      <Link>Other\TSwitchClassGettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSwitchClassSettor.cst">
+      <Link>Other\TSwitchClassSettor.cst</Link>
+    </None>
+    <None Include="..\x64\Debug\Template_bak\TSystem.cst">
+      <Link>Other\TSystem.cst</Link>
+    </None>
+    <None Include="Template_cs\TEnum.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cs\TFrames.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Template_cs\TFrames.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FrameIODriver\FrameIODriver.csproj">
@@ -56,6 +107,10 @@
     <ProjectReference Include="..\..\FrameIOInterface\FrameIOInterface.csproj">
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
+      <Project>{f4f37e33-c1d6-49d4-b05f-1b98a0395828}</Project>
+      <Name>FrameIORun</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

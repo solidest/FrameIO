@@ -16,41 +16,32 @@ namespace FrameIO.Main
         }
 
         protected override string Token => "cs";
-        protected override string FramesFileName => "Frames";
         protected override string DefaultExtension { get => "cs";}
 
-        protected override void CreateShareFile()
+        protected override IList<string> ConvertFramesCode(IList<string> base64List)
         {
-            return;
+            return base64List.Select(p => "\"" + p + "\",").ToList();
         }
 
-
-        protected override StringBuilder GetEnumFileContent(Enumdef em)
+        protected override void CreateSharedFile()
         {
-            var ret = new StringBuilder();
-
-            return ret;
-        }
-
-        protected override StringBuilder GetFramesFileContent(IList<string> framesjson)
-        {
-            var ret = new StringBuilder();
-
-            return ret;
+            //HACK
         }
 
         protected override StringBuilder GetInnerSubsysFileContent(InnerSubsys innersys)
         {
-            var ret = new StringBuilder();
+            //HACK
+            var code = new StringBuilder();
 
-            return ret;
+            return code;
         }
 
         protected override StringBuilder GetSubsysFileContent(Subsys subsys)
         {
-            var ret = new StringBuilder();
+            //HACK
+            var code = new StringBuilder();
 
-            return ret;
+            return code;
         }
     }
 }

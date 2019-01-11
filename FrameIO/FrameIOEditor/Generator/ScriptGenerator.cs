@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,50 +27,62 @@ namespace FrameIO.Main
 
         #region --abstract--
 
+        //代码类型标识
         protected abstract string Token { get; }
-        protected abstract string FramesFileName { get; }
+
+        //数据帧代码文件名
+        //protected abstract string FramesFileName { get; }
+
+        //默认扩展名
         protected abstract string DefaultExtension { get; }
-        protected abstract void CreateShareFile();
-        protected abstract StringBuilder GetFramesFileContent(IList<string> framesjson);
-        protected abstract StringBuilder GetEnumFileContent(Enumdef em);
+
+        //创建专有的共享类库文件
+        protected abstract void CreateSharedFile();
+
+        //数据帧文件内容转换
+        protected abstract IList<string> ConvertFramesCode(IList<string> base64List);
+
+
+        //子系统代码文件内容
         protected abstract StringBuilder GetInnerSubsysFileContent(InnerSubsys innersys);
+
+        //分系统代码文件内容
         protected abstract StringBuilder GetSubsysFileContent(Subsys subsys);
 
-
         #endregion
+
+        #region --start--
+
 
         public void GenerateScriptFile()
         {
             try
             {
                 var pjnames = _pj.Name.Split('.');
-                _path = _out.GetMainOutPath() + "\\" + pjnames[pjnames.Length-1] + "_" + Token;
+                _path = _out.GetMainOutPath() + "\\" + pjnames[pjnames.Length - 1] + "_" + Token;
 
                 //准备目录
                 PrepareDir();
 
                 //生成专有的共享文件
-                CreateShareFile();
+                CreateSharedFile();
 
                 //生成数据帧文件
-                CreateFile(FramesFileName, GetFramesFileContent(ToBase64List(_jframes.GetJsonString())));
+                CreateFramsFile();
 
                 //生成枚举
-                foreach (var emdef in _pj.EnumdefList)
-                {
-                    CreateFile(emdef.Name, GetEnumFileContent(emdef));
-                }
+                foreach (var emdef in _pj.EnumdefList) CreateEnumFile(emdef);
 
                 //生成子系统文件
-                foreach(var isys in _pj.InnerSubsysList)
+                foreach (var isys in _pj.InnerSubsysList)
                 {
-                    CreateFile(isys.Name, GetInnerSubsysFileContent(isys));
+                    OutFile(isys.Name, GetInnerSubsysFileContent(isys));
                 }
 
                 //生成分系统文件
-                foreach(var subsys in _pj.SubsysList)
+                foreach (var subsys in _pj.SubsysList)
                 {
-                    CreateFile(subsys.Name, GetSubsysFileContent(subsys));
+                    OutFile(subsys.Name, GetSubsysFileContent(subsys));
                 }
 
                 //GenerateSysFile(pj.SubsysList);
@@ -82,7 +95,225 @@ namespace FrameIO.Main
             }
         }
 
-        #region --Helper--
+
+
+        #endregion
+
+        #region --Config--
+
+        protected const string TPROJECT = "project";
+
+
+        #endregion
+
+        #region --数据帧--
+
+
+        private void CreateFramsFile()
+        {
+            var frms = _jframes.GetJsonString();
+            var cont = CompressBytes(Encoding.Default.GetBytes(frms));
+            var b64list = ToBase64List(cont);
+            
+            OutFile("TFrames", "Frames", "framesconfig", ConvertFramesCode(b64list), TPROJECT, _pj.Name);
+        }
+
+        #endregion
+
+        #region --枚举--
+
+        //生成枚举文件代码内容
+        protected virtual void CreateEnumFile(Enumdef em)
+        {
+            var code = em.ItemsList.Select(p => p.Name + (p.ItemValue.Length == 0 ? "," : (" = " + p.ItemValue + ","))).ToList();
+            OutFile("TEnum", em.Name, "enumlist", code,
+                TPROJECT, _pj.Name,
+                "enumname", em.Name);
+        }
+
+        #endregion
+
+        #region --子系统--
+
+
+
+        #endregion
+
+        #region --分系统--
+
+
+        #endregion
+
+        #region --Helper for file--
+
+
+        //创建文件
+        protected void OutFile(string templageName, string fileName, string token, IList<string> codelist, params string[] others)
+        {
+            var code = GetTemplateBuilder(templageName);
+            ReplaceText(code, token, codelist);
+
+            for(int i=0; i<others.Length; i+=2)
+            {
+                ReplaceText(code, others[i], others[i + 1]);
+            }
+            OutFile(fileName, code);
+        }
+
+
+        //输出文件
+        private void OutFile(string fname, StringBuilder content)
+        {
+            var fn = _path + "\\" + (fname.Split('.').Length > 1 ? fname : fname + "." + DefaultExtension);
+            var match = Regex.Match(content.ToString(), "<%.+%>");
+            while (match.Success)
+            {
+                content.Replace(match.Value, "");
+                match = match.NextMatch();
+            }
+            content.Replace("\t", "    ");
+            File.WriteAllText(fn, content.ToString());
+            _out.OutText(string.Format("信息：生成文件{0}", fn), false);
+        }
+
+
+        //取代码模板字符缓冲
+        protected StringBuilder GetTemplateBuilder(string tname)
+        {
+            return new StringBuilder(GetTemplate(tname));
+        }
+
+        //取代码模板
+        protected string GetTemplate(string tname)
+        {
+            return File.ReadAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\Template_" + Token + "\\" + tname + ".tpl");
+        }
+
+        //替换标识符字符串
+        protected void ReplaceText(StringBuilder code, string template_id, string new_id)
+        {
+            code.Replace("<%" + template_id + "%>", new_id);
+        }
+
+
+        //替换标识未字符串列表
+        protected void ReplaceText(StringBuilder code, string template_id, IList<string> new_list)
+        {
+            if (new_list.Count == 0) return;
+            var pre = new string(' ', GetEmptyBefore(code, template_id));
+            var str = new StringBuilder();
+
+            for (int i = 0; i < new_list.Count; i++)
+            {
+                str.Append((i==0?"":pre) + new_list[i] + (i == new_list.Count-1 ? "" : Environment.NewLine));
+            }
+            var script = str.ToString();
+            ReplaceText(code, template_id, script.EndsWith(",")? script.Substring(0, script.Length-1) : script);
+        }
+
+        //去掉最末位的字符
+        protected IList<string> RemoveLastChart(IList<string> list)
+        {
+            list[list.Count - 1] = list[list.Count - 1].Substring(0, list.Count - 1);
+            return list;
+        }
+
+
+        //查找标识前面的空格数量
+        protected int GetEmptyBefore(StringBuilder code, string template_id)
+        {
+            var script = code.ToString();
+            var match = Regex.Match(script, "<%" + template_id + "%>");
+            while (match.Success)
+            {
+                int pos = match.Index;
+                int ret = 0;
+                while(--pos>0)
+                {
+                    if (script[pos] == '\t')
+                        ret += 4;
+                    else if (script[pos] == ' ')
+                        ret += 1;
+                    else
+                        return ret;
+                }
+            }
+
+            throw new Exception("unknow");
+        }
+
+        //准备输出目录
+        private void PrepareDir()
+        {
+            if (!Path.HasExtension(_path))
+            {
+                Directory.CreateDirectory(_path);
+            }
+            else
+            {
+                ClearDir(_path);
+                Directory.CreateDirectory(_path);
+            }
+        }
+
+        private string[] extlist = new string[4] { "cs", "cpp", "h", "hpp" };
+
+        //删除目录下的文件
+        private void ClearDir(string dirpath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(dirpath);
+            FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
+            foreach (FileSystemInfo i in fileinfo)
+            {
+                if (i is FileInfo)
+                {
+                    if (extlist.Contains(i.Extension))
+                        File.Delete(i.FullName);
+                }
+            }
+        }
+
+        #endregion
+
+        #region --Helper for other--
+
+        //转换字符串为Base64数组
+        protected static IList<string> ToBase64List(byte[] data)
+        {
+            var ret = new List<string>();
+            var str = Convert.ToBase64String(data);
+            for (int i = 0; i < str.Length; i += 60)
+            {
+                if ((i + 60) >= str.Length)
+                {
+                    ret.Add(str.Substring(i));
+                }
+                else
+                {
+                    ret.Add(str.Substring(i, 60));
+                }
+            }
+            return ret;
+        }
+
+
+        //压缩内存
+        public static byte[] CompressBytes(byte[] bytes)
+        {
+            using (MemoryStream compressStream = new MemoryStream())
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Compress))
+                {
+                    zipStream.Write(bytes, 0, bytes.Length);
+                    zipStream.Close();
+                    return compressStream.ToArray();
+                }
+            }
+        }
+
+        #endregion
+
+        #region --Helper for script--
 
         //取通道类型
         protected string ToChannelType(syschanneltype chtype)
@@ -105,24 +336,6 @@ namespace FrameIO.Main
             return "";
         }
 
-        //转换字符串为Base64数组
-        protected static IList<string> ToBase64List(string data)
-        {
-            var ret = new List<string>();
-            var str = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(data));
-            for (int i = 0; i < str.Length; i += 60)
-            {
-                if ((i + 60) >= str.Length)
-                {
-                    ret.Add(str.Substring(i));
-                }
-                else
-                {
-                    ret.Add(str.Substring(i, 60));
-                }
-            }
-            return ret;
-        }
 
 
         //属性是否为数组
@@ -131,181 +344,7 @@ namespace FrameIO.Main
             return sys.Propertys.Where(p => (p.Name == proname && p.IsArray)).Count() > 0;
         }
 
-
-        //取代码模板
-        protected string GetTemplate(string tname)
-        {
-            return File.ReadAllText(System.AppDomain.CurrentDomain.BaseDirectory + "\\Template\\" + Token + "\\" + tname + ".tpl");
-        }
-
-        //替换标识符
-        protected void ReplaceText(StringBuilder code, string template_id, string new_id)
-        {
-            code.Replace("<%" + template_id + "%>", new_id);
-        }
-
-        protected void ReplaceText(StringBuilder code, string template_id, IList<string> new_list, int tab_count)
-        {
-            if (new_list.Count == 0) return;
-            var pre = new string('\t', tab_count);
-            var str = new StringBuilder(new_list[0]);
-
-            for (int i = 1; i < new_list.Count; i++)
-            {
-                str.Append(Environment.NewLine + pre + new_list[i]);
-            }
-            ReplaceText(code, template_id, str.ToString());
-        }
-
-
-        //生成代码文件
-        private void CreateFile(string fname, StringBuilder content)
-        {
-            var fn = _path + "\\" + (fname.Split('.').Length > 1 ? fname : fname + "." + DefaultExtension);
-            var match = Regex.Match(content.ToString(), "<%.+%>");
-            while (match.Success)
-            {
-                content.Replace(match.Value, "");
-                match = match.NextMatch();
-            }
-            content.Replace("\t", "    ");
-            File.WriteAllText(fn, content.ToString());
-            _out.OutText(string.Format("信息：生成文件{0}", fn), false);
-        }
-
-        //准备输出目录
-        private void PrepareDir()
-        {
-            if (!Path.HasExtension(_path))
-            {
-                Directory.CreateDirectory(_path);
-            }
-            else
-            {
-                ClearDir(_path);
-                Directory.CreateDirectory(_path);
-            }
-        }
-
-        private string[] extlist = new string[3] { "cs", "cpp", "h" };
-
-        //删除目录下的文件
-        private void ClearDir(string dirpath)
-        {
-            DirectoryInfo dir = new DirectoryInfo(dirpath);
-            FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();  //返回目录中所有文件和子目录
-            foreach (FileSystemInfo i in fileinfo)
-            {
-                if (i is FileInfo)
-                {
-                    if (extlist.Contains(i.Extension))
-                        File.Delete(i.FullName);
-                }
-            }
-        }
-
-
-        //static private string GetGetorName(Subsys sys, string proname)
-        //{
-        //    foreach (var p in sys.Propertys)
-        //    {
-        //        if (p.Name == proname)
-        //            return GetGetorName(p.PropertyType);
-        //    }
-        //    return "Get_";
-        //}
-
-        //static private string GetProType(Subsys sys, string proname)
-        //{
-        //    if (proname.Contains("."))
-        //    {
-        //        var names = proname.Split('.');
-        //        if (names.Count() != 2) return "";
-        //        foreach (var p in sys.Propertys)
-        //        {
-        //            if (p.Name == names[0])
-        //            {
-        //                foreach (var ss in _pj.SubsysList)
-        //                {
-        //                    if (ss.Name == p.PropertyType)
-        //                        return GetProType(ss, names[1]);
-        //                }
-        //            }
-        //        }
-
-        //    }
-
-        //    foreach (var p in sys.Propertys)
-        //    {
-        //        if (p.Name == proname)
-        //            return p.PropertyType;
-        //    }
-        //    return "";
-        //}
-
-        ////取值函数名称
-        //static private string GetGetorName(string ty)
-        //{
-        //    switch (ty)
-        //    {
-        //        case "bool":
-        //            return "GetBool";
-        //        case "byte":
-        //            return "GetByte";
-        //        case "sbyte":
-        //            return "GetSByte";
-        //        case "short":
-        //            return "GetShort";
-        //        case "ushort":
-        //            return "GetUShort";
-        //        case "int":
-        //            return "GetInt";
-        //        case "uint":
-        //            return "GetUInt";
-        //        case "long":
-        //            return "GetLong";
-        //        case "ulong":
-        //            return "GetULong";
-        //        case "float":
-        //            return "GetFloat";
-        //        case "double":
-        //            return "GetDouble";
-        //    }
-        //    return "";
-        //}
-
-        //类型名称
-        //static public string GetTypeName(syspropertytype ty)
-        //{
-        //    switch(ty)
-        //    {
-        //        case syspropertytype.SYSPT_BOOL:
-        //            return "bool";
-        //        case syspropertytype.SYSPT_BYTE:
-        //            return "byte";
-        //        case syspropertytype.SYSPT_SBYTE:
-        //            return "sbyte";
-        //        case syspropertytype.SYSPT_SHORT:
-        //            return "short";
-        //        case syspropertytype.SYSPT_USHORT:
-        //            return "ushort";
-        //        case syspropertytype.SYSPT_INT:
-        //            return "int";
-        //        case syspropertytype.SYSPT_UINT:
-        //            return "uint";
-        //        case syspropertytype.SYSPT_LONG:
-        //            return "long";
-        //        case syspropertytype.SYSPT_ULONG:
-        //            return "ulong";
-        //        case syspropertytype.SYSPT_FLOAT:
-        //            return "float";
-        //        case syspropertytype.SYSPT_DOUBLE:
-        //            return "double";
-        //    }
-        //    Debug.Assert(false);
-        //    return "";
-        //}
-
+        
 
         #endregion
 

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIO", "FrameIO.csproj", "{06B3609F-E8C7-465E-B6D1-5F27616BA4E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EEEF0D71-5A3A-4E46-AFFF-74CD55CFA394} = {EEEF0D71-5A3A-4E46-AFFF-74CD55CFA394}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIOInterface", "..\FrameIOInterface\FrameIOInterface.csproj", "{22D3C366-AAB4-4FE2-9C69-3FEAB4DD751B}"
 EndProject

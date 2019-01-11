@@ -1,7 +1,11 @@
 ﻿using FrameIO.Interface;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 
 namespace FrameIO.Run
 {
@@ -36,6 +40,23 @@ namespace FrameIO.Run
         {
             return _frms[name];
         }
+
+        //初始化入口
+        public static void InitialFromGZipBase64(string config)
+        {
+            using (var compressStream = new MemoryStream(Convert.FromBase64String(config)))
+            {
+                using (var zipStream = new GZipStream(compressStream, CompressionMode.Decompress))
+                {
+                    using (var resultStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(resultStream);
+                        InitialFromJson(Encoding.Default.GetString(resultStream.ToArray()));
+                    }
+                }
+            }
+        }
+
 
         #endregion
 
