@@ -9,6 +9,7 @@ namespace FrameIO.Main
     //c# 代码生成驱动
     public class SharpScriptGenerator : ScriptGenerator
     {
+        #region --Initial--
 
         public SharpScriptGenerator(IOProject pj, IOutText tout) : base(pj, tout)
         {
@@ -18,30 +19,148 @@ namespace FrameIO.Main
         protected override string Token => "cs";
         protected override string DefaultExtension { get => "cs";}
 
-        protected override IList<string> ConvertFramesCode(IList<string> base64List)
-        {
-            return base64List.Select(p => "\"" + p + "\",").ToList();
-        }
+        protected override string SystemTemplate => "TSubsys";
+
+        protected override string ExceptionHandlerTemplate => "TExceptionHandler";
 
         protected override void CreateSharedFile()
         {
             //HACK
         }
 
-        protected override StringBuilder GetInnerSubsysFileContent(InnerSubsys innersys)
-        {
-            //HACK
-            var code = new StringBuilder();
+        #endregion
 
-            return code;
+        #region --Frames--
+
+        protected override IList<string> ConvertFramesCode(IList<string> base64List)
+        {
+            return base64List.Select(p => "\"" + p + "\",").ToList();
         }
 
-        protected override StringBuilder GetSubsysFileContent(Subsys subsys)
-        {
-            //HACK
-            var code = new StringBuilder();
+        #endregion
 
-            return code;
+        #region --InnerSubsys--
+
+
+        //创建子系统类文件
+        protected override StringBuilder GetInnerSubsysFileContent(InnerSubsys inner)
+        {
+            var pros = new List<string>();
+            foreach(var pro in inner.Propertys)
+            {
+                pros.Add(GetPropertyDefCode(pro));
+            }
+
+            var inis = new List<string>();
+            foreach (var pro in inner.Propertys)
+            {
+                inis.Add(GetPropertyIniCode(pro));
+            }
+
+            return GetTemplateBuilder("TInnerSubsys", "propertydeclare", pros,
+                "project", _pj.Name,
+                "innersys", inner.Name,
+                "propertyinitial", List2String(inis, 3));
         }
+
+
+        #endregion
+
+        #region --Property--
+
+        //取属性定义代码
+        protected override string GetPropertyDefCode(SubsysProperty pro)
+        {
+            var ret = new StringBuilder();
+            if (pro.IsBaseType() || _pj.IsEnum(pro.PropertyType))
+            {
+                if (pro.IsArray)
+                    ret.Append(@"public ObservableCollection<Parameter<bool?>> name { get; private set; }");
+                else
+                    ret.Append(@"public Parameter<bool?> name { get; private set;}");
+            }
+            else
+            {
+                if (pro.IsArray)
+                    ret.Append(@"public ObservableCollection<bool> name { get; private set; }");
+                else
+                    ret.Append(@"public bool Name { get; private set; }");
+            }
+
+            ret.Replace("bool", pro.PropertyType);
+            ret.Replace("name", pro.Name);
+            return ret.ToString();
+        }
+
+        //取属性初始化代码
+        protected override string GetPropertyIniCode(SubsysProperty pro)
+        {
+            var ret = new StringBuilder();
+            if (pro.IsBaseType() || _pj.IsEnum(pro.PropertyType))
+            {
+                if (pro.IsArray)
+                {
+                    ret.Append(@"name = new ObservableCollection<Parameter<bool?>>();");
+                    if ((pro.ArrayLen?.Length) > 0)
+                        ret.AppendFormat(@" for (int i = 0; i < {0}; i++) name.Add(new Parameter<bool?>());", pro.ArrayLen);
+                }
+                else
+                {
+                    ret.Append(@"name = new Parameter<bool?>();");
+                }
+            }
+            else
+            {
+                if (pro.IsArray)
+                {
+                    ret.Append(@"name = new ObservableCollection<bool>();");
+                    if (pro.ArrayLen?.Length > 0)
+                        ret.AppendFormat(@" for(int i=0; i<{0}; i++) name.Add(new bool());", pro.ArrayLen);
+                }
+                else
+                    ret.Append(@"name = new bool();");
+            }
+
+            ret.Replace("bool", pro.PropertyType);
+            ret.Replace("name", pro.Name);
+            return ret.ToString();
+        }
+
+        #endregion
+
+        #region --Channel--
+
+        //通道声明
+        protected override string GetChannelDeclare(SubsysChannel ch)
+        {
+            return string.Format("public FioChannel {0};", ch.Name);
+        }
+
+
+        //通道初始化
+        protected override IList<string> GetChannelInitialFun(SubsysChannel ch)
+        {
+            var ret = new List<string>();
+            ret.Add(string.Format("public void InitialChannel{0}(ChannelOption ops)", ch.Name));
+            ret.Add("{");
+            ret.Add("\tif (ops == null) ops = new ChannelOption();");
+            foreach (var op in ch.Options)
+            {
+                ret.Add(string.Format("\tif (!ops.Contains(\"{0}\")) ops.SetOption(\"{0}\", {1});", op.Name, op.OptionValue));
+            }
+            ret.Add(string.Format("\tops.SetOption(\"{0}\", {1});", "$channeltype", (int)ch.ChannelType));
+            ret.Add(string.Format("\t{0} = FioNetRunner.GetChannel(ops);", ch.Name));
+            ret.Add("}");
+            return ret;
+        }
+
+
+        #endregion
+
+        #region --SendAction--
+
+
+        #endregion
+
     }
 }

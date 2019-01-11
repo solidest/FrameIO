@@ -31,6 +31,11 @@ namespace FrameIO.Run
                 Options.Add(optionname, optionvalue);
         }
 
+        public object GetOption(string optionname)
+        {
+            return Options[optionname];
+        }
+
         public bool Contains(string optionname)
         {
             return Options.Keys.Contains(optionname);

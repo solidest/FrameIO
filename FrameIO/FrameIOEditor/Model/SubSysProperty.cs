@@ -26,7 +26,7 @@ namespace FrameIO.Main
             }
             set
             {
-                if (IsArray) _len = value;
+                if (IsArray && value!="0") _len = value;
             }
         }
         public int Syid { get; set; }

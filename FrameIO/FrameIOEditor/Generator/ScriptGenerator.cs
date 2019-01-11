@@ -25,33 +25,19 @@ namespace FrameIO.Main
             _jframes = new Frames2Json(_pj);
         }
 
-        #region --abstract--
+        #region --Initial--
+
+        protected const string TPROJECT = "project";
 
         //代码类型标识
         protected abstract string Token { get; }
 
-        //数据帧代码文件名
-        //protected abstract string FramesFileName { get; }
 
         //默认扩展名
         protected abstract string DefaultExtension { get; }
 
         //创建专有的共享类库文件
         protected abstract void CreateSharedFile();
-
-        //数据帧文件内容转换
-        protected abstract IList<string> ConvertFramesCode(IList<string> base64List);
-
-
-        //子系统代码文件内容
-        protected abstract StringBuilder GetInnerSubsysFileContent(InnerSubsys innersys);
-
-        //分系统代码文件内容
-        protected abstract StringBuilder GetSubsysFileContent(Subsys subsys);
-
-        #endregion
-
-        #region --start--
 
 
         public void GenerateScriptFile()
@@ -74,10 +60,7 @@ namespace FrameIO.Main
                 foreach (var emdef in _pj.EnumdefList) CreateEnumFile(emdef);
 
                 //生成子系统文件
-                foreach (var isys in _pj.InnerSubsysList)
-                {
-                    OutFile(isys.Name, GetInnerSubsysFileContent(isys));
-                }
+                foreach (var inner in _pj.InnerSubsysList) CreateInnerSubsys(inner);
 
                 //生成分系统文件
                 foreach (var subsys in _pj.SubsysList)
@@ -85,7 +68,6 @@ namespace FrameIO.Main
                     OutFile(subsys.Name, GetSubsysFileContent(subsys));
                 }
 
-                //GenerateSysFile(pj.SubsysList);
                 _out.OutText("信息：代码文件输出完成", false);
 
             }
@@ -99,16 +81,13 @@ namespace FrameIO.Main
 
         #endregion
 
-        #region --Config--
-
-        protected const string TPROJECT = "project";
-
-
-        #endregion
-
         #region --数据帧--
 
 
+        //数据帧文件内容转换
+        protected abstract IList<string> ConvertFramesCode(IList<string> base64List);
+
+        //数据帧文件内容转换
         private void CreateFramsFile()
         {
             var frms = _jframes.GetJsonString();
@@ -135,29 +114,148 @@ namespace FrameIO.Main
 
         #region --子系统--
 
+        //子系统代码文件内容
+        protected abstract StringBuilder GetInnerSubsysFileContent(InnerSubsys inner);
 
+        //找出全部需要被创建的子系统
+        protected void CreateInnerSubsys(InnerSubsys inner)
+        {
+            OutFile(inner.Name, GetInnerSubsysFileContent(inner));
+        }
 
         #endregion
 
         #region --分系统--
 
+        //分系统相关
+        protected abstract string SystemTemplate { get; }
+        protected abstract string GetPropertyDefCode(SubsysProperty pro);
+        protected abstract string GetPropertyIniCode(SubsysProperty pro);
+        protected abstract string ExceptionHandlerTemplate { get; }
+
+        //创建分系统类文件
+        private StringBuilder GetSubsysFileContent(Subsys subsys)
+        {
+            var prodec = new List<string>();
+            foreach (var item in subsys.Propertys)
+            {
+                prodec.Add(GetPropertyDefCode(item));
+            }
+
+            var proini = new List<string>();
+            foreach (var item in subsys.Propertys)
+            {
+                proini.Add(GetPropertyIniCode(item));
+            }
+
+            return GetTemplateBuilder(SystemTemplate, "propertydeclare", prodec,
+                "project", _pj.Name,
+                "system", subsys.Name,
+                "propertyinitial", List2String(proini, 3),
+                "channeldeclare", GetChannelsDeclare(subsys, 2),
+                "channelinitial", GetChannelsInitial(subsys, 2),
+                "exceptionhandler", GetExceptionhandler(2),
+                "sendactionlist", GetSendActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), 2),
+                "recvactionlist", GetRecvActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), 2)
+                );
+        }
+
+        //异常处理函数
+        private String GetExceptionhandler(int tabCount)
+        {
+            if (ExceptionHandlerTemplate == null) return "";
+            var exh = GetTemplate(ExceptionHandlerTemplate);
+            var exhs = exh.Split(Environment.NewLine.ToCharArray()).Where(p=>p!="").ToList();
+            return List2String(exhs, tabCount);
+        }
+
+        #endregion
+
+        #region --通道--
+
+        protected abstract string GetChannelDeclare(SubsysChannel ch);
+        protected abstract IList<string> GetChannelInitialFun(SubsysChannel ch);
+
+        //通道声明
+        private string GetChannelsDeclare(Subsys subsys, int tabCount)
+        {
+            var chs = new List<string>();
+            foreach(var ch in subsys.Channels)
+            {
+                chs.Add(GetChannelDeclare(ch));
+            }
+            return List2String(chs, tabCount);
+        }
+
+        //通道初始化函数
+        private string GetChannelsInitial(Subsys subsys, int tabCount)
+        {
+            var chs = new List<string>();
+            foreach (var ch in subsys.Channels)
+            {
+                var fun = GetChannelInitialFun(ch);
+                if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
+                chs.AddRange(fun);
+            }
+            return List2String(chs, tabCount);
+        }
+
+
+        #endregion
+
+
+        #region --发送数据--
+
+        protected abstract IList<string> GetSendFun(SubsysAction ac);
+
+        private string GetSendActions(IEnumerable<SubsysAction> acs, int tabCount)
+        {
+            if (acs == null) return "";
+            var chs = new List<string>();
+            foreach (var ac in acs)
+            {
+                var fun = GetSendFun(ac);
+                if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
+                chs.AddRange(fun);
+            }
+            return List2String(chs, tabCount);
+        }
+
+
+        #endregion
+
+        #region --接收数据--
+
+        protected abstract IList<string> GetRecvFun(SubsysAction ac);
+
+        private string GetRecvActions(IEnumerable<SubsysAction> acs, int tabCount)
+        {
+            if (acs == null) return "";
+            var chs = new List<string>();
+            foreach (var ac in acs)
+            {
+                var fun = GetRecvFun(ac);
+                if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
+                chs.AddRange(fun);
+            }
+            return List2String(chs, tabCount);
+        }
 
         #endregion
 
         #region --Helper for file--
 
+        //插入前置空白
+        private IList<string> InsertTabs(IList<string> ls, int tabCount)
+        {
+            var pre = new string('\t', tabCount);
+            return ls.Select(p => pre + p).ToList();
+        }
 
-        //创建文件
+        //输出文件
         protected void OutFile(string templageName, string fileName, string token, IList<string> codelist, params string[] others)
         {
-            var code = GetTemplateBuilder(templageName);
-            ReplaceText(code, token, codelist);
-
-            for(int i=0; i<others.Length; i+=2)
-            {
-                ReplaceText(code, others[i], others[i + 1]);
-            }
-            OutFile(fileName, code);
+            OutFile(fileName, GetTemplateBuilder(templageName, token, codelist, others));
         }
 
 
@@ -176,6 +274,32 @@ namespace FrameIO.Main
             _out.OutText(string.Format("信息：生成文件{0}", fn), false);
         }
 
+        //取代码模板字符缓冲 并填充内容
+        protected StringBuilder GetTemplateBuilder(string templageName, string token, IList<string> codelist, params string[] others)
+        {
+            var code = GetTemplateBuilder(templageName);
+            ReplaceText(code, token, codelist);
+
+            for (int i = 0; i < others.Length; i += 2)
+            {
+                ReplaceText(code, others[i], others[i + 1]);
+            }
+            return code;
+        }
+
+        //拼接代码
+        protected string List2String(IList<string> codelist, int tabCount)
+        {
+            var pre = new string('\t', tabCount);
+            var str = new StringBuilder();
+
+            for (int i = 0; i < codelist.Count; i++)
+            {
+                str.Append((i == 0 ? "" : pre) + codelist[i] + (i == codelist.Count - 1 ? "" : Environment.NewLine));
+            }
+            return str.ToString();
+
+        }
 
         //取代码模板字符缓冲
         protected StringBuilder GetTemplateBuilder(string tname)
@@ -220,9 +344,8 @@ namespace FrameIO.Main
 
 
         //查找标识前面的空格数量
-        protected int GetEmptyBefore(StringBuilder code, string template_id)
+        protected int GetEmptyBefore(string script, string template_id)
         {
-            var script = code.ToString();
             var match = Regex.Match(script, "<%" + template_id + "%>");
             while (match.Success)
             {
@@ -238,8 +361,12 @@ namespace FrameIO.Main
                         return ret;
                 }
             }
-
             throw new Exception("unknow");
+        }
+        protected int GetEmptyBefore(StringBuilder code, string template_id)
+        {
+            return GetEmptyBefore(code.ToString(), template_id);       
+
         }
 
         //准备输出目录

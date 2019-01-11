@@ -83,7 +83,7 @@ namespace FrameIO.Main
             var fseg = GetHeaderSegment(frm.Segments);
             if (fseg != null && fseg.Match!=null && fseg.Match.Length>0 && fseg.BitCount>=8 && fseg.BitCount%8==0)
             {
-                o.Add(HEADERMATCH_TOKEN, Convert.ToInt64(fseg.Match));
+                o.Add(HEADERMATCH_TOKEN, Helper.ToULong(fseg.Match));
                 o.Add(HEADERMATCHLEN_TOKEN, fseg.BitCount / 8);
             }
 
@@ -139,9 +139,9 @@ namespace FrameIO.Main
             if(seg.Value!=null) ret.Add(VALUE_TOKEN, Exp2JToken(seg.Value));
 
             if(seg.ValidateMin!=null && seg.ValidateMin.Length>0)
-                ret.Add(MINVALUE_TOKEN, Helper.ValidateIsInt(seg.ValidateMin) ? Convert.ToInt64(seg.ValidateMin) : Convert.ToDouble(seg.ValidateMin));
+                ret.Add(MINVALUE_TOKEN, Helper.ValidateIsInt(seg.ValidateMin) ? Helper.ToLong(seg.ValidateMin) : Convert.ToDouble(seg.ValidateMin));
             if (seg.ValidateMax != null && seg.ValidateMax.Length > 0)
-                ret.Add(MAXVALUE_TOKEN, Helper.ValidateIsInt(seg.ValidateMax) ? Convert.ToInt64(seg.ValidateMax) : Convert.ToDouble(seg.ValidateMax));
+                ret.Add(MAXVALUE_TOKEN, Helper.ValidateIsInt(seg.ValidateMax) ? Helper.ToLong(seg.ValidateMax) : Convert.ToDouble(seg.ValidateMax));
             if (seg.ValidateCheck != CheckType.None)
             {
                 ret.Add(CHECKTYPE_TOKEN, seg.ValidateCheck.ToString());
@@ -279,7 +279,7 @@ namespace FrameIO.Main
             switch (ep.Op)
             {
                 case exptype.EXP_INT:
-                    return new JValue(Convert.ToInt64(ep.ConstStr));
+                    return new JValue(Helper.ToLong(ep.ConstStr));
 
                 case exptype.EXP_REAL:
                     return new JValue(Convert.ToDouble(ep.ConstStr));
@@ -354,7 +354,7 @@ namespace FrameIO.Main
             {
                 n = em.ItemsList[i].Name;
                 var v = em.ItemsList[i].ItemValue;
-                ret = (v == null || v == "") ? (ret + 1) : Convert.ToInt64(v);
+                ret = (v == null || v == "") ? (ret + 1) : Helper.ToLong(v);
                 i += 1;
                 if (i == em.ItemsList.Count) break;
             } while (n != itname);

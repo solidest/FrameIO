@@ -62,7 +62,7 @@ namespace FrameIO.Run
 
         #region --Channel--
 
-        public static IOChannel GetChannel(ChannelTypeEnum chtype, ChannelOption chops)
+        public static FioChannel GetChannel(ChannelTypeEnum chtype, ChannelOption chops)
         {
             var ops = chops.Options;
             IChannelBase ich = null;
@@ -101,7 +101,7 @@ namespace FrameIO.Run
             }
 
             Debug.Assert(ich != null);
-            return new IOChannel(ich, chops);
+            return new FioChannel(ich, chops);
         }
 
         #endregion

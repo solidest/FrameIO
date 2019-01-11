@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-    public class IOChannel
+    public class FioChannel
     {
         private Interface.IChannelBase _ch;
 
-        internal IOChannel(Interface.IChannelBase ch, ChannelOption ops)
+        internal protected FioChannel(Interface.IChannelBase ch, ChannelOption ops)
         {
             _ch = ch;
             _ch.InitConfig(ops.Options);
@@ -34,13 +34,13 @@ namespace FrameIO.Run
             _ch.Close();
         }
 
-        public void SendFrame(FrameObject value)
+        protected void SendFrame(FrameObject value)
         {
             if (value.FrameName == null) throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.RecvErr, "", "无法发送不完整数据帧");
             _ch.WriteFrame(new FramePacker(value));
         }
 
-        public FrameObject RecvFrame(string frameName)
+        protected FrameObject RecvFrame(string frameName)
         {
             var res = new FrameUnpacker(frameName);
             var o = _ch.ReadFrame(res);

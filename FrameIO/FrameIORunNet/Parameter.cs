@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel;
 
-namespace FrameIO.RunNet
+namespace FrameIO.Run
 {
     public class Parameter<T> : INotifyPropertyChanged
     {

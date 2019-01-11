@@ -27,6 +27,10 @@ namespace FrameIO.Main
         public MainWindow()
         {
             InitializeComponent();
+
+            //打开上次文件
+            FioConfig.LoadConfig(this);
+
             LoadEditorConfig();
 
             Thread parseThread = new Thread(this.Parse);
@@ -41,6 +45,7 @@ namespace FrameIO.Main
             _isCoding = true;
             UpdateEditMode();
             SwitchView(this, null);
+
         }
 
         private IOProject _project;
@@ -286,9 +291,7 @@ namespace FrameIO.Main
                 mainPanelBorder.Margin = new Thickness(0);
             }
 
-            //打开上次文件
-            FioConfig.LoadConfig(this);
-            if(FioConfig.LastFile != null && File.Exists(FioConfig.LastFile))
+            if (FioConfig.LastFile != null && File.Exists(FioConfig.LastFile))
             {
                 OpenProject(FioConfig.LastFile);
             }
@@ -297,6 +300,7 @@ namespace FrameIO.Main
         //窗口关闭之前
         private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            FioConfig.IsCoding = _isCoding;
             FioConfig.SaveConfig(this);
             if(_lastprojectid>0)
             {

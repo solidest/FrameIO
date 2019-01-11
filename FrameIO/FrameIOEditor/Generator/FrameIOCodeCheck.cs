@@ -59,7 +59,10 @@ namespace FrameIO.Main
             return ErrorList.Count==0;
         }
 
+        #region --检查子系统--
 
+
+        #endregion
 
 
         #region --检查分系统--

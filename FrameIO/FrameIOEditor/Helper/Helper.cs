@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +12,41 @@ using System.Windows.Media.Imaging;
 
 namespace FrameIO.Main
 {
-    public partial class Helper
+    public static class Helper
     {
+        private static byte[] String2HexValue(string mHex)
+        {
+            mHex = Regex.Replace(mHex, "[^0-9A-Fa-f]", "");
+            if (mHex.Length % 2 != 0)
+                mHex = mHex.Remove(mHex.Length - 1, 1);
+            Debug.Assert(mHex.Length > 0);
+            byte[] vBytes = new byte[mHex.Length / 2];
+            if (vBytes.Length < 8) vBytes = new byte[8];
+            for (int i = 0; i < mHex.Length; i += 2)
+                if (!byte.TryParse(mHex.Substring(i, 2), NumberStyles.HexNumber, null, out vBytes[i / 2]))
+                    vBytes[i / 2] = 0;
+            return vBytes;
+        }
+
+        public static long ToLong(string str)
+        {
+            if(str.StartsWith("0x") || str.StartsWith("0X"))
+            {
+                return BitConverter.ToInt64(String2HexValue(str), 0);
+            }
+
+            return Convert.ToInt64(str);
+        }
+
+        public static ulong ToULong(string str)
+        {
+            if (str.StartsWith("0x") || str.StartsWith("0X"))
+            {
+                return BitConverter.ToUInt64(String2HexValue(str), 0);
+            }
+
+            return Convert.ToUInt64(str);
+        }
 
         //取数据帧基础字段名
         public static IList<string> GetFrameSegmentsName(string name, ICollection<Frame> pjfrms, bool notIntoSubsys = false)
@@ -118,30 +153,6 @@ namespace FrameIO.Main
                         }
                         return;
 
-                        //if (oneoflist != null)
-                        //{
-                        //    var refsegs = frm.Segments.Where(p => p.Name == bseg.OneOfBySegment);
-                        //    if (refsegs == null || refsegs.Count()==0) break;
-                        //    var refseg = refsegs.First();
-                        //    if (refseg != null && refseg.GetType() == typeof(FrameSegmentInteger))
-                        //    {
-                        //        var iseg = (FrameSegmentInteger)refseg;
-                        //        if (iseg.ToEnum != null && iseg.ToEnum.Length >= 0)
-                        //        {
-                        //            var ooh = new OneOfHelper() { ByEnum = iseg.ToEnum, BySegname = (pre == "" ? "" : (pre + ".")) + bseg.OneOfBySegment };
-                        //            foreach (var item in bseg.OneOfCaseList)
-                        //            {
-                        //                var itempre = mypre + "." + item.EnumItem;
-                        //                var mylist = GetFrameSegmentsName(item.FrameName, pjfrms, oneoflist);
-                        //                var mysegs = mylist.Select(p => itempre + "." + p);
-                        //                var ooih = new OneOfItemHelper() { ItemName = item.EnumItem == "other" ? "default" : ooh.ByEnum + "." + item.EnumItem };
-                        //                ooih.Segmens.AddRange(mysegs);
-                        //                ooh.Items.Add(ooih);
-                        //            }
-                        //            oneoflist.Add(ooh);
-                        //        }
-                        //    }
-                        //}
                 }
             }
         }

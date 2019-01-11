@@ -14,6 +14,7 @@ namespace FrameIO.Main
     {
 
         public static string LastFile { get; set; }
+        public static bool IsCoding { get; set; }
 
         public static void SaveConfig(IOutText it)
         {
@@ -21,6 +22,7 @@ namespace FrameIO.Main
             {
                 var cfg = new JObject();
                 cfg.Add(nameof(LastFile), LastFile);
+                cfg.Add(nameof(IsCoding), IsCoding);
                 
                 var cf = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\fio.config";
                 if(File.Exists(cf)) File.Delete(cf);
@@ -42,6 +44,7 @@ namespace FrameIO.Main
                 {
                     var cfg = JObject.Parse(File.ReadAllText(cf));
                     LastFile = cfg?[nameof(LastFile)]?.Value<string>();
+                    IsCoding = cfg?[nameof(IsCoding)]?.Value<bool>() ?? false;
                 }
             }
             catch (Exception ex)

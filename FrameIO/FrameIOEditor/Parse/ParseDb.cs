@@ -276,7 +276,7 @@ PRAGMA foreign_keys = on;
 
             for (int i = 0; i < ret.Count; i++)
             {
-                if (ret[i].SysPropertyName.StartsWith("@@"))
+                if (ret[i].SysPropertyName.StartsWith("@"))
                     userBeginCode.Add(ret[i].SysPropertyName);
                 else
                     break;
@@ -285,7 +285,7 @@ PRAGMA foreign_keys = on;
             int ifind = -1;
             for(int i = ret.Count-1; i>=0; i--)
             {
-                if (ret[i].SysPropertyName.StartsWith("@@"))
+                if (ret[i].SysPropertyName.StartsWith("@"))
                     ifind = i;
                 else
                     break;

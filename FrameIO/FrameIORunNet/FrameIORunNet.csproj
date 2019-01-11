@@ -7,7 +7,7 @@
     <ProjectGuid>{EEEF0D71-5A3A-4E46-AFFF-74CD55CFA394}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FrameIO.RunNet</RootNamespace>
+    <RootNamespace>FrameIO.Run</RootNamespace>
     <AssemblyName>FrameIORunNet</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -45,10 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FioNetRunner.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Template_cs\TEnum.cs" />
+    <None Include="Template_cs\TExceptionHandler.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Template_cs\TInnerSubsys.cs" />
+    <Compile Include="Template_cs\TSubsys.cs" />
     <None Include="..\x64\Debug\Template_bak\TChannelInitial.cst">
       <Link>Other\TChannelInitial.cst</Link>
     </None>
@@ -91,6 +97,7 @@
     <None Include="..\x64\Debug\Template_bak\TSystem.cst">
       <Link>Other\TSystem.cst</Link>
     </None>
+    <None Include="readme.md" />
     <None Include="Template_cs\TEnum.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -98,6 +105,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Template_cs\TFrames.cs" />
+    <None Include="Template_cs\TInnerSubsys.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cs\TSubsys.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FrameIODriver\FrameIODriver.csproj">

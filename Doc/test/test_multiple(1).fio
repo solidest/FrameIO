@@ -1,0 +1,130 @@
+//项目:test_multiple
+project main {
+	//受控对象
+	system System_A {
+		uint _CommandSize;
+		uint _WidgetIdent;
+		uint _UnusedPad;
+		uint _ParameterIdent;
+		byte _Parameter_3Byte;
+		byte[3] _Parameter_ArrayByte;
+		CreateTime _CreateTime;
+		Parameter_1Byte _Parameter_1Byte;
+		Parameter_2Byte _Parameter_2Byte;
+		Parameter_null _Parameter_null;
+
+		channel CH_UDP_SEND : udp {
+			localip = "192.168.0.153";
+			localport = 8007;
+			remoteip = "192.168.0.153";
+			remoteport = 8008;
+		}
+		channel CH_UDP_RECV : udp {
+			localip = "192.168.0.153";
+			localport = 8008;
+			remoteip = "192.168.0.153";
+			remoteport = 8007;
+		}
+
+		action A_Send : send Frame_CMD on CH_UDP_SEND {
+			CommandSize : _CommandSize;
+			WidgetIdent : _WidgetIdent;
+			UnusedPad : _UnusedPad;
+			blockdata:_Parameter_ArrayByte;
+			ParameterIdent : _ParameterIdent;
+			@switch((Enum_name)_ParameterIdent.Value) {
+			@case Enum_name.B160:
+			name.B160 : _Parameter_1Byte;
+			@break;
+			@case Enum_name.B180:
+			name.B180 : _Parameter_2Byte;
+			@break;
+			@case Enum_name.B530:
+			name.B530 : _Parameter_3Byte;
+			@break;
+			@default
+			name.other : _Parameter_null;			
+			@break;			
+			@}
+			time : _CreateTime;
+		}
+		action A_Recv : recv Frame_CMD on CH_UDP_RECV {
+			CommandSize : _CommandSize;
+			WidgetIdent : _WidgetIdent;
+			UnusedPad : _UnusedPad;
+			blockdata:_Parameter_ArrayByte;
+			ParameterIdent : _ParameterIdent;
+			@switch((Enum_name)_ParameterIdent.Value) {
+			@case Enum_name.B160:
+			name.B160 : _Parameter_1Byte;
+			@break;
+			@case Enum_name.B180:
+			name.B180 : _Parameter_2Byte;
+			@break;
+			@case Enum_name.B530:
+			name.B530 : _Parameter_3Byte;
+			@break;
+			@default
+			name.other : _Parameter_null;			
+			@break;			
+			@}
+			time : _CreateTime;
+		}		
+	}
+
+	//数据帧
+	[subsys: Parameter_1Byte]
+	frame Frame_Parameter_1Byte {
+		integer ParameterValueBuffer bitcount=8;
+		integer UnusedPad bitcount=8;
+	}
+	[subsys: Parameter_2Byte]
+	frame Frame_Parameter_2Byte {
+		integer ParameterValueBuffer bitcount=16;
+	}
+	frame Frame_Parameter_3Byte{
+		integer ParameterValueBuffer bitcount=4 max=15 min=0;
+		integer UnusedPad bitcount=4  max=15 min=0;
+	}
+	frame Frame_Parameter_End{
+		integer ParameterEnd bitcount=16 value=0x55aa;
+	}
+	[subsys: Parameter_null]
+	frame Frame_null {
+	}
+	frame Frame_CMD {
+		integer CommandSize bitcount=16;
+		integer WidgetIdent bitcount=16;
+		integer UnusedPad bitcount=16;
+		block blockdata type={
+			integer b1 signed=false bitcount=8;
+			integer b2 signed=false bitcount=8;
+			integer b3 signed=false bitcount=8;
+		};
+		integer ParameterIdent bitcount=16 toenum=Enum_name;
+		block name type=oneof(ParameterIdent){
+			 B160 : Frame_Parameter_1Byte,
+			 B180 : Frame_Parameter_1Byte,
+			 B530 : Frame_Parameter_2Byte,
+			 other : Frame_null
+		};
+		[subsys: CreateTime]
+		block time type={
+			integer nian signed=true bitcount=8;
+			integer yue signed=true bitcount=8;
+			integer ri signed=true bitcount=8;
+		};
+		integer CheckSegment bitcount=16 check=sum16_false;
+		integer CheckSubSegment bitcount=3 checkrange=(CommandSize,UnusedPad);
+		block endSeg type=Frame_Parameter_End;
+	}
+
+
+
+	enum Enum_name {
+		B160 = 0xB160,
+		B180 = 0xB180,
+		B530 = 0xB530,
+		B540 = 0xB540
+	}
+}
