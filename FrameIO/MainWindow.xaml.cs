@@ -671,8 +671,8 @@ namespace FrameIO.Main
                     //FrameIOSharpCodeGenerator.GenerateSharpCodeFile(_project, this);
                     scriptor = new SharpScriptGenerator(_project, this);
                 else if (e.Parameter.ToString() == "cpp")
-                    scriptor = new SharpScriptGenerator(_project, this);
-                scriptor.GenerateScriptFile();
+                    this.OutText("未完待续。。。。。", true);
+                scriptor?.GenerateScriptFile();
             }
         }
 

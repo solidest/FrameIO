@@ -85,9 +85,6 @@ namespace FrameIO.Run
             o.Add(segs[segs.Length - 1], vs);
         }
 
-
-
-
         #endregion
 
         #region --GetValue

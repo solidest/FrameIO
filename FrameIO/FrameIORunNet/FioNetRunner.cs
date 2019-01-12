@@ -10,7 +10,17 @@ namespace FrameIO.Run
     {
         public static FioChannel GetChannel(ChannelOption chops)
         {
-            return IORunner.GetChannel((ChannelTypeEnum)chops.GetOption("$channeltype"), chops);
+            var ret = IORunner.GetChannel((ChannelTypeEnum)chops.GetOption("$channeltype"), chops);
+            
+            return ret;
         }
+
+        //获取一个数据帧的空数据对象
+        public static FioNetObject NewFrameObject(string frameName)
+        {
+            return new FioNetObject(IORunner.NewFrameObject(frameName));
+        }
+
+
     }
 }

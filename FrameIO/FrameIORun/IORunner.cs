@@ -60,6 +60,8 @@ namespace FrameIO.Run
 
         #endregion
 
+
+
         #region --Channel--
 
         public static FioChannel GetChannel(ChannelTypeEnum chtype, ChannelOption chops)
@@ -105,6 +107,8 @@ namespace FrameIO.Run
         }
 
         #endregion
+
+
 
     }
 

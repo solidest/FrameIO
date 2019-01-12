@@ -19,21 +19,14 @@ namespace FrameIO.Run
         public static void Pack(IExpRun arrLen, PackHandler ph, SegRunBase me, IFrameWriteBuffer buff, JObject parent, JArray vs)
         {
             int len = arrLen.GetInt(parent, me);
-            if (vs == null) vs = new JArray();
+            if (vs == null || vs.Count!=len)
+            {
+                me.LogError(Interface.FrameIOErrorType.SendErr, "数组长度不匹配");
+                return;
+            }
 
             for (int i = 0; i < len; i++)
             {
-                if (i == vs.Count)
-                {
-                    var dv = me.GetDefaultValue();
-                    if (dv == null)
-                    {
-                        me.LogError(Interface.FrameIOErrorType.SendErr, "数组长度不匹配");
-                        return;
-                    }
-                    vs.Add(dv);
-                }
-
                 ph(buff, parent, vs[i]);
             }
         }
