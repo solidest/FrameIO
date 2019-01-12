@@ -480,7 +480,7 @@ namespace FrameIO.Main
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var setlist = new List<string>();
-            foreach (var gettor in ac.Maps)
+            foreach (var gettor in ac.LiteMaps)
             {
                 if (gettor.FrameSegName == "")
                     setlist.Add(gettor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
@@ -501,19 +501,19 @@ namespace FrameIO.Main
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var getlist = new List<string>();
-            foreach (var setor in ac.Maps)
-            {
-                if (setor.FrameSegName == "")
-                    getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
-                else if (ProIsArray(sys, setor.SysPropertyName))
-                {
-                    getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
-                    //getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
-                }
-                else
-                    getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName, setor.FrameSegName));
+            //foreach (var setor in ac.Maps)
+            //{
+            //    if (setor.FrameSegName == "")
+            //        getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
+            //    else if (ProIsArray(sys, setor.SysPropertyName))
+            //    {
+            //        getlist.Add(string.Format("{0}.Clear();", setor.SysPropertyName));
+            //        //getlist.Add(string.Format("for (int i = 0; i < data.{0}.Length; i++) {1}.Add(new Parameter<{2}?>(data.{0}[i]));", setor.FrameSegName, setor.SysPropertyName, GetTypeName(GetProType(sys, setor.SysPropertyName))));
+            //    }
+            //    else
+            //        getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName, setor.FrameSegName));
 
-            }
+            //}
             ReplaceText(code, "getvaluelist", getlist, 4);
             return code.ToString();
         }

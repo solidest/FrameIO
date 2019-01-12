@@ -225,9 +225,10 @@ PRAGMA foreign_keys = on;
                     IOType = (actioniotype)Convert.ToInt32(r["actiontype"]),
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
-                    Maps = LoadActionMaps(acid, out liteMaps, out userBeginCode, out userEndCode),
                     Syid = syid
                 };
+                LoadActionMaps(acid, out liteMaps, out userBeginCode, out userEndCode);
+
                 ac.LiteMaps = liteMaps;
                 ac.BeginCodes = userBeginCode;
                 ac.EndCodes = userEndCode;

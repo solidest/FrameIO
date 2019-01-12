@@ -307,7 +307,7 @@ namespace FrameIO.Main
             {
                 var fms = _pj.FrameList.Where(p => p.Name == ac.FrameName);
                 var frm = fms.First();
-                foreach(var map in ac.Maps)
+                foreach(var map in ac.LiteMaps)
                 {
                     if (map.SysPropertyName != "" && !map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p=>p.Name==map.SysPropertyName).Count()==0)
                     {

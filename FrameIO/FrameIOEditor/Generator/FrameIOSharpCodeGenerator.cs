@@ -527,24 +527,24 @@ namespace FrameIO.Main
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var setlist = new List<string>();
-            foreach(var gettor in ac.Maps)
-            {
-                if (gettor.FrameSegName == "")
-                    setlist.Add(gettor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
-                else if(SegIsArray(ac.FrameName, gettor.FrameSegName))
-                    if (_pj.IsEnum(GetProType(sys, gettor.SysPropertyName)))
-                        setlist.Add(string.Format("data.{0} = {1}.Select(p => ({2}?)p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName, GetSegmentType(ac.FrameName, gettor.FrameSegName)));
-                    else
-                        setlist.Add(string.Format("data.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
-                else
-                {
-                    if(_pj.IsEnum(GetProType(sys, gettor.SysPropertyName)))
-                        setlist.Add(string.Format("data.{0} = ({1}){2}.Value;", gettor.FrameSegName, GetSegmentType(ac.FrameName, gettor.FrameSegName), gettor.SysPropertyName));
-                    else
-                        setlist.Add(string.Format("data.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
+            //foreach(var gettor in ac.Maps)
+            //{
+            //    if (gettor.FrameSegName == "")
+            //        setlist.Add(gettor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
+            //    else if(SegIsArray(ac.FrameName, gettor.FrameSegName))
+            //        if (_pj.IsEnum(GetProType(sys, gettor.SysPropertyName)))
+            //            setlist.Add(string.Format("data.{0} = {1}.Select(p => ({2}?)p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName, GetSegmentType(ac.FrameName, gettor.FrameSegName)));
+            //        else
+            //            setlist.Add(string.Format("data.{0} = {1}.Select(p => p.Value).ToArray();", gettor.FrameSegName, gettor.SysPropertyName));
+            //    else
+            //    {
+            //        if(_pj.IsEnum(GetProType(sys, gettor.SysPropertyName)))
+            //            setlist.Add(string.Format("data.{0} = ({1}){2}.Value;", gettor.FrameSegName, GetSegmentType(ac.FrameName, gettor.FrameSegName), gettor.SysPropertyName));
+            //        else
+            //            setlist.Add(string.Format("data.{0} = {1}.Value;", gettor.FrameSegName, gettor.SysPropertyName));
 
-                }
-            }
+            //    }
+            //}
             ReplaceText(code, "setvaluelist", setlist, 4);
             return code.ToString();
         }
@@ -557,28 +557,28 @@ namespace FrameIO.Main
             ReplaceText(code, "framename", ac.FrameName);
             ReplaceText(code, "channelname", ac.ChannelName);
             var getlist = new List<string>();
-            foreach(var setor in ac.Maps)
-            {
-                if (setor.FrameSegName == "")
-                    getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
-                else if (SegIsArray(ac.FrameName, setor.FrameSegName))
-                {
-                    //getlist.Add(string.Format("int _count_{0} = {0}.Count;   if (_count > data.{1}.Length) _count = data.{1}.Length;", setor.SysPropertyName, setor.FrameSegName));
-                    if (_pj.IsEnum(GetProType(sys, setor.SysPropertyName)))
-                        getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = ({2})data.{1}[i];", setor.SysPropertyName, setor.FrameSegName, GetProType(sys, setor.SysPropertyName)));
-                    else
-                        getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = data.{1}[i];", setor.SysPropertyName, setor.FrameSegName));
-                }
-                else
-                {
-                    if (_pj.IsEnum(GetProType(sys, setor.SysPropertyName)))
-                        getlist.Add(string.Format("{0}.Value = ({1})data.{2}; ", setor.SysPropertyName, GetProType(sys, setor.SysPropertyName), setor.FrameSegName));
-                    else
-                        getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
+            //foreach(var setor in ac.Maps)
+            //{
+            //    if (setor.FrameSegName == "")
+            //        getlist.Add(setor.SysPropertyName.TrimStart('@').TrimEnd(Environment.NewLine.ToCharArray()));
+            //    else if (SegIsArray(ac.FrameName, setor.FrameSegName))
+            //    {
+            //        //getlist.Add(string.Format("int _count_{0} = {0}.Count;   if (_count > data.{1}.Length) _count = data.{1}.Length;", setor.SysPropertyName, setor.FrameSegName));
+            //        if (_pj.IsEnum(GetProType(sys, setor.SysPropertyName)))
+            //            getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = ({2})data.{1}[i];", setor.SysPropertyName, setor.FrameSegName, GetProType(sys, setor.SysPropertyName)));
+            //        else
+            //            getlist.Add(string.Format("for (int i = 0; i < Helper.GetMin({0}.Count, data.{1}.Length); i++) {0}[i].Value = data.{1}[i];", setor.SysPropertyName, setor.FrameSegName));
+            //    }
+            //    else
+            //    {
+            //        if (_pj.IsEnum(GetProType(sys, setor.SysPropertyName)))
+            //            getlist.Add(string.Format("{0}.Value = ({1})data.{2}; ", setor.SysPropertyName, GetProType(sys, setor.SysPropertyName), setor.FrameSegName));
+            //        else
+            //            getlist.Add(string.Format("{0}.Value = data.{1}; ", setor.SysPropertyName,  setor.FrameSegName));
 
-                }
+            //    }
                 
-            }
+            //}
             ReplaceText(code, "getvaluelist", getlist, 4);
             return code.ToString();
         }

@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Main
 {
-    //动作映射代码生成助手
+    //自动生成测试用例
 
-    internal class ScriptActionGenerator
+    internal class ScriptTestGenerator
     {
-        public ScriptActionGenerator()
+        public ScriptTestGenerator()
         {
 
         }
-
-
     }
 }

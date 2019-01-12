@@ -17,10 +17,11 @@ namespace FrameIO.Main
         public string FrameName { get; set; } = "";
         public int Syid { get; set; }
 
-        public ObservableCollection<SubsysActionMap> Maps { get; set; } = new ObservableCollection<SubsysActionMap>();
+        //public ObservableCollection<SubsysActionMap> LiteMaps { set=>SetMaps(value); } 
         public ObservableCollection<SubsysActionMap> LiteMaps { get; set; } = new ObservableCollection<SubsysActionMap>();
         public List<string> BeginCodes { get; set; } = new List<string>();
         public List<string> EndCodes { get; set; } = new List<string>();
+
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

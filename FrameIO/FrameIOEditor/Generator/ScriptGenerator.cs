@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -13,19 +15,21 @@ namespace FrameIO.Main
     //代码生成器
     public abstract class ScriptGenerator
     {
+
+
+        #region --Initial--
+
         protected IOProject _pj;
         protected IOutText _out;
         protected string _path;
-        private Frames2Json _jframes;
-        
-        public ScriptGenerator(IOProject pj,  IOutText tout)
+        protected Frames2Json _jframes;
+
+        public ScriptGenerator(IOProject pj, IOutText tout)
         {
             _pj = pj;
             _out = tout;
             _jframes = new Frames2Json(_pj);
         }
-
-        #region --Initial--
 
         protected const string TPROJECT = "project";
 
@@ -155,8 +159,8 @@ namespace FrameIO.Main
                 "channeldeclare", GetChannelsDeclare(subsys, 2),
                 "channelinitial", GetChannelsInitial(subsys, 2),
                 "exceptionhandler", GetExceptionhandler(2),
-                "sendactionlist", GetSendActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), 2),
-                "recvactionlist", GetRecvActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), 2)
+                "sendactionlist", GetActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), 2),
+                "recvactionlist", GetActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), 2)
                 );
         }
 
@@ -203,43 +207,220 @@ namespace FrameIO.Main
 
         #endregion
 
+        #region --IO动作--
 
-        #region --发送数据--
+        protected abstract string GetSendFunDeclear(IList<string> paras, SubsysAction ac);
+        protected abstract string GetRecvFunDeclear(IList<string> paras, SubsysAction ac);
+        protected abstract IList<string> GetSendCode(JProperty seg, SubsysActionMap map);
+        protected abstract IList<string> GetRecvCode(JProperty seg, SubsysActionMap map);
 
-        protected abstract IList<string> GetSendFun(SubsysAction ac);
+        //for current work
+        private Stack<WhyCode> _workStack = new Stack<WhyCode>();
+        private List<string> _workParas = new List<string>();
 
-        private string GetSendActions(IEnumerable<SubsysAction> acs, int tabCount)
+        private string GetActions(IEnumerable<SubsysAction> acs, int tabCount)
         {
             if (acs == null) return "";
             var chs = new List<string>();
             foreach (var ac in acs)
             {
-                var fun = GetSendFun(ac);
+                PrepareStack();
+                var fun = GetActionFun(ac);
                 if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
                 chs.AddRange(fun);
             }
             return List2String(chs, tabCount);
+        }
+
+
+        //生成IO函数
+        private IList<string> GetActionFun(SubsysAction ac)
+        {
+            var codes = new List<string>();
+
+            var jfrm = _jframes.FindJFrame(ac.FrameName);
+            var frm = FindFrame(ac.FrameName);
+
+            //先生成函数体，并收集参数
+            PushCode(WhyCode.Frame, codes, null, "", ac);
+            codes.AddRange(ac.BeginCodes);
+            AppendActionCodeList(codes,  _jframes.GetChildren(jfrm, true), ac);
+            codes.AddRange(ac.EndCodes);
+            PopCode(WhyCode.Frame, codes);
+ 
+            //后生成完整函数
+            string dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
+
+            codes.Insert(0, dec);
+            return codes;
+
+        }
+
+
+        //遍历全部节点
+        private void AppendActionCodeList(List<string> codes, IEnumerable<JProperty> segs, SubsysAction ac)
+        {
+
+            foreach (var seg in segs)
+            {
+                JProperty bySeg = null;
+                string oneOfItem = "";
+                var children = _jframes.GetChildrenNode(seg, out bySeg, out oneOfItem);
+
+                if (children == null)
+                {
+                    AppendNodeCode(codes, seg, ac);
+                    continue;
+                }
+                else
+                {
+                    WhyCode why = WhyCode.Block;
+                    if (bySeg != null)
+                        why = WhyCode.Switch;
+                    else if (oneOfItem != "")
+                        why = WhyCode.Case;
+
+                    PushCode(why, codes, bySeg, oneOfItem, ac);
+                    AppendNodeCode(codes, seg, ac);
+                    AppendActionCodeList(codes, _jframes.GetChildren(children), ac);
+                    PopCode(why, codes);
+                }
+
+            }
+        }
+
+
+        //赋值语句
+        private void AppendNodeCode(List<string> codes, JProperty node, SubsysAction ac)
+        {
+            var map = FindMap(node, ac);
+            if (map != null)
+            {
+                var ret = (ac.IOType == actioniotype.AIO_SEND ? GetSendCode(node, map) : GetRecvCode(node, map));
+                codes.AddRange(FormatPreTabs(ret));
+            }
+        }
+
+        //压栈代码
+        private void PushCode(WhyCode why, IList<string> codes, JProperty bySeg, string intoCase, SubsysAction ac)
+        {
+
+            switch (why)
+            {
+                case WhyCode.Block:
+                    break;
+
+                case WhyCode.Switch:
+                    {
+                        var para = _jframes.GetSegFullName(bySeg.Value.Value<JObject>(), bySeg.Name, true);
+                        _workParas.Add(para);
+                        var key = ac.IOType == actioniotype.AIO_SEND ? para.Replace('.', '_') : ""; //HACK read enum
+                        codes.Add(FormatPreTabs(string.Format("switch({0})", key)));
+                        codes.Add(FormatPreTabs("{"));
+                        _workStack.Push(why);
+                    }
+                    break;
+                case WhyCode.Case:
+                    {
+                        var byseg = _workParas.Last();
+                        string em = _jframes.GetToEnum(byseg);
+                        codes.Add(FormatPreTabs(string.Format("case {0}:", em + "." + intoCase), true));
+                        codes.Add(FormatPreTabs("{", true));
+                    }
+                    break;
+                case WhyCode.Frame:
+                    codes.Add("{");
+                    _workStack.Push(why);
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        }
+
+        //出栈代码
+        private void PopCode(WhyCode why, IList<string> codes)
+        {
+            switch (why)
+            {
+                case WhyCode.Block:
+                    break;
+                case WhyCode.Switch:
+                    _workStack.Pop();
+                    codes.Add(FormatPreTabs("}"));
+                    break;
+                case WhyCode.Case:
+                    codes.Add(FormatPreTabs("break;", false));
+                    codes.Add(FormatPreTabs("}", true));
+                    break;
+                case WhyCode.Frame:
+                    _workStack.Pop();
+                    codes.Add("}");
+                    break;
+                default:
+                    break;
+            }
         }
 
 
         #endregion
 
-        #region --接收数据--
+        #region --Helper for action--
 
-        protected abstract IList<string> GetRecvFun(SubsysAction ac);
+        #region --Helper for stack--
 
-        private string GetRecvActions(IEnumerable<SubsysAction> acs, int tabCount)
+        //生成action函数体代码语句
+        public enum WhyCode
         {
-            if (acs == null) return "";
-            var chs = new List<string>();
-            foreach (var ac in acs)
-            {
-                var fun = GetRecvFun(ac);
-                if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
-                chs.AddRange(fun);
-            }
-            return List2String(chs, tabCount);
+            Block,
+            Switch,
+            Case,
+            Frame
         }
+
+        private void PrepareStack()
+        {
+            Debug.Assert(_workStack.Count == 0);
+            _workParas.Clear();
+        }
+
+        private IList<string> FormatPreTabs(IList<string> ret)
+        {
+            int tabCount = _workStack.Where(p => p == WhyCode.Switch).Count() * 2 + 1;
+            return (tabCount == 0) ? ret : ret.Select(p => new string('\t', tabCount) + p).ToList();
+        }
+
+        private string FormatPreTabs(string code, bool isCase = false)
+        {
+            int tabCount = _workStack.Where(p => p == WhyCode.Switch).Count() * 2;
+            if (!isCase) tabCount += 1;
+            return (tabCount == 0) ? code : new string('\t', tabCount) + code;
+        }
+
+        #endregion
+
+        //查找匹配的映射
+        private SubsysActionMap FindMap(JProperty seg, SubsysAction ac)
+        {
+            var segname = _jframes.GetSegFullName(seg.Value.Value<JObject>(), seg.Name, false);
+            var finds = ac.LiteMaps.Where(p => p.FrameSegName == segname);
+            if (finds.Count() > 0)
+            {
+                return finds.First();
+            }
+            else
+                return null;
+        }
+
+
+        //查找数据帧
+        private Frame FindFrame(string name)
+        {
+            return _pj.FrameList.Where(p => p.Name == name).First();
+        }
+
 
         #endregion
 

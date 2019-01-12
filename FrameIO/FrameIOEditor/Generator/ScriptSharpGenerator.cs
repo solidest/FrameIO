@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace FrameIO.Main
 {
@@ -155,10 +156,44 @@ namespace FrameIO.Main
         }
 
 
+
         #endregion
 
         #region --SendAction--
 
+
+        protected override string GetSendFunDeclear(IList<string> paras, SubsysAction ac)
+        {
+            var parss = new StringBuilder();
+            string pas = null;
+            foreach (var item in paras)
+            {
+                parss.Append(_jframes.GetToEnum(item) + " " + item.Replace(".", "_") + ", ");
+            }
+            if (parss.Length > 2) pas = parss.ToString().Substring(0, parss.Length - 2);
+            return string.Format("public void {0}({1})", ac.Name, pas ?? "");
+        }
+
+        protected override string GetRecvFunDeclear(IList<string> paras, SubsysAction ac)
+        {
+            return string.Format("public void {0}({1})", ac.Name, "");
+        }
+
+        protected override IList<string> GetSendCode(JProperty seg, SubsysActionMap map)
+        {
+            //HACK
+            var ret = new List<string>();
+            ret.Add(string.Format("{0} = {1};", map.SysPropertyName, map.FrameSegName));
+            return ret;
+        }
+
+        protected override IList<string> GetRecvCode(JProperty seg, SubsysActionMap map)
+        {
+            //HACK
+            var ret = new List<string>();
+            ret.Add(string.Format("{0} = {1};", map.FrameSegName, map.SysPropertyName));
+            return ret;
+        }
 
         #endregion
 

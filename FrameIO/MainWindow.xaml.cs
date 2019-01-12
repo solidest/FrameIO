@@ -30,7 +30,8 @@ namespace FrameIO.Main
 
             //打开上次文件
             FioConfig.LoadConfig(this);
-
+            _outHeight = FioConfig.OutHeight>160?FioConfig.OutHeight:160;
+            gridMain.RowDefinitions[3].Height = new GridLength(_outHeight, GridUnitType.Pixel);
             LoadEditorConfig();
 
             Thread parseThread = new Thread(this.Parse);
@@ -52,6 +53,7 @@ namespace FrameIO.Main
         private bool _isCoding = false;
         private string __file = "";
         private bool _isModified = false;
+        private int _outHeight = 160;
 
         private string FileName
         {
@@ -301,6 +303,7 @@ namespace FrameIO.Main
         private void OnBeforeClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
             FioConfig.IsCoding = _isCoding;
+            FioConfig.OutHeight = (int)gridMain.RowDefinitions[3].Height.Value;
             FioConfig.SaveConfig(this);
             if(_lastprojectid>0)
             {
@@ -624,11 +627,12 @@ namespace FrameIO.Main
             {
                 case Visibility.Visible:
                     HSplitter.Visibility = Visibility.Collapsed;
+                    _outHeight = (int)gridMain.RowDefinitions[3].Height.Value;
                     gridMain.RowDefinitions[3].Height = new GridLength(0, GridUnitType.Pixel);
                     break;
                 case Visibility.Collapsed:
                     HSplitter.Visibility = Visibility.Visible;
-                    gridMain.RowDefinitions[3].Height = new GridLength(160, GridUnitType.Pixel);
+                    gridMain.RowDefinitions[3].Height = new GridLength(_outHeight, GridUnitType.Pixel);
                     break;
             }
             if(e!=null) e.Handled = true;
