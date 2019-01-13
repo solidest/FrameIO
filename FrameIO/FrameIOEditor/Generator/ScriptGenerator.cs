@@ -16,7 +16,6 @@ namespace FrameIO.Main
     public abstract class ScriptGenerator
     {
 
-
         #region --Initial--
 
         protected IOProject _pj;
@@ -218,8 +217,8 @@ namespace FrameIO.Main
         protected abstract string GetRecvSwitchKey(string segFullName);
 
         //for current work
-        private Stack<WhyCode> _workStack = new Stack<WhyCode>();
-        private List<string> _workParas = new List<string>();
+        private Stack<WhyCode> _workStack;
+        private List<string> _workParas;
 
         private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
@@ -227,7 +226,6 @@ namespace FrameIO.Main
             var chs = new List<string>();
             foreach (var ac in acs)
             {
-                PrepareStack();
                 var fun = GetActionFun(ac, pros);
                 if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
                 chs.AddRange(fun);
@@ -239,23 +237,30 @@ namespace FrameIO.Main
         //生成IO函数
         private IList<string> GetActionFun(SubsysAction ac, IEnumerable<SubsysProperty> pros)
         {
+            _workParas = new List<string>();
+            _workStack = new Stack<WhyCode>();
+
             var codes = new List<string>();
 
             var jfrm = _jframes.FindJFrame(ac.FrameName);
             var frm = FindFrame(ac.FrameName);
 
             //先生成函数体，并收集参数
-            //PushCode(WhyCode.Frame, codes, null, "", ac);
+
             codes.AddRange(GetUserScript(ac.BeginCodes));
             AppendActionCodeList(codes,  _jframes.GetChildren(jfrm, true), ac, pros);
             codes.AddRange(GetUserScript(ac.EndCodes));
-            //PopCode(WhyCode.Frame, codes);
+            Debug.Assert(_workStack.Count == 0);
+
  
             //后生成完整函数
             var dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
             codes.InsertRange(0, dec);
             var end = (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunClose(_workParas, ac) : GetRecvFunClose(_workParas, ac);
             codes.AddRange(end);
+
+            _workStack = null;
+            _workParas = null;
             return codes;
 
         }
@@ -433,11 +438,6 @@ namespace FrameIO.Main
             Case
         }
 
-        private void PrepareStack()
-        {
-            Debug.Assert(_workStack.Count == 0);
-            _workParas.Clear();
-        }
 
         private IList<string> FormatPreTabs(IList<string> ret)
         {
