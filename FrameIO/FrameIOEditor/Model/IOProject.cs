@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -56,6 +57,11 @@ namespace FrameIO.Main
                 ret.Add(ename.Name);
             }
             return ret;
+        }
+
+        internal bool IsInnerSubsys(string name)
+        {
+            return InnerSubsysList.Where(p => p.Name == name).Count() > 0;
         }
 
         public List<SelectItem> GetPropertySelectTypeList()
@@ -124,7 +130,7 @@ namespace FrameIO.Main
             {
                 if (fr.SubSysName != null && fr.SubSysName.Length > 0)
                 {
-                    InnerSubsysList.Add(new InnerSubsys(fr.SubSysName, fr.Segments));
+                    InnerSubsysList.Add(new InnerSubsys(fr.SubSysName, fr.Name, fr.Segments));
                 }
 
                 foreach(var seg in fr.Segments)
@@ -134,7 +140,7 @@ namespace FrameIO.Main
                         var bseg = (FrameSegmentBlock)seg;
                         if(bseg.UsedType== BlockSegType.DefFrame && bseg.SubSysName!=null && bseg.SubSysName.Length>0)
                         {
-                            InnerSubsysList.Add(new InnerSubsys(bseg.SubSysName, bseg.DefineSegments));
+                            InnerSubsysList.Add(new InnerSubsys(bseg.SubSysName, bseg.Name, bseg.DefineSegments));
                         }
                     }
                 }

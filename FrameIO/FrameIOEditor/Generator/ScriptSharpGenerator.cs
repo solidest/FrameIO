@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,19 +74,20 @@ namespace FrameIO.Main
         protected override string GetPropertyDefCode(SubsysProperty pro)
         {
             var ret = new StringBuilder();
-            if (pro.IsBaseType() || _pj.IsEnum(pro.PropertyType))
+            if (pro.IsBaseType() || pro.IsEnum(_pj))
             {
                 if (pro.IsArray)
-                    ret.Append(@"public ObservableCollection<Parameter<bool?>> name { get; private set; }");
+                    ret.Append("public ObservableCollection<Parameter<bool?>> name { get; private set; }");
                 else
-                    ret.Append(@"public Parameter<bool?> name { get; private set;}");
+                    ret.Append("public Parameter<bool?> name { get; private set;}");
             }
             else
             {
+                Debug.Assert(pro.IsInnerSubsys(_pj));
                 if (pro.IsArray)
-                    ret.Append(@"public ObservableCollection<bool> name { get; private set; }");
+                    ret.Append("public ObservableCollection<bool> name { get; private set; }");
                 else
-                    ret.Append(@"public bool Name { get; private set; }");
+                    ret.Append("public bool name { get; private set; }");
             }
 
             ret.Replace("bool", pro.PropertyType);
@@ -101,25 +103,25 @@ namespace FrameIO.Main
             {
                 if (pro.IsArray)
                 {
-                    ret.Append(@"name = new ObservableCollection<Parameter<bool?>>();");
+                    ret.Append("name = new ObservableCollection<Parameter<bool?>>();");
                     if ((pro.ArrayLen?.Length) > 0)
-                        ret.AppendFormat(@" for (int i = 0; i < {0}; i++) name.Add(new Parameter<bool?>());", pro.ArrayLen);
+                        ret.AppendFormat(" for (int i = 0; i < {0}; i++) name.Add(new Parameter<bool?>());", pro.ArrayLen);
                 }
                 else
                 {
-                    ret.Append(@"name = new Parameter<bool?>();");
+                    ret.Append("name = new Parameter<bool?>();");
                 }
             }
             else
             {
                 if (pro.IsArray)
                 {
-                    ret.Append(@"name = new ObservableCollection<bool>();");
+                    ret.Append("name = new ObservableCollection<bool>();");
                     if (pro.ArrayLen?.Length > 0)
-                        ret.AppendFormat(@" for(int i=0; i<{0}; i++) name.Add(new bool());", pro.ArrayLen);
+                        ret.AppendFormat(" for(int i=0; i<{0}; i++) name.Add(new bool());", pro.ArrayLen);
                 }
                 else
-                    ret.Append(@"name = new bool();");
+                    ret.Append("name = new bool();");
             }
 
             ret.Replace("bool", pro.PropertyType);
@@ -162,8 +164,10 @@ namespace FrameIO.Main
         #region --SendAction--
 
 
-        protected override string GetSendFunDeclear(IList<string> paras, SubsysAction ac)
+        protected override IList<string> GetSendFunDeclear(IList<string> paras, SubsysAction ac)
         {
+            var ret = new List<string>();
+
             var parss = new StringBuilder();
             string pas = null;
             foreach (var item in paras)
@@ -171,29 +175,132 @@ namespace FrameIO.Main
                 parss.Append(_jframes.GetToEnum(item) + " " + item.Replace(".", "_") + ", ");
             }
             if (parss.Length > 2) pas = parss.ToString().Substring(0, parss.Length - 2);
-            return string.Format("public void {0}({1})", ac.Name, pas ?? "");
-        }
-
-        protected override string GetRecvFunDeclear(IList<string> paras, SubsysAction ac)
-        {
-            return string.Format("public void {0}({1})", ac.Name, "");
-        }
-
-        protected override IList<string> GetSendCode(JProperty seg, SubsysActionMap map)
-        {
-            //HACK
-            var ret = new List<string>();
-            ret.Add(string.Format("{0} = {1};", map.SysPropertyName, map.FrameSegName));
+            var dec =  string.Format("public void {0}({1})", ac.Name, pas ?? "");
+            ret.Add(dec);
+            ret.Add("{");
+            ret.Add(string.Format("\tvar __v__ = FioNetRunner.NewFrameObject(\"{0}\");", ac.FrameName));
             return ret;
         }
 
-        protected override IList<string> GetRecvCode(JProperty seg, SubsysActionMap map)
+
+        protected override IList<string> GetSendCode(JProperty seg, SubsysProperty pro)
         {
-            //HACK
             var ret = new List<string>();
-            ret.Add(string.Format("{0} = {1};", map.FrameSegName, map.SysPropertyName));
+            var fullSegName = _jframes.GetSegFullName(seg.Value.Value<JObject>(), false);
+            if(pro.IsBaseType())
+            {
+                ret.Add(string.Format("__v__.SetValue(\"{0}\", {1});", fullSegName, pro.Name));
+            }
+            else if (pro.IsEnum(_pj))
+            {
+                ret.Add(string.Format("__v__.SetValue(\"{0}\", (int){1});", fullSegName, pro.Name));
+            }
+            else if(pro.IsInnerSubsys(_pj))
+            {
+                if(!pro.IsArray)
+                {
+                    ret.Add("{");
+                    ret.Add(string.Format("\tvar __vv__ = new FioNetObject();", fullSegName));
+                    foreach(var inpro in _pj.InnerSubsysList.Where(p=>p.Name == pro.PropertyType).First().Propertys)
+                        ret.Add(string.Format("\t__vv__.SetValue(\"{0}\", {0});", inpro.Name));
+                    ret.Add(string.Format("\t__v__.SetValue(\"{0}\", __vv__);", fullSegName));
+                    ret.Add("}");
+                }
+                else
+                {
+                    ret.Add("{");
+                    ret.Add(string.Format("\tvar __vvs__ = new List<FioNetObject>();", fullSegName));
+                    ret.Add(string.Format("\tfor (int i = 0; i < {0}.Count; i++)", pro.Name));
+                    ret.Add("\t{");
+                    ret.Add(string.Format("\t\tvar __vv__ = new FioNetObject();", fullSegName));
+                    foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
+                        ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {0});", inpro.Name));
+                    ret.Add("\t\t__vvs__.Add(__vv__);");
+                    ret.Add("\t}");
+                    ret.Add(string.Format("\t__v__.SetValue(\"{0}\", __vvs__);", fullSegName));
+                    ret.Add("}");
+                }
+            }
             return ret;
         }
+
+
+        protected override IList<string> GetSendFunClose(IList<string> paras, SubsysAction ac)
+        {
+            //FioNetRunner.SendFrame(__v__, ch);
+            var ret = new List<string>();
+            ret.Add(string.Format("\tFioNetRunner.SendFrame(__v__, {0});", ac.ChannelName));
+            ret.Add("}");
+            return ret;
+        }
+
+
+        #endregion
+
+        #region --RecvAction-
+
+        protected override IList<string> GetRecvFunDeclear(IList<string> paras, SubsysAction ac)
+        {
+            var ret = new List<string>();
+            ret.Add(string.Format("public void {0}()", ac.Name));
+            ret.Add("{");
+            ret.Add(string.Format("\tvar __v__ = FioNetRunner.RecvFrame(\"{0}\", {1});", ac.FrameName, ac.ChannelName));
+            return ret;
+        }
+
+        protected override IList<string> GetRecvCode(JProperty seg, SubsysProperty pro)
+        {
+            var ret = new List<string>();
+            var fullSegName = _jframes.GetSegFullName(seg.Value.Value<JObject>(), false);
+            if (pro.IsBaseType())
+            {
+                ret.Add(string.Format("__v__.GetValue(\"{0}\", {1});", fullSegName, pro.Name));
+            }
+            else if (pro.IsEnum(_pj))
+            {
+                ret.Add(string.Format("{0} = ({1})__v__.GetValue(\"{2}\");", pro.Name, pro.PropertyType, fullSegName));
+            }
+            else if (pro.IsInnerSubsys(_pj))
+            {
+                if (!pro.IsArray)
+                {
+                    ret.Add("{");
+                    ret.Add(string.Format("\tvar __vv__ = __v__.GetObject(\"{0}\";", fullSegName));
+                    foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
+                        ret.Add(string.Format("\t__vv__.GetValue(\"{0}\", {0});", inpro.Name));
+                    ret.Add("}");
+                }
+                else
+                {
+                    ret.Add("{");
+                    ret.Add(string.Format("\tvar __vvs__ = __v__.GetObjectArray(\"{0}\";", fullSegName));
+                    ret.Add("\tint __vvi__ = 0;");
+                    ret.Add(string.Format("\tforeach(var __vv__ in __vvs)", pro.Name));
+                    ret.Add("\t{");
+                    ret.Add("\t\t__vvi__ += 1;");
+                    ret.Add(string.Format("\t\tif({0}.Count == __vvi__) break;", pro.Name));
+                    foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
+                        ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {0});", inpro.Name));
+                    ret.Add("\t}");
+                    ret.Add("}");
+                }
+            }
+            return ret;
+        }
+
+
+        protected override IList<string> GetRecvFunClose(IList<string> paras, SubsysAction ac)
+        {
+            var ret = new List<string>();
+            ret.Add("}");
+            return ret;
+        }
+
+        protected override string GetRecvSwitchKey(string segFullName)
+        {
+            return string.Format("({0})__v__.GetValue(\"{1}\")", _jframes.GetToEnum(segFullName), segFullName);
+        }
+
 
         #endregion
 

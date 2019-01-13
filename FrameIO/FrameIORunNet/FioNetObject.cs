@@ -1,4 +1,5 @@
-﻿using System;
+﻿using main;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,9 +11,25 @@ namespace FrameIO.Run
     public class FioNetObject
     {
         private FrameObject _fo;
+
+        public FioNetObject()
+        {
+            _fo = new FrameObject();
+        }
+
         internal FioNetObject(FrameObject fo)
         {
             _fo = fo;
+        }
+
+        public void SetValue(string segname, int value)
+        {
+            _fo.SetValue(segname, value);
+        }
+
+        public int GetValue(string segname)
+        {
+            return _fo.GetInt(segname);
         }
 
         public void SetValue(string segname, Parameter<bool?> value)
@@ -42,25 +59,26 @@ namespace FrameIO.Run
             }
         }
 
-        public void SetValueObject(string segname, FioNetObject value)
+        public void SetValue(string segname, FioNetObject value)
         {
             _fo.SetObject(segname, value._fo);
         }
 
-        public FioNetObject GetValueObject(string segname)
+        public void SetValue(string segname, Collection<FioNetObject> values)
+        {
+            _fo.SetObjectArray(segname, values.Select(p => p._fo));
+        }
+
+        public FioNetObject GetObject(string segname)
         {
             return new FioNetObject(_fo.GetObject(segname));
         }
 
-        public IEnumerable<FioNetObject> GetValueObjectArray(string segname)
+        public IEnumerable<FioNetObject> GetObjectArray(string segname)
         {
             return _fo.GetObjectArray(segname).Select(p => new FioNetObject(p)).ToArray();
         }
 
-        public void SetValueObjectArray(string segname, Collection<FioNetObject> values)
-        {
-            _fo.SetObjectArray(segname, values.Select(p => p._fo));
-        }
 
     }
 }

@@ -196,9 +196,9 @@ actionmaplist:																			{ $$ = NULL; }
 
 actionmap:
 	notelist T_ID ':' T_ID ';'															{ $$ = new_actionmap($2, $4, $1); }
-	| notelist T_ID ':' T_UNION_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
+	//| notelist T_ID ':' T_UNION_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
 	| notelist T_UNION_ID ':' T_ID ';'													{ $$ = new_actionmap($2, $4, $1); }
-	| notelist T_UNION_ID ':' T_UNION_ID ';'											{ $$ = new_actionmap($2, $4, $1); }
+	//| notelist T_UNION_ID ':' T_UNION_ID ';'											{ $$ = new_actionmap($2, $4, $1); }
 	| notelist T_AT_USER																{ $$ = new_actionmap(0, $2, $1); }
 ;
 

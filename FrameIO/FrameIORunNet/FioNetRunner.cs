@@ -8,6 +8,7 @@ namespace FrameIO.Run
 {
     public static class FioNetRunner
     {
+        //获取一个通道
         public static FioChannel GetChannel(ChannelOption chops)
         {
             var ret = IORunner.GetChannel((ChannelTypeEnum)chops.GetOption("$channeltype"), chops);
@@ -21,6 +22,16 @@ namespace FrameIO.Run
             return new FioNetObject(IORunner.NewFrameObject(frameName));
         }
 
+        //发送数据
+        public static void SendFrame(FioNetObject data, FioChannel ch)
+        {
 
+        }
+
+        //接收数据
+        public static FioNetObject RecvFrame(string frame, FioChannel ch)
+        {
+            return null;
+        }
     }
 }

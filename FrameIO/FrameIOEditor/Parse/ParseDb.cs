@@ -269,33 +269,28 @@ PRAGMA foreign_keys = on;
                 ret.Add(mp);
             }
 
-            for(int i=0; i<ret.Count; i++)
-            {
-                if (!ret[i].SysPropertyName.StartsWith("@"))
-                    liteMaps.Add(ret[i]);
-            }
+            int index = 0;
 
-            for (int i = 0; i < ret.Count; i++)
+            for(; index<ret.Count; index++)
             {
-                if (ret[i].SysPropertyName.StartsWith("@"))
-                    userBeginCode.Add(ret[i].SysPropertyName);
+                if (ret[index].SysPropertyName.StartsWith("@"))
+                    userBeginCode.Add(ret[index].SysPropertyName);
                 else
                     break;
             }
 
-            int ifind = -1;
-            for(int i = ret.Count-1; i>=0; i--)
+            for (; index < ret.Count; index++)
             {
-                if (ret[i].SysPropertyName.StartsWith("@"))
-                    ifind = i;
+                if (!ret[index].SysPropertyName.StartsWith("@"))
+                    liteMaps.Add(ret[index]);
                 else
                     break;
             }
 
-            if(ifind>=0)
+            for (; index < ret.Count; index++)
             {
-                for(int i=ifind; i<ret.Count; i++)
-                    userEndCode.Add(ret[i].SysPropertyName);
+                if (ret[index].SysPropertyName.StartsWith("@"))
+                    userEndCode.Add(ret[index].SysPropertyName);
             }
 
             return ret;
@@ -460,7 +455,7 @@ PRAGMA foreign_keys = on;
                 var innersubsysname = GetSymbol(Convert.ToInt32(r["subsysid"]));
                 if(innersubsysname != "")
                 {
-                    LoadInnerSubSys(innersubsysname, fr.Segments, Convert.ToInt32(r["subsysid"]));
+                    LoadInnerSubSys(innersubsysname, fr.Name, fr.Segments, Convert.ToInt32(r["subsysid"]));
                     fr.SubSysName = innersubsysname;
                 }
             }
@@ -664,10 +659,10 @@ PRAGMA foreign_keys = on;
         }
 
 
-        private void LoadInnerSubSys(string name, ObservableCollection<FrameSegmentBase> seglist, int syid)
+        private void LoadInnerSubSys(string name, string mapSegName, ObservableCollection<FrameSegmentBase> seglist, int syid)
         {
             //if (_pj.InnerSubsysList.Where(p => p.Name == name).Count() > 0) return;
-            _pj.InnerSubsysList.Add(new InnerSubsys(name, seglist) { Syid=syid});
+            _pj.InnerSubsysList.Add(new InnerSubsys(name, mapSegName, seglist) { Syid=syid});
         }
 
         //加载数据帧字段
@@ -729,7 +724,7 @@ PRAGMA foreign_keys = on;
                         if (innersys != "" && bseg.UsedType== BlockSegType.DefFrame)
                         {
                             bseg.SubSysName = innersys;
-                            LoadInnerSubSys(innersys, bseg.DefineSegments, Convert.ToInt32(r["subsysid"]));
+                            LoadInnerSubSys(innersys, bseg.Name, bseg.DefineSegments, Convert.ToInt32(r["subsysid"]));
                         }
                             
                         break;

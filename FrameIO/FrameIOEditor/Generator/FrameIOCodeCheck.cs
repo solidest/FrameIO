@@ -20,6 +20,7 @@ namespace FrameIO.Main
         static private Dictionary<Frame, Dictionary<string, Frame>> FrameSegmentList {  get;  set; }
 
         static private List<string> _proptypelist;
+        static private Frames2Json _jfrms;
 
         static private void Reset()
         {
@@ -28,28 +29,16 @@ namespace FrameIO.Main
             _pj = null;
             ErrorList = new Dictionary<int, string>();
             FrameSegmentList = new Dictionary<Frame, Dictionary<string, Frame>>();
+            _jfrms = null;
         }
 
-        //"枚举名称重复";
-        //"枚举组成项名称重复";
-        //"分系统名称重复";
-        //"通道名称重复";
-        //"通道参数重复设置";
-        //"操作名称重复";
-        //"字段值重复设置";
-        //"属性名称重复";
-        //"数据帧名称重复";
-        //"字段名称重复";
-        //"字段属性重复设置";
-        //"字段属性与字段类型不匹配";
-        //"OneOf 选择项名称重复";
-        //"未定义的enum引用";
 
         //执行语法检查
         static public bool CheckProject(IOProject pj)
         {
             Reset();
             _pj = pj;
+            _jfrms = new Frames2Json(_pj);
             _proptypelist = _pj.GetPropertyTypeList();
 
             CheckNameRepeated();
@@ -64,36 +53,8 @@ namespace FrameIO.Main
 
         #endregion
 
+        #region --检查通道--
 
-        #region --检查分系统--
-
-        static private void CheckSubsys()
-        {
-            foreach(var sys in _pj.SubsysList)
-            {
-                CheckSubsysName(sys);
-
-                foreach (var pt in sys.Propertys)
-                    CheckProperty(pt);
-
-                foreach(var ch in sys.Channels)
-                    CheckChannel(ch);
-
-                foreach (var ac in sys.Actions)
-                    CheckAction(ac, sys);
-            }
-        }
-
-
-        //检查属性
-        static private void CheckProperty(SubsysProperty pt)
-        {
-            if(!_proptypelist.Contains(pt.PropertyType))
-                AddErrorInfo(pt.Syid, "分系统属性类型错误");
-        }
-
-        #region --通道--
-        
         //检查通道
         static private void CheckChannel(SubsysChannel ch)
         {
@@ -129,7 +90,7 @@ namespace FrameIO.Main
             switch (chtype)
             {
                 case syschanneltype.SCHT_COM:
-                    return new string[5] { "baudrate", "parity", "databits", "stopbits", "waittimeout" }; 
+                    return new string[5] { "baudrate", "parity", "databits", "stopbits", "waittimeout" };
                 case syschanneltype.SCHT_CAN:
                     return new string[9] { "devtype", "devind", "channelind", "baudrate", "acccode", "accmark", "mode", "filter", "waittimeout" };
                 case syschanneltype.SCHT_TCPSERVER:
@@ -137,7 +98,7 @@ namespace FrameIO.Main
                 case syschanneltype.SCHT_TCPCLIENT:
                     return new string[2] { "port", "waittimeout" };
                 case syschanneltype.SCHT_UDP:
-                    return new string[3] { "localport", "remoteport", "waittimeout" }; 
+                    return new string[3] { "localport", "remoteport", "waittimeout" };
                 case syschanneltype.SCHT_DIO:
                     return new string[4] { "deviceno", "channelidx", "minvalue", "waittimeout" };
             }
@@ -149,7 +110,7 @@ namespace FrameIO.Main
             switch (chtype)
             {
                 case syschanneltype.SCHT_COM:
-                    return new string[1] { "portname"};
+                    return new string[1] { "portname" };
                 case syschanneltype.SCHT_CAN:
                     return new string[1] { "vendor" };
                 case syschanneltype.SCHT_TCPSERVER:
@@ -255,7 +216,7 @@ namespace FrameIO.Main
             {
                 if (str.Contains(op.Name))
                 {
-                    if (Helper.ValidateIsInt(op.OptionValue)||Helper.ValidateIsReal(op.OptionValue))
+                    if (Helper.ValidateIsInt(op.OptionValue) || Helper.ValidateIsReal(op.OptionValue))
                         AddErrorInfo(op.Syid, "参数值设置错误");
                 }
                 else if (nms.Contains(op.Name))
@@ -294,7 +255,34 @@ namespace FrameIO.Main
                 AddErrorInfo(syid, "必须设置为整数值");
         }
         #endregion
-        
+    
+        #region --检查分系统--
+
+        static private void CheckSubsys()
+        {
+            foreach(var sys in _pj.SubsysList)
+            {
+                CheckSubsysName(sys);
+
+                foreach (var pt in sys.Propertys)
+                    CheckProperty(pt);
+
+                foreach(var ch in sys.Channels)
+                    CheckChannel(ch);
+
+                foreach (var ac in sys.Actions)
+                    CheckAction(ac, sys);
+            }
+        }
+
+
+        //检查属性
+        static private void CheckProperty(SubsysProperty pt)
+        {
+            if(!_proptypelist.Contains(pt.PropertyType))
+                AddErrorInfo(pt.Syid, "分系统属性类型错误");
+        }
+
 
         //检查动作
         static private void CheckAction(SubsysAction ac, Subsys sys)
@@ -309,11 +297,11 @@ namespace FrameIO.Main
                 var frm = fms.First();
                 foreach(var map in ac.LiteMaps)
                 {
-                    if (map.SysPropertyName != "" && !map.SysPropertyName.StartsWith("@") && sys.Propertys.Where(p=>p.Name==map.SysPropertyName).Count()==0)
+                    if (!CheckProInMap(map.SysPropertyName, sys))
                     {
                         AddErrorInfo(map.Syid, "引用的分系统属性不正确");
                     }
-                    if (map.FrameSegName != "" && !CheckSegInMap(map.FrameSegName, ac.FrameName))
+                    if (!CheckSegInMap(map.FrameSegName, ac.FrameName))
                     {
                         AddErrorInfo(map.Syid, "引用的数据帧字段不正确");
                     }
@@ -322,44 +310,29 @@ namespace FrameIO.Main
             }
         }
 
+        //是否包含引用的属性
+        static private bool CheckProInMap(string proname, Subsys sys)
+        {
+            var nms = proname.Split('.');
+            if (nms.Length == 0) return false;
+
+            var pros = sys.Propertys.Where(p => p.Name == nms[0]);
+            if (pros.Count() == 0) return false;
+            if (nms.Length == 1) return true;
+
+            
+            //子系统
+            var inner = pros.First().PropertyType;
+            var segname = proname.Substring(proname.IndexOf(".")+1);
+            return CheckSegInMap(segname, inner);
+        }
+
 
         //是否包含引用的字段
         static private bool CheckSegInMap(string segname, string frmname)
         {
-            var frms = _pj.FrameList.Where(p => p.Name == frmname);
-            var frm = frms.First();
-            if (frm == null) return false;
-            var segs = FrameSegmentList[frm];
-            if (segs.Keys.Contains(segname))
-            {
-                var fr = segs[segname];
-                if (fr != null)
-                    return fr.SubSysName != null && fr.SubSysName.Length > 0;       //引用数据帧是否可以直接赋值
-                else
-                    return true;
-            }
-
-            var nms = segname.Split('.');
-            int imy = -1;
-            Frame findfrm = null;
-            for(int i=0; i<nms.Length; i++)
-            {
-                var n = nms[0];
-                for (int ii = 1; ii <= i; ii++)
-                    n = n + "." + nms[ii];
-                if (segs.Keys.Contains(n))
-                {
-                    imy = i;
-                    findfrm = segs[n];
-                }
-                else
-                    break;
-            }
-            if (imy == -1 || findfrm == null) return false;
-            var refn = nms[imy + 1];
-            for (int ii = imy + 2; ii < nms.Length; ii++)
-                refn = refn + "." + nms[ii];
-            return CheckSegInMap(refn, findfrm.Name);
+            var seg = _jfrms.FindSegment(frmname + "." + segname);
+            return (seg != null);
         }
 
 
@@ -390,13 +363,6 @@ namespace FrameIO.Main
         //检查一级对象是否重名
         static private void CheckNameRepeated()
         {
-            //foreach(var em in _pj.EnumdefList)
-            //{
-            //    foreach (var sys in _pj.SubsysList)
-            //        if (em.Name == sys.Name)
-            //            AddErrorInfo(sys.Syid, "分系统定义与枚举定义重名");
-            //}
-
             var names = new List<Tuple<string, int>>();
             names.AddRange(_pj.EnumdefList.Select(p => new Tuple<string, int>(p.Name, p.Syid)));
             names.AddRange(_pj.InnerSubsysList.Select(p => new Tuple<string, int>(p.Name, p.Syid)));

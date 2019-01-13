@@ -65,6 +65,13 @@ namespace FrameIO.Main
                     _jfrms.Add(frm.Name, Frame2JObject(frm));
                 }
             }
+
+            foreach(var inner in pj.InnerSubsysList)
+            {
+                var frm = new Frame(inner.Name);
+                frm.Segments = inner.MapSegList;
+                _jfrms.Add(frm.Name, Frame2JObject(frm));
+            }
         }
 
         #region --Public Helper--
@@ -134,16 +141,21 @@ namespace FrameIO.Main
         //查找数据帧
         public JProperty FindJFrame(string name)
         {
-           return _jfrms?.Properties().Where(p => p.Name == name).First();
+           return _jfrms?.Properties().Where(p => p.Name == name)?.First();
+        }
+
+        //查找字段对象
+        public JObject FindSegment(string fullName)
+        {
+            if (_segs.Keys.Contains(fullName))
+                return _segs[fullName];
+            else
+                return null;
         }
 
         //取字段的全名
-        public string GetSegFullName(JObject seg, string name, bool withFrame)
+        public string GetSegFullName(JObject seg, bool withFrame)
         {
-            if (_segs.Where(p => p.Value == seg).Count() == 0)
-            {
-                var i = 0;
-            }
             var fn =  _segs.Where(p => p.Value == seg).First().Key;
             if (withFrame) return fn;
             return fn.Substring(fn.IndexOf('.') + 1);
@@ -329,9 +341,7 @@ namespace FrameIO.Main
         //数据帧是否被分系统使用
         private bool IsUsedBySys(Frame frm)
         {
-            //HACK IsUsedBySys
-            //return true;
-            return _subsys.Where(p => p.Actions.Where(a => a.FrameName == frm.Name).Count() > 0).Count() > 0;
+            return (_subsys.Where(p => p.Actions.Where(a => a.FrameName == frm.Name).Count() > 0).Count() > 0);
         }
 
 

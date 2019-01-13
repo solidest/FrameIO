@@ -16,6 +16,12 @@ namespace FrameIO.Run
 
     public class FrameObject : Interface.ISegmentGettor
     {
+        public FrameObject()
+        {
+            RootValue = new JObject();
+            FrameName = "";
+        }
+
         internal FrameObject(string frameName)
         {
             RootValue = new JObject();

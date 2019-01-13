@@ -10,11 +10,16 @@ namespace FrameIO.Main
 {
     public class InnerSubsys : INotifyPropertyChanged
     {
-        public InnerSubsys(string name, ObservableCollection<FrameSegmentBase> seglist)
+        public InnerSubsys(string name, string mapSegName, ObservableCollection<FrameSegmentBase> seglist)
         {
             Name = name;
+            MapSegName = mapSegName;
+            MapSegList = seglist;
             AddPropertys(seglist);
         }
+
+        public string MapSegName { get; private set; }
+        public ObservableCollection<FrameSegmentBase> MapSegList { get; private set; }
         public string Name { get; set; }
 
         public string Notes { get; set; }

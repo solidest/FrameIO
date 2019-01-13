@@ -159,8 +159,8 @@ namespace FrameIO.Main
                 "channeldeclare", GetChannelsDeclare(subsys, 2),
                 "channelinitial", GetChannelsInitial(subsys, 2),
                 "exceptionhandler", GetExceptionhandler(2),
-                "sendactionlist", GetActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), 2),
-                "recvactionlist", GetActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), 2)
+                "sendactionlist", GetActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), subsys.Propertys, 2),
+                "recvactionlist", GetActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), subsys.Propertys, 2)
                 );
         }
 
@@ -209,23 +209,26 @@ namespace FrameIO.Main
 
         #region --IO动作--
 
-        protected abstract string GetSendFunDeclear(IList<string> paras, SubsysAction ac);
-        protected abstract string GetRecvFunDeclear(IList<string> paras, SubsysAction ac);
-        protected abstract IList<string> GetSendCode(JProperty seg, SubsysActionMap map);
-        protected abstract IList<string> GetRecvCode(JProperty seg, SubsysActionMap map);
+        protected abstract IList<string> GetSendFunDeclear(IList<string> paras, SubsysAction ac);
+        protected abstract IList<string> GetRecvFunDeclear(IList<string> paras, SubsysAction ac);
+        protected abstract IList<string> GetSendFunClose(IList<string> paras, SubsysAction ac);
+        protected abstract IList<string> GetRecvFunClose(IList<string> paras, SubsysAction ac);
+        protected abstract IList<string> GetSendCode(JProperty seg, SubsysProperty pro);
+        protected abstract IList<string> GetRecvCode(JProperty seg, SubsysProperty pro);
+        protected abstract string GetRecvSwitchKey(string segFullName);
 
         //for current work
         private Stack<WhyCode> _workStack = new Stack<WhyCode>();
         private List<string> _workParas = new List<string>();
 
-        private string GetActions(IEnumerable<SubsysAction> acs, int tabCount)
+        private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
             if (acs == null) return "";
             var chs = new List<string>();
             foreach (var ac in acs)
             {
                 PrepareStack();
-                var fun = GetActionFun(ac);
+                var fun = GetActionFun(ac, pros);
                 if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
                 chs.AddRange(fun);
             }
@@ -234,7 +237,7 @@ namespace FrameIO.Main
 
 
         //生成IO函数
-        private IList<string> GetActionFun(SubsysAction ac)
+        private IList<string> GetActionFun(SubsysAction ac, IEnumerable<SubsysProperty> pros)
         {
             var codes = new List<string>();
 
@@ -242,23 +245,87 @@ namespace FrameIO.Main
             var frm = FindFrame(ac.FrameName);
 
             //先生成函数体，并收集参数
-            PushCode(WhyCode.Frame, codes, null, "", ac);
-            codes.AddRange(ac.BeginCodes);
-            AppendActionCodeList(codes,  _jframes.GetChildren(jfrm, true), ac);
-            codes.AddRange(ac.EndCodes);
-            PopCode(WhyCode.Frame, codes);
+            //PushCode(WhyCode.Frame, codes, null, "", ac);
+            codes.AddRange(GetUserScript(ac.BeginCodes));
+            AppendActionCodeList(codes,  _jframes.GetChildren(jfrm, true), ac, pros);
+            codes.AddRange(GetUserScript(ac.EndCodes));
+            //PopCode(WhyCode.Frame, codes);
  
             //后生成完整函数
-            string dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
-
-            codes.Insert(0, dec);
+            var dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
+            codes.InsertRange(0, dec);
+            var end = (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunClose(_workParas, ac) : GetRecvFunClose(_workParas, ac);
+            codes.AddRange(end);
             return codes;
 
         }
 
+        //赋值语句
+        private void AppendNodeCode(List<string> codes, JProperty node, SubsysAction ac, IEnumerable<SubsysProperty> pros)
+        {
+            var map = FindMap(node, ac);
+            if (map != null)
+            {
+                var pro = pros.Where(p => p.Name == map.SysPropertyName).First();
+                var ret = (ac.IOType == actioniotype.AIO_SEND ? GetSendCode(node, pro) : GetRecvCode(node, pro));
+                codes.AddRange(FormatPreTabs(ret));
+            }
+        }
+
+        //分解子系统到值字段上
+        //private IEnumerable<SubsysProperty> GetSubPropertyList(string proname, IEnumerable<SubsysProperty> pros)
+        //{
+        //    var ret = new List<SubsysProperty>();
+            
+        //    //查找子系统属性
+        //    if(proname.Contains("."))
+        //    {
+        //        var nms = proname.Split('.');
+        //        var mpro = pros.Where(p => p.Name == nms[0]).First();
+        //        var inner = _pj.InnerSubsysList.Where(p => p.Name == mpro.PropertyType).First();
+        //        var pro = inner.Propertys.Where(p => p.Name == nms[1]).First();
+        //        var npro = new SubsysProperty(proname, pro);
+        //        ret.Add(npro);
+        //    }
+        //    else
+        //    {
+        //        var mpro = pros.Where(p => p.Name == proname).First();
+        //        if (mpro.IsInnerSubsys(_pj))
+        //        {
+        //            var inner = _pj.InnerSubsysList.Where(p => p.Name == mpro.PropertyType).First();
+        //            foreach(var pp in inner.Propertys)
+        //            {
+        //                ret.AddRange(GetSubPropertyList(proname + "." + pp.Name, pros));
+        //            }
+        //        }
+        //        else
+        //            ret.Add(mpro);
+        //    }
+
+        //    return ret;
+        //}
+
+
+        //查找匹配的映射
+
+        private SubsysActionMap FindMap(JProperty seg, SubsysAction ac)
+        {
+            var segname = _jframes.GetSegFullName(seg.Value.Value<JObject>(), false);
+            var finds = ac.LiteMaps.Where(p => p.FrameSegName == segname);
+            if (finds.Count() > 0)
+            {
+                return finds.First();
+            }
+            else
+                return null;
+        }
+
+
+        #region --while--
+
 
         //遍历全部节点
-        private void AppendActionCodeList(List<string> codes, IEnumerable<JProperty> segs, SubsysAction ac)
+        private void AppendActionCodeList(List<string> codes, IEnumerable<JProperty> segs, SubsysAction ac, IEnumerable<SubsysProperty> pros)
         {
 
             foreach (var seg in segs)
@@ -269,7 +336,7 @@ namespace FrameIO.Main
 
                 if (children == null)
                 {
-                    AppendNodeCode(codes, seg, ac);
+                    AppendNodeCode(codes, seg, ac, pros);
                     continue;
                 }
                 else
@@ -281,25 +348,14 @@ namespace FrameIO.Main
                         why = WhyCode.Case;
 
                     PushCode(why, codes, bySeg, oneOfItem, ac);
-                    AppendNodeCode(codes, seg, ac);
-                    AppendActionCodeList(codes, _jframes.GetChildren(children), ac);
+                    AppendNodeCode(codes, seg, ac, pros);
+                    AppendActionCodeList(codes, _jframes.GetChildren(children), ac, pros);
                     PopCode(why, codes);
                 }
 
             }
         }
 
-
-        //赋值语句
-        private void AppendNodeCode(List<string> codes, JProperty node, SubsysAction ac)
-        {
-            var map = FindMap(node, ac);
-            if (map != null)
-            {
-                var ret = (ac.IOType == actioniotype.AIO_SEND ? GetSendCode(node, map) : GetRecvCode(node, map));
-                codes.AddRange(FormatPreTabs(ret));
-            }
-        }
 
         //压栈代码
         private void PushCode(WhyCode why, IList<string> codes, JProperty bySeg, string intoCase, SubsysAction ac)
@@ -312,9 +368,9 @@ namespace FrameIO.Main
 
                 case WhyCode.Switch:
                     {
-                        var para = _jframes.GetSegFullName(bySeg.Value.Value<JObject>(), bySeg.Name, true);
+                        var para = _jframes.GetSegFullName(bySeg.Value.Value<JObject>(), true);
                         _workParas.Add(para);
-                        var key = ac.IOType == actioniotype.AIO_SEND ? para.Replace('.', '_') : ""; //HACK read enum
+                        var key = ac.IOType == actioniotype.AIO_SEND ? para.Replace('.', '_') : GetRecvSwitchKey(para); //HACK read enum
                         codes.Add(FormatPreTabs(string.Format("switch({0})", key)));
                         codes.Add(FormatPreTabs("{"));
                         _workStack.Push(why);
@@ -324,13 +380,13 @@ namespace FrameIO.Main
                     {
                         var byseg = _workParas.Last();
                         string em = _jframes.GetToEnum(byseg);
-                        codes.Add(FormatPreTabs(string.Format("case {0}:", em + "." + intoCase), true));
+                        if (intoCase == "other")
+                            em = "default";
+                        else
+                            em = em + "." + intoCase;
+                        codes.Add(FormatPreTabs(string.Format("case {0}:", em ), true));
                         codes.Add(FormatPreTabs("{", true));
                     }
-                    break;
-                case WhyCode.Frame:
-                    codes.Add("{");
-                    _workStack.Push(why);
                     break;
 
                 default:
@@ -355,15 +411,13 @@ namespace FrameIO.Main
                     codes.Add(FormatPreTabs("break;", false));
                     codes.Add(FormatPreTabs("}", true));
                     break;
-                case WhyCode.Frame:
-                    _workStack.Pop();
-                    codes.Add("}");
-                    break;
+
                 default:
                     break;
             }
         }
 
+        #endregion
 
         #endregion
 
@@ -376,8 +430,7 @@ namespace FrameIO.Main
         {
             Block,
             Switch,
-            Case,
-            Frame
+            Case
         }
 
         private void PrepareStack()
@@ -401,27 +454,27 @@ namespace FrameIO.Main
 
         #endregion
 
-        //查找匹配的映射
-        private SubsysActionMap FindMap(JProperty seg, SubsysAction ac)
+
+        //用户代码
+        private IList<string> GetUserScript(IList<string> codes)
         {
-            var segname = _jframes.GetSegFullName(seg.Value.Value<JObject>(), seg.Name, false);
-            var finds = ac.LiteMaps.Where(p => p.FrameSegName == segname);
-            if (finds.Count() > 0)
+            if (Token == "cpp")
             {
-                return finds.First();
+                return codes.Where(p => p.StartsWith("@@")).Select(p => p.TrimStart('@')).ToList();
             }
             else
-                return null;
-        }
+            {
+                return codes.Where(p => !p.StartsWith("@@")).Where(p => p.StartsWith("@")).Select(p => p.TrimStart('@')).ToList();
+            }
 
+        }
 
         //查找数据帧
         private Frame FindFrame(string name)
         {
             return _pj.FrameList.Where(p => p.Name == name).First();
         }
-
-
+        
         #endregion
 
         #region --Helper for file--
