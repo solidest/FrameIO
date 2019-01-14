@@ -62,6 +62,7 @@ namespace FrameIO.Run
                     my.Add(seg.Name, tv);
                 }
                 seg.Pack(buff, my, tv);
+                seg = seg.Next;
             }
         }
 
@@ -112,7 +113,7 @@ namespace FrameIO.Run
             }
 
             //向上传递
-            if (Parent == null)
+            if (Parent == null) //已经到达末尾
             {
                 firstSeg = null;
                 pc = null;
@@ -127,6 +128,7 @@ namespace FrameIO.Run
         //自上而下查找
         public override bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue)
         {
+
             //无法继续
             if(IsArray && !_arrLen.CanCalc(ctx, this))
             {
@@ -139,7 +141,7 @@ namespace FrameIO.Run
             //空白
             if (First == null)
             {
-                LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
+                return LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
             }
 
             //初始化自身
@@ -160,7 +162,7 @@ namespace FrameIO.Run
                 else
                 {
                     my = new JObject();
-                    ctx?.Add(Name, theValue);
+                    ctx.Add(Name, my);
                 }
             }
             else

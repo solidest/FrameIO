@@ -56,7 +56,7 @@ namespace FrameIO.Run
             if (IsArray)
                 pc.Add(v);
             else
-                ((JObject)pc).Add(Name, pc);
+                ((JObject)pc).Add(Name, v);
             return v;
         }
 

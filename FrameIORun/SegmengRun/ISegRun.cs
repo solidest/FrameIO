@@ -149,11 +149,14 @@ namespace FrameIO.Run
 
         static public JObject GetValueParent(JToken v)
         {
-            if (v.Parent == null) return null;
+            if (v.Parent == null)
+                return null;
             if (v.Parent.Type == JTokenType.Array)
                 return v.Parent.Parent.Value<JObject>();
+            else if (v.Parent.Type == JTokenType.Property)
+                return ((JProperty)v.Parent).Value.Value<JObject>();
             else
-                return v.Parent.Value<JObject>();
+                throw new Exception("unknow");
         }
 
     }

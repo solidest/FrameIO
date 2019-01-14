@@ -18,7 +18,8 @@ namespace FrameIO.Run
         {
             _qq = new Queue<ValueInfo>();
             var vi = new ValueInfo();
-            var res = frm.LookUpFirstValueSeg(out vi.vSeg, out vi.vPc, out vi.vLen, null, root);
+
+            var res = frm.LookUpFirstValueSeg(out vi.vSeg, out vi.vPc, out vi.vLen, root, null);
 
             Debug.Assert(res);
 
@@ -29,7 +30,7 @@ namespace FrameIO.Run
             }
             else
             {
-                FirstBytesLen = GetNextBlockSize(vi, true);
+                FirstBytesLen = GetNextBlockSize(vi, false);
             }
 
         }
@@ -61,7 +62,7 @@ namespace FrameIO.Run
 
             while (nextSeg.LookUpNextValueSeg(out nextSeg, out pc, out len, pc, nextSeg))
             {
-                if (_last == null) break;
+                if (nextSeg == null) break;
                 bitLen += nextSeg.BitLen * len;
                 var pos = new ValueInfo() { vSeg = nextSeg, vLen = len, vPc = pc };
                 _qq.Enqueue(pos);

@@ -97,18 +97,14 @@ namespace FrameIO.Run
 
         public FrameObject GetObject(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            o = (JObject)o[segs[segs.Length - 1]];
-            return new FrameObject(o);
+            return new FrameObject( (JObject)FindToken(segname).Value<byte>());
         }
 
         public IEnumerable<FrameObject> GetObjectArray(string segname)
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             var arr = (JArray)o[segs[segs.Length - 1]];
             var ret = new List<FrameObject>(arr.Count);
             return arr.Select(p=>new FrameObject((JObject)p));
@@ -118,7 +114,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<bool>();
         }
 
@@ -126,23 +122,20 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<bool>();
         }
 
         public byte GetByte(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<byte>();
+            return FindToken(segname).Value<byte>();
         }
 
         public IEnumerable<byte> GetByteArray(string segname)
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<byte>();
         }
 
@@ -150,7 +143,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<sbyte>();
         }
 
@@ -158,7 +151,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<sbyte>();
         }
 
@@ -166,7 +159,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<short>();
         }
 
@@ -174,7 +167,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<short>();
         }
 
@@ -182,7 +175,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<ushort>();
         }
 
@@ -190,7 +183,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<ushort>();
         }
 
@@ -198,7 +191,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Value<int>();
         }
 
@@ -206,7 +199,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<int>();
         }
 
@@ -222,7 +215,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<uint>();
         }
 
@@ -238,7 +231,7 @@ namespace FrameIO.Run
         {
             var o = RootValue;
             var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
+            //if (segs.Length > 1) o = FindObject(segs);
             return o[segs[segs.Length - 1]].Values<long>();
         }
 
@@ -294,9 +287,15 @@ namespace FrameIO.Run
         }
 
 
-    #endregion
+        #endregion
 
         #region --Helper--
+
+        //HACK
+        private JObject FindObject(string []segs)
+        {
+            return null;
+        }
 
         public override string ToString()
         {
@@ -304,12 +303,14 @@ namespace FrameIO.Run
         }
 
         //查找已经存在的Object
-        private JObject FindObject(string[] segs)
+        private JToken FindToken(string segFullName)
         {
-            var ret = RootValue;
-            for (int i = 0; i < segs.Length - 1; i++)
-                ret = (JObject)ret[segs[i]];
-            return ret;
+            var r = RootValue[FrameName];
+            if (!segFullName.Contains(".")) return  r[segFullName];
+            var nms = segFullName.Split('.');
+            for (int i = 0; i < nms.Length-1; i++)
+                r = (JObject)r[nms[i]];
+            return r[nms[nms.Length-1]];
         }
 
 

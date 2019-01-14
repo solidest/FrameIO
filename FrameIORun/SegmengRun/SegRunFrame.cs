@@ -37,8 +37,6 @@ namespace FrameIO.Run
             ret.Parent = null;
             ret.Next = null;
             ret.Previous = null;
-            ret.First = null;
-            ret.Last = null;
             ret.Root = ret;
             return ret;
         }
