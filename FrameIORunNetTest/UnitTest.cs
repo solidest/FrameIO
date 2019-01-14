@@ -8,9 +8,16 @@ namespace FrameIORunNetTest
     public class UnitTest
     {
         [TestMethod]
-        public void A_NetTestMulti()
+        public void A_FioNetRunner_Initial()
         {
             var ch = FioNetRunner.GetChannel(null);
         }
+
+        [TestMethod]
+        public void A_FioNetRunner_SendOneByte()
+        {
+            
+        }
+
     }
 }
