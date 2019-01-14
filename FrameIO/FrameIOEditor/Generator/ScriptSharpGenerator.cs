@@ -25,18 +25,18 @@ namespace FrameIO.Main
 
         protected override string ExceptionHandlerTemplate => "TExceptionHandler";
 
-        protected override void CreateSharedFile()
-        {
-            //HACK
-        }
 
         #endregion
 
         #region --Frames--
 
-        protected override IList<string> ConvertFramesCode(IList<string> base64List)
+        internal override void CreateFramsFile(IList<string> frames)
         {
-            return base64List.Select(p => "\"" + p + "\",").ToList();
+            var codes = frames.Select(p => "\"" + p + "\",").ToList();
+            OutFile("TFioNetRunner", "FioNetRunner", "framesconfig", codes);
+            OutFile("TParameter", "Parameter");
+            OutFile("TFioNetObject", "FioNetObject");
+
         }
 
         #endregion
@@ -202,7 +202,7 @@ namespace FrameIO.Main
                     ret.Add("{");
                     ret.Add(string.Format("\tvar __vv__ = new FioNetObject();", fullSegName));
                     foreach(var inpro in _pj.InnerSubsysList.Where(p=>p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t__vv__.SetValue(\"{0}\", {0});", inpro.Name));
+                        ret.Add(string.Format("\t__vv__.SetValue(\"{0}\", {1});", inpro.Name, pro.Name + "." + inpro.Name));
                     ret.Add(string.Format("\t__v__.SetValue(\"{0}\", __vv__);", fullSegName));
                     ret.Add("}");
                 }
@@ -214,7 +214,7 @@ namespace FrameIO.Main
                     ret.Add("\t{");
                     ret.Add(string.Format("\t\tvar __vv__ = new FioNetObject();", fullSegName));
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {0});", inpro.Name));
+                        ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
                     ret.Add("\t\t__vvs__.Add(__vv__);");
                     ret.Add("\t}");
                     ret.Add(string.Format("\t__v__.SetValue(\"{0}\", __vvs__);", fullSegName));
@@ -267,7 +267,7 @@ namespace FrameIO.Main
                     ret.Add("{");
                     ret.Add(string.Format("\tvar __vv__ = __v__.GetObject(\"{0}\";", fullSegName));
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t__vv__.GetValue(\"{0}\", {0});", inpro.Name));
+                        ret.Add(string.Format("\t__vv__.GetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
                     ret.Add("}");
                 }
                 else
@@ -280,7 +280,7 @@ namespace FrameIO.Main
                     ret.Add("\t\t__vvi__ += 1;");
                     ret.Add(string.Format("\t\tif({0}.Count == __vvi__) break;", pro.Name));
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {0});", inpro.Name));
+                        ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
                     ret.Add("\t}");
                     ret.Add("}");
                 }
@@ -300,7 +300,6 @@ namespace FrameIO.Main
         {
             return string.Format("({0})__v__.GetValue(\"{1}\")", _jframes.GetToEnum(segFullName), segFullName);
         }
-
 
         #endregion
 

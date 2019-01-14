@@ -17,15 +17,13 @@ namespace FrameIO.Run
         static private Dictionary<string, SegRunFrame> _frms = new Dictionary<string, SegRunFrame>();
 
         //从json字符串加载全部数据帧
-        internal static void InitialFromJson(string json)
+        public static void InitialFromJson(string json)
         {
-            var jfrms = JObject.Parse(json)[SegRunBase.FRAMELIST_TOKEN].Value<JArray>();
+            var jfrms = JObject.Parse(json);
 
-            foreach (JObject vo in jfrms)
+            foreach (var frm in jfrms)
             {
-                var p = (JProperty)vo.First;
-                var o = p.Value.Value<JObject>();
-                _frms.Add(p.Name, SegRunFrame.NewFrame(o, p.Name));
+                _frms.Add(frm.Key, SegRunFrame.NewFrame((JObject)frm.Value, frm.Key));
             }
         }
 

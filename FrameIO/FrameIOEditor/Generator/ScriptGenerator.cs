@@ -35,13 +35,8 @@ namespace FrameIO.Main
         //代码类型标识
         protected abstract string Token { get; }
 
-
         //默认扩展名
         protected abstract string DefaultExtension { get; }
-
-        //创建专有的共享类库文件
-        protected abstract void CreateSharedFile();
-
 
         public void GenerateScriptFile()
         {
@@ -53,11 +48,8 @@ namespace FrameIO.Main
                 //准备目录
                 PrepareDir();
 
-                //生成专有的共享文件
-                CreateSharedFile();
-
                 //生成数据帧文件
-                CreateFramsFile();
+                CreateFramsFile(GetFramsFile());
 
                 //生成枚举
                 foreach (var emdef in _pj.EnumdefList) CreateEnumFile(emdef);
@@ -80,24 +72,20 @@ namespace FrameIO.Main
             }
         }
 
+        internal abstract void CreateFramsFile(IList<string> frames);
+
 
 
         #endregion
 
         #region --数据帧--
 
-
         //数据帧文件内容转换
-        protected abstract IList<string> ConvertFramesCode(IList<string> base64List);
-
-        //数据帧文件内容转换
-        private void CreateFramsFile()
+        private IList<string> GetFramsFile()
         {
             var frms = _jframes.GetJsonString();
             var cont = CompressBytes(Encoding.Default.GetBytes(frms));
-            var b64list = ToBase64List(cont);
-            
-            OutFile("TFrames", "Frames", "framesconfig", ConvertFramesCode(b64list), TPROJECT, _pj.Name);
+            return ToBase64List(cont);          
         }
 
         #endregion
@@ -384,12 +372,12 @@ namespace FrameIO.Main
                 case WhyCode.Case:
                     {
                         var byseg = _workParas.Last();
-                        string em = _jframes.GetToEnum(byseg);
+                        string co = _jframes.GetToEnum(byseg);
                         if (intoCase == "other")
-                            em = "default";
+                            co = "default:";
                         else
-                            em = em + "." + intoCase;
-                        codes.Add(FormatPreTabs(string.Format("case {0}:", em ), true));
+                            co = "case " + co + "." + intoCase + ":";
+                        codes.Add(FormatPreTabs(co, true));
                         codes.Add(FormatPreTabs("{", true));
                     }
                     break;
@@ -487,9 +475,16 @@ namespace FrameIO.Main
         }
 
         //输出文件
-        protected void OutFile(string templageName, string fileName, string token, IList<string> codelist, params string[] others)
+        protected void OutFile(string templateName, string fileName, string token, IList<string> codelist, params string[] others)
         {
-            OutFile(fileName, GetTemplateBuilder(templageName, token, codelist, others));
+            OutFile(fileName, GetTemplateBuilder(templateName, token, codelist, others));
+        }
+
+        //直接输出文件
+        protected void OutFile(string template, string outfile)
+        {
+            var b = GetTemplateBuilder(template);
+            OutFile(outfile, b);
         }
 
 

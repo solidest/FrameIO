@@ -45,10 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FioNetObject.cs" />
-    <Compile Include="FioNetRunner.cs" />
-    <Compile Include="Parameter.cs" />
+    <Compile Include="Template_cs\TFioNetObject.cs" />
+    <Compile Include="Template_cs\TFioNetRunner.cs" />
+    <Compile Include="Template_cs\TParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Template_cs\TFioNetObject.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cs\TFioNetRunner.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cs\TParameter.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Template_cs\TEnum.cs" />
     <None Include="Template_cs\TExceptionHandler.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -101,10 +110,6 @@
     <None Include="Template_cs\TEnum.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Template_cs\TFrames.tpl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Compile Include="Template_cs\TFrames.cs" />
     <None Include="Template_cs\TInnerSubsys.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

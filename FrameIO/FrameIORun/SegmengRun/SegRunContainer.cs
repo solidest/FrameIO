@@ -9,7 +9,7 @@ namespace FrameIO.Run
     {
         private Dictionary<string, ISegRun> _segs;
 
-        internal abstract protected string ItemsListToken { get; }
+        internal abstract protected JObject ItemsList { get; }
         internal abstract protected SegmentTypeEnum GetItemType(JObject o);
 
 
@@ -40,7 +40,7 @@ namespace FrameIO.Run
 
         protected override void InitialFromJson(JObject o)
         {
-            var segs = o[ItemsListToken].Value<JArray>();
+            
             foreach (JObject seg in segs)
             {
                 var pseg = (JProperty)seg.First;

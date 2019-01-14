@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace FrameIO.Run
 {
     public static class FioNetRunner
     {
+        //初始化
+        static FioNetRunner()
+        {
+            var config = string.Concat(
+
+                "<% contentlist %>");
+
+            IORunner.InitialFromGZipBase64(config);
+            
+        }
+
         //获取一个通道
         public static FioChannel GetChannel(ChannelOption chops)
         {
+            if (chops == null || !chops.Contains("$channeltype")) return null;
             var ret = IORunner.GetChannel((ChannelTypeEnum)chops.GetOption("$channeltype"), chops);
             
             return ret;
