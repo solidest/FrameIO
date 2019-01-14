@@ -23,7 +23,7 @@ namespace FrameIO.Run
         //自下而上查找
         public bool LookUpNextValueSeg(out SegRunValue nextSeg, out JContainer pc, out int repeated, JContainer thePc, SegRunValue theSeg)
         {
-            var p = IsArray ? (JObject)thePc.Parent : (JObject)thePc;
+            var p = IsArray ? ((JObject)thePc.Parent.Parent) : (JObject)thePc;
             if (Next != null)
                 return Next.LookUpFirstValueSeg(out nextSeg, out pc, out repeated, p, p[Next.Name]);
             else

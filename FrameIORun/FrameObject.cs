@@ -102,28 +102,13 @@ namespace FrameIO.Run
 
         public IEnumerable<FrameObject> GetObjectArray(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            var arr = (JArray)o[segs[segs.Length - 1]];
-            var ret = new List<FrameObject>(arr.Count);
+            var arr = (JArray)FindToken(segname);
             return arr.Select(p=>new FrameObject((JObject)p));
         }
 
         public bool GetBool(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<bool>();
-        }
-
-        public IEnumerable<bool> GetBoolArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<bool>();
+            return FindToken(segname).Value<bool>();
         }
 
         public byte GetByte(string segname)
@@ -131,171 +116,117 @@ namespace FrameIO.Run
             return FindToken(segname).Value<byte>();
         }
 
-        public IEnumerable<byte> GetByteArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<byte>();
-        }
-
         public sbyte GetSByte(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<sbyte>();
-        }
-
-        public IEnumerable<sbyte> GetSByteArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<sbyte>();
+            return FindToken(segname).Value<sbyte>();
         }
 
         public short GetShort(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<short>();
-        }
-
-        public IEnumerable<short> GetShortArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<short>();
+            return FindToken(segname).Value<short>();
         }
 
         public ushort GetUShort(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<ushort>();
-        }
-
-        public IEnumerable<ushort> GetUShortArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<ushort>();
+            return FindToken(segname).Value<ushort>();
         }
 
         public int GetInt(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<int>();
-        }
-
-        public IEnumerable<int> GetIntArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<int>();
+            return FindToken(segname).Value<int>();
         }
 
         public uint GetUInt(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<uint>();
-        }
-
-        public IEnumerable<uint> GetUIntArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<uint>();
+            return FindToken(segname).Value<uint>();
         }
 
         public long GetLong(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<long>();
-        }
-
-        public IEnumerable<long> GetLongArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            //if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<long>();
+            return FindToken(segname).Value<long>();
         }
 
         public ulong GetULong(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<ulong>();
-        }
-
-        public IEnumerable<ulong> GetULongArray(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<ulong>();
+            return FindToken(segname).Value<ulong>();
         }
 
         public float GetFloat(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<float>();
+            return FindToken(segname).Value<float>();
+        }
+
+        public double GetDouble(string segname)
+        {
+            return FindToken(segname).Value<double>();
+        }
+
+
+        public IEnumerable<bool> GetBoolArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<bool>();
+        }
+
+        public IEnumerable<byte> GetByteArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<byte>();
+        }
+
+        public IEnumerable<sbyte> GetSByteArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<sbyte>();
+        }
+
+
+        public IEnumerable<short> GetShortArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<short>();
+        }
+
+        public IEnumerable<ushort> GetUShortArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<ushort>();
+        }
+
+
+        public IEnumerable<int> GetIntArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<int>();
+        }
+
+
+        public IEnumerable<uint> GetUIntArray(string segname)
+        {
+            return((JArray)FindToken(segname)).Values<uint>();
+        }
+
+
+        public IEnumerable<long> GetLongArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<long>();
+        }
+
+
+        public IEnumerable<ulong> GetULongArray(string segname)
+        {
+            return ((JArray)FindToken(segname)).Values<ulong>();
         }
 
 
         public IEnumerable<float> GetFloatArray(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<float>();
+            return ((JArray)FindToken(segname)).Values<float>();
         }
-
-
-        public double GetDouble(string segname)
-        {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Value<double>();
-        }
-
 
         public IEnumerable<double> GetDoubleArray(string segname)
         {
-            var o = RootValue;
-            var segs = segname.Split('.');
-            if (segs.Length > 1) o = FindObject(segs);
-            return o[segs[segs.Length - 1]].Values<double>();
+            return ((JArray)FindToken(segname)).Values<double>();
         }
 
 
         #endregion
 
         #region --Helper--
-
-        //HACK
-        private JObject FindObject(string []segs)
-        {
-            return null;
-        }
 
         public override string ToString()
         {

@@ -310,8 +310,8 @@ PRAGMA foreign_keys = on;
           
                 var sp = new SubsysProperty()
                 {
-                    ArrayLen = cs,
                     IsArray = ci >= 0,
+                    ArrayLen = cs,
                     Name = r["name"].ToString(),
                     Notes = LoadNotes(Convert.ToInt32(r["namesyid"])),
                     PropertyType = r["propertytype"].ToString(),
