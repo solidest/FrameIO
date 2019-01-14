@@ -52,6 +52,18 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\FioNetObject.cs">
+      <Link>FrameOneByte\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\FioNetRunner.cs">
+      <Link>FrameOneByte\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\Parameter.cs">
+      <Link>FrameOneByte\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\subsys1.cs">
+      <Link>FrameOneByte\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\test_multi_cs\CreateTime.cs">
       <Link>MultiTest\CreateTime.cs</Link>
     </Compile>
@@ -92,6 +104,10 @@
     <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
+      <Project>{f4f37e33-c1d6-49d4-b05f-1b98a0395828}</Project>
+      <Name>FrameIORun</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

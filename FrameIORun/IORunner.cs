@@ -106,7 +106,23 @@ namespace FrameIO.Run
 
         #endregion
 
+        #region --Action--
 
+
+        //发送数据
+        public static void SendFrame(FrameObject data, FioChannel ch)
+        {
+            ch.SendFrame(data);
+        }
+
+        //接收数据
+        public static FrameObject RecvFrame(string frame, FioChannel ch)
+        {
+            return ch.RecvFrame(frame);
+        }
+
+        
+        #endregion
 
     }
 

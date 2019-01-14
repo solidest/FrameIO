@@ -1,7 +1,8 @@
 ﻿
 using System.ComponentModel;
+using FrameIO.Run;
 
-namespace FrameIO.Run
+namespace <%project%>
 {
     public class Parameter<T> : INotifyPropertyChanged
     {

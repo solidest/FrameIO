@@ -484,6 +484,7 @@ namespace FrameIO.Main
         protected void OutFile(string template, string outfile)
         {
             var b = GetTemplateBuilder(template);
+            ReplaceText(b, TPROJECT, _pj.Name);
             OutFile(outfile, b);
         }
 

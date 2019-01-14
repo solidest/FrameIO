@@ -1,6 +1,7 @@
 ﻿
+using FrameIO.Run;
 
-namespace FrameIO.Run
+namespace <%project%>
 {
     public static class FioNetRunner
     {
@@ -33,13 +34,13 @@ namespace FrameIO.Run
         //发送数据
         public static void SendFrame(FioNetObject data, FioChannel ch)
         {
-
+            IORunner.SendFrame(data.TheObject, ch);
         }
 
         //接收数据
         public static FioNetObject RecvFrame(string frame, FioChannel ch)
         {
-            return null;
+            return new FioNetObject(IORunner.RecvFrame(frame, ch));
         }
     }
 }

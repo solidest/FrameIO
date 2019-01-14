@@ -15,7 +15,7 @@ namespace <%project%>
 		<%propertydeclare%>
 
 		//属性初始化
-		private void InitialParameter()
+		public void InitialParameter()
 		{
 			<%propertyinitial%>
 		}

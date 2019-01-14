@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FrameIO.Run;
 
-
-namespace FrameIO.Run
+namespace <%project%>
 {
     public class FioNetObject
     {
@@ -20,6 +20,8 @@ namespace FrameIO.Run
         {
             _fo = fo;
         }
+
+		internal FrameObject TheObject { get => _fo; }
 
         #region --SetValue--
 

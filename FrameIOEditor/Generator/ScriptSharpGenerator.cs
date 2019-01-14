@@ -33,7 +33,9 @@ namespace FrameIO.Main
         internal override void CreateFramsFile(IList<string> frames)
         {
             var codes = frames.Select(p => "\"" + p + "\",").ToList();
-            OutFile("TFioNetRunner", "FioNetRunner", "framesconfig", codes);
+            OutFile("TFioNetRunner", "FioNetRunner",
+                "framesconfig", codes, 
+                TPROJECT, _pj.Name);
             OutFile("TParameter", "Parameter");
             OutFile("TFioNetObject", "FioNetObject");
 

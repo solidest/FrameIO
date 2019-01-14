@@ -34,13 +34,13 @@ namespace FrameIO.Run
             _ch.Close();
         }
 
-        protected void SendFrame(FrameObject value)
+        internal void SendFrame(FrameObject value)
         {
             if (value.FrameName == null) throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.RecvErr, "", "无法发送不完整数据帧");
             _ch.WriteFrame(new FramePacker(value));
         }
 
-        protected FrameObject RecvFrame(string frameName)
+        internal FrameObject RecvFrame(string frameName)
         {
             var res = new FrameUnpacker(frameName);
             var o = _ch.ReadFrame(res);

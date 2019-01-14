@@ -21,6 +21,8 @@ namespace FrameIO.Run
             _fo = fo;
         }
 
+        internal FrameObject TheObject { get => _fo; }
+
         #region --SetValue--
 
         public void SetValue(string segname, int value)
