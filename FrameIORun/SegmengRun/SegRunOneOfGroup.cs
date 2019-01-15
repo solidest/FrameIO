@@ -150,7 +150,6 @@ namespace FrameIO.Run
                 else
                 {
                     myselect = new JObject();
-                    ctx.Add(Name, my);
                     my.Add(select.Name, myselect);
                 }
             }

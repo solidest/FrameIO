@@ -100,11 +100,8 @@
     <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\subsys1.cs">
       <Link>FrameOneByte\subsys1.cs</Link>
     </Compile>
-    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\abc.cs">
-      <Link>FrameOneof\abc.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\emtest.cs">
-      <Link>FrameOneof\emtest.cs</Link>
+    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\Enum_Type.cs">
+      <Link>FrameOneof\Enum_Type.cs</Link>
     </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\FioNetObject.cs">
       <Link>FrameOneof\FioNetObject.cs</Link>
@@ -115,11 +112,8 @@
     <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\Parameter.cs">
       <Link>FrameOneof\Parameter.cs</Link>
     </Compile>
-    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\SYS1.cs">
-      <Link>FrameOneof\SYS1.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\SYS2.cs">
-      <Link>FrameOneof\SYS2.cs</Link>
+    <Compile Include="..\..\FrameIOTest\frame_test_oneof_cs\testenum.cs">
+      <Link>FrameOneof\testenum.cs</Link>
     </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\FioNetObject.cs">
       <Link>FrameGroup\FioNetObject.cs</Link>
