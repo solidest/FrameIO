@@ -10,7 +10,6 @@
 //    [TestClass]
 //    public class Test_Enum
 //    {
-//        test_tcp
 //        [TestMethod]
 //        public void ENUM()
 //        {
@@ -29,23 +28,12 @@
 
 //            tester.A_Send_Type1();
 
-//            tester.datetype.Value = 2;
-//            tester.age1.Value = 10;
-//            tester.age2.Value = 20;
-
-//            tester.A_Send_Type2();
-
 //            tester.A_Recv();
 
 //            Assert.IsTrue(tester.datetype.Value == 1);
 //            Assert.IsTrue(tester.name1.Value == 1);
 //            Assert.IsTrue(tester.name2.Value == 2);
 
-//            tester.A_Recv();
-
-//            Assert.IsTrue(tester.datetype.Value == 2);
-//            Assert.IsTrue(tester.age1.Value == 10);
-//            Assert.IsTrue(tester.age2.Value == 20);
 
 //        }
 //    }

@@ -1,6 +1,11 @@
 project test_enum {
 	system testenum {
-		uint datetype;uint name1;uint name2;uint age1;uint age2;
+		uint datetype;
+		uint name1;
+		uint name2;
+		uint age1;
+		uint age2;
+
 		channel CH_COM3 : com {
 			portname = "COM3";
 			baudrate = 9600;
@@ -15,28 +20,21 @@ project test_enum {
 			databits = 8;
 			stopbits = 1;
 		}
+
 		action A_Send_Type1 : send Frame_Send_Type1 on CH_COM3 {
 			DATATYPE : datetype;
 			NAME1 : name1;
 			NAME2 : name2;
 		}
-		action A_Send_Type2 : recv Frame_Send_Type2 on CH_COM4 {
+		action A_Send_Type2 : send Frame_Send_Type2 on CH_COM4 {
 			DATATYPE : datetype;
 			AGE1 : age1;
 			AGE2 : age2;
 		}
 		action A_Recv : recv Frame_Recv on CH_COM4 {
-			@switch((Enum_Type)data.DATATYPE) {
-			@case Enum_Type.enum_type1:
-			DATA.enum_type1.NAME1 : name1;
-			DATA.enum_type1.NAME2 : name2;
-			@break;
-			@case Enum_Type.enum_type2:
-			DATA.enum_type2.AGE1 : age1;
-			DATA.enum_type2.AGE2 : age2;
-			@break;
-			@}
 			DATATYPE : datetype;
+			DAT.enum_type1.NAME1 : name1;
+			DAT.enum_type1.NAME2 : name2;
 		}
 	}
 
@@ -49,7 +47,10 @@ project test_enum {
 
 	frame Frame_Recv {
 		integer DATATYPE toenum=Enum_Type;
-		block DATA type=oneof(DATATYPE){ enum_type1 : Frame_type1, enum_type2 : Frame_type2};
+		block DAT type=oneof(DATATYPE){
+			 enum_type1 : Frame_type1,
+			 enum_type2 : Frame_type2
+		};
 	}
 
 	frame Frame_type1 {
@@ -63,7 +64,7 @@ project test_enum {
 	}
 
 	frame Frame_Send_Type2 {
-		integer DATATYPE;
+		integer DATATYPE toenum=Enum_Type;
 		integer AGE1;
 		integer AGE2;
 	}
@@ -72,4 +73,5 @@ project test_enum {
 		enum_type1 = 1,
 		enum_type2 = 2
 	}
+
 }

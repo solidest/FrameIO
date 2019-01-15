@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using FrameIO.Run;
 using FrameIO.Interface;
 using System.Diagnostics;
-using System.Linq;
 using System;
 
 namespace test_enum
@@ -88,22 +87,10 @@ namespace test_enum
         }
 
         //数据接收
-        public void A_Send_Type2()
-        {
-            var __v__ = FioNetRunner.RecvFrame("Frame_Send_Type2", CH_COM4);
-            __v__.GetValue("DATATYPE", datetype);
-            __v__.GetValue("AGE1", age1);
-            __v__.GetValue("AGE2", age2);
-        }
-        
-
         public void A_Recv()
         {
             var __v__ = FioNetRunner.RecvFrame("Frame_Recv", CH_COM4);
-        switch((Enum_Type)DATATYPE) {
-
-        case Enum_Type.enum_type1:
-
+            __v__.GetValue("DATATYPE", datetype);
             switch((Enum_Type)__v__.GetValue("Frame_Recv.DATATYPE"))
             {
                 case Enum_Type.enum_type1:
@@ -117,14 +104,6 @@ namespace test_enum
                     break;
                 }
             }
-        break;
-
-        case Enum_Type.enum_type2:
-
-        break;
-
-        }
-
         }
 
     }
