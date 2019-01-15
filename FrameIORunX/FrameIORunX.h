@@ -1,3 +1,5 @@
 ﻿#pragma once
 
-extern "C" __declspec(dllexport) void* NewFrameObject(char* frameName);
+
+extern "C" 
+extern "C" __declspec(dllexport) int NewFrameObject(char* frameName);
