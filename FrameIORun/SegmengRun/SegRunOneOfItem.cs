@@ -35,5 +35,18 @@ namespace FrameIO.Run
 
         #endregion
 
+
+        #region --Unpack--
+
+        //自下而上 分支执行完毕
+        public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
+        {
+            var myp = GetValueParent(ctxOfChild);
+            return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, (JObject)myp.Parent.Parent);
+        }
+
+
+        #endregion
+
     }
 }

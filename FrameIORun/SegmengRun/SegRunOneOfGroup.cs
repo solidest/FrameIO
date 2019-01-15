@@ -75,7 +75,6 @@ namespace FrameIO.Run
         #endregion
 
 
-
         #region --Unpack--
 
         //自下而上 分支执行完毕
@@ -127,7 +126,7 @@ namespace FrameIO.Run
             //空白
             if (First == null)
             {
-                LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
+                return LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
             }
 
             //初始化自身
