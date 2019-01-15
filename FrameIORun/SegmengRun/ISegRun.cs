@@ -152,7 +152,7 @@ namespace FrameIO.Run
             if (v.Parent == null)
                 return null;
             if (v.Parent.Type == JTokenType.Array)
-                return v.Parent.Parent.Value<JObject>();
+                return v.Parent.Parent.Parent.Value<JObject>();
             else if (v.Parent.Type == JTokenType.Property)
                 return ((JProperty)v.Parent).Value.Value<JObject>();
             else

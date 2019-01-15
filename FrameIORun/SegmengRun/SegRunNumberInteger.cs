@@ -29,7 +29,8 @@ namespace FrameIO.Run
         {
             var ret = new SegRunInteger();
             ret.Name = name;
-            if (isArray) ret.ArrayLen = Helper.GetExp(o[ARRAYLEN_TOKEN]);
+            if (isArray)
+                ret.ArrayLen = Helper.GetExp(o[ARRAYLEN_TOKEN]);
             ret.InitialFromJson(o);
             return ret;
         }

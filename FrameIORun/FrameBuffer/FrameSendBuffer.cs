@@ -15,6 +15,7 @@ namespace FrameIO.Run
         private MemoryStream _cach;
         private SliceWriter _odd;
         private Dictionary<object, int> _pos;
+        private object _lasttoken;
 
         public FrameSendBuffer()
         {
@@ -28,7 +29,11 @@ namespace FrameIO.Run
         //写入到缓冲
         public void Write(ulong rawValue, int bitLen, object token)
         {
-            _pos.Add(token,(int)_cach.Position*8 + _odd.BitLen);
+            if (token != _lasttoken)
+            {
+                _pos.Add(token, (int)_cach.Position * 8 + _odd.BitLen);
+                _lasttoken = token;
+            }
             _odd = _odd.WriteAppend(_cach, SliceWriter.GetSlice(rawValue, bitLen));
         }
 
@@ -42,7 +47,7 @@ namespace FrameIO.Run
         //结束写入
         public byte[] Flush()
         {
-            Debug.Assert(_odd.IsEmpty);
+            if (!_odd.IsEmpty) throw new Exception("runtime 数据帧字段未能整字节对齐");
             _cach.Close();
             return _cach.ToArray();
         }

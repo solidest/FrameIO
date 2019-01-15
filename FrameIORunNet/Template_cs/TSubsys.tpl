@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using FrameIO.Run;
 using FrameIO.Interface;
 using System.Diagnostics;
-using System.Linq;
 using System;
 
 namespace <%project%>

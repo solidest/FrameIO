@@ -302,7 +302,8 @@ namespace FrameIO.Main
                     throw new Exception("unknow");
             }
 
-            if (isarray) ret.Add(ARRAYLEN_TOKEN, Exp2JToken(seg.Repeated));
+            if (isarray)
+                ret.Add(ARRAYLEN_TOKEN, Exp2JToken(seg.Repeated));
             return ret;
 
         }

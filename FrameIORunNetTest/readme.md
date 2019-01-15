@@ -1,13 +1,10 @@
-﻿# 测试用例
+﻿### 数据帧 测试用例
 
-标签（空格分隔）： WORK
-
----
-
-- 单字节收发 A_FioNetRunner_FrameOneByte
-- 字节数组收发 A_FioNetRunner_FrameByteArray	
-- bool型收发
-- bool数组收发
+- 数据帧解析初始化 A__FrameRunnerInitial
+- 单字节收发 A__FrameOneByte
+- 字节数组收发 A__FrameByteArray
+- 字节未对齐 A__FrameNotAlignByte
+- bool型收发 A__FrameBool
 - short收发
 - ushort收发
 - int收发
@@ -26,7 +23,8 @@
 - check属性和checkrange属性设置检查
 - 包头匹配match检查
 - 数据帧引用字段收发
-- block内定义字段收发
+- block 内定义字段收发 A__FrameGroup
+_ block 数组收发
 - oneof 匹配分支收发
 - oneof 数组收发
 - oneof 嵌套使用测试
@@ -35,8 +33,10 @@
 - 数据帧应用数组字段收发
 - block内定义字段数组收发
 - bytesizeof(字段)取字段长度测试
-- bytesizeof(this)取字段长度测试
+- bytesizeof(this)取整包长度测试
 - value设置为公式测试
+- 设置子系统收发测试 A__FrameSubsys
+- 设置子系统数组收发 A__FrameSubsysArray
 
 
 

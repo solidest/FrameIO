@@ -211,12 +211,13 @@ namespace FrameIO.Main
                 else
                 {
                     ret.Add("{");
-                    ret.Add(string.Format("\tvar __vvs__ = new List<FioNetObject>();", fullSegName));
+                    ret.Add(string.Format("\tvar __vvs__ = new Collection<FioNetObject>();", fullSegName));
                     ret.Add(string.Format("\tfor (int i = 0; i < {0}.Count; i++)", pro.Name));
                     ret.Add("\t{");
                     ret.Add(string.Format("\t\tvar __vv__ = new FioNetObject();", fullSegName));
+                    int index = 0;
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
+                        ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {1}[i].{2});", inpro.Name, pro.Name, inpro.Name));
                     ret.Add("\t\t__vvs__.Add(__vv__);");
                     ret.Add("\t}");
                     ret.Add(string.Format("\t__v__.SetValue(\"{0}\", __vvs__);", fullSegName));
@@ -267,22 +268,23 @@ namespace FrameIO.Main
                 if (!pro.IsArray)
                 {
                     ret.Add("{");
-                    ret.Add(string.Format("\tvar __vv__ = __v__.GetObject(\"{0}\";", fullSegName));
+                    ret.Add(string.Format("\tvar __vv__ = __v__.GetObject(\"{0}\");", fullSegName));
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t__vv__.GetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
+                        ret.Add(string.Format("\t__vv__.GetValue(\"{0}\", {1});", inpro.Name, pro.Name + "." + inpro.Name));
                     ret.Add("}");
                 }
                 else
                 {
                     ret.Add("{");
-                    ret.Add(string.Format("\tvar __vvs__ = __v__.GetObjectArray(\"{0}\";", fullSegName));
+                    ret.Add(string.Format("\tvar __vvs__ = __v__.GetObjectArray(\"{0}\");", fullSegName));
                     ret.Add("\tint __vvi__ = 0;");
-                    ret.Add(string.Format("\tforeach(var __vv__ in __vvs)", pro.Name));
+                    ret.Add(string.Format("\tforeach(var __vv__ in __vvs__)", pro.Name));
                     ret.Add("\t{");
-                    ret.Add("\t\t__vvi__ += 1;");
                     ret.Add(string.Format("\t\tif({0}.Count == __vvi__) break;", pro.Name));
+                    int index = 0;
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
-                        ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {1});", inpro.Name, inpro.Name, pro.Name + "." + inpro.Name));
+                        ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {1}[__vvi__].{2});", inpro.Name, pro.Name, inpro.Name));
+                    ret.Add("\t\t__vvi__ += 1;");
                     ret.Add("\t}");
                     ret.Add("}");
                 }

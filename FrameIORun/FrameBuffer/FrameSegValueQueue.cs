@@ -30,7 +30,7 @@ namespace FrameIO.Run
             }
             else
             {
-                FirstBytesLen = GetNextBlockSize(vi, false);
+                FirstBytesLen = GetNextBlockSize(vi, true);
             }
 
         }
