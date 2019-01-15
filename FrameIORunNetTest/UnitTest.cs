@@ -12,7 +12,7 @@ namespace FrameIORunNetTest
 
         //初始化
         [TestMethod]
-        public void A__FioNetRunneInitial()
+        public void A__FioNetRunnerInitial()
         {
             var ch = frame_test_onebyte.FioNetRunner.GetChannel(null);
             Assert.IsNull(ch);

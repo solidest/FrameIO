@@ -1,9 +1,10 @@
 ﻿### 数据帧 测试用例
 
-- 单字节收发 A_FioNetRunner_FrameOneByte
-- 字节数组收发 A_FioNetRunner_FrameByteArray	
-- bool型收发
-- bool数组收发
+- 数据帧解析初始化 A__FioNetRunnerInitial
+- 单字节收发 A__FrameOneByte
+- 字节数组收发 A__FrameByteArray
+- 字节未对齐 A__NotAlignByte
+- bool型收发 A__FrameBool
 - short收发
 - ushort收发
 - int收发
