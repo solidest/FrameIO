@@ -34,6 +34,7 @@
 - bytesizeof(字段)取字段长度测试
 - bytesizeof(this)取整包长度测试
 - value设置为公式测试
+- 设置子系统收发测试
 
 
 
