@@ -23,7 +23,7 @@
 - check属性和checkrange属性设置检查
 - 包头匹配match检查
 - 数据帧引用字段收发
-- block内定义字段收发
+- block 内定义字段收发
 - oneof 匹配分支收发
 - oneof 数组收发
 - oneof 嵌套使用测试
@@ -32,7 +32,7 @@
 - 数据帧应用数组字段收发
 - block内定义字段数组收发
 - bytesizeof(字段)取字段长度测试
-- bytesizeof(this)取字段长度测试
+- bytesizeof(this)取整包长度测试
 - value设置为公式测试
 
 

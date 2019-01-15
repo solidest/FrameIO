@@ -51,7 +51,7 @@ namespace FrameIORunNetTest
 
         #endregion
 
-        #region --字节收发--
+        #region --byte收发--
 
         //单字节收发
         [TestMethod]
@@ -99,7 +99,7 @@ namespace FrameIORunNetTest
 
         #endregion
 
-        #region --bool--
+        #region --bool收发--
 
         //字节未对齐
         [TestMethod]
@@ -118,18 +118,53 @@ namespace FrameIORunNetTest
             sys2.pro1[0].Value = true;
             sys2.pro1[6].Value = true;
             sys2.pro2.Value = true;
-            Exception ex = null;
 
             sys2.SendData();
             sys1.RecvData();
 
-            Assert.IsNull(ex);
             Assert.IsTrue((bool)sys1.pro1[0].Value);
             Assert.IsFalse((bool)sys1.pro1[3].Value);
             Assert.IsTrue((bool)sys1.pro1[6].Value);
             Assert.IsTrue((bool)sys1.pro2.Value);
         }
 
+
+        #endregion
+
+        #region --group收发--
+
+
+        //字节未对齐
+        [TestMethod]
+        public void A__FrameGroup()
+        {
+            var sys1 = new frame_test_seggroup.subsys1();
+            sys1.InitialParameter();
+            sys1.InitialChanneltcp_recv(null);
+            Assert.IsTrue(sys1.tcp_recv.Open());
+
+            var sys2 = new frame_test_seggroup.subsys1();
+            sys2.InitialParameter();
+            sys2.InitialChanneltcp_send(null);
+            Assert.IsTrue(sys2.tcp_send.Open());
+
+            sys2.pro1[0].Value = true;
+            sys2.pro1[6].Value = true;
+            sys2.pro2.Value = true;
+            sys2.pro3_1.Value = 55;
+            sys2.pro3_2.Value = 66;
+
+            sys2.SendData();
+            sys1.RecvData();
+
+            Assert.IsTrue((bool)sys1.pro1[0].Value);
+            Assert.IsFalse((bool)sys1.pro1[3].Value);
+            Assert.IsTrue((bool)sys1.pro1[6].Value);
+            Assert.IsTrue((bool)sys1.pro2.Value);
+            Assert.IsTrue(sys1.pro3_1.Value == 55);
+            Assert.IsTrue(sys1.pro3_2.Value == 66);
+
+        }
 
         #endregion
 

@@ -100,6 +100,18 @@
     <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\subsys1.cs">
       <Link>FrameOneByte\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\FioNetObject.cs">
+      <Link>FrameGroup\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\FioNetRunner.cs">
+      <Link>FrameGroup\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\Parameter.cs">
+      <Link>FrameGroup\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\subsys1.cs">
+      <Link>FrameGroup\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\test_multi_cs\CreateTime.cs">
       <Link>MultiTest\CreateTime.cs</Link>
     </Compile>
