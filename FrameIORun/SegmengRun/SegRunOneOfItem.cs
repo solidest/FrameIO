@@ -41,38 +41,9 @@ namespace FrameIO.Run
         //自下而上 分支执行完毕
         public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
         {
-            //return ((SegRunOneOfGroup)Parent).LookUpNextValueSeg(out firstSeg, out pc, out repeated, (JObject)ctxOfChild.Parent.Parent);
             var myp = GetValueParent(ctxOfChild);
             return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, (JObject)myp.Parent.Parent);
         }
-
-
-
-        ////向下穿透
-        //public override bool LookUpFirstValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctx, JToken theValue)
-        //{
-
-        //    //空白
-        //    if (First == null)
-        //    {
-        //        return LookUpNextValueSeg(out firstSeg, out pc, out repeated, ctx);
-        //    }
-
-        //    //初始化自身
-        //    JObject my = null;
-
-        //    if (theValue == null)
-        //    {
-        //        my = new JObject();
-        //        ctx.Add(Name, my);
-        //    }
-        //    else
-        //        my = (JObject)theValue;
-
-        //    //向下查找
-        //    return First.LookUpFirstValueSeg(out firstSeg, out pc, out repeated, my, my[First.Name]);
-        //}
-
 
 
         #endregion
