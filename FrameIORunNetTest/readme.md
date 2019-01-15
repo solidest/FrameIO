@@ -1,9 +1,9 @@
 ﻿### 数据帧 测试用例
 
-- 数据帧解析初始化 A__FioNetRunnerInitial
+- 数据帧解析初始化 A__FrameRunnerInitial
 - 单字节收发 A__FrameOneByte
 - 字节数组收发 A__FrameByteArray
-- 字节未对齐 A__NotAlignByte
+- 字节未对齐 A__FrameNotAlignByte
 - bool型收发 A__FrameBool
 - short收发
 - ushort收发
@@ -35,8 +35,8 @@ _ block 数组收发
 - bytesizeof(字段)取字段长度测试
 - bytesizeof(this)取整包长度测试
 - value设置为公式测试
-- 设置子系统收发测试 A__Subsys
-- 设置子系统数组收发 A__SubsysArray
+- 设置子系统收发测试 A__FrameSubsys
+- 设置子系统数组收发 A__FrameSubsysArray
 
 
 
