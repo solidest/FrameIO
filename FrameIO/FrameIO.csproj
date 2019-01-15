@@ -272,13 +272,13 @@
     <Resource Include="img\compilesharp.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="FrameIOEditor\FrameIOEditor.csproj">
-      <Project>{cf8f4619-7685-4dee-a5fd-d6a112d95c44}</Project>
-      <Name>FrameIOEditor</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+    <ProjectReference Include="..\FrameIOEditor\FrameIOEditor.csproj">
+      <Project>{e1712a0f-ec1c-46d1-a078-45d39ea7ac3e}</Project>
+      <Name>FrameIOEditor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
