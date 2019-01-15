@@ -97,7 +97,7 @@ namespace FrameIO.Run
 
         public FrameObject GetObject(string segname)
         {
-            return new FrameObject( (JObject)FindToken(segname).Value<byte>());
+            return new FrameObject((JObject)FindToken(segname));
         }
 
         public IEnumerable<FrameObject> GetObjectArray(string segname)
@@ -236,7 +236,7 @@ namespace FrameIO.Run
         //查找已经存在的Object
         private JToken FindToken(string segFullName)
         {
-            var r = RootValue[FrameName];
+            var r = ((FrameName ==null || FrameName=="")? RootValue : RootValue[FrameName]);
             if (!segFullName.Contains(".")) return  r[segFullName];
             var nms = segFullName.Split('.');
             for (int i = 0; i < nms.Length-1; i++)
