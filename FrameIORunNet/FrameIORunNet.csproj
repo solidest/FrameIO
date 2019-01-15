@@ -44,9 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Template_cs\TFioNetObject.cs" />
-    <Compile Include="Template_cs\TFioNetRunner.cs" />
-    <Compile Include="Template_cs\TParameter.cs" />
+    <Compile Include="TFioNetObject.cs" />
+    <Compile Include="TFioNetRunner.cs" />
+    <Compile Include="TParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
     <None Include="Template_cs\TFioNetObject.tpl">
