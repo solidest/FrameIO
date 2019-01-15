@@ -64,6 +64,18 @@
     <Compile Include="..\..\FrameIOTest\frame_test_bytearray_cs\subsys1.cs">
       <Link>FrameByteArray\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\FioNetObject.cs">
+      <Link>FrameNotAligByte\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\FioNetRunner.cs">
+      <Link>FrameNotAligByte\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\Parameter.cs">
+      <Link>FrameNotAligByte\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\subsys1.cs">
+      <Link>FrameNotAligByte\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\FioNetObject.cs">
       <Link>FrameOneByte\FioNetObject.cs</Link>
     </Compile>
