@@ -20,7 +20,7 @@ namespace FrameIORunNetTest
 
         //字节未对齐
         [TestMethod]
-        public void A__NotByeAlig()
+        public void A__NotAlignByte()
         {
             var sys1 = new frame_test_notaligbyte.subsys1();
             sys1.InitialParameter();
@@ -34,19 +34,19 @@ namespace FrameIORunNetTest
 
             sys2.pro1[0].Value = true;
             sys2.pro1[6].Value = false;
-            Exception e = null;
-            //try
+            Exception ex = null;
+            try
             {
                 sys2.SendData();
 
                 sys1.RecvData();
 
             }
-            //catch(Exception ex)
-            //{
-            //    ex = e;
-            //}
-            Assert.IsNotNull(e);
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            Assert.IsNotNull(ex);
         }
 
         #endregion
@@ -98,7 +98,41 @@ namespace FrameIORunNetTest
         }
 
         #endregion
-       
+
+        #region --bool--
+
+        //字节未对齐
+        [TestMethod]
+        public void A__FrameBool()
+        {
+            var sys1 = new frame_test_bool.subsys1();
+            sys1.InitialParameter();
+            sys1.InitialChanneltcp_recv(null);
+            Assert.IsTrue(sys1.tcp_recv.Open());
+
+            var sys2 = new frame_test_bool.subsys1();
+            sys2.InitialParameter();
+            sys2.InitialChanneltcp_send(null);
+            Assert.IsTrue(sys2.tcp_send.Open());
+
+            sys2.pro1[0].Value = true;
+            sys2.pro1[6].Value = true;
+            sys2.pro2.Value = true;
+            Exception ex = null;
+
+            sys2.SendData();
+            sys1.RecvData();
+
+            Assert.IsNull(ex);
+            Assert.IsTrue((bool)sys1.pro1[0].Value);
+            Assert.IsFalse((bool)sys1.pro1[3].Value);
+            Assert.IsTrue((bool)sys1.pro1[6].Value);
+            Assert.IsTrue((bool)sys1.pro2.Value);
+        }
+
+
+        #endregion
+
 
     }
 }

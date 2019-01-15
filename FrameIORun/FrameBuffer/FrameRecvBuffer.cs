@@ -11,7 +11,7 @@ namespace FrameIO.Run
     {
         private MemoryStream _cach;
         private SliceReader _sr;
-
+        private object _lasttoken;
         private Dictionary<object, int> _pos;
 
         public bool CanRead => !_sr.IsEmpty;
@@ -32,7 +32,11 @@ namespace FrameIO.Run
 
         public ulong ReadBits(int bitLen, object token)
         {
-            _pos.Add(token, (int)_cach.Position * 8 - _sr.NotReadBitLen);
+            if(token != _lasttoken)
+            {
+                _pos.Add(token, (int)_cach.Position * 8 - _sr.NotReadBitLen);
+                _lasttoken = token;
+            }
             return _sr.ReadBits(bitLen);
         }
 

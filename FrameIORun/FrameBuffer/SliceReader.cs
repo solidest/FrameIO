@@ -30,17 +30,19 @@ namespace FrameIO.Run
 
         public ulong ReadBits(int bitLen)
         {
+            //字节推进
             var len = _bitOdd + bitLen;
             var newOdd = len % 8;
-            var newPos = _bytePos + len / 8 + (newOdd == 0 ? 0 : 1);
+            var newPos = len >= 8 ? _bytePos + 1 : _bytePos; //_bytePos + len / 8 + (newOdd == 0 ? 0 : 1);
 
             ulong ret = 0;
 
-            if (_bytePos + 7 > _cach.Length)
+            if (_cach.Length < _bytePos + 8)
             {
                 byte[] newb = new byte[8];
-                for (int i = _bytePos, ii = 0; i < newPos; i++, ii++)
+                for (int i = _bytePos, ii = 0; i <= (newPos==_cach.Length ? newPos-1:newPos); i++, ii++)
                     newb[ii] = _cach[i];
+                
                 ret = (BitConverter.ToUInt64(newb, 0) >> _bitOdd) & (0xFFFFFFFFFFFFFFFF >> (64 - bitLen));
             }
             else

@@ -31,7 +31,7 @@ namespace FrameIO.Run
 
         private void PackItem(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            buff.Write(GetRaw(buff, (JValue)theValue), BitLen, theValue);
+            buff.Write(GetRaw(buff, (JValue)theValue), BitLen, IsArray? theValue.Parent.Parent:theValue.Parent);
         }
 
         public override int GetBitLen(JObject parent)
@@ -51,12 +51,12 @@ namespace FrameIO.Run
         public override JValue UnpackValue(IFrameReadBuffer buff, JContainer pc)
         {
             var v = (JValue)GetDefaultValue();
-            v.Value = buff.ReadBits(BitLen, v);
-
             if (IsArray)
                 pc.Add(v);
             else
                 ((JObject)pc).Add(Name, v);
+
+            v.Value = buff.ReadBits(BitLen, IsArray? pc.Parent : v.Parent);
             return v;
         }
 

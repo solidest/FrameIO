@@ -52,6 +52,18 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\FrameIOTest\frame_test_bool_cs\FioNetObject.cs">
+      <Link>FrameBool\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bool_cs\FioNetRunner.cs">
+      <Link>FrameBool\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bool_cs\Parameter.cs">
+      <Link>FrameBool\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bool_cs\subsys1.cs">
+      <Link>FrameBool\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_bytearray_cs\FioNetObject.cs">
       <Link>FrameByteArray\FioNetObject.cs</Link>
     </Compile>
