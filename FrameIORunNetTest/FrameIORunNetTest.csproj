@@ -52,21 +52,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\FrameIOTest\framet_test_subsys_cs\FioNetObject.cs">
-      <Link>FrameSubsys\FioNetObject.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\framet_test_subsys_cs\FioNetRunner.cs">
-      <Link>FrameSubsys\FioNetRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\framet_test_subsys_cs\Parameter.cs">
-      <Link>FrameSubsys\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\framet_test_subsys_cs\sub1.cs">
-      <Link>FrameSubsys\sub1.cs</Link>
-    </Compile>
-    <Compile Include="..\..\FrameIOTest\framet_test_subsys_cs\subsys1.cs">
-      <Link>FrameSubsys\subsys1.cs</Link>
-    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_bool_cs\FioNetObject.cs">
       <Link>FrameBool\FioNetObject.cs</Link>
     </Compile>
@@ -127,6 +112,36 @@
     <Compile Include="..\..\FrameIOTest\frame_test_seggroup_cs\subsys1.cs">
       <Link>FrameGroup\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsysarray_cs\FioNetObject.cs">
+      <Link>FrameSubsysArray\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsysarray_cs\FioNetRunner.cs">
+      <Link>FrameSubsysArray\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsysarray_cs\Parameter.cs">
+      <Link>FrameSubsysArray\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsysarray_cs\sub1.cs">
+      <Link>FrameSubsysArray\sub1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsysarray_cs\subsys1.cs">
+      <Link>FrameSubsysArray\subsys1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\FioNetObject.cs">
+      <Link>FrameSubsys\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\FioNetRunner.cs">
+      <Link>FrameSubsys\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\Parameter.cs">
+      <Link>FrameSubsys\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\sub1.cs">
+      <Link>FrameSubsys\sub1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\subsys1.cs">
+      <Link>FrameSubsys\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\test_multi_cs\CreateTime.cs">
       <Link>MultiTest\CreateTime.cs</Link>
     </Compile>
@@ -174,6 +189,7 @@
       <Name>FrameIORun</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

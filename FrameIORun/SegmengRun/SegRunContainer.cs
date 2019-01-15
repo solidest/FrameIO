@@ -60,10 +60,10 @@ namespace FrameIO.Run
                         AddItem(pseg.Name, SegRunReal.NewSegReal(oseg, pseg.Name, true));
                         break;
                     case SegmentTypeEnum.SegGroup:
-                        AddItem(pseg.Name, SegRunGroup.NewSegGroup(oseg[SEGMENTLIST_TOKEN].Value<JObject>(), pseg.Name, false));
+                        AddItem(pseg.Name, SegRunGroup.NewSegGroup(oseg[SEGMENTLIST_TOKEN].Value<JObject>(), pseg.Name));
                         break;
                     case SegmentTypeEnum.SegGroupArray:
-                        AddItem(pseg.Name, SegRunGroup.NewSegGroup(oseg[SEGMENTLIST_TOKEN].Value<JObject>(), pseg.Name, true));
+                        AddItem(pseg.Name, SegRunGroup.NewSegGroupArray(oseg[SEGMENTLIST_TOKEN].Value<JObject>(), pseg.Name, oseg));
                         break;
                     case SegmentTypeEnum.SegOneOfGroup:
                         AddItem(pseg.Name, SegRunOneOfGroup.NewOneOfGroup(oseg, pseg.Name, false));

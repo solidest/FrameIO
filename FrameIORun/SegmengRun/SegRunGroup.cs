@@ -18,11 +18,19 @@ namespace FrameIO.Run
         #region --Initial--
 
          //从json加载内容
-        static internal SegRunGroup NewSegGroup(JObject o, string name, bool isArray)
+        static internal SegRunGroup NewSegGroup(JObject o, string name)
         {
             var ret = new SegRunGroup();
             ret.Name = name;
-            if(isArray) ret._arrLen = Helper.GetExp(o[ARRAYLEN_TOKEN]);
+            ret.InitialFromJson(o);
+            return ret;
+        }
+
+        static internal SegRunGroup NewSegGroupArray(JObject o, string name, JObject owner)
+        {
+            var ret = new SegRunGroup();
+            ret.Name = name;
+            ret._arrLen = Helper.GetExp(owner[ARRAYLEN_TOKEN]);
             ret.InitialFromJson(o);
             return ret;
         }
@@ -39,7 +47,7 @@ namespace FrameIO.Run
 
         public override void Pack(IFrameWriteBuffer buff, JObject parent, JToken theValue)
         {
-            if (_arrLen != null)
+            if (IsArray)
             {
                 SegRunArray.Pack(_arrLen, PackItem, this, buff, parent, (JArray)theValue);
             }

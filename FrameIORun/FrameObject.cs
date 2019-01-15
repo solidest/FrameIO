@@ -34,7 +34,7 @@ namespace FrameIO.Run
         private FrameObject(JObject o)
         {
             RootValue = o;
-            FrameName = null;
+            FrameName = "";
         }
 
         internal JObject RootValue { get; }
@@ -236,7 +236,7 @@ namespace FrameIO.Run
         //查找已经存在的Object
         private JToken FindToken(string segFullName)
         {
-            var r = ((FrameName ==null || FrameName=="")? RootValue : RootValue[FrameName]);
+            var r = (FrameName==""? RootValue : RootValue[FrameName]);
             if (!segFullName.Contains(".")) return  r[segFullName];
             var nms = segFullName.Split('.');
             for (int i = 0; i < nms.Length-1; i++)
