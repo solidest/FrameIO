@@ -1,5 +1,5 @@
 //项目:1.test_tcp
-project main {
+project test_tcp {
 	//受控对象
 	system test_tcp {
 		uint len;
@@ -7,12 +7,12 @@ project main {
 		uint head;
 
 		channel CHS : tcpserver {
-			serverip = "192.168.0.153";
+			serverip = "192.168.0.151";
 			port = 8007;
-			clientip = "192.168.0.153";
+			clientip = "192.168.0.151";
 		}
 		channel CHC : tcpclient {
-			serverip = "192.168.0.153";
+			serverip = "192.168.0.151";
 			port = 8007;
 		}
 

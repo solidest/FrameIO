@@ -15,7 +15,7 @@ namespace FrameIOUintTester
         public void COM()
         {
             var tester = new test_com.testcom();
-
+            tester.InitialParameter();
             tester.InitialChannelCH_COM3(null);
             tester.InitialChannelCH_COM4(null);
 

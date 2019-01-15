@@ -1,0 +1,45 @@
+//项目:3.test_com
+project test_com_receivetimeout {
+	//受控对象
+	system test_com_receivetimeout {
+		uint head;
+		uint len;
+		uint end;
+
+		channel CH_COM3 : com {
+			portname = "COM3";
+			baudrate = 9600;
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+			waittimeout = 5000;
+		}
+		channel CH_COM4 : com {
+			baudrate = 9600;
+			portname = "COM4";
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+			waittimeout = 5000;
+		}
+
+		action A_Send : send FrameSR on CH_COM3 {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+		action A_Recv : recv FrameSR on CH_COM4 {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame FrameSR {
+		integer HEAD;
+		integer LEN;
+		integer END;
+	}
+
+}

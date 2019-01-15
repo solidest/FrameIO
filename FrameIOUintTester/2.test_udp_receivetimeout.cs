@@ -16,23 +16,24 @@ namespace FrameIOUintTester
         {
             var tester = new test_udp_receivetimeout.test_udp_receivetimeout();
 
+            tester.InitialParameter();
             tester.InitialChannelCH_UDP_SEND(null);
             tester.InitialChannelCH_UDP_RECV(null);
 
             Assert.IsTrue(tester.CH_UDP_SEND.Open());
             Assert.IsTrue(tester.CH_UDP_RECV.Open());
 
-            //tester.head.Value = 0x55;
-            //tester.len.Value = 1;
-            //tester.end.Value = 0xaa;
+            tester.head.Value = 0x55;
+            tester.len.Value = 1;
+            tester.end.Value = 0xaa;
 
-            //tester.A_Send();
+            tester.A_Send();
 
             tester.A_Recv();
 
-            Assert.IsFalse(tester.head.Value == 0x55);
-            Assert.IsFalse(tester.len.Value == 1);
-            Assert.IsFalse(tester.end.Value == 0xaa);
+            Assert.IsTrue(tester.head.Value == 0x55);
+            Assert.IsTrue(tester.len.Value == 1);
+            Assert.IsTrue(tester.end.Value == 0xaa);
 
 
         }

@@ -7,13 +7,13 @@ project test_tcp_receivetimeout {
 		uint head;
 
 		channel CHS : tcpserver {
-			serverip = "192.168.0.148";
+			serverip = "192.168.0.151";
 			port = 8007;
-			clientip = "192.168.0.148";
+			clientip = "192.168.0.151";
 			waittimeout = 5000;
 		}
 		channel CHC : tcpclient {
-			serverip = "192.168.0.148";
+			serverip = "192.168.0.151";
 			port = 8007;
 			waittimeout = 5000;
 		}

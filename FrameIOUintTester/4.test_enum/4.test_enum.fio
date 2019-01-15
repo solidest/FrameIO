@@ -1,13 +1,6 @@
-//项目:4.test_enum
 project test_enum {
-	//受控对象
 	system testenum {
-		uint datetype;
-		uint name1;
-		uint name2;
-		uint age1;
-		uint age2;
-
+		uint datetype;uint name1;uint name2;uint age1;uint age2;
 		channel CH_COM3 : com {
 			portname = "COM3";
 			baudrate = 9600;
@@ -22,13 +15,12 @@ project test_enum {
 			databits = 8;
 			stopbits = 1;
 		}
-
 		action A_Send_Type1 : send Frame_Send_Type1 on CH_COM3 {
 			DATATYPE : datetype;
 			NAME1 : name1;
 			NAME2 : name2;
 		}
-		action A_Send_Type2 : send Frame_Send_Type2 on CH_COM3 {
+		action A_Send_Type2 : recv Frame_Send_Type2 on CH_COM4 {
 			DATATYPE : datetype;
 			AGE1 : age1;
 			AGE2 : age2;
@@ -80,5 +72,4 @@ project test_enum {
 		enum_type1 = 1,
 		enum_type2 = 2
 	}
-
 }

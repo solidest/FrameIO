@@ -1,7 +1,8 @@
 
 using System.ComponentModel;
+using FrameIO.Run;
 
-namespace test_crc
+namespace test_enum
 {
     public class Parameter<T> : INotifyPropertyChanged
     {
@@ -27,9 +28,9 @@ namespace test_crc
                 if (!Equals(_value, value))
                 {
                     _value = value;
-                    if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
                 }
-                if (ValueUpdated != null) ValueUpdated.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                ValueUpdated?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
         }
 
@@ -45,11 +46,4 @@ namespace test_crc
         public event ValueUpdatedEventHandler ValueUpdated;
     }
 
-    public class Helper
-    {
-        static public int GetMin(int n1, int n2)
-        {
-            return n1 > n2 ? n2 : n1;
-        }
-    }
 }

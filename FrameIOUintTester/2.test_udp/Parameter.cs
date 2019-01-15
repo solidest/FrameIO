@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using FrameIO.Run;
 
-namespace main
+namespace test_udp
 {
     public class Parameter<T> : INotifyPropertyChanged
     {

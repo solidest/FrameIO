@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_udp
+namespace test_com
 {
     public static class FioNetRunner
     {
@@ -10,10 +10,10 @@ namespace test_udp
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAKvm5VJQUEorSsxNDQ5SslKoBvGBIsGp6bmpeSU+mcUlCFGg",
+                "H4sIAAAAAAAEAKvm5VJQUHIrSsxNDQ5SslKoBvGBIsGp6bmpeSU+mcUlCFGg",
                 "uIerowuyAEJpSGVBKlAGxPXMK0lNTy1S0kFWlZmel5oCVJCWmFOciizjlFni",
                 "nF+aB7LH2AhForIk1b8oBWgQyNjcxJwcFBNd85LzU8BGKgUUZeZmlmSWpaIo",
-                "CEvMKQU5yQAmVguXVfJx9RsO3nD1G8KxAWGAKSBRCwCe12EEiwIAAA==");
+                "CEvMKQU5yQAmVguXVfJx9RsO3nD1G8KxAWGAKSBRCwAycL3PiwIAAA==");
 
             IORunner.InitialFromGZipBase64(config);
             

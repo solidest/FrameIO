@@ -7,15 +7,15 @@ project test_udp {
 		uint end;
 
 		channel CH_UDP_SEND : udp {
-			localip = "192.168.0.153";
+			localip = "192.168.0.151";
 			localport = 8007;
-			remoteip = "192.168.0.153";
+			remoteip = "192.168.0.151";
 			remoteport = 8008;
 		}
 		channel CH_UDP_RECV : udp {
-			localip = "192.168.0.153";
+			localip = "192.168.0.151";
 			localport = 8008;
-			remoteip = "192.168.0.153";
+			remoteip = "192.168.0.151";
 			remoteport = 8007;
 		}
 

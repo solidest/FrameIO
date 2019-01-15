@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System;
 
-namespace test_com_receivetimeout
+namespace test_com
 {
-    public partial class test_com_receivetimeout
+    public partial class testcom
     {
 
         //属性声明
@@ -37,7 +37,6 @@ namespace test_com_receivetimeout
             if (!ops.Contains("parity")) ops.SetOption("parity", 0);
             if (!ops.Contains("databits")) ops.SetOption("databits", 8);
             if (!ops.Contains("stopbits")) ops.SetOption("stopbits", 1);
-            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             ops.SetOption("$channeltype", 1);
             CH_COM3 = FioNetRunner.GetChannel(ops);
         }
@@ -51,7 +50,6 @@ namespace test_com_receivetimeout
             if (!ops.Contains("parity")) ops.SetOption("parity", 0);
             if (!ops.Contains("databits")) ops.SetOption("databits", 8);
             if (!ops.Contains("stopbits")) ops.SetOption("stopbits", 1);
-            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             ops.SetOption("$channeltype", 1);
             CH_COM4 = FioNetRunner.GetChannel(ops);
         }
@@ -89,9 +87,6 @@ namespace test_com_receivetimeout
         public void A_Recv()
         {
             var __v__ = FioNetRunner.RecvFrame("FrameSR", CH_COM4);
-            __v__.GetValue("HEAD", head);
-            __v__.GetValue("LEN", len);
-            __v__.GetValue("END", end);
         }
 
     }

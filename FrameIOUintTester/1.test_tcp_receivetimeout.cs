@@ -15,7 +15,7 @@ namespace FrameIOUintTester
         public void TCP_receivetimeout()
         {
             var tester = new test_tcp_receivetimeout.test_tcp_receivetimeout();
-
+            tester.InitialParameter();
             tester.InitialChannelCHS(null);
             tester.InitialChannelCHC(null);
 

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using FrameIO.Run;
 
-namespace test_udp
+namespace test_tcp
 {
     public class FioNetObject
     {

@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_udp
+namespace test_enum
 {
     public static class FioNetRunner
     {
@@ -10,10 +10,15 @@ namespace test_udp
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAKvm5VJQUEorSsxNDQ5SslKoBvGBIsGp6bmpeSU+mcUlCFGg",
-                "uIerowuyAEJpSGVBKlAGxPXMK0lNTy1S0kFWlZmel5oCVJCWmFOciizjlFni",
-                "nF+aB7LH2AhForIk1b8oBWgQyNjcxJwcFBNd85LzU8BGKgUUZeZmlmSWpaIo",
-                "CEvMKQU5yQAmVguXVfJx9RsO3nD1G8KxAWGAKSBRCwCe12EEiwIAAA==");
+                "H4sIAAAAAAAEAO1WTWuDQBC9B/IfxHMPNb31ZhsbAm0NjRR6ChInsuCuYtZA",
+                "CP737hrdD6PZll5aqxfdec9x38wb9TSdWJb9lIcYNmsg0SY4ZuDY99aJAwxa",
+                "Q4yB0Ge0pzLK4nM3cIOPlacGJZ1nYQhfLgmFGHL7RmWhmEDECLsw2YOKPCD6",
+                "mBaEP+tupgFHCn4esUQ8LQ6TRMvokW0aVSntVY4wougAGuE9TAq+pdsmVgrU",
+                "fnVfPGcoQmZ/V8j5ojqdRdXGfIPtYYCWDFKPFJjj/FxN3pc7zbQaZfoE/N0i",
+                "T4tMSzuHjA26T+obOFlUTuVVt7eLXCHAt0v1F4VpH0sKWE2vbKXR6bThnkYL",
+                "vGNuv9d1ye7rvmD0uUASrrpB0EyuEMSL7jdHecHumvv/UAg9oC31IknHdlTp",
+                "B45t6zc61l2Mhq3rMPpV86tciMve76H4UVNqOH4VO8fr9+o06BjIb9x0Un4C",
+                "+P87ymMMAAA=");
 
             IORunner.InitialFromGZipBase64(config);
             

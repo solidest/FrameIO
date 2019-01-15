@@ -1,10 +1,12 @@
 
 using System.ComponentModel;
+using FrameIO.Run;
 
-namespace test_calc
+namespace test_com
 {
     public class Parameter<T> : INotifyPropertyChanged
     {
+        public delegate void ValueUpdatedEventHandler(object sender, PropertyChangedEventArgs e);
         private T _value;
 
         public Parameter(T value)
@@ -26,8 +28,9 @@ namespace test_calc
                 if (!Equals(_value, value))
                 {
                     _value = value;
-                    if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
                 }
+                ValueUpdated?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
         }
 
@@ -40,5 +43,7 @@ namespace test_calc
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event ValueUpdatedEventHandler ValueUpdated;
     }
+
 }

@@ -14,8 +14,8 @@ namespace FrameIOUintTester
         [TestMethod]
         public void TCP()
         {
-            var tester = new test_tcp.tcp();
-
+            var tester = new test_tcp.test_tcp();
+            tester.InitialParameter();
             tester.InitialChannelCHS(null);
             tester.InitialChannelCHC(null);
 

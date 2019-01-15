@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_udp
+namespace test_udp_receivetimeout
 {
     public static class FioNetRunner
     {

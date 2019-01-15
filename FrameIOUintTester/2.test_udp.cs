@@ -15,6 +15,7 @@ namespace FrameIOUintTester
         public void UDP()
         {
             var tester = new test_udp.testudp();
+            tester.InitialParameter();
 
             tester.InitialChannelCH_UDP_SEND(null);
             tester.InitialChannelCH_UDP_RECV(null);

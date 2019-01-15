@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_udp
+namespace test_tcp
 {
     public static class FioNetRunner
     {
