@@ -252,6 +252,7 @@ namespace FrameIORunNetTest
         {
             var tester = new frame_test_oneof.testenum();
 
+           
             tester.InitialParameter();
             tester.InitialChanneltcp_recv(null);
             tester.InitialChanneltcp_send(null);
@@ -262,6 +263,8 @@ namespace FrameIORunNetTest
             tester.datetype.Value = 1;
             tester.name1.Value = 1;
             tester.name2.Value = 2;
+            tester.end1.Value = true;
+            tester.end7.Value = 100;
 
             tester.A_Send_Type1();
 

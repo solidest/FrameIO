@@ -57,6 +57,7 @@ namespace FrameIO.Run
                 ((JObject)pc).Add(Name, v);
 
             v.Value = buff.ReadBits(BitLen, IsArray? pc.Parent : v.Parent);
+            if (!IsArray) DoValid(buff, this, v);
             return v;
         }
 
