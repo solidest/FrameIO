@@ -2,7 +2,7 @@
 project test_array {
 	//受控对象
 	system testarray {
-		uint[] content;
+		uint[5] content;
 
 		channel CH_COM3 : com {
 			portname = "COM3";

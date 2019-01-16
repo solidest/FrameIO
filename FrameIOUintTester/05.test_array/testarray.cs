@@ -5,26 +5,18 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System;
 
-namespace test_enum
+namespace test_array
 {
-    public partial class testenum
+    public partial class testarray
     {
 
         //属性声明
-        public Parameter<uint?> datetype { get; private set;}
-        public Parameter<uint?> name1 { get; private set;}
-        public Parameter<uint?> name2 { get; private set;}
-        public Parameter<uint?> age1 { get; private set;}
-        public Parameter<uint?> age2 { get; private set;}
+        public ObservableCollection<Parameter<uint?>> content { get; private set; }
 
         //属性初始化
         public void InitialParameter()
         {
-            datetype = new Parameter<uint?>();
-            name1 = new Parameter<uint?>();
-            name2 = new Parameter<uint?>();
-            age1 = new Parameter<uint?>();
-            age2 = new Parameter<uint?>();
+            content = new ObservableCollection<Parameter<uint?>>(); for (int i = 0; i < 5; i++) content.Add(new Parameter<uint?>());
         }
 
         //通道声明
@@ -77,34 +69,23 @@ namespace test_enum
         }
 
         //数据发送
-        public void A_Send_Type1()
+        public void A_Send()
         {
-            var __v__ = FioNetRunner.NewFrameObject("Frame_Send_Type1");
-            __v__.SetValue("DATATYPE", datetype);
-            __v__.SetValue("NAME1", name1);
-            __v__.SetValue("NAME2", name2);
+            var __v__ = FioNetRunner.NewFrameObject("Frame_Array");
+            __v__.SetValue("CONTENT", content);
             FioNetRunner.SendFrame(__v__, CH_COM3);
+        }
+        
+
+        public void A_Recv()
+        {
+            var __v__ = FioNetRunner.NewFrameObject("Frame_Array");
+            __v__.SetValue("CONTENT", content);
+            FioNetRunner.SendFrame(__v__, CH_COM4);
         }
 
         //数据接收
-        public void A_Recv()
-        {
-            var __v__ = FioNetRunner.RecvFrame("Frame_Recv", CH_COM4);
-            __v__.GetValue("DATATYPE", datetype);
-            switch((Enum_Type)__v__.GetValue("Frame_Recv.DATATYPE"))
-            {
-                case Enum_Type.enum_type1:
-                {
-                    __v__.GetValue("DAT.enum_type1.NAME1", name1);
-                    __v__.GetValue("DAT.enum_type1.NAME2", name2);
-                    break;
-                }
-                case Enum_Type.enum_type2:
-                {
-                    break;
-                }
-            }
-        }
+        
 
     }
 }

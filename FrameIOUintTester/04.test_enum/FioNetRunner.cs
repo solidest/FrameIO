@@ -10,14 +10,14 @@ namespace test_enum
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAO1Vz2uDMBS+F/o/SM47zO62m1tdKXSzrDLYqUh9lYCJksZC",
-                "Kf7vS6zmh9W5sdPaeknyvi/P9+N7ehyPHAe9sIjAegU0XoeHHFz06BwlIKAV",
-                "JAQoX+Ad11Zhn3qhF34ufdOo6dKLQORxTjkkwNCdycIJhVgQtlG6AxN5wvw5",
-                "K6h818PEAg4cAhYLR9ItidLU8ujTTRZXLtGSYYI53oNF+IjSQoZ039hKhaI3",
-                "79V3LyWRyf9N5LSpllNStTDfYbO/QEmGmU8LInG5VpP3406LXAfTDCgE2xnL",
-                "itxyO4VcDHpA6wuSrCpn8qrr7SJXCMhwuf2hGIpjzoGY7o1QmjzdNtzTaIV3",
-                "zO3vuq7Zfd1XjD4VaMK3alC0IVUo4ln3m6c8Y3fN/TUUwjZYR7tIWrEdVfqD",
-                "Ytv5DyrWm90EW9fhpldLr/qgttb/cDwqvwAJMUvyrAkAAA==");
+                "H4sIAAAAAAAEAO1Vz2vCMBS+C/4PpWcP091262YnwrbKLIOdpNhnCTRpiakg",
+                "0v99SWzzo1o78DSWXJq87+vLy/c+eKfxyPP8V5pg2KyBpP6TdxIhHlxDhoGw",
+                "N7RnOsrj8yAO4u9VaAY1PT6WwBFxXBIGGVB/YrJQRkDcskvyPZjIM2IvRUXE",
+                "XY8zCzgyiGjKE4m0OMlzK2NItkUqU/orijBi6AAWIS5CUmGBi+9GFmjiX0le",
+                "iZIf2lg9Md86+MyIQLRb0KIqrbRzKLmeEWl+EGSlnMmTv3dFlgiIchm/aNqF",
+                "+utYMsBmeqOU9p3TLtzTaIV/BO/hlRJ+33XN7uu+YvS5QBNuukHRhlyhiBfd",
+                "b1d9wZZCzP6fEHbAOtoiacdeUekOx3bfP+jYYOEM2+jg/Gr5VR/UttnIz1nD",
+                "Zh5+wvbg5qGbh24eiuXmYSuEm4d/o09uHp51uGcejkf1D6eO4TwjDgAA");
 
             IORunner.InitialFromGZipBase64(config);
             

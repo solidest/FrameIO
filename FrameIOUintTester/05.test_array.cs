@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace FrameIOUintTester
 {
     [TestClass]
-    public class Test_Enum
+    public class Test_array
     {
+        //test_tcp
         [TestMethod]
-        public void ENUM()
+        public void Test()
         {
-            var tester = new test_enum.testenum();
-
+            var tester = new test_array.testarray();
             tester.InitialParameter();
             tester.InitialChannelCH_COM3(null);
             tester.InitialChannelCH_COM4(null);
@@ -22,18 +22,18 @@ namespace FrameIOUintTester
             Assert.IsTrue(tester.CH_COM3.Open());
             Assert.IsTrue(tester.CH_COM4.Open());
 
-            tester.datetype.Value = 1;
-            tester.name1.Value = 1;
-            tester.name2.Value = 2;
+            for (int i = 0; i < 5; i++)
+                tester.content[i].Value = (uint)i;
 
-            tester.A_Send_Type1();
+            tester.A_Send();
 
             tester.A_Recv();
 
-            Assert.IsTrue(tester.datetype.Value == 1);
-            Assert.IsTrue(tester.name1.Value == 1);
-            Assert.IsTrue(tester.name2.Value == 2);
-
+            Assert.IsTrue(tester.content[0].Value == 0);
+            Assert.IsTrue(tester.content[1].Value == 1);
+            Assert.IsTrue(tester.content[2].Value == 2);
+            Assert.IsTrue(tester.content[3].Value == 3);
+            Assert.IsTrue(tester.content[4].Value == 4);
 
         }
     }

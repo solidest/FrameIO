@@ -1,0 +1,33 @@
+//项目:test_max
+project test_max {
+	//受控对象
+	system subsys1 {
+		int A;
+
+		channel CH_SEND : udp {
+			localip = "192.168.0.151";
+			localport = 8007;
+			remoteip = "192.168.0.151";
+			remoteport = 8008;
+		}
+		channel CH_RECV : udp {
+			localip = "192.168.0.151";
+			localport = 8008;
+			remoteip = "192.168.0.151";
+			remoteport = 8007;
+		}
+
+		action A_SEND : send frame1 on CH_SEND {
+			SegA : A;
+		}
+		action A_RECV : recv frame1 on CH_RECV {
+			SegA : A;
+		}
+	}
+
+	//数据帧
+	frame frame1 {
+		integer SegA max=10 min=5;
+	}
+
+}
