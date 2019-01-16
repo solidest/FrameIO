@@ -66,6 +66,18 @@
     <Compile Include="05.test_array\FioNetRunner.cs" />
     <Compile Include="05.test_array\Parameter.cs" />
     <Compile Include="05.test_array\testarray.cs" />
+    <Compile Include="10.test_subsys\FioNetObject.cs" />
+    <Compile Include="10.test_subsys\FioNetRunner.cs" />
+    <Compile Include="10.test_subsys\Parameter.cs" />
+    <Compile Include="10.test_subsys\position.cs" />
+    <Compile Include="10.test_subsys\testsubsys.cs" />
+    <Compile Include="10.test_Subsys_Array.cs" />
+    <Compile Include="10.test_Subsys.cs" />
+    <Compile Include="10.test_subsys_Array\FioNetObject.cs" />
+    <Compile Include="10.test_subsys_Array\FioNetRunner.cs" />
+    <Compile Include="10.test_subsys_Array\Parameter.cs" />
+    <Compile Include="10.test_subsys_Array\position.cs" />
+    <Compile Include="10.test_subsys_Array\testsubsys.cs" />
     <Compile Include="11.test_max.cs" />
     <Compile Include="02.test_udp_receivetimeout.cs" />
     <Compile Include="02.test_udp_receivetimeout\2.test_udp_receivetimeout.cs" />
@@ -117,6 +129,8 @@
     <None Include="06.test_can_yh\6.test_can_yh.fio" />
     <None Include="07.test_bit\7.test_bit.fio" />
     <None Include="08.test_calc\8.test_caculate.fio" />
+    <None Include="10.test_subsys\10.test_subsys.fio" />
+    <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
     <None Include="11.test_max\11.test_max.fio" />
     <None Include="packages.config" />
   </ItemGroup>

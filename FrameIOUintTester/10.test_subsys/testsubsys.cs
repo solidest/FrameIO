@@ -5,48 +5,52 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System;
 
-namespace test_max
+namespace test_subsys
 {
-    public partial class subsys1
+    public partial class testsubsys
     {
 
         //属性声明
-        public Parameter<int?> A { get; private set;}
+        public Parameter<uint?> head { get; private set;}
+        public Parameter<uint?> len { get; private set;}
+        public Parameter<uint?> end { get; private set;}
+        public position pos { get; private set; }
 
         //属性初始化
         public void InitialParameter()
         {
-            A = new Parameter<int?>();
+            head = new Parameter<uint?>();
+            len = new Parameter<uint?>();
+            end = new Parameter<uint?>();
+            pos = new position();
         }
 
         //通道声明
-        public FioChannel CH_SEND;
-        public FioChannel CH_RECV;
+        public FioChannel CH_UDP_SEND;
+        public FioChannel CH_UDP_RECV;
 
         //通道初始化
-        public void InitialChannelCH_SEND(ChannelOption ops)
+        public void InitialChannelCH_UDP_SEND(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
             if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.151");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8007);
             if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.151");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8008);
-            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             ops.SetOption("$channeltype", 5);
-            CH_SEND = FioNetRunner.GetChannel(ops);
+            CH_UDP_SEND = FioNetRunner.GetChannel(ops);
         }
         
 
-        public void InitialChannelCH_RECV(ChannelOption ops)
+        public void InitialChannelCH_UDP_RECV(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
             if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.151");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8008);
             if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.151");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8007);
-            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 5000);
             ops.SetOption("$channeltype", 5);
-            CH_RECV = FioNetRunner.GetChannel(ops);
+            CH_UDP_RECV = FioNetRunner.GetChannel(ops);
         }
 
         //异常处理接口
@@ -69,18 +73,28 @@ namespace test_max
         }
 
         //数据发送
-        public void A_SEND()
+        public void A_Send()
         {
-            var __v__ = FioNetRunner.NewFrameObject("frame1");
-            __v__.SetValue("SegA", A);
-            FioNetRunner.SendFrame(__v__, CH_SEND);
+            var __v__ = FioNetRunner.NewFrameObject("frameSR");
+            __v__.SetValue("HEAD", head);
+            __v__.SetValue("LEN", len);
+            {
+                var __vv__ = new FioNetObject();
+                __vv__.SetValue("jingdu", pos.jingdu);
+                __vv__.SetValue("weidu", pos.weidu);
+                __v__.SetValue("JWD", __vv__);
+            }
+            __v__.SetValue("END", end);
+            FioNetRunner.SendFrame(__v__, CH_UDP_SEND);
         }
 
         //数据接收
-        public void A_RECV()
+        public void A_Recv()
         {
-            var __v__ = FioNetRunner.RecvFrame("frame1", CH_RECV);
-            __v__.GetValue("SegA", A);
+            var __v__ = FioNetRunner.RecvFrame("frameSR", CH_UDP_RECV);
+            __v__.GetValue("HEAD", head);
+            __v__.GetValue("LEN", len);
+            __v__.GetValue("END", end);
         }
 
     }

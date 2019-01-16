@@ -1,0 +1,50 @@
+//项目:2.test_subsys
+project test_subsys {
+	//受控对象
+	system testsubsys {
+		uint head;
+		uint len;
+		uint end;
+		position pos;
+
+		channel CH_UDP_SEND : udp {
+			localip = "192.168.0.151";
+			localport = 8007;
+			remoteip = "192.168.0.151";
+			remoteport = 8008;
+		}
+		channel CH_UDP_RECV : udp {
+			localip = "192.168.0.151";
+			localport = 8008;
+			remoteip = "192.168.0.151";
+			remoteport = 8007;
+		}
+
+		action A_Send : send frameSR on CH_UDP_SEND {
+			HEAD : head;
+			LEN : len;
+			JWD : pos;
+			END : end;
+		}
+		action A_Recv : recv frameSR on CH_UDP_RECV {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	[subsys: position]
+	frame blockframe {
+		real jingdu;
+		real weidu isdouble=true;
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD;
+		integer LEN;
+		block JWD type=blockframe;
+		integer END;
+	}
+
+}
