@@ -291,13 +291,21 @@ namespace FrameIORunX
 	}
 #pragma endregion
 
-#pragma region --Send && Recv--
-	extern "C" __declspec(dllexport) double SendFrame(void * chHandle, void * FrameHandle)
-	{
+	#pragma region --Send && Recv--
 
+	extern "C" __declspec(dllexport) void SendFrame(void * chHandle, void * FrameHandle)
+	{
+		IORunner::SendFrame(*(gcroot<FrameObject^> *)FrameHandle, *(gcroot<FioChannel^> *)chHandle);
 	}
 
-#pragma endregion
+	extern "C" __declspec(dllexport) void* RecvFrame(void * chHandle, const char* frameName)
+	{
+		auto o = new gcroot<FrameObject^>();
+		*o = IORunner::RecvFrame(ConvertToString(frameName), *(gcroot<FioChannel^> *)chHandle);
+		return o;
+	}
+
+	#pragma endregion
 
 
 }
