@@ -61,6 +61,38 @@ namespace FrameIO.Main
                 || PropertyType == "long" || PropertyType == "ulong" || PropertyType == "float" || PropertyType == "double");
         }
 
+        public string CppTypeName { get => GetCppTypeName(); }
+        public string GetCppTypeName()
+        {
+            switch (PropertyType)
+            {
+                case "bool":
+                    return "bool";
+                case "byte":
+                    return "unsigned char";
+                case "sbyte":
+                    return "signed char";
+                case "short":
+                    return "short";
+                case "ushort":
+                    return "unsigned short";
+                case "int":
+                    return "int";
+                case "uint":
+                    return "unsigned int";
+                case "long":
+                    return "long long";
+                case "unsigned long":
+                    return "unsigned long long";
+                case "float":
+                    return "float";
+                case "double":
+                    return "double";
+                default:
+                    return PropertyType;
+            }
+        }
+
         public bool IsEnum(IOProject pj)
         {
             return pj.IsEnum(PropertyType);

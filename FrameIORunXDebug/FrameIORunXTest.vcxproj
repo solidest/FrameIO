@@ -133,15 +133,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FioObjextX.h" />
+    <ClInclude Include="FioXChannel.h" />
     <ClInclude Include="FrameIORunX.h" />
+    <ClInclude Include="Frmaes.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\FrameIORunX\FrameIORunX.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="FrameIORunXTest.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -160,11 +163,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FrameIOInterface\FrameIOInterface.csproj">
-      <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
-      <Project>{f4f37e33-c1d6-49d4-b05f-1b98a0395828}</Project>
+    <ProjectReference Include="..\FrameIORunX\FrameIORunX.vcxproj">
+      <Project>{f875a934-b44f-4795-ac21-7d80e1592928}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

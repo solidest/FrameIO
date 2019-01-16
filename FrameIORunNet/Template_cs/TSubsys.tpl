@@ -21,7 +21,7 @@ namespace <%project%>
 
 		//通道声明
         <%channeldeclare%>
-
+		<%channelrelease%>
 		//通道初始化
 		<%channelinitial%>
 

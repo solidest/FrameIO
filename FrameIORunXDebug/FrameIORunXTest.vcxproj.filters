@@ -24,6 +24,18 @@
     <ClInclude Include="FrameIORunX.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Frmaes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioXChannel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioObjextX.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -38,9 +50,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\FrameIORunX\FrameIORunX.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

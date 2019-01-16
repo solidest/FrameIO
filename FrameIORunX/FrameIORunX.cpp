@@ -23,6 +23,12 @@ namespace FrameIORunX
 		return ss;
 	}
 
+	struct  ValueArray
+	{
+		int len;
+		void* arr;
+	};
+
 	public class FioChannelX
 	{
 	private:
@@ -84,6 +90,14 @@ namespace FrameIORunX
 
 	};
 
+	extern "C" __declspec(dllexport) void FioInitial(const char* config)
+	{
+		char * res = new char[1024*256];
+		strcpy(res, res);
+		System::String^ ss = Marshal::PtrToStringAnsi(static_cast<System::IntPtr>(res));
+
+		delete[] res;
+	}
 
 	#pragma region --Channel--
 
@@ -113,15 +127,7 @@ namespace FrameIORunX
 
 	extern "C" __declspec(dllexport) bool FioChannelOpen(void* channelHandle)
 	{
-		try
-		{
-			return ((FioChannelX*)channelHandle)->OpenChannel();
-
-		}
-		catch (const std::exception& ex)
-		{
-			std::cout << ex.what();
-		}
+		return ((FioChannelX*)channelHandle)->OpenChannel();
 	}
 
 	extern "C" __declspec(dllexport) void FioChannelClose(void* channelHandle)
@@ -149,7 +155,7 @@ namespace FrameIORunX
 
 	#pragma region --Object--
 
-	extern "C" __declspec(dllexport) void* FioCreateObject(const char * frameName)
+	extern "C" __declspec(dllexport) void* FioObjectCreate(const char * frameName)
 	{
 		auto o = new gcroot<FrameObject^>();
 		*o = IORunner::NewFrameObject(ConvertToString(frameName));
@@ -157,24 +163,339 @@ namespace FrameIORunX
 	}
 
 
-	extern "C" __declspec(dllexport) void* FioGetObjectValue(void * ovHandle, const char* segName)
+	extern "C" __declspec(dllexport) void* FioObjectGetValue(void * ovHandle, const char* segName)
 	{
 		auto o = new gcroot<FrameObject^>();
 		*o = (*(gcroot<FrameObject^> *)ovHandle)->GetObject(ConvertToString(segName));
 		return o;
 	}
 
-	extern "C" __declspec(dllexport) void FioSetObjectValue(void * ovHandle, const char* segName, void* oValueHandle)
+	extern "C" __declspec(dllexport) void FioObjectSetValue(void * ovHandle, const char* segName, void* oValueHandle)
 	{
 		(*(gcroot<FrameObject^> *)ovHandle)->SetObject(ConvertToString(segName), *(gcroot<FrameObject^> *)oValueHandle);
 	}
 
-	extern "C" __declspec(dllexport) void FioReleaseObject(void * ovHandle)
+	extern "C" __declspec(dllexport) void FioObjectSetArray(void * ovHandle, const char* segName, void** osValueHandle, int len)
+	{
+		auto arr = gcnew array<FrameObject^>(len);
+
+		for (int i = 0; i < len; i++)
+		{
+			arr[i] = *(((gcroot<FrameObject^>**)(osValueHandle))[i]);
+		}
+		(*(gcroot<FrameObject^> *)ovHandle)->SetObjectArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioObjectRelease(void * ovHandle)
 	{
 		delete (gcroot<FrameObject^> *)ovHandle;
 	}
 
 
+	extern "C" __declspec(dllexport) void* FioObjectGetArray(void * ovHandle, const char* segName)
+	{
+		auto oo = (*(gcroot<FrameObject^> *)ovHandle)->GetObjectArray(ConvertToString(segName));
+		auto ret = new ValueArray;
+		ret->len = 0;
+		for each (FrameObject^ o in oo) ret->len++;
+		if (ret->len == 0) return NULL;
+		ret->arr = new void * [ret->len];
+
+		for (int i = 0; i < ret->len; i++)
+			((gcroot<FrameObject^>**)(ret->arr))[i] = new gcroot<FrameObject^>();
+		return ret;
+	}
+
+	extern "C" __declspec(dllexport) void FioObjectReleaseArray(void * ovsHandle)
+	{
+		for (int i = 0; i < ((ValueArray*)ovsHandle)->len; i++)
+			delete (((gcroot<FrameObject^>**)(((ValueArray*)ovsHandle)->arr))[i]);
+		delete[]((gcroot<FrameObject^>**)(((ValueArray*)ovsHandle)->arr));
+		delete (ValueArray*)ovsHandle;
+	}
+
+
+	#pragma endregion
+
+	#pragma region --SetArray--
+
+
+	extern "C" __declspec(dllexport) void FioSetBoolValues(void * ovHandle, const char* segName, bool * values, int len)
+	{
+		auto arr = gcnew array<bool>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+
+	extern "C" __declspec(dllexport) void FioSetByteValues(void * ovHandle, const char* segName, unsigned char * values, int len)
+	{
+		auto arr = gcnew array<unsigned char>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetSByteValues(void * ovHandle, const char* segName, signed char * values, int len)
+	{
+		auto arr = gcnew array<signed char>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+
+	extern "C" __declspec(dllexport) void FioSetShortValues(void * ovHandle, const char* segName, short * values, int len)
+	{
+		auto arr = gcnew array<short>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetUShortValues(void * ovHandle, const char* segName, unsigned short * values, int len)
+	{
+		auto arr = gcnew array<unsigned short>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetIntValues(void * ovHandle, const char* segName, int * values, int len)
+	{
+		auto arr = gcnew array<int>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetUIntValues(void * ovHandle, const char* segName, unsigned int * values, int len)
+	{
+		auto arr = gcnew array<unsigned int>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetLongValues(void * ovHandle, const char* segName, long long * values, int len)
+	{
+		auto arr = gcnew array<long long>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetULongValues(void * ovHandle, const char* segName, unsigned long long * values, int len)
+	{
+		auto arr = gcnew array<unsigned long long>(len);
+		for (int i = 0; i < len; i++)
+			arr[i] = values[i];
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetDoubleValues(void * ovHandle, const char* segName, double * values, int len)
+	{
+		auto arr = gcnew array<double>(len);
+		for (int i = 0; i < len; i++)
+		{
+			arr[i] = values[i];
+		}
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+	extern "C" __declspec(dllexport) void FioSetFloatValues(void * ovHandle, const char* segName, float * values, int len)
+	{
+		auto arr = gcnew array<float>(len);
+		for (int i = 0; i < len; i++)
+		{
+			arr[i] = values[i];
+		}
+		(*((gcroot<FrameObject^> *)ovHandle))->SetValueArray(ConvertToString(segName), arr);
+	}
+
+
+
+	#pragma endregion
+
+	#pragma region --GetArray--
+
+		extern "C" __declspec(dllexport) void* FioGetDoubleValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (double v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new double[ret->len];
+			int i = 0;
+			for each (double v in arr)
+				((double*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetFloatValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (float v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new float[ret->len];
+			int i = 0;
+			for each (float v in arr)
+				((float*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetLongValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (long long v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new long long[ret->len];
+			int i = 0;
+			for each (long long v in arr)
+				((long long*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetULongValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (unsigned long long v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new unsigned long long[ret->len];
+			int i = 0;
+			for each (unsigned long long v in arr)
+				((unsigned long long*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetIntValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (int v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new int[ret->len];
+			int i = 0;
+			for each (int v in arr)
+				((int*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetUIntValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (unsigned int v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new unsigned int[ret->len];
+			int i = 0;
+			for each (unsigned int v in arr)
+				((unsigned int*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetUShortValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (unsigned short v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new unsigned short[ret->len];
+			int i = 0;
+			for each (unsigned short v in arr)
+				((unsigned short*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetShortValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (short v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new short[ret->len];
+			int i = 0;
+			for each (short v in arr)
+				((short*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetByteValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (unsigned char v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new unsigned char[ret->len];
+			int i = 0;
+			for each (unsigned char v in arr)
+				((unsigned char*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+
+		extern "C" __declspec(dllexport) void* FioGetSByteValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (signed char v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new signed char[ret->len];
+			int i = 0;
+			for each (signed char v in arr)
+				((unsigned char*)ret->arr)[i++] = v;
+			return ret;
+		}
+
+		extern "C" __declspec(dllexport) void* FioGetBoolValues(void * ovHandle, const char* segName)
+		{
+			auto arr = (*((gcroot<FrameObject^> *)ovHandle))->GetDoubleArray(ConvertToString(segName));
+			auto ret = new ValueArray;
+			ret->len = 0;
+			for each (bool v in arr)
+				ret->len++;
+			if (ret->len == 0) return NULL;
+
+			ret->arr = new bool[ret->len];
+			int i = 0;
+			for each (bool v in arr)
+				((bool*)ret->arr)[i++] = v;
+			return ret;
+		}
 
 	#pragma endregion
 
@@ -235,7 +556,6 @@ namespace FrameIORunX
 		(*((gcroot<FrameObject^> *)ovHandle))->SetValue(ConvertToString(segName), value);
 	}
 
-
 #pragma endregion
 
 	#pragma region --GetValue--
@@ -289,16 +609,21 @@ namespace FrameIORunX
 	{
 		return (*((gcroot<FrameObject^> *)ovHandle))->GetSByte(ConvertToString(segName));
 	}
+
+	extern "C" __declspec(dllexport) bool FioGetBoolValue(void * ovHandle, const char* segName)
+	{
+		return (*((gcroot<FrameObject^> *)ovHandle))->GetBool(ConvertToString(segName));
+	}
 #pragma endregion
 
 	#pragma region --Send && Recv--
 
-	extern "C" __declspec(dllexport) void SendFrame(void * chHandle, void * FrameHandle)
+	extern "C" __declspec(dllexport) void FioSendFrame(void * chHandle, void * FrameHandle)
 	{
 		IORunner::SendFrame(*(gcroot<FrameObject^> *)FrameHandle, *(gcroot<FioChannel^> *)chHandle);
 	}
 
-	extern "C" __declspec(dllexport) void* RecvFrame(void * chHandle, const char* frameName)
+	extern "C" __declspec(dllexport) void* FioRecvFrame(void * chHandle, const char* frameName)
 	{
 		auto o = new gcroot<FrameObject^>();
 		*o = IORunner::RecvFrame(ConvertToString(frameName), *(gcroot<FioChannel^> *)chHandle);
