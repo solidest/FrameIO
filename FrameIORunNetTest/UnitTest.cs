@@ -250,29 +250,35 @@ namespace FrameIORunNetTest
         [TestMethod]
         public void A__FrameOneof()
         {
-            var tester = new frame_test_oneof.testenum();
+            var tester1 = new frame_test_oneof.testenum();
+            var tester2 = new frame_test_oneof.testenum();
 
-           
-            tester.InitialParameter();
-            tester.InitialChanneltcp_recv(null);
-            tester.InitialChanneltcp_send(null);
 
-            Assert.IsTrue(tester.tcp_recv.Open());
-            Assert.IsTrue(tester.tcp_send.Open());
+            tester2.InitialParameter();
+            tester2.InitialChanneltcp_recv(null);
 
-            tester.datetype.Value = 1;
-            tester.name1.Value = 1;
-            tester.name2.Value = 2;
-            tester.end1.Value = true;
-            tester.end7.Value = 100;
+            tester1.InitialParameter();
+            tester1.InitialChanneltcp_send(null);
 
-            tester.A_Send_Type1();
+            Assert.IsTrue(tester2.tcp_recv.Open());
+            Assert.IsTrue(tester1.tcp_send.Open());
 
-            tester.A_Recv();
+            tester1.datetype.Value = 1;
+            tester1.name1.Value = 1;
+            tester1.name2.Value = 2;
+            tester1.end1.Value = true;
+            tester1.end7.Value = 100;
 
-            Assert.IsTrue(tester.datetype.Value == 1);
-            Assert.IsTrue(tester.name1.Value == 1);
-            Assert.IsTrue(tester.name2.Value == 2);
+            tester1.A_Send_Type1();
+
+            tester2.A_Recv();
+
+            Assert.IsTrue(tester2.datetype.Value == 1);
+            Assert.IsTrue(tester2.name1.Value == 1);
+            Assert.IsTrue(tester2.name2.Value == 2);
+            Assert.IsTrue(tester2.end1.Value == true);
+            Assert.IsTrue(tester2.end7.Value == 100);
+
         }
 
 

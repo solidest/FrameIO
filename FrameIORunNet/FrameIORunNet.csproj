@@ -49,6 +49,21 @@
     <Compile Include="TParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
+    <None Include="Template_cpp\TEnum.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\TExceptionHandler.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\TFrmaes.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\TStruct.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\TSubsys.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Template_cs\TFioNetObject.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -64,48 +79,6 @@
     </None>
     <Compile Include="Template_cs\TInnerSubsys.cs" />
     <Compile Include="Template_cs\TSubsys.cs" />
-    <None Include="..\x64\Debug\Template_bak\TChannelInitial.cst">
-      <Link>Other\TChannelInitial.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TEnum.cst">
-      <Link>Other\TEnum.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TFrame.cst">
-      <Link>Other\TFrame.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TInnerClassGettor.cst">
-      <Link>Other\TInnerClassGettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TInnerClassSettor.cst">
-      <Link>Other\TInnerClassSettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TParameter.cst">
-      <Link>Other\TParameter.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TRecvAction.cst">
-      <Link>Other\TRecvAction.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TRecvLoopAction.cst">
-      <Link>Other\TRecvLoopAction.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSegmentGettor.cst">
-      <Link>Other\TSegmentGettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSegmentSettor.cst">
-      <Link>Other\TSegmentSettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSendAction.cst">
-      <Link>Other\TSendAction.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSwitchClassGettor.cst">
-      <Link>Other\TSwitchClassGettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSwitchClassSettor.cst">
-      <Link>Other\TSwitchClassSettor.cst</Link>
-    </None>
-    <None Include="..\x64\Debug\Template_bak\TSystem.cst">
-      <Link>Other\TSystem.cst</Link>
-    </None>
     <None Include="readme.md" />
     <None Include="Template_cs\TEnum.tpl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
