@@ -215,7 +215,6 @@ namespace FrameIO.Main
                     ret.Add(string.Format("\tfor (int i = 0; i < {0}.Count; i++)", pro.Name));
                     ret.Add("\t{");
                     ret.Add(string.Format("\t\tvar __vv__ = new FioNetObject();", fullSegName));
-                    int index = 0;
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
                         ret.Add(string.Format("\t\t__vv__.SetValue(\"{0}\", {1}[i].{2});", inpro.Name, pro.Name, inpro.Name));
                     ret.Add("\t\t__vvs__.Add(__vv__);");
@@ -281,7 +280,6 @@ namespace FrameIO.Main
                     ret.Add(string.Format("\tforeach(var __vv__ in __vvs__)", pro.Name));
                     ret.Add("\t{");
                     ret.Add(string.Format("\t\tif({0}.Count == __vvi__) break;", pro.Name));
-                    int index = 0;
                     foreach (var inpro in _pj.InnerSubsysList.Where(p => p.Name == pro.PropertyType).First().Propertys)
                         ret.Add(string.Format("\t\t__vv__.GetValue(\"{0}\", {1}[__vvi__].{2});", inpro.Name, pro.Name, inpro.Name));
                     ret.Add("\t\t__vvi__ += 1;");
@@ -302,7 +300,7 @@ namespace FrameIO.Main
 
         protected override string GetRecvSwitchKey(string segFullName)
         {
-            return string.Format("({0})__v__.GetValue(\"{1}\")", _jframes.GetToEnum(segFullName), segFullName);
+            return string.Format("({0})__v__.GetValue(\"{1}\")", _jframes.GetToEnum(segFullName), segFullName.Substring(segFullName.IndexOf('.')+1));
         }
 
         #endregion

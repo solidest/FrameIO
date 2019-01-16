@@ -21,7 +21,8 @@ namespace FrameIO.Run
 
         public void FlushNew(byte[] cach)
         {
-            if (!IsEmpty) throw new Exception("unknow");
+            if (!IsEmpty)
+                throw new Exception("unknow");
             _cach = cach;
             _bytePos = 0;
             _bitOdd = 0;
@@ -31,9 +32,9 @@ namespace FrameIO.Run
         public ulong ReadBits(int bitLen)
         {
             //字节推进
-            var len = _bitOdd + bitLen;
-            var newOdd = len % 8;
-            var newPos = len >= 8 ? _bytePos + 1 : _bytePos; //_bytePos + len / 8 + (newOdd == 0 ? 0 : 1);
+            var newOdd = (_bitOdd + bitLen) % 8;
+            var newPos = _bytePos + bitLen / 8;
+            if (bitLen % 8 + _bitOdd >=8) newPos += 1;
 
             ulong ret = 0;
 
