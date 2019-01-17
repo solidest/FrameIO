@@ -27,13 +27,16 @@
     <ClInclude Include="Frmaes.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FioXChannel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FioObjextX.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioRunner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioChannel.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

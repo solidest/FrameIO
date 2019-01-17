@@ -18,6 +18,11 @@ public:
 		FioChannelRelease(_ch);
 	}
 
+	void * GetHandle()
+	{
+		return _ch;
+	}
+
 	//…Ë÷√≤Œ ˝
 	void SetOption(const char* optionName, int optionValue)
 	{
