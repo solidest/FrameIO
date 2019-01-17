@@ -66,6 +66,10 @@
     <Compile Include="05.test_array\FioNetRunner.cs" />
     <Compile Include="05.test_array\Parameter.cs" />
     <Compile Include="05.test_array\testarray.cs" />
+    <Compile Include="07.test_bit\FioNetObject.cs" />
+    <Compile Include="07.test_bit\FioNetRunner.cs" />
+    <Compile Include="07.test_bit\Parameter.cs" />
+    <Compile Include="07.test_bit\test_bit.cs" />
     <Compile Include="10.test_subsys\FioNetObject.cs" />
     <Compile Include="10.test_subsys\FioNetRunner.cs" />
     <Compile Include="10.test_subsys\Parameter.cs" />
@@ -78,6 +82,7 @@
     <Compile Include="10.test_subsys_Array\Parameter.cs" />
     <Compile Include="10.test_subsys_Array\position.cs" />
     <Compile Include="10.test_subsys_Array\testsubsys.cs" />
+    <Compile Include="05.test_array_1.cs" />
     <Compile Include="11.test_max.cs" />
     <Compile Include="02.test_udp_receivetimeout.cs" />
     <Compile Include="02.test_udp_receivetimeout\2.test_udp_receivetimeout.cs" />
@@ -94,17 +99,11 @@
     <Compile Include="03.test_com_receivetimeout\FioNetRunner.cs" />
     <Compile Include="03.test_com_receivetimeout\Parameter.cs" />
     <Compile Include="03.test_com_receivetimeout\test_com_receivetimeout.cs" />
-    <Compile Include="04.test_enum\Enum_Type.cs" />
-    <Compile Include="04.test_enum\FioNetObject.cs" />
-    <Compile Include="04.test_enum\FioNetRunner.cs" />
-    <Compile Include="04.test_enum\Parameter.cs" />
-    <Compile Include="04.test_enum\testenum.cs" />
     <Compile Include="09.test_crc.cs" />
     <Compile Include="08.test_calc.cs" />
     <Compile Include="07.test_bit.cs" />
     <Compile Include="06.test_can_yh.cs" />
     <Compile Include="05.test_array.cs" />
-    <Compile Include="04.test_enum.cs" />
     <Compile Include="03.test_com.cs" />
     <Compile Include="02.test_udp.cs" />
     <Compile Include="01.test_tcp.cs" />
@@ -112,6 +111,10 @@
     <Compile Include="11.test_max\FioNetRunner.cs" />
     <Compile Include="11.test_max\Parameter.cs" />
     <Compile Include="11.test_max\subsys1.cs" />
+    <Compile Include="05.test_array_1\FioNetObject.cs" />
+    <Compile Include="05.test_array_1\FioNetRunner.cs" />
+    <Compile Include="05.test_array_1\Parameter.cs" />
+    <Compile Include="05.test_array_1\sub_SingleByteArray.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
@@ -124,7 +127,6 @@
     <None Include="02.test_udp\2.test_udp.fio" />
     <None Include="03.test_com\3.test_com.fio" />
     <None Include="03.test_com_receivetimeout\3.test_com_receivetimeout.fio" />
-    <None Include="04.test_enum\4.test_enum.fio" />
     <None Include="05.test_array\5.test_array.fio" />
     <None Include="06.test_can_yh\6.test_can_yh.fio" />
     <None Include="07.test_bit\7.test_bit.fio" />
@@ -133,6 +135,7 @@
     <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
     <None Include="11.test_max\11.test_max.fio" />
     <None Include="packages.config" />
+    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIODriver\FrameIODriver.csproj">
@@ -152,6 +155,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="04.test_enum\" />
     <Folder Include="09.test_crc\" />
     <Folder Include="Test_PowerSupplyManager\" />
     <Folder Include="Test_tcpserver\" />

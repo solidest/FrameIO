@@ -5,22 +5,22 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System;
 
-namespace test_tcp
+namespace SingleByteArray
 {
-    public partial class test_tcp
+    public partial class sub_SingleByteArray
     {
 
         //属性声明
-        public Parameter<uint?> len { get; private set;}
-        public Parameter<uint?> end { get; private set;}
-        public Parameter<uint?> head { get; private set;}
+        public ObservableCollection<Parameter<byte?>> len { get; private set; }
+        public ObservableCollection<Parameter<byte?>> end { get; private set; }
+        public Parameter<byte?> head { get; private set;}
 
         //属性初始化
         public void InitialParameter()
         {
-            len = new Parameter<uint?>();
-            end = new Parameter<uint?>();
-            head = new Parameter<uint?>();
+            len = new ObservableCollection<Parameter<byte?>>(); for (int i = 0; i < 2; i++) len.Add(new Parameter<byte?>());
+            end = new ObservableCollection<Parameter<byte?>>();
+            head = new Parameter<byte?>();
         }
 
         //通道声明
@@ -31,9 +31,9 @@ namespace test_tcp
         public void InitialChannelCHS(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "127.0.0.1");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
-            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.151");
+            if (!ops.Contains("clientip")) ops.SetOption("clientip", "127.0.0.1");
             ops.SetOption("$channeltype", 3);
             CHS = FioNetRunner.GetChannel(ops);
         }
@@ -42,7 +42,7 @@ namespace test_tcp
         public void InitialChannelCHC(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "127.0.0.1");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
             ops.SetOption("$channeltype", 4);
             CHC = FioNetRunner.GetChannel(ops);

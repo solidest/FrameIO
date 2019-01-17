@@ -7,12 +7,12 @@ project test_bit {
 		byte head;
 
 		channel CHS : tcpserver {
-			serverip = "192.168.0.153";
+			serverip = "192.168.0.151";
 			port = 8007;
-			clientip = "192.168.0.153";
+			clientip = "192.168.0.151";
 		}
 		channel CHC : tcpclient {
-			serverip = "192.168.0.153";
+			serverip = "192.168.0.151";
 			port = 8007;
 		}
 
@@ -30,8 +30,14 @@ project test_bit {
 
 	//数据帧
 	frame frameSR {
-		integer HEAD bitcount=2;
-		integer LEN bitcount=3;
-		integer END bitcount=3;
+		integer HEAD ;
+		integer LEN ;
+		integer END ;
 	}
+	frame frameSRfffffff {
+		integer HEAD bitcount=2 ;
+		integer LEN bitcount=3 ;
+		integer END bitcount=3 ;
+	}
+
 }

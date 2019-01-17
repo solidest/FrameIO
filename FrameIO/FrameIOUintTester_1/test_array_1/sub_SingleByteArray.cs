@@ -3,24 +3,25 @@ using System.Collections.ObjectModel;
 using FrameIO.Run;
 using FrameIO.Interface;
 using System.Diagnostics;
+using System.Linq;
 using System;
 
-namespace test_tcp
+namespace SingleByteArray
 {
-    public partial class test_tcp
+    public partial class sub_SingleByteArray
     {
 
         //属性声明
-        public Parameter<uint?> len { get; private set;}
-        public Parameter<uint?> end { get; private set;}
-        public Parameter<uint?> head { get; private set;}
+        public ObservableCollection<Parameter<byte?>> len { get; private set; }
+        public ObservableCollection<Parameter<byte?>> end { get; private set; }
+        public Parameter<byte?> head { get; private set;}
 
         //属性初始化
         public void InitialParameter()
         {
-            len = new Parameter<uint?>();
-            end = new Parameter<uint?>();
-            head = new Parameter<uint?>();
+            len = new ObservableCollection<Parameter<byte?>>(); for (int i = 0; i < 2; i++) len.Add(new Parameter<byte?>());
+            end = new ObservableCollection<Parameter<byte?>>();
+            head = new Parameter<byte?>();
         }
 
         //通道声明
