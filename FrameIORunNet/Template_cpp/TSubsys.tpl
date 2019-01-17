@@ -1,4 +1,6 @@
 ﻿
+#include "FioRunner.h"
+
 class <%system%>
 {
 	public:

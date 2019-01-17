@@ -403,7 +403,7 @@ namespace FrameIO.Main
                         if (intoCase == "other")
                             co = "default:";
                         else
-                            co = "case " + co + "." + intoCase + ":";
+                            co = "case " + co + (Token=="cpp"?"::":".") + intoCase + ":";
                         codes.Add(FormatPreTabs(co, true));
                         codes.Add(FormatPreTabs("{", true));
                     }

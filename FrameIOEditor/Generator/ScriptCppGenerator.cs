@@ -129,7 +129,7 @@ namespace FrameIO.Main
 
         protected override string GetChannelDeclare(SubsysChannel ch)
         {
-            return string.Format("FioXChannel * {0};", ch.Name);
+            return string.Format("FioChannelX * {0};", ch.Name);
         }
 
         protected override IList<string> GetChannelInitialFun(SubsysChannel ch)
@@ -137,10 +137,10 @@ namespace FrameIO.Main
             var ret = new List<string>();
             ret.Add(string.Format("void InitialChannel{0}()", ch.Name));
             ret.Add("{");
-            ret.Add(string.Format("\t{0} = new FioXChannel({1});", ch.Name, (int)ch.ChannelType));
+            ret.Add(string.Format("\t{0} = new FioChannelX({1});", ch.Name, (int)ch.ChannelType));
             foreach (var op in ch.Options)
             {
-                ret.Add(string.Format("\t{0}->SetOption({1}, {2});", ch.Name, op.Name, op.OptionValue));
+                ret.Add(string.Format("\t{0}->SetOption(\"{1}\", {2});", ch.Name, op.Name, op.OptionValue));
             }
             ret.Add(string.Format("\t{0}->InitialChannel();", ch.Name));
             ret.Add("}");
@@ -239,7 +239,7 @@ namespace FrameIO.Main
         protected override IList<string> GetSendFunClose(IList<string> paras, SubsysAction ac)
         {
             var ret = new List<string>();
-            ret.Add(string.Format("\tSendFrame({0}, __v__);", ac.ChannelName));
+            ret.Add(string.Format("\tSendFrame(*{0}, __v__);", ac.ChannelName));
             ret.Add("}");
             return ret;
         }
@@ -253,8 +253,8 @@ namespace FrameIO.Main
             var ret = new List<string>();
             ret.Add(string.Format("void {0}()", ac.Name));
             ret.Add("{");
-            ret.Add(string.Format("\tFioObjextX __v__(\"{0}\")", ac.FrameName));
-            ret.Add(string.Format("\tRecvFrame(\"{0}\", {1}, &__v__);", ac.FrameName, ac.ChannelName));
+            ret.Add(string.Format("\tFioObjextX __v__(\"{0}\");", ac.FrameName));
+            ret.Add(string.Format("\tRecvFrame(\"{0}\", *{1}, &__v__);", ac.FrameName, ac.ChannelName));
             return ret;
         }
 
@@ -265,9 +265,10 @@ namespace FrameIO.Main
             if (pro.IsBaseType())
             {
                 if (pro.IsArray)
-                    ret.Add(string.Format("{0} = __v__.{1}(\"{2}\");", pro.Name, GetGettorName(pro.PropertyType), fullSegName));
+                       ret.Add(string.Format("__v__.GetArray(\"{0}\", {1});", fullSegName, pro.Name));
                 else
-                    ret.Add(string.Format("GetArray(\"{0}\", {1})", fullSegName, pro.Name));
+                    ret.Add(string.Format("{0} = __v__.{1}(\"{2}\");", pro.Name, GetGettorName(pro.PropertyType), fullSegName));
+
             }
             else if (pro.IsEnum(_pj))
             {

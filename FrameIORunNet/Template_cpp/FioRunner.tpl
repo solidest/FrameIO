@@ -3,6 +3,7 @@
 #include "FioChannel.h"
 #include "FioObjextX.h"
 #include "FrameIORunX.h"
+#include "enums.h"
 
 void SendFrame(FioChannelX& ch, FioObjextX& frame)
 {
