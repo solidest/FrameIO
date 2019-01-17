@@ -121,7 +121,11 @@ namespace FrameIO.Main
         //分系统相关
         protected abstract string SystemTemplate { get; }
         protected abstract string GetPropertyDefCode(SubsysProperty pro);
-        protected abstract string GetPropertyIniCode(SubsysProperty pro);
+        protected virtual string GetPropertyIniCode(SubsysProperty pro)
+        {
+            return "";
+        }
+
         protected abstract string ExceptionHandlerTemplate { get; }
 
         //创建分系统类文件
@@ -136,7 +140,8 @@ namespace FrameIO.Main
             var proini = new List<string>();
             foreach (var item in subsys.Propertys)
             {
-                proini.Add(GetPropertyIniCode(item));
+                var str = GetPropertyIniCode(item);
+                if(str!="" && str!=null) proini.Add(str);
             }
 
             return GetTemplateBuilder(SystemTemplate, "propertydeclare", prodec,
@@ -145,10 +150,32 @@ namespace FrameIO.Main
                 "propertyinitial", List2String(proini, 3),
                 "channeldeclare", GetChannelsDeclare(subsys, 2),
                 "channelinitial", GetChannelsInitial(subsys, 2),
+                "channelrelease", GetChannelsRelease(subsys, 2),
                 "exceptionhandler", GetExceptionhandler(2),
                 "sendactionlist", GetActions(subsys.Actions.Where(p=>p.IOType== actioniotype.AIO_SEND), subsys.Propertys, 2),
                 "recvactionlist", GetActions(subsys.Actions.Where(p => p.IOType == actioniotype.AIO_RECV), subsys.Propertys, 2)
                 );
+        }
+
+        private string GetChannelsRelease(Subsys subsys, int tabCount)
+        {
+            var chs = new List<string>();
+            foreach (var ch in subsys.Channels)
+            {
+                var fun = GetChannelRelease(ch);
+                if(fun!=null)
+                {
+                    if (chs.Count > 0 && fun.Count > 0) chs.Add(Environment.NewLine);
+                    chs.AddRange(fun);
+                }
+            }
+            if(chs.Count>0) return List2String(chs, tabCount);
+            return "";
+        }
+
+        protected virtual IList<string> GetChannelRelease(SubsysChannel ch)
+        {
+            return null;
         }
 
         //异常处理函数
@@ -376,7 +403,7 @@ namespace FrameIO.Main
                         if (intoCase == "other")
                             co = "default:";
                         else
-                            co = "case " + co + "." + intoCase + ":";
+                            co = "case " + co + (Token=="cpp"?"::":".") + intoCase + ":";
                         codes.Add(FormatPreTabs(co, true));
                         codes.Add(FormatPreTabs("{", true));
                     }
@@ -504,6 +531,16 @@ namespace FrameIO.Main
             _out.OutText(string.Format("信息：生成文件{0}", fn), false);
         }
 
+        protected void AppendTextTo(string fname, string text)
+        {
+            var f = _path + "\\" + fname;
+            var t = "";
+            if (File.Exists(f))
+                t = File.ReadAllText(f);
+            var tt = t + Environment.NewLine + text;
+            File.WriteAllText(f, tt);
+        }
+
         //取代码模板字符缓冲 并填充内容
         protected StringBuilder GetTemplateBuilder(string templageName, string token, IList<string> codelist, params string[] others)
         {
@@ -602,7 +639,7 @@ namespace FrameIO.Main
         //准备输出目录
         private void PrepareDir()
         {
-            if (!Path.HasExtension(_path))
+            if (!Directory.Exists(_path))
             {
                 Directory.CreateDirectory(_path);
             }
@@ -613,7 +650,7 @@ namespace FrameIO.Main
             }
         }
 
-        private string[] extlist = new string[4] { "cs", "cpp", "h", "hpp" };
+        private string[] extlist = new string[4] { ".cs", ".cpp", ".h", ".hpp" };
 
         //删除目录下的文件
         private void ClearDir(string dirpath)

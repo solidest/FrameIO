@@ -76,6 +76,18 @@
     <Compile Include="..\..\FrameIOTest\frame_test_bytearray_cs\subsys1.cs">
       <Link>FrameByteArray\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\FioNetObject.cs">
+      <Link>FrameDynamicArray\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\FioNetRunner.cs">
+      <Link>FrameDynamicArray\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\Parameter.cs">
+      <Link>FrameDynamicArray\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\sub_SingleByteArray.cs">
+      <Link>FrameDynamicArray\sub_SingleByteArray.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\FioNetObject.cs">
       <Link>FrameNotAligByte\FioNetObject.cs</Link>
     </Compile>

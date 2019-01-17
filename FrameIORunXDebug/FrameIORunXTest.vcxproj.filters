@@ -15,18 +15,38 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FrameIORunX.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FrameIORunX.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Frmaes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioObjextX.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioRunner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FioChannel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FrameIORunX.cpp">
+    <ResourceCompile Include="app.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FrameIORunXTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -35,23 +55,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="app.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="app.ico">
       <Filter>资源文件</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FrameIORunX.def">
-      <Filter>源文件</Filter>
-    </None>
   </ItemGroup>
 </Project>

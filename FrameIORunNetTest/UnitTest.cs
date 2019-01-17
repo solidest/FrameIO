@@ -250,29 +250,35 @@ namespace FrameIORunNetTest
         [TestMethod]
         public void A__FrameOneof()
         {
-            var tester = new frame_test_oneof.testenum();
+            var tester1 = new frame_test_oneof.testenum();
+            var tester2 = new frame_test_oneof.testenum();
 
-           
-            tester.InitialParameter();
-            tester.InitialChanneltcp_recv(null);
-            tester.InitialChanneltcp_send(null);
 
-            Assert.IsTrue(tester.tcp_recv.Open());
-            Assert.IsTrue(tester.tcp_send.Open());
+            tester2.InitialParameter();
+            tester2.InitialChanneltcp_recv(null);
 
-            tester.datetype.Value = 1;
-            tester.name1.Value = 1;
-            tester.name2.Value = 2;
-            tester.end1.Value = true;
-            tester.end7.Value = 100;
+            tester1.InitialParameter();
+            tester1.InitialChanneltcp_send(null);
 
-            tester.A_Send_Type1();
+            Assert.IsTrue(tester2.tcp_recv.Open());
+            Assert.IsTrue(tester1.tcp_send.Open());
 
-            tester.A_Recv();
+            tester1.datetype.Value = 1;
+            tester1.name1.Value = 1;
+            tester1.name2.Value = 2;
+            tester1.end1.Value = true;
+            tester1.end7.Value = 100;
 
-            Assert.IsTrue(tester.datetype.Value == 1);
-            Assert.IsTrue(tester.name1.Value == 1);
-            Assert.IsTrue(tester.name2.Value == 2);
+            tester1.A_Send_Type1();
+
+            tester2.A_Recv();
+
+            Assert.IsTrue(tester2.datetype.Value == 1);
+            Assert.IsTrue(tester2.name1.Value == 1);
+            Assert.IsTrue(tester2.name2.Value == 2);
+            Assert.IsTrue(tester2.end1.Value == true);
+            Assert.IsTrue(tester2.end7.Value == 100);
+
         }
 
 
@@ -280,5 +286,55 @@ namespace FrameIORunNetTest
 
         #endregion
 
+        #region --动态数组--
+        [TestMethod]
+        public void A__FrameDynamicArray()
+        {
+            var tester1 = new frame_test_dynamicarray.sub_SingleByteArray();
+            var tester2 = new frame_test_dynamicarray.sub_SingleByteArray();
+
+            tester1.InitialParameter();
+            tester2.InitialParameter();
+
+            tester1.InitialChannelCHS(null);
+            tester2.InitialChannelCHC(null);
+
+            Assert.IsTrue(tester1.CHS.Open());
+            Assert.IsTrue(tester2.CHC.Open());
+            Assert.IsTrue(tester1.end.Count == 0);
+
+            tester1.end.Add(new frame_test_dynamicarray.Parameter<byte?>(10));
+            tester1.end.Add(new frame_test_dynamicarray.Parameter<byte?>(98));
+            tester1.end.Add(new frame_test_dynamicarray.Parameter<byte?>(2));
+
+            tester1.head.Value = (byte)tester1.end.Count;
+
+            tester1.len[0].Value = 2;
+            tester1.len[1].Value = 3;
+           
+
+
+            tester1.A_Send();
+
+            tester2.end.Add(new frame_test_dynamicarray.Parameter<byte?>(0));
+            tester2.end.Add(new frame_test_dynamicarray.Parameter<byte?>(0));
+            tester2.end.Add(new frame_test_dynamicarray.Parameter<byte?>(0));
+
+            tester2.A_Recv();
+
+
+            Assert.IsTrue(tester2.head.Value == 3);
+            Assert.IsTrue(tester2.len[0].Value == 2);
+            Assert.IsTrue(tester2.len[1].Value == 3);
+            Assert.IsTrue(tester2.end[0].Value == 10);
+            Assert.IsTrue(tester2.end[1].Value == 98);
+            Assert.IsTrue(tester2.end[2].Value == 2);
+        }
+
+
+        #endregion
+
+
     }
+
 }
