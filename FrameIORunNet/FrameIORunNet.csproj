@@ -104,5 +104,19 @@
       <Name>FrameIORun</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Template_cpp\FioChannel.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\FioObjextX.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\FioRunner.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Template_cpp\FrameIORunX.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

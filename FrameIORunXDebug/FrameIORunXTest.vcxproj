@@ -134,7 +134,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FioObjextX.h" />
-    <ClInclude Include="FioXChannel.h" />
+    <ClInclude Include="FioRunner.h" />
+    <ClInclude Include="FioChannel.h" />
     <ClInclude Include="FrameIORunX.h" />
     <ClInclude Include="Frmaes.h" />
     <ClInclude Include="Resource.h" />
