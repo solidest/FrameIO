@@ -20,7 +20,7 @@ namespace FrameIO.Main
         static private Dictionary<Frame, Dictionary<string, Frame>> FrameSegmentList {  get;  set; }
 
         static private List<string> _proptypelist;
-        static private Frames2Json _jfrms;
+        //static private Frames2Json _jfrms;
 
         static private void Reset()
         {
@@ -29,7 +29,7 @@ namespace FrameIO.Main
             _pj = null;
             ErrorList = new Dictionary<int, string>();
             FrameSegmentList = new Dictionary<Frame, Dictionary<string, Frame>>();
-            _jfrms = null;
+            //_jfrms = null;
         }
 
 
@@ -38,13 +38,14 @@ namespace FrameIO.Main
         {
             Reset();
             _pj = pj;
-            _jfrms = new Frames2Json(_pj);
+            //_jfrms = new Frames2Json(_pj);
+
             _proptypelist = _pj.GetPropertyTypeList();
 
             CheckNameRepeated();
             CheckFrames();
             CheckSubsys();
-
+            CheckOneOf();
             return ErrorList.Count==0;
         }
 
@@ -331,8 +332,9 @@ namespace FrameIO.Main
         //是否包含引用的字段
         static private bool CheckSegInMap(string segname, string frmname)
         {
-            var seg = _jfrms.FindSegment(frmname + "." + segname);
-            return (seg != null);
+            var frm = FindFrame(frmname);
+            if (frm == null) return false;
+            return frm.Segments.Where(p => p.Name == segname).Count() > 0;
         }
 
 
@@ -574,6 +576,35 @@ namespace FrameIO.Main
             segns.Add(seg.Name, null);
         }
 
+        #endregion
+
+        #region --检查OneOf--
+
+        static private void CheckOneOf()
+        {
+            foreach(var frm in _pj.FrameList)
+            {
+                var seg = frm.Segments.Where(p => typeof(FrameSegmentBlock) == p.GetType() && ((FrameSegmentBlock)p).UsedType == BlockSegType.OneOf);
+                if (seg.Count() == 0) continue;
+                foreach(var oseg in seg)
+                {
+                    bool find = false;
+                    foreach(var fseg in frm.Segments)
+                    {
+                        if (fseg == oseg) break;
+                        if(fseg.Name == ((FrameSegmentBlock)oseg).OneOfBySegment)
+                        {
+                            find = true;
+                            break;
+                        }
+                    }
+                    if (!find)
+                        AddErrorInfo(oseg.Syid, "设置的oneofby字段不正确");
+                }
+
+
+            }
+        }
         #endregion
 
         #region --Helper--
