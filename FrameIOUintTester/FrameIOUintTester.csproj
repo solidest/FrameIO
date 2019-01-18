@@ -49,11 +49,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="12.TcpServer\FioNetObject.cs" />
-    <Compile Include="12.TcpServer\FioNetRunner.cs" />
-    <Compile Include="12.TcpServer\Parameter.cs" />
-    <Compile Include="12.TcpServer\Tcpserver.cs" />
-    <Compile Include="12.test_TcpServer.cs" />
+    <Compile Include="12.Tcp_TwoServer\FioNetObject.cs" />
+    <Compile Include="12.Tcp_TwoServer\FioNetRunner.cs" />
+    <Compile Include="12.Tcp_TwoServer\Parameter.cs" />
+    <Compile Include="12.Tcp_TwoServer\Tcpserver.cs" />
+    <Compile Include="12.test_Tcp_Two_Server.cs" />
     <Compile Include="01.test_tcp\FioNetObject.cs" />
     <Compile Include="01.test_tcp\FioNetRunner.cs" />
     <Compile Include="01.test_tcp\Parameter.cs" />
