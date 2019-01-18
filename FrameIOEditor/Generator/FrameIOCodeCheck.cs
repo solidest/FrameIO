@@ -334,7 +334,53 @@ namespace FrameIO.Main
         {
             var frm = FindFrame(frmname);
             if (frm == null) return false;
-            return frm.Segments.Where(p => p.Name == segname).Count() > 0;
+            var segns = segname.Split('.');
+            var segnms = frm.Segments.Select(p => p.Name);
+            var refsegs = frm.Segments;
+            var mapsegs = new Dictionary<string, string>();
+            for (int i = 0; i < segns.Length; i++)
+            {
+                if (segnms.Where(p => p == segns[i]).Count() == 0) return false;
+                if(refsegs!=null)
+                {
+                    var oseg = refsegs.Where(p => p.Name == segns[i]).First();
+                    
+                    if(oseg.GetType() == typeof(FrameSegmentBlock))
+                    {
+                        var bseg = ((FrameSegmentBlock)oseg);
+                        switch (bseg.UsedType)
+                        {
+                            case BlockSegType.DefFrame:
+                                segnms = bseg.DefineSegments.Select(p=>p.Name);
+                                refsegs = bseg.DefineSegments;
+                                break;
+                            case BlockSegType.OneOf:
+                                segnms = bseg.OneOfCaseList.Select(p => p.EnumItem);
+                                refsegs = null;
+                                mapsegs.Clear();
+                                foreach (var item in bseg.OneOfCaseList)
+                                {
+                                    mapsegs.Add(item.EnumItem, item.FrameName);
+                                }
+                                break;
+                            case BlockSegType.RefFrame:
+                                segnms = FindFrame(bseg.RefFrameName).Segments.Select(p => p.Name);
+                                refsegs = FindFrame(bseg.RefFrameName).Segments;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    var findfrm = FindFrame(mapsegs[segns[i]]);
+                    refsegs = findfrm.Segments;
+                    segnms = findfrm.Segments.Select(p => p.Name);
+                }
+
+            }
+
+            return true;
+
         }
 
 
@@ -595,15 +641,35 @@ namespace FrameIO.Main
                         if(fseg.Name == ((FrameSegmentBlock)oseg).OneOfBySegment)
                         {
                             find = true;
+                            CheckToEnum(fseg);                            
                             break;
                         }
                     }
                     if (!find)
                         AddErrorInfo(oseg.Syid, "设置的oneofby字段不正确");
                 }
-
-
             }
+        }
+
+        static private bool CheckToEnum(FrameSegmentBase seg)
+        {
+            if (seg.GetType() != typeof(FrameSegmentInteger))
+            {
+                AddErrorInfo(seg.Syid, "不能作为oneof分支的判断字段");
+                return false;
+            }
+            var iseg = (FrameSegmentInteger)seg;
+            if(iseg.ToEnum == null || iseg.ToEnum.Length==0)
+            {
+                AddErrorInfo(seg.Syid, "oneof分支的判断字段必须设置toenum属性");
+                return false;
+            }
+            if(!_pj.IsEnum(iseg.ToEnum))
+            {
+                AddErrorInfo(seg.Syid, "toenum属性设置错误");
+                return false;   
+            }
+            return true;
         }
         #endregion
 

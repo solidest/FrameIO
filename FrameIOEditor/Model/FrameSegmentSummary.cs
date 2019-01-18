@@ -38,12 +38,13 @@ namespace FrameIO.Main
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
+                    int index = e.NewStartingIndex;
                     foreach (FrameSegmentSummary seg in e.NewItems)
                     {
                         seg._seg = new FrameSegmentInteger();
                         seg._type = SegmentType.Integer;
                         seg._segs = _segs;
-                        _segs.Add(seg._seg);
+                        _segs.Insert(index++, seg._seg);
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
