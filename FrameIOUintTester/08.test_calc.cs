@@ -1,38 +1,43 @@
-﻿//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace FrameIOUintTester
-//{
-//    [TestClass]
-//    public class Test_CALC
-//    {
-//        //test_tcp
-//        [TestMethod]
-//        public void CALC()
-//        {
-//            var tester = new test_calc.test_calc();
+namespace FrameIOUintTester
+{
+    [TestClass]
+    public class Test_CALC
+    {
+        //test_tcp
+        [TestMethod]
+        public void CALC()
+        {
+            var tester_s = new test_calc.test_calc();
+            var tester_c = new test_calc.test_calc();
 
-//            tester.InitialChannelCHS(null);
-//            tester.InitialChannelCHC(null);
+            tester_s.InitialParameter();
+            tester_c.InitialParameter();
 
-//            Assert.IsTrue(tester.CHS.Open());
-//            Assert.IsTrue(tester.CHC.Open());
+            tester_s.InitialChannelCHS(null);
+            tester_c.InitialChannelCHC(null);
 
-//            tester.head.Value = 0x02;
-//            tester.len.Value = 0x06;
+            Assert.IsTrue(tester_s.CHS.Open());
+            Assert.IsTrue(tester_c.CHC.Open());
 
-//            tester.A_Send();
+            tester_s.head.Value = 0x02;
+            tester_s.len.Value = 0x06;
+            tester_s.end.Value = 0x06;
 
-//            tester.A_Recv();
+            tester_s.A_Send();
 
-//            Assert.IsTrue(tester.head.Value == 0x02);
-//            Assert.IsTrue(tester.len.Value == 0x06);
-//            Assert.IsTrue(tester.end.Value == 0x08);
+            tester_c.A_Recv();
 
-//        }
-//    }
-//}
+            Assert.IsTrue(tester_c.head.Value == 0x02);
+            Assert.IsTrue(tester_c.len.Value == 0x06);
+            Assert.IsTrue(tester_c.end.Value == 0x08);
+
+        }
+    }
+}

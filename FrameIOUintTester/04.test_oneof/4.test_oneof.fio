@@ -21,28 +21,29 @@ project test_enum {
 			stopbits = 1;
 		}
 
-		action A_Send_Type1 : send Frame_Send_Type1 on CH_COM3 {
+		action A_Send_Type1 : send Frame_Send on CH_COM3 {
 			DATATYPE : datetype;
-			NAME1 : name1;
-			NAME2 : name2;
-		}
-		action A_Send_Type2 : send Frame_Send_Type2 on CH_COM4 {
-			DATATYPE : datetype;
-			AGE1 : age1;
-			AGE2 : age2;
+			DAT.enum_type1.NAME1 : name1;
+			DAT.enum_type1.NAME2 : name2;
+			DAT.enum_type2.AGE1 : age1;
+			DAT.enum_type2.AGE2 : age2;
 		}
 		action A_Recv : recv Frame_Recv on CH_COM4 {
 			DATATYPE : datetype;
 			DAT.enum_type1.NAME1 : name1;
 			DAT.enum_type1.NAME2 : name2;
+			DAT.enum_type2.AGE1 : age1;
+			DAT.enum_type2.AGE2 : age2;
 		}
 	}
 
 	//数据帧
-	frame Frame_Send_Type1 {
-		integer DATATYPE;
-		integer NAME1;
-		integer NAME2;
+	frame Frame_Send {
+		integer DATATYPE toenum=Enum_Type;
+		block DAT type=oneof(DATATYPE){
+			 enum_type1 : Frame_type1,
+			 enum_type2 : Frame_type2
+		};
 	}
 
 	frame Frame_Recv {

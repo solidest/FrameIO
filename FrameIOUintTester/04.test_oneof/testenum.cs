@@ -30,7 +30,7 @@ namespace test_enum
         //通道声明
         public FioChannel CH_COM3;
         public FioChannel CH_COM4;
-
+        
         //通道初始化
         public void InitialChannelCH_COM3(ChannelOption ops)
         {

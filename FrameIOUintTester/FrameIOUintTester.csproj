@@ -49,6 +49,16 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="04.test_oneof.cs" />
+    <Compile Include="04.test_oneof\Enum_Type.cs" />
+    <Compile Include="04.test_oneof\FioNetObject.cs" />
+    <Compile Include="04.test_oneof\FioNetRunner.cs" />
+    <Compile Include="04.test_oneof\Parameter.cs" />
+    <Compile Include="04.test_oneof\testenum.cs" />
+    <Compile Include="08.test_calc\FioNetObject.cs" />
+    <Compile Include="08.test_calc\FioNetRunner.cs" />
+    <Compile Include="08.test_calc\Parameter.cs" />
+    <Compile Include="08.test_calc\test_calc.cs" />
     <Compile Include="12.Tcp_TwoServer\FioNetObject.cs" />
     <Compile Include="12.Tcp_TwoServer\FioNetRunner.cs" />
     <Compile Include="12.Tcp_TwoServer\Parameter.cs" />
@@ -130,9 +140,12 @@
     <None Include="01.test_tcp\1.test_tcp.fio" />
     <None Include="01.test_tcp_receivetimeout\1.test_tcp_receivetimeout.fio" />
     <None Include="02.test_udp\2.test_udp.fio" />
+    <None Include="02.test_udp_receivetimeout\2.test_udp_receivetimeout.fio" />
     <None Include="03.test_com\3.test_com.fio" />
     <None Include="03.test_com_receivetimeout\3.test_com_receivetimeout.fio" />
+    <None Include="04.test_oneof\4.test_oneof.fio" />
     <None Include="05.test_array\5.test_array.fio" />
+    <None Include="05.test_array_1\05.test_array_1.fio" />
     <None Include="06.test_can_yh\6.test_can_yh.fio" />
     <None Include="07.test_bit\7.test_bit.fio" />
     <None Include="08.test_calc\8.test_caculate.fio" />
@@ -160,7 +173,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="04.test_enum\" />
     <Folder Include="09.test_crc\" />
     <Folder Include="Test_PowerSupplyManager\" />
     <Folder Include="Test_tcpserver\" />
