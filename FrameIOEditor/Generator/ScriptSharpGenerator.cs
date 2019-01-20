@@ -195,7 +195,7 @@ namespace FrameIO.Main
             }
             else if (pro.IsEnum(_pj))
             {
-                ret.Add(string.Format("__v__.SetValue(\"{0}\", (int){1});", fullSegName, pro.Name));
+                ret.Add(string.Format("__v__.SetValue(\"{0}\", (int){1}.Value);", fullSegName, pro.Name));
             }
             else if(pro.IsInnerSubsys(_pj))
             {
@@ -260,7 +260,7 @@ namespace FrameIO.Main
             }
             else if (pro.IsEnum(_pj))
             {
-                ret.Add(string.Format("{0} = ({1})__v__.GetValue(\"{2}\");", pro.Name, pro.PropertyType, fullSegName));
+                ret.Add(string.Format("{0}.Value = ({1})__v__.GetValue(\"{2}\");", pro.Name, pro.PropertyType, fullSegName));
             }
             else if (pro.IsInnerSubsys(_pj))
             {
