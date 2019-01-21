@@ -162,6 +162,8 @@
     <None Include="10.test_subsys\10.test_subsys.fio" />
     <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
     <None Include="11.test_max\11.test_max.fio" />
+    <None Include="13.test_udp_no_localip\13.test_udp_no_localip.fio" />
+    <None Include="14.test_tcp_no_localip\14.test_tcp_no_localip.fio" />
     <None Include="packages.config" />
     <None Include="readme.md" />
   </ItemGroup>
@@ -184,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="09.test_crc\" />
+    <Folder Include="15.test_repeated\" />
     <Folder Include="Test_PowerSupplyManager\" />
     <Folder Include="Test_tcpserver\" />
   </ItemGroup>
