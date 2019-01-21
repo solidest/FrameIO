@@ -269,25 +269,28 @@ PRAGMA foreign_keys = on;
                 ret.Add(mp);
             }
 
-            int index = 0;
-
-            for(; index<ret.Count; index++)
+            int start = 0;
+            int end = ret.Count - 1;
+            for (; start < ret.Count; start++)
             {
-                if (ret[index].SysPropertyName.StartsWith("@"))
-                    userBeginCode.Add(ret[index].SysPropertyName);
+                if (ret[start].SysPropertyName.StartsWith("@"))
+                    userBeginCode.Add(ret[start].SysPropertyName);
                 else
                     break;
             }
-
-            for (; index < ret.Count; index++)
+            while (end > start)
+            {
+                if (ret[end].SysPropertyName.StartsWith("@"))
+                    end--;
+                else
+                    break;
+            }
+            for (int index = start; index <= end; index++)
             {
                 if (!ret[index].SysPropertyName.StartsWith("@"))
                     liteMaps.Add(ret[index]);
-                else
-                    break;
             }
-
-            for (; index < ret.Count; index++)
+            for (int index = end + 1; index < ret.Count; index++)
             {
                 if (ret[index].SysPropertyName.StartsWith("@"))
                     userEndCode.Add(ret[index].SysPropertyName);

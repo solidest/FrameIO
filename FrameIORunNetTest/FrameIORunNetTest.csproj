@@ -100,6 +100,27 @@
     <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\subsys1.cs">
       <Link>FrameNotAligByte\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\abc.cs">
+      <Link>FrameOldVersion\abc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\emtest.cs">
+      <Link>FrameOldVersion\emtest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\FioNetObject.cs">
+      <Link>FrameOldVersion\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\FioNetRunner.cs">
+      <Link>FrameOldVersion\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\Parameter.cs">
+      <Link>FrameOldVersion\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\SYS1.cs">
+      <Link>FrameOldVersion\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_oldversion_cs\SYS2.cs">
+      <Link>FrameOldVersion\SYS2.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_onebyte_cs\FioNetObject.cs">
       <Link>FrameOneByte\FioNetObject.cs</Link>
     </Compile>
