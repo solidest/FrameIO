@@ -49,6 +49,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="14.test_tcp_nolocalip.cs" />
+    <Compile Include="13.test_udp_no_localip.cs" />
     <Compile Include="04.test_oneof.cs" />
     <Compile Include="04.test_oneof\Enum_Type.cs" />
     <Compile Include="04.test_oneof\FioNetObject.cs" />
@@ -130,6 +132,14 @@
     <Compile Include="05.test_array_1\FioNetRunner.cs" />
     <Compile Include="05.test_array_1\Parameter.cs" />
     <Compile Include="05.test_array_1\sub_SingleByteArray.cs" />
+    <Compile Include="13.test_udp_no_localip\FioNetObject.cs" />
+    <Compile Include="13.test_udp_no_localip\FioNetRunner.cs" />
+    <Compile Include="13.test_udp_no_localip\Parameter.cs" />
+    <Compile Include="13.test_udp_no_localip\testudpno_localip.cs" />
+    <Compile Include="14.test_tcp_no_localip\FioNetObject.cs" />
+    <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
+    <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
+    <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />

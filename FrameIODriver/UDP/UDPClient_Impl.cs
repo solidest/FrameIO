@@ -14,11 +14,14 @@ namespace FrameIO.Driver
         #region IFrameStream
         public bool Open()
         {
-            if (UDPClient.UdpClient != null)
-                DeviceIsOpen = true;
-            else
-                DeviceIsOpen = false;
+            //if (UDPClient.UdpClient != null)
+            //    DeviceIsOpen = true;
+            //else
+            //    DeviceIsOpen = false;
 
+            //return DeviceIsOpen;
+
+            DeviceIsOpen = UDPClient.Open();
             return DeviceIsOpen;
         }
         public bool DeviceIsOpen { get; set; } = false;
