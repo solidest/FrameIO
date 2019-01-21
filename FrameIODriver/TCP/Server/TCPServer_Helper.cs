@@ -22,7 +22,7 @@ namespace FrameIO.Driver
 
         public static Dictionary<string, Socket> clients = new Dictionary<string, Socket>();
         private  Socket serverTemp = null;
-        private  bool IsRunning = false;
+        private  bool IsRunning = false; 
         public Socket InitServer(Dictionary<string, object> config)
         {
             if (client == null)
