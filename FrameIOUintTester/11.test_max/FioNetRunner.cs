@@ -10,10 +10,10 @@ namespace test_max
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAFWOQQvCIBiG70H/QTzHcEWXbhUdgqKg6C75TT5QF85FY+y/",
-                "pxsyvajf87y8n/1yQQitLNdQ0h3pw+jBA6QG4y7YuJlOfJ+COfrsPuBNGM/G",
-                "gQRLV2kKpQHhAxVXDaTmgO5Ytybs2awz0Tm4WeGLQq3mSmWNJ/OuxVhJ7xY1",
-                "OvxCFnhx1YYvsRRe0US+LXLDf9GUrGDRDNNjvPwx/AH4qvH4MQEAAA==");
+                "H4sIAAAAAAAEAKvm5VJQUEorSsxNNVSyUqgGcYECwanpual5JT6ZxSUIUYi4",
+                "I7IAQmlIZUEqUAbE9cwrSU1PLVLSQVaVmZ6XmgJUkJaYU5yKLOOUWeKcX5oH",
+                "ssfYCEWisiTVvygFaBDI2NzEnBwUE13zkvNTwEYqBRRl5maWZJaloigIS8wp",
+                "BTnJACZWC2GAKSBRCwDSvFVo/AAAAA==");
 
             IORunner.InitialFromGZipBase64(config);
             

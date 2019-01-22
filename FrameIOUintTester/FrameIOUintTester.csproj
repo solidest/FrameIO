@@ -49,6 +49,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="11.test_max\FioNetObject.cs" />
+    <Compile Include="11.test_max\FioNetRunner.cs" />
+    <Compile Include="11.test_max\Parameter.cs" />
+    <Compile Include="11.test_max\subsys1.cs" />
     <Compile Include="14.test_tcp_nolocalip.cs" />
     <Compile Include="13.test_udp_no_localip.cs" />
     <Compile Include="04.test_oneof.cs" />
@@ -124,10 +128,6 @@
     <Compile Include="03.test_com.cs" />
     <Compile Include="02.test_udp.cs" />
     <Compile Include="01.test_tcp.cs" />
-    <Compile Include="11.test_max\FioNetObject.cs" />
-    <Compile Include="11.test_max\FioNetRunner.cs" />
-    <Compile Include="11.test_max\Parameter.cs" />
-    <Compile Include="11.test_max\subsys1.cs" />
     <Compile Include="05.test_array_1\FioNetObject.cs" />
     <Compile Include="05.test_array_1\FioNetRunner.cs" />
     <Compile Include="05.test_array_1\Parameter.cs" />

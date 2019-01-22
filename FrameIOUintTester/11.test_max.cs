@@ -15,21 +15,23 @@ namespace FrameIOUintTester
         public void Test_Max_Min()
         {
             var tester = new test_max.subsys1();
+            var tester1 = new test_max.subsys1();
             tester.InitialParameter();
+            tester1.InitialParameter();
 
             tester.InitialChannelCH_SEND(null);
-            tester.InitialChannelCH_RECV(null);
+            tester1.InitialChannelCH_RECV(null);
 
             Assert.IsTrue(tester.CH_SEND.Open());
-            Assert.IsTrue(tester.CH_RECV.Open());
+            Assert.IsTrue(tester1.CH_RECV.Open());
 
-            tester.A.Value = 11;
+            tester.A.Value = 8;
 
             tester.A_SEND();
 
-            tester.A_RECV();
+            tester1.A_RECV();
 
-            Assert.IsTrue(tester.A.Value == 11);
+            Assert.IsTrue(tester.A.Value == 8);
         }
     }
 }
