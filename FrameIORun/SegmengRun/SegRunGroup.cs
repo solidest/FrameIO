@@ -87,7 +87,7 @@ namespace FrameIO.Run
 
         public int GetItemBitLen(JObject parent, JToken theValue)
         {
-            if (theValue == null) return 0;
+            //if (theValue == null) return 0;
             int ret = 0;
             
             var p = First;
@@ -107,6 +107,7 @@ namespace FrameIO.Run
         public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
         {
             var myp = GetValueParent(ctxOfChild);
+            //var myp = (JObject)ctxOfChild.Parent.Parent;
 
             //自身传递
             if (IsArray && ctxOfChild.Next != null)

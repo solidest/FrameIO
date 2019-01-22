@@ -42,7 +42,7 @@ namespace FrameIO.Run
         public override bool LookUpNextValueSeg(out SegRunValue firstSeg, out JContainer pc, out int repeated, JObject ctxOfChild)
         {
             var myp = GetValueParent(ctxOfChild);
-            return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, (JObject)myp.Parent.Parent.Parent.Parent);
+            return Parent.LookUpNextValueSeg(out firstSeg, out pc, out repeated, myp);
         }
 
 

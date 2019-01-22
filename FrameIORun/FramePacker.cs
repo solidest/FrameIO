@@ -19,7 +19,7 @@ namespace FrameIO.Run
         {
             var buff = new FrameSendBuffer();
             var frm = IORunner.GetFrame(_v.FrameName);
-            frm.Pack(buff, null, _v.RootValue);
+            frm.Pack(buff, _v.RootValue, _v.RootValue);
             var ret = buff.Flush();
             return ret;
         }

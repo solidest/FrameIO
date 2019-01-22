@@ -13,7 +13,9 @@ namespace FrameIO.Run
         //名称
         string Name { get; }
         int GetBitLen(JObject parent);
-
+        SegRunContainer Parent { get; set; }
+        SegRunBase First { get; set; }
+        SegRunBase Last { get; set; }
     }
 
     //internal interface ISegRun
@@ -143,7 +145,10 @@ namespace FrameIO.Run
             var pos = new StringBuilder(Name);
             var p = Parent;
             while (p != null)
+            {
                 pos.Insert(0, p.Name + ".");
+                p = p.Parent;
+            }
             throw new Interface.FrameIOException(type, pos.ToString(), info);
         }
 
@@ -152,9 +157,9 @@ namespace FrameIO.Run
             if (v.Parent == null)
                 return null;
             if (v.Parent.Type == JTokenType.Array)
-                return v.Parent.Parent.Parent.Value<JObject>();
+                return (JObject)v.Parent.Parent.Parent;
             else if (v.Parent.Type == JTokenType.Property)
-                return ((JProperty)v.Parent).Value.Value<JObject>();
+                return (JObject)v.Parent.Parent;
             else
                 throw new Exception("unknow");
         }

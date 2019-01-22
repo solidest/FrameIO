@@ -76,6 +76,36 @@
     <Compile Include="..\..\FrameIOTest\frame_test_bytearray_cs\subsys1.cs">
       <Link>FrameByteArray\subsys1.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\FioNetObject.cs">
+      <Link>FrameBytesizeof\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\FioNetRunner.cs">
+      <Link>FrameBytesizeof\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\Parameter.cs">
+      <Link>FrameBytesizeof\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\SYS1.cs">
+      <Link>FrameBytesizeof\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\SYS2.cs">
+      <Link>FrameBytesizeof\SYS2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\FioNetObject.cs">
+      <Link>FrameCrc\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\FioNetRunner.cs">
+      <Link>FrameCrc\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\Parameter.cs">
+      <Link>FrameCrc\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\SYS1.cs">
+      <Link>FrameCrc\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\SYS2.cs">
+      <Link>FrameCrc\SYS2.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\FioNetObject.cs">
       <Link>FrameDynamicArray\FioNetObject.cs</Link>
     </Compile>
@@ -189,6 +219,21 @@
     </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_subsys_cs\subsys1.cs">
       <Link>FrameSubsys\subsys1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_validate_cs\FioNetObject.cs">
+      <Link>FrameValidate\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_validate_cs\FioNetRunner.cs">
+      <Link>FrameValidate\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_validate_cs\Parameter.cs">
+      <Link>FrameValidate\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_validate_cs\SYS1.cs">
+      <Link>FrameValidate\SYS1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_validate_cs\SYS2.cs">
+      <Link>FrameValidate\SYS2.cs</Link>
     </Compile>
     <Compile Include="..\..\FrameIOTest\test_multi_cs\CreateTime.cs">
       <Link>MultiTest\CreateTime.cs</Link>

@@ -127,16 +127,25 @@ namespace FrameIO.Run
 
         public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
-
-            if (_value != null)
+            if(IsArray)
             {
-                return new JValue(_value.GetLong(parent, Parent));
+                var ret = new JArray();
+                for (int i = 0; i < ArrayLen.GetLong(parent, this); i++)
+                {
+                    ret.Add(new JValue(0));
+                }
+                return ret;
             }
-            else if (_check != null)
+            if (_check != null)
             {
                 return new JValue(_check.GetCheckResult(buff, parent, Parent));
             }
-            LogError(Interface.FrameIOErrorType.SendErr, "未赋值");
+            else if (_value != null)
+            {
+                return new JValue(_value.GetLong(parent, this));
+            }
+            else
+                LogError(Interface.FrameIOErrorType.SendErr, "未赋值");
             return GetDefaultValue();
         }
 

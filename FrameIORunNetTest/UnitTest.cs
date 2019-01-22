@@ -334,6 +334,105 @@ namespace FrameIORunNetTest
 
         #endregion
 
+        #region --验证--
+
+        [TestMethod]
+        public void A__FrameValidate()
+        {
+
+            var tester1 = new frame_test_validate.SYS1();
+            var tester2 = new frame_test_validate.SYS2();
+
+            tester1.InitialParameter();
+            tester2.InitialParameter();
+
+            tester2.InitialChannelCHA(null);
+            tester1.InitialChannelCH1(null);
+
+            Assert.IsTrue(tester2.CHA.Open());
+            Assert.IsTrue(tester1.CH1.Open());
+
+            tester1.PROPERTYa.Value = 2;
+
+            Exception ex = null;
+
+            try
+            {
+                tester1.SendData();
+                tester2.RecvData();
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            Assert.IsNotNull(ex);
+
+        }
+
+        #endregion
+
+        #region --ByteSizeOf--
+
+
+        [TestMethod]
+        public void A__FrameByteSizeOf()
+        {
+
+            var tester1 = new frame_test_bytesizeof.SYS1();
+            var tester2 = new frame_test_bytesizeof.SYS2();
+
+            tester1.InitialParameter();
+            tester2.InitialParameter();
+
+            tester2.InitialChannelCHA(null);
+            tester1.InitialChannelCH1(null);
+
+            Assert.IsTrue(tester2.CHA.Open());
+            Assert.IsTrue(tester1.CH1.Open());
+
+            tester1.PROPERTYa.Value = 2;
+
+
+            tester1.SendData();
+            tester2.RecvData();
+            Assert.IsTrue(tester2.len.Value == 47);
+
+        }
+
+
+        #endregion
+
+        #region --Crc--
+
+        [TestMethod]
+        public void A__FrameCRC()
+        {
+
+            var tester1 = new frame_test_crc.SYS1();
+            var tester2 = new frame_test_crc.SYS2();
+
+            tester1.InitialParameter();
+            tester2.InitialParameter();
+
+            tester2.InitialChannelCHA(null);
+            tester1.InitialChannelCH1(null);
+
+            Assert.IsTrue(tester2.CHA.Open());
+            Assert.IsTrue(tester1.CH1.Open());
+
+            tester1.PROPERTYa.Value = 4;
+            tester1.PROPERTYb.Value = 9;
+            tester1.PROPERTYc.Value = 9;
+            tester1.PROPERTYd.Value = 19.563;
+            tester1.PROPERTYe[0].Value  = true;
+
+            tester1.SendData();
+            tester2.RecvData();
+            Assert.IsTrue(tester2.check_value.Value == 20);
+
+        }
+
+        #endregion
 
     }
 

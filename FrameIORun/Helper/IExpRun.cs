@@ -192,7 +192,12 @@ namespace FrameIO.Run
 
         public int GetInt(JObject ctx, ISegRun theSeg)
         {
-            var len = theSeg.GetBitLen(ctx);
+            ISegRun seg = null;
+            if (IsThis)
+                seg = theSeg.Parent;
+            else
+                seg = theSeg.Parent[_seg];
+            var len = seg.GetBitLen(ctx);
             if (len % 8 != 0) throw new Exception("runtime 数据帧字段未能整字节对齐");
             return len / 8;
         }

@@ -103,6 +103,16 @@ namespace FrameIO.Run
 
         public override JToken GetAutoValue(IFrameWriteBuffer buff, JObject parent)
         {
+            if (IsArray)
+            {
+                var ret = new JArray();
+                for (int i = 0; i < ArrayLen.GetLong(parent, this); i++)
+                {
+                    ret.Add(new JValue(0.0));
+                }
+                return ret;
+            }
+
             if (_value == null)
             {
                 LogError(Interface.FrameIOErrorType.SendErr, "未赋值");
