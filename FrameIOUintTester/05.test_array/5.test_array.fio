@@ -1,0 +1,35 @@
+//项目:5.test_array
+project test_array {
+	//受控对象
+	system testarray {
+		uint[5] content;
+
+		channel CH_COM3 : com {
+			portname = "COM3";
+			baudrate = 9600;
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+		}
+		channel CH_COM4 : com {
+			portname = "COM4";
+			baudrate = 9600;
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+		}
+
+		action A_Send : send Frame_Array on CH_COM3 {
+			CONTENT : content;
+		}
+		action A_Recv : send Frame_Array on CH_COM4 {
+			CONTENT : content;
+		}
+	}
+
+	//数据帧
+	frame Frame_Array {
+		integer CONTENT repeated=5;
+	}
+
+}

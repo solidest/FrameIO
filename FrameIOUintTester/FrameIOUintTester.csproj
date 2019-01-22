@@ -49,120 +49,97 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\0.flo\1.test_tcp\frame.cs">
-      <Link>1.test_tcp\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\1.test_tcp\Parameter.cs">
-      <Link>1.test_tcp\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\1.test_tcp\tcp.cs">
-      <Link>1.test_tcp\tcp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\2.test_udp\frame.cs">
-      <Link>2.test_udp\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\2.test_udp\Parameter.cs">
-      <Link>2.test_udp\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\2.test_udp\testudp.cs">
-      <Link>2.test_udp\testudp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\3.test_com\frame.cs">
-      <Link>3.test_com\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\3.test_com\Parameter.cs">
-      <Link>3.test_com\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\3.test_com\testcom.cs">
-      <Link>3.test_com\testcom.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\4.test_enum\Enum_Type.cs">
-      <Link>4.test_enum\Enum_Type.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\4.test_enum\frame.cs">
-      <Link>4.test_enum\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\4.test_enum\Parameter.cs">
-      <Link>4.test_enum\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\4.test_enum\testenum.cs">
-      <Link>4.test_enum\testenum.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\5.test_array\frame.cs">
-      <Link>5.test_array\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\5.test_array\Parameter.cs">
-      <Link>5.test_array\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\5.test_array\testarray.cs">
-      <Link>5.test_array\testarray.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\6.test_can_yh\frame.cs">
-      <Link>6.test_can_yh\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\6.test_can_yh\Parameter.cs">
-      <Link>6.test_can_yh\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\6.test_can_yh\testcan.cs">
-      <Link>6.test_can_yh\testcan.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\tcp_server_test\frame.cs">
-      <Link>Test_tcpserver\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\tcp_server_test\Parameter.cs">
-      <Link>Test_tcpserver\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\tcp_server_test\SYS1.cs">
-      <Link>Test_tcpserver\SYS1.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\tcp_server_test\SYS2.cs">
-      <Link>Test_tcpserver\SYS2.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\tcp_server_test\SYS3.cs">
-      <Link>Test_tcpserver\SYS3.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\test_PowerSupplyManager\Enum_DataType.cs">
-      <Link>Test_PowerSupplyManager\Enum_DataType.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\test_PowerSupplyManager\frame.cs">
-      <Link>Test_PowerSupplyManager\frame.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\test_PowerSupplyManager\Parameter.cs">
-      <Link>Test_PowerSupplyManager\Parameter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\0.flo\test_PowerSupplyManager\PowerSupplyManager.cs">
-      <Link>Test_PowerSupplyManager\PowerSupplyManager.cs</Link>
-    </Compile>
-    <Compile Include="1.test_tcp_receivetimeout.cs" />
-    <Compile Include="1.test_tcp_receivetimeout\frame.cs" />
-    <Compile Include="1.test_tcp_receivetimeout\Parameter.cs" />
-    <Compile Include="1.test_tcp_receivetimeout\test_tcp_receivetimeout.cs" />
-    <Compile Include="2.test_udp_receivetimeout.cs" />
-    <Compile Include="2.test_udp_receivetimeout\frame.cs" />
-    <Compile Include="2.test_udp_receivetimeout\Parameter.cs" />
-    <Compile Include="2.test_udp_receivetimeout\test_udp_receivetimeout.cs" />
-    <Compile Include="3.test_com_receivetimeout.cs" />
-    <Compile Include="3.test_com_receivetimeout\frame.cs" />
-    <Compile Include="3.test_com_receivetimeout\Parameter.cs" />
-    <Compile Include="3.test_com_receivetimeout\test_com_receivetimeout.cs" />
-    <Compile Include="9.test_crc.cs" />
-    <Compile Include="8.test_calc.cs" />
-    <Compile Include="7.test_bit.cs" />
-    <Compile Include="6.test_can_yh.cs" />
-    <Compile Include="5.test_array.cs" />
-    <Compile Include="4.test_enum.cs" />
-    <Compile Include="3.test_com.cs" />
-    <Compile Include="2.test_udp.cs" />
-    <Compile Include="1.test_tcp.cs" />
-    <Compile Include="7.test_bit\frame.cs" />
-    <Compile Include="7.test_bit\Parameter.cs" />
-    <Compile Include="7.test_bit\test_bit.cs" />
-    <Compile Include="8.test_calc\frame.cs" />
-    <Compile Include="8.test_calc\Parameter.cs" />
-    <Compile Include="8.test_calc\test_calc.cs" />
-    <Compile Include="9.test_crc\frame.cs" />
-    <Compile Include="9.test_crc\Parameter.cs" />
-    <Compile Include="9.test_crc\test_crc.cs" />
+    <Compile Include="14.test_tcp_nolocalip.cs" />
+    <Compile Include="13.test_udp_no_localip.cs" />
+    <Compile Include="04.test_oneof.cs" />
+    <Compile Include="04.test_oneof\Enum_Type.cs" />
+    <Compile Include="04.test_oneof\FioNetObject.cs" />
+    <Compile Include="04.test_oneof\FioNetRunner.cs" />
+    <Compile Include="04.test_oneof\Parameter.cs" />
+    <Compile Include="04.test_oneof\testenum.cs" />
+    <Compile Include="08.test_calc\FioNetObject.cs" />
+    <Compile Include="08.test_calc\FioNetRunner.cs" />
+    <Compile Include="08.test_calc\Parameter.cs" />
+    <Compile Include="08.test_calc\test_calc.cs" />
+    <Compile Include="12.Tcp_TwoServer\FioNetObject.cs" />
+    <Compile Include="12.Tcp_TwoServer\FioNetRunner.cs" />
+    <Compile Include="12.Tcp_TwoServer\Parameter.cs" />
+    <Compile Include="12.Tcp_TwoServer\Tcpserver.cs" />
+    <Compile Include="12.test_Tcp_Two_Server.cs" />
+    <Compile Include="01.test_tcp\FioNetObject.cs" />
+    <Compile Include="01.test_tcp\FioNetRunner.cs" />
+    <Compile Include="01.test_tcp\Parameter.cs" />
+    <Compile Include="01.test_tcp\test_tcp.cs" />
+    <Compile Include="01.test_tcp_receivetimeout.cs" />
+    <Compile Include="01.test_tcp_receivetimeout\FioNetObject.cs" />
+    <Compile Include="01.test_tcp_receivetimeout\FioNetRunner.cs" />
+    <Compile Include="01.test_tcp_receivetimeout\Parameter.cs" />
+    <Compile Include="01.test_tcp_receivetimeout\test_tcp_receivetimeout.cs" />
+    <Compile Include="02.test_udp\FioNetObject.cs" />
+    <Compile Include="02.test_udp\FioNetRunner.cs" />
+    <Compile Include="02.test_udp\Parameter.cs" />
+    <Compile Include="02.test_udp\testudp.cs" />
+    <Compile Include="05.test_array\FioNetObject.cs" />
+    <Compile Include="05.test_array\FioNetRunner.cs" />
+    <Compile Include="05.test_array\Parameter.cs" />
+    <Compile Include="05.test_array\testarray.cs" />
+    <Compile Include="07.test_bit\FioNetObject.cs" />
+    <Compile Include="07.test_bit\FioNetRunner.cs" />
+    <Compile Include="07.test_bit\Parameter.cs" />
+    <Compile Include="07.test_bit\test_bit.cs" />
+    <Compile Include="10.test_subsys\FioNetObject.cs" />
+    <Compile Include="10.test_subsys\FioNetRunner.cs" />
+    <Compile Include="10.test_subsys\Parameter.cs" />
+    <Compile Include="10.test_subsys\position.cs" />
+    <Compile Include="10.test_subsys\testsubsys.cs" />
+    <Compile Include="10.test_Subsys_Array.cs" />
+    <Compile Include="10.test_Subsys.cs" />
+    <Compile Include="10.test_subsys_Array\FioNetObject.cs" />
+    <Compile Include="10.test_subsys_Array\FioNetRunner.cs" />
+    <Compile Include="10.test_subsys_Array\Parameter.cs" />
+    <Compile Include="10.test_subsys_Array\position.cs" />
+    <Compile Include="10.test_subsys_Array\testsubsys.cs" />
+    <Compile Include="05.test_array_1.cs" />
+    <Compile Include="11.test_max.cs" />
+    <Compile Include="02.test_udp_receivetimeout.cs" />
+    <Compile Include="02.test_udp_receivetimeout\2.test_udp_receivetimeout.cs" />
+    <Compile Include="02.test_udp_receivetimeout\FioNetObject.cs" />
+    <Compile Include="02.test_udp_receivetimeout\FioNetRunner.cs" />
+    <Compile Include="02.test_udp_receivetimeout\Parameter.cs" />
+    <Compile Include="02.test_udp_receivetimeout\test_udp_receivetimeout.cs" />
+    <Compile Include="03.test_com\FioNetObject.cs" />
+    <Compile Include="03.test_com\FioNetRunner.cs" />
+    <Compile Include="03.test_com\Parameter.cs" />
+    <Compile Include="03.test_com\testcom.cs" />
+    <Compile Include="03.test_com_receivetimeout.cs" />
+    <Compile Include="03.test_com_receivetimeout\FioNetObject.cs" />
+    <Compile Include="03.test_com_receivetimeout\FioNetRunner.cs" />
+    <Compile Include="03.test_com_receivetimeout\Parameter.cs" />
+    <Compile Include="03.test_com_receivetimeout\test_com_receivetimeout.cs" />
+    <Compile Include="09.test_crc.cs" />
+    <Compile Include="08.test_calc.cs" />
+    <Compile Include="07.test_bit.cs" />
+    <Compile Include="06.test_can_yh.cs" />
+    <Compile Include="05.test_array.cs" />
+    <Compile Include="03.test_com.cs" />
+    <Compile Include="02.test_udp.cs" />
+    <Compile Include="01.test_tcp.cs" />
+    <Compile Include="11.test_max\FioNetObject.cs" />
+    <Compile Include="11.test_max\FioNetRunner.cs" />
+    <Compile Include="11.test_max\Parameter.cs" />
+    <Compile Include="11.test_max\subsys1.cs" />
+    <Compile Include="05.test_array_1\FioNetObject.cs" />
+    <Compile Include="05.test_array_1\FioNetRunner.cs" />
+    <Compile Include="05.test_array_1\Parameter.cs" />
+    <Compile Include="05.test_array_1\sub_SingleByteArray.cs" />
+    <Compile Include="13.test_udp_no_localip\FioNetObject.cs" />
+    <Compile Include="13.test_udp_no_localip\FioNetRunner.cs" />
+    <Compile Include="13.test_udp_no_localip\Parameter.cs" />
+    <Compile Include="13.test_udp_no_localip\testudpno_localip.cs" />
+    <Compile Include="14.test_tcp_no_localip\FioNetObject.cs" />
+    <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
+    <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
+    <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
@@ -170,16 +147,23 @@
     <Compile Include="UserPowerSupplyManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="1.test_tcp\1.test_tcp.fio" />
-    <None Include="1.test_tcp_receivetimeout\1.test_tcp_receivetimeout.fio" />
-    <None Include="2.test_udp\2.test_udp.fio" />
-    <None Include="2.test_udp_receivetimeout\2.test_udp_receivetimeout.fio" />
-    <None Include="4.test_enum\4.test_enum.fio" />
-    <None Include="5.test_array\5.test_array.fio" />
-    <None Include="6.test_can_yh\6.test_can_yh.fio" />
-    <None Include="7.test_bit\7.test_bit.fio" />
-    <None Include="8.test_calc\8.test_caculate.fio" />
+    <None Include="01.test_tcp\1.test_tcp.fio" />
+    <None Include="01.test_tcp_receivetimeout\1.test_tcp_receivetimeout.fio" />
+    <None Include="02.test_udp\2.test_udp.fio" />
+    <None Include="02.test_udp_receivetimeout\2.test_udp_receivetimeout.fio" />
+    <None Include="03.test_com\3.test_com.fio" />
+    <None Include="03.test_com_receivetimeout\3.test_com_receivetimeout.fio" />
+    <None Include="04.test_oneof\4.test_oneof.fio" />
+    <None Include="05.test_array\5.test_array.fio" />
+    <None Include="05.test_array_1\05.test_array_1.fio" />
+    <None Include="06.test_can_yh\6.test_can_yh.fio" />
+    <None Include="07.test_bit\7.test_bit.fio" />
+    <None Include="08.test_calc\8.test_caculate.fio" />
+    <None Include="10.test_subsys\10.test_subsys.fio" />
+    <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
+    <None Include="11.test_max\11.test_max.fio" />
     <None Include="packages.config" />
+    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FrameIODriver\FrameIODriver.csproj">
@@ -190,8 +174,19 @@
       <Project>{22d3c366-aab4-4fe2-9c69-3feab4dd751b}</Project>
       <Name>FrameIOInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FrameIORun\FrameIORun.csproj">
+      <Project>{f4f37e33-c1d6-49d4-b05f-1b98a0395828}</Project>
+      <Name>FrameIORun</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="09.test_crc\" />
+    <Folder Include="Test_PowerSupplyManager\" />
+    <Folder Include="Test_tcpserver\" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

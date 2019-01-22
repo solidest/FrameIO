@@ -14,7 +14,7 @@ namespace FrameIO.Driver
         private IPEndPoint localEndPoint = null; 
         public IPEndPoint remoteEndPoint = null;
         private int ReceiveTimeOut = 5000;
-
+        private bool IsRunning = false;
         public UdpClient InitClient(Dictionary<string,object> config)
         {
             if (UdpClient == null)
@@ -27,7 +27,8 @@ namespace FrameIO.Driver
                 localEndPoint = new IPEndPoint(IPAddress.Parse("" + config["localip"]), Convert.ToInt32(config["localport"]));
                 remoteEndPoint = new IPEndPoint(IPAddress.Parse("" + config["remoteip"]), Convert.ToInt32(config["remoteport"]));
 
-                UdpClient.Client.Bind(localEndPoint);
+                //UdpClient.Client.Bind(localEndPoint);
+                
 
                 if (config.ContainsKey("waittimeout"))
                     ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
@@ -36,7 +37,23 @@ namespace FrameIO.Driver
             }
             return UdpClient;
         }
-
+        public bool Open()
+        {
+            try
+            {
+                if(UdpClient!=null && !IsRunning)
+                {
+                    UdpClient.Client.Bind(localEndPoint);
+                    IsRunning = true;
+                }
+                    
+                return true;
+            }catch(Exception)
+            {
+                return false;
+            }
+            
+        }
         public void CloseUDPClient()
         {
             if(UdpClient != null)
