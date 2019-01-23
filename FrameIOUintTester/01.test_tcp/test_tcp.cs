@@ -26,7 +26,7 @@ namespace test_tcp
         //通道声明
         public FioChannel CHS;
         public FioChannel CHC;
-
+        
         //通道初始化
         public void InitialChannelCHS(ChannelOption ops)
         {
@@ -74,13 +74,13 @@ namespace test_tcp
             __v__.SetValue("HEAD", head);
             __v__.SetValue("LEN", len);
             __v__.SetValue("END", end);
-            FioNetRunner.SendFrame(__v__, CHS);
+            FioNetRunner.SendFrame(__v__, CHC);
         }
 
         //数据接收
         public void A_Recv()
         {
-            var __v__ = FioNetRunner.RecvFrame("frameSR", CHC);
+            var __v__ = FioNetRunner.RecvFrame("frameSR", CHS);
             __v__.GetValue("HEAD", head);
             __v__.GetValue("LEN", len);
             __v__.GetValue("END", end);

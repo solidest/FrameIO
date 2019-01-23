@@ -15,17 +15,37 @@ namespace FrameIOUintTester
         public void TCP_nolocalip()
         {
             var tester = new test_tcp_nolocalip .test_tcp();
+            var tester_c = new test_tcp_nolocalip.test_tcp();
+
             tester.InitialParameter();
+            tester_c.InitialParameter();
+
             tester.InitialChannelCHS(null);
+            tester_c.InitialChannelCHC(null);
 
+            
             Assert.IsTrue(tester.CHS.Open());
+            //Assert.IsTrue(tester_c.CHC.Open());
 
+           // tester_c.CHC.Close();
 
-            tester.A_Recv();
+            Exception ex = null;
+            try
+            {
+                tester.A_Recv();
+            }
+            catch (Exception e)
+            {
 
-            Assert.IsTrue(tester.head.Value == 0x55);
-            Assert.IsTrue(tester.len.Value == 1);
-            Assert.IsTrue(tester.end.Value == 0xaa);
+                ex = e;
+            }
+
+            Assert.IsNotNull(ex);
+            Assert.IsTrue(ex.GetType() == typeof(FrameIO.Interface.FrameIOException));
+
+            //Assert.IsTrue(tester.head.Value == 0x55);
+            //Assert.IsTrue(tester.len.Value == 1);
+            //Assert.IsTrue(tester.end.Value == 0xaa);
 
 
         }

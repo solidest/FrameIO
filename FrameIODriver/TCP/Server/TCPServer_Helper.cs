@@ -59,7 +59,7 @@ namespace FrameIO.Driver
                 serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

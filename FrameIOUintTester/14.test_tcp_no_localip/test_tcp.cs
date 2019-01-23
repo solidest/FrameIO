@@ -31,7 +31,7 @@ namespace test_tcp_nolocalip
         public void InitialChannelCHS(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "198.168.0.151");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
             if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.151");
             ops.SetOption("$channeltype", 3);
@@ -68,7 +68,7 @@ namespace test_tcp_nolocalip
         }
 
         //数据发送
-        public void A_Recv()
+        public void A_Send()
         {
             var __v__ = FioNetRunner.NewFrameObject("frameSR");
             __v__.SetValue("HEAD", head);
@@ -78,7 +78,7 @@ namespace test_tcp_nolocalip
         }
 
         //数据接收
-        public void A_Send()
+        public void A_Recv()
         {
             var __v__ = FioNetRunner.RecvFrame("frameSR", CHS);
             __v__.GetValue("HEAD", head);

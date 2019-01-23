@@ -20,13 +20,13 @@ namespace FrameIOUintTester
             tester.InitialChannelCHC(null);
 
             Assert.IsTrue(tester.CHS.Open());
-            Assert.IsTrue(tester.CHC.Open());
+            //Assert.IsTrue(tester.CHC.Open());
 
-            tester.head.Value = 0x55;
-            tester.len.Value = 1;
-            tester.end.Value = 0xaa;
+            //tester.head.Value = 0x55;
+            //tester.len.Value = 1;
+            //tester.end.Value = 0xaa;
 
-            tester.A_Send();
+            //tester.A_Send();
 
             tester.A_Recv();
 
