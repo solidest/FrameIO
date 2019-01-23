@@ -44,7 +44,7 @@ namespace FrameIO.Run
             if (o.ContainsKey(VALUE_TOKEN)) _value = Helper.GetExp(o[VALUE_TOKEN]);
             if (o.ContainsKey(MAXVALUE_TOKEN)) _valid.AddMaxValidate(o[MAXVALUE_TOKEN]);
             if (o.ContainsKey(MINVALUE_TOKEN)) _valid.AddMinValidate(o[MINVALUE_TOKEN]);
-            if (o.ContainsKey(CHECKFROM_TOKEN)) _check = _valid.AddCheckValidate(o[CHECKTYPE_TOKEN], o[CHECKFROM_TOKEN], o[CHECKTO_TOKEN] );
+            if (o.ContainsKey(CHECKTYPE_TOKEN)) _check = _valid.AddCheckValidate(o[CHECKTYPE_TOKEN], o[CHECKFROM_TOKEN], o[CHECKTO_TOKEN] );
         }
 
 
@@ -93,7 +93,14 @@ namespace FrameIO.Run
             }
 
             if (_signed)
+            {
+                //处理负数
+                if((v & ((ulong)1<<(_bitcount-1))) !=0)
+                {
+                    v |= (0xFFFFFFFFFFFFFFFF << _bitcount);  
+                }
                 return BitConverter.ToInt64(BitConverter.GetBytes(v), 0);
+            }
             else
                 return BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
 
@@ -107,7 +114,7 @@ namespace FrameIO.Run
         {
             if (v >= 0) return (ulong)v;
 
-            var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0);
+            var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0) &( 0xFFFFFFFFFFFFFFFF>>(64-_bitcount));
             if (_encoded != EncodedTypeEnum.Primitive) uv = (_encoded == EncodedTypeEnum.Complement ? GetComplement(uv) : GetInversion(uv));
             return uv;
 
@@ -138,7 +145,7 @@ namespace FrameIO.Run
             }
             if (_check != null)
             {
-                return new JValue(_check.GetCheckResult(buff, parent, Parent));
+                return new JValue(_check.GetCheckResult(buff, parent, Parent, this));
             }
             else if (_value != null)
             {

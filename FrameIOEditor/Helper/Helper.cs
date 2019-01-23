@@ -25,19 +25,21 @@ namespace FrameIO.Main
 
         public static long ToLong(string str)
         {
-            if(str.StartsWith("0x") || str.StartsWith("0X"))
+            if (str.StartsWith("0x") || str.StartsWith("0X"))
             {
-                return BitConverter.ToInt64(String2HexValue(str), 0);
+                return BitConverter.ToInt64(String2HexValue(str.Substring(2)), 0);
             }
 
-            return Convert.ToInt64(str);
+            var ret= Convert.ToInt64(str);
+            return ret;
         }
 
         public static ulong ToULong(string str)
         {
             if (str.StartsWith("0x") || str.StartsWith("0X"))
             {
-                return BitConverter.ToUInt64(String2HexValue(str), 0);
+                var ret = BitConverter.ToUInt64(String2HexValue(str.Substring(2)), 0);
+                return ret;
             }
 
             return Convert.ToUInt64(str);

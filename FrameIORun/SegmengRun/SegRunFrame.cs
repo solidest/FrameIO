@@ -17,6 +17,7 @@ namespace FrameIO.Run
         }
 
         public int MatchHeaderBytesLen { get; private set; }
+        public ulong MatchValue { get => _matchValue; }
         private ulong _matchValue;
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FrameIO.Run;
 using System.Threading;
@@ -428,7 +429,72 @@ namespace FrameIORunNetTest
 
             tester1.SendData();
             tester2.RecvData();
-            Assert.IsTrue(tester2.check_value.Value == 20);
+            Assert.IsTrue(tester2.check_value.Value == 168);
+
+        }
+
+        #endregion
+
+        #region --Match--
+
+        [TestMethod]
+        public void A__FrameMatch()
+        {
+
+            var sender = new frame_test_match.subsys1();
+            var recver = new frame_test_match.subsys1();
+
+            sender.InitialParameter();
+            recver.InitialParameter();
+
+            recver.InitialChanneltcp_recv(null);
+            sender.InitialChanneltcp_send(null);
+
+            Assert.IsTrue(recver.tcp_recv.Open());
+            Assert.IsTrue(sender.tcp_send.Open());
+
+            sender.pro0.Value = 99;
+            sender.pro1.Value = 0x55;
+            sender.pro2.Value = 0xAA;
+            sender.pro3.Value = 0x55;
+            sender.pro4.Value = 2;
+            sender.pro5.Value = 3;
+
+            sender.SendData();
+            recver.RecvData();
+
+            Assert.IsTrue(recver.header3.Value == 3);
+
+        }
+
+        #endregion
+
+        #region --Int--
+        [TestMethod]
+        public void A__FrameInt()
+        {
+
+            var tester1 = new frame_test_long.subsys1();
+            var tester2 = new frame_test_long.subsys1();
+
+            tester1.InitialParameter();
+            tester2.InitialParameter();
+
+            tester2.InitialChanneltcp_recv(null);
+            tester1.InitialChanneltcp_send(null);
+
+            Assert.IsTrue(tester2.tcp_recv.Open());
+            Assert.IsTrue(tester1.tcp_send.Open());
+
+            tester1.pro1.Value = -9955584;
+            tester1.pro2.Value = -6.555;
+            tester1.pro3.Value = -765.345f;
+
+            tester1.SendData();
+            tester2.RecvData();
+            Assert.IsTrue(tester2.pro1.Value == -9955584);
+            Assert.IsTrue(tester2.pro2.Value == -6.555);
+            Assert.IsTrue(tester2.pro3.Value == -765.345f);
 
         }
 

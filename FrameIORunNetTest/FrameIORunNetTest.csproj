@@ -118,6 +118,30 @@
     <Compile Include="..\..\FrameIOTest\frame_test_dynamicarray_cs\sub_SingleByteArray.cs">
       <Link>FrameDynamicArray\sub_SingleByteArray.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_long_cs\FioNetObject.cs">
+      <Link>FrameInt\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_long_cs\FioNetRunner.cs">
+      <Link>FrameInt\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_long_cs\Parameter.cs">
+      <Link>FrameInt\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_long_cs\subsys1.cs">
+      <Link>FrameInt\subsys1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_match_cs\FioNetObject.cs">
+      <Link>FrameMatch\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_match_cs\FioNetRunner.cs">
+      <Link>FrameMatch\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_match_cs\Parameter.cs">
+      <Link>FrameMatch\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_match_cs\subsys1.cs">
+      <Link>FrameMatch\subsys1.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_notaligbyte_cs\FioNetObject.cs">
       <Link>FrameNotAligByte\FioNetObject.cs</Link>
     </Compile>

@@ -49,9 +49,21 @@ namespace FrameIO.Run
 
         internal override ulong GetRaw(IFrameWriteBuffer buff, JValue jv)
         {
-            double d = jv.Value<double>();
+            ulong v = 0;
+            double d = 0.0;
 
-            var v = BitConverter.ToUInt64(BitConverter.GetBytes(d), 0);
+            if(_isdouble)
+            {
+                d = jv.Value<double>();
+                v = BitConverter.ToUInt64(BitConverter.GetBytes(d), 0);
+            }
+            else
+            {
+                float f = jv.Value<float>();
+                v = BitConverter.ToUInt32(BitConverter.GetBytes(f), 0);
+                d = f;
+            }
+
 
             if(d < 0 && _encoded!= EncodedTypeEnum.Primitive)
             {
@@ -88,7 +100,6 @@ namespace FrameIO.Run
                 return BitConverter.ToDouble(BitConverter.GetBytes(v), 0);
             else
                 return BitConverter.ToSingle(BitConverter.GetBytes(v), 0);
-
         }
 
         protected override void DoValid(IFrameReadBuffer buff, SegRunNumber seg, JToken value)

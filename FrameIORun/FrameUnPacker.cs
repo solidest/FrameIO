@@ -15,6 +15,8 @@ namespace FrameIO.Run
         private int  _appendCount;
         private SegRunFrame _f;
         private FrameSegValueQueue _qq;
+        private MatchHeader _match;
+
         public FrameObject RootValue { get; }
 
 
@@ -25,6 +27,7 @@ namespace FrameIO.Run
             _qq = new FrameSegValueQueue(_f, RootValue.RootValue);
             _b = new FrameRecvBuffer();
             _appendCount = 0;
+            _match = new MatchHeader(_f.MatchValue, _f.MatchHeaderBytesLen);
         }
 
 
@@ -32,9 +35,17 @@ namespace FrameIO.Run
 
         public int AppendBlock(byte[] buffer)
         {
-            if (_appendCount == 0 && !_f.IsMatch(buffer)) return FirstBlockSize;
+            //需要匹配包头 逐字节匹配
+            if (_appendCount == 0 && _match.NeedMatch && !_match.AppendAndMatch(buffer))
+            {
+                return 1;
+            }
             _appendCount += 1;
-            _b.Append(buffer);
+            if (_appendCount == 1 && _match.NeedMatch)
+                _b.Append(_match.Header);
+            else
+                _b.Append(buffer);
+
             _qq.Unpack(_b);
             return _qq.GetNextBlockSize();
         }
