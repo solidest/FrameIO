@@ -58,14 +58,14 @@ namespace FrameIO.Driver
         {
             if (client != null)
             {
-
                 try
                 {
                     if (Connect(ipe))
                         return true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
                     return false;
                 }
             }

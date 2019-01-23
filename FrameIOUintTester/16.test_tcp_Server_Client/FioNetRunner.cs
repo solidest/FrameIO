@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_max
+namespace test_tcp_server_client
 {
     public static class FioNetRunner
     {
@@ -10,10 +10,10 @@ namespace test_max
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAKvm5VJQUEorSsxNNVSyUqgGcYECwanpual5JT6ZxSUIUYi4",
-                "I7IAQmlIZUEqUAbE9cwrSU1PLVLSQVaVmZ6XmgJUkJaYU5yKLOOUWeKcX5oH",
-                "ssfYCEWisiTVvygFaBDI2NzEnBwUE13zkvNTwEYqBRRl5maWZJaloigIS8wp",
-                "BTnJACZWC2GAKSBRCwDSvFVo/AAAAA==");
+                "H4sIAAAAAAAEAKvm5VJQUEorSsxNDQ5SslKoBvGBIsGp6bmpeSU+mcUlCFGg",
+                "uIerowuyAEJpSGVBKlAGxPXMK0lNTy1S0kFWlZmel5oCVJCWmFOciizjlFni",
+                "nF+aB7LH2AhForIk1b8oBWgQyNjcxJwcFBNd85LzU8BGKgUUZeZmlmSWpaIo",
+                "CEvMKQU5yQAmVguXVfJx9RsO3nD1G8KxAWGAKSBRCwCe12EEiwIAAA==");
 
             IORunner.InitialFromGZipBase64(config);
             

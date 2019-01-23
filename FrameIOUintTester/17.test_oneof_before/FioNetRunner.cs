@@ -1,7 +1,7 @@
 
 using FrameIO.Run;
 
-namespace test_max
+namespace test_oneof_before
 {
     public static class FioNetRunner
     {
@@ -10,10 +10,15 @@ namespace test_max
         {
             var config = string.Concat(
 
-                "H4sIAAAAAAAEAKvm5VJQUEorSsxNNVSyUqgGcYECwanpual5JT6ZxSUIUYi4",
-                "I7IAQmlIZUEqUAbE9cwrSU1PLVLSQVaVmZ6XmgJUkJaYU5yKLOOUWeKcX5oH",
-                "ssfYCEWisiTVvygFaBDI2NzEnBwUE13zkvNTwEYqBRRl5maWZJaloigIS8wp",
-                "BTnJACZWC2GAKSBRCwDSvFVo/AAAAA==");
+                "H4sIAAAAAAAEAO1WTWuDQBC9B/IfxHMONYVSerONDYG2hkYKPQUTJ7LgrmLW",
+                "QAj+97p+7a6JtSVNwXa96M48Z+e9HeUdhgNN0x9jF8NyAcTT77QDC2XBBfgY",
+                "CH1CW8qjRdwVAxzq7CPIMmw5IxR8iPWRiEI+AbbDxg22IGbuEX0IE8L2MW6k",
+                "xJ6CHXtZIVYWu0EgVbTIOvTykvo8RhhRtAMJ8OYGCWvpqoqlI5HH6nI8bn+R",
+                "xvoP0JiYjum8z63LUbke/yQXJ7RIglme3Zd5g9/g2knTJmBvpnGYRFLZCUTZ",
+                "V2qT8gUGrpUTcfnrzU83zwBrl2YbGc1Uex8zClgsL7RS8TSa6ZbfR51/MZ+t",
+                "Ey18/dQ5uu30a0TbFHDAp9NQw7qmogYenX51pUfoXIjx/xNCDkhLWSQ+sSdU",
+                "OmNim/w7J9acqoEtdVDzKs0rX9SP5UN+KzQsXdYrrHfKZfXNniiXpVyWclm9",
+                "+Vkrl1UKoVxWP85JuaxCh3Nc1nCQfgCTQfECzxIAAA==");
 
             IORunner.InitialFromGZipBase64(config);
             
