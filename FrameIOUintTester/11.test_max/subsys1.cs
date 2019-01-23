@@ -22,7 +22,7 @@ namespace test_max
         //通道声明
         public FioChannel CH_SEND;
         public FioChannel CH_RECV;
-
+        
         //通道初始化
         public void InitialChannelCH_SEND(ChannelOption ops)
         {

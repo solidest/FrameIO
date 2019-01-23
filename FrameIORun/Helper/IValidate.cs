@@ -146,6 +146,7 @@ namespace FrameIO.Run
             var res = GetCheckResult(buff, value.Parent.Parent.Value<JObject>(), seg.Parent, value);
             var ret = (value.Value<ulong>() == res);
             if (!ret) ErrorInfo = "校验失败";
+            
             return ret;
         }
 

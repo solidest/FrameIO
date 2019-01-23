@@ -47,7 +47,8 @@ namespace FrameIO.Run
                 _b.Append(buffer);
 
             _qq.Unpack(_b);
-            return _qq.GetNextBlockSize();
+            var ret =  _qq.GetNextBlockSize();
+            return ret;
         }
 
         public ISegmentGettor Unpack()

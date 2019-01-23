@@ -63,13 +63,13 @@ namespace FrameIO.Driver
                 
             return up.Unpack();
         }
-        static byte[] buffExtra = new byte[65535];
-        static int buffExtraDataLen= 0;
-        static bool wanttoRecv = true;
+        byte[] buffExtra = new byte[65535];
+        int buffExtraDataLen= 0;
         private byte[] ReadFixedBlock(int len)
         {
             byte[] buff = new byte[len];
             byte[] recvBuf = new byte[len];
+            bool wanttoRecv = true;
 
             int dataLeft = len;
             int start = 0;
@@ -79,10 +79,14 @@ namespace FrameIO.Driver
                 {
                     if (buffExtraDataLen != 0)
                     {
-                        if (buffExtraDataLen > dataLeft)
+                        if (buffExtraDataLen >= dataLeft)
                         {
                             Array.Copy(buffExtra, 0, buff, 0, dataLeft);
-                            Array.Copy(buffExtra, buffExtraDataLen - dataLeft, buffExtra, 0, buffExtraDataLen - dataLeft);
+                            //Array.Copy(buffExtra, buffExtraDataLen - dataLeft, buffExtra, 0, buffExtraDataLen - dataLeft);
+                            for (int i = dataLeft; i < buffExtraDataLen; i++)
+                            {
+                                buffExtra[i - dataLeft] = buffExtra[i];
+                            }
                             buffExtraDataLen = buffExtraDataLen - dataLeft;
                             start += dataLeft;
                             dataLeft -= dataLeft;
@@ -93,10 +97,11 @@ namespace FrameIO.Driver
                             Array.Copy(buffExtra, 0, buff, 0, buffExtraDataLen);
                             start += buffExtraDataLen;
                             dataLeft -= buffExtraDataLen;
-                            if (dataLeft > 0)
-                                wanttoRecv = true;
-                            else
-                                wanttoRecv = false;
+                            //if (dataLeft > 0)
+                            wanttoRecv = true;
+                            //else
+                            //    wanttoRecv = false;
+                            buffExtraDataLen = 0;
                         }
                     }
                     if (wanttoRecv)

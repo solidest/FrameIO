@@ -20,21 +20,21 @@ namespace FrameIO.Driver
         private int ReceiveTimeOut = 5000;
 
 
-        public static Dictionary<string, Socket> clients = new Dictionary<string, Socket>();
-        private  Socket serverTemp = null;
-        private  bool IsRunning = false; 
+        private Socket serverTemp = null;
+        private bool IsRunning = false;
+
         public Socket InitServer(Dictionary<string, object> config)
         {
             if (client == null)
             {
-                if (!config.ContainsKey("serverip") || !config.ContainsKey("port") || !config.ContainsKey("clientip") )
+                if (!config.ContainsKey("serverip") || !config.ContainsKey("port") || !config.ContainsKey("clientip"))
                     throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化TCP Client", "缺少初始化配置参数!");
 
                 listenerIp = "" + config["serverip"];
                 listenerPort = Convert.ToInt32(config["port"]);
                 clientIp = "" + config["clientip"];
 
-                if(config.ContainsKey("waittimeout"))
+                if (config.ContainsKey("waittimeout"))
                     ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
 
                 IPAddress ip = IPAddress.Parse(listenerIp);
@@ -53,12 +53,7 @@ namespace FrameIO.Driver
                     serverTemp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     serverTemp.Bind(serverEPoint);
                     serverTemp.ReceiveTimeout = ReceiveTimeOut;
-                    serverTemp.Listen(1);
-                }
-                foreach(var c in clients)
-                {
-                    if (c.Value.RemoteEndPoint.ToString().Contains(clientIp))
-                        return false;
+                    serverTemp.Listen(5);
                 }
 
                 serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
@@ -74,35 +69,38 @@ namespace FrameIO.Driver
             Socket mySserver = (Socket)ar.AsyncState;
 
             var newClient = mySserver.EndAccept(ar);
-            lock (clients)
-            {
-                clients.Add(newClient.RemoteEndPoint.ToString(), newClient);
-                client = newClient;
-            }
+            System.Diagnostics.Debug.WriteLine(newClient.RemoteEndPoint.ToString());
+            client = newClient;
+
+            serverTemp.BeginAccept(new AsyncCallback(AcceptConnection), serverTemp);
 
         }
         private static int recvlen = 0;
         private static bool running = true;
         public Byte[] BeginReceive(int len)
         {
+            if (null == client || !client.Connected)
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端未连接!");
+
             Byte[] data = new byte[len];
 
             int dataleft = len;
             recvlen = 0;
 
-            var dicclient = clients.ToArray().FirstOrDefault(c => c.Value.RemoteEndPoint.ToString().Contains(clientIp));
+            var dicclient = client;
 
+            
             try
             {
                 while (recvlen < len)
                 {
                     running = true;
-                    dicclient.Value.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
+                    dicclient.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
                     asyncResult =>
                     {
                         lock (this)
                         {
-                            recvlen += dicclient.Value.EndReceive(asyncResult);
+                            recvlen += dicclient.EndReceive(asyncResult);
                             running = false;
                         }
                     }, null);
@@ -132,24 +130,18 @@ namespace FrameIO.Driver
         }
         public void Send(byte[] msg)
         {
-            var client = clients.ToArray().FirstOrDefault(c => c.Value.RemoteEndPoint.ToString() == c.Key);
+            //var client = clients.ToArray().FirstOrDefault(c => c.Value.RemoteEndPoint.ToString() == c.Key);
 
-            client.Value.BeginSend(msg, 0, msg.Length, SocketFlags.None, new AsyncCallback(SendData), client);
+            client.BeginSend(msg, 0, msg.Length, SocketFlags.None, new AsyncCallback(SendData), client);
 
         }
 
         public void CloseServer()
         {
-            foreach (var client in clients)
-            {
-                if (client.Value != null)
-                {
-                    if (client.Value.Connected)
-                    {
-                        client.Value.Close();
-                    }
-                }
-            }
+
+            if (client.Connected)
+                client.Close();
+
 
 
         }
