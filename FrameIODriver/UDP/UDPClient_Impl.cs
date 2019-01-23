@@ -65,6 +65,32 @@ namespace FrameIO.Driver
         }
         byte[] buffExtra = new byte[65535];
         int buffExtraDataLen= 0;
+
+        private byte[] ReadFixedBlock2(int len)
+        {
+            try
+            {
+                while (buffExtraDataLen < len)
+                {
+                    var readData = UDPClient.ReceiveMsg();
+                    Array.Copy(readData, 0, buffExtra, buffExtraDataLen, readData.Length);
+                    buffExtraDataLen += readData.Length;
+                }
+
+                var ret = new byte[len];
+                Array.Copy(ret, buffExtra, len);
+                for (int i = len; i < buffExtraDataLen; i++)
+                    buffExtra[i - len] = buffExtra[i];
+                buffExtraDataLen -= len;
+                return ret;
+            }
+            catch (Exception)
+            {
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "UDP客户端", "接收数据超时!");
+            }
+
+        }
+
         private byte[] ReadFixedBlock(int len)
         {
             byte[] buff = new byte[len];
