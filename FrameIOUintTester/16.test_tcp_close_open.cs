@@ -27,8 +27,8 @@ namespace FrameIOUintTester
             Assert.IsTrue(tester1.CHC.Open());
 
             tester1.CHC.Close();
-            //System.Threading.Thread.Sleep(30000);
-            //tester1.InitialChannelCHC(null);
+            System.Threading.Thread.Sleep(100);
+            tester1.InitialChannelCHC(null);
             Assert.IsTrue(tester1.CHC.Open());
 
             tester.head.Value = 0x55;
