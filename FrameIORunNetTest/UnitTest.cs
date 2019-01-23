@@ -269,8 +269,15 @@ namespace FrameIORunNetTest
             tester1.name2.Value = 2;
             tester1.end1.Value = true;
             tester1.end7.Value = 100;
+            tester1.pro1.Value = 6765;
+            tester1.pro2.Value = 234;
+            tester1.pro3.Value = 78;
+            tester1.age1.Value = 60;
+            tester1.age2.Value = 80;
 
-            tester1.A_Send_Type1();
+
+
+            tester1.A_Send_Type1(frame_test_oneof.Enum_Type.enum_type1);
 
             tester2.A_Recv();
 
@@ -279,7 +286,22 @@ namespace FrameIORunNetTest
             Assert.IsTrue(tester2.name2.Value == 2);
             Assert.IsTrue(tester2.end1.Value == true);
             Assert.IsTrue(tester2.end7.Value == 100);
+            Assert.IsTrue(tester2.pro1.Value == 6765);
+            Assert.IsTrue(tester2.pro2.Value == 234);
+            Assert.IsTrue(tester2.pro3.Value == 78);
 
+            tester1.datetype.Value = 2;
+            tester1.A_Send_Type1(frame_test_oneof.Enum_Type.enum_type2);
+
+            tester2.A_Recv();
+            Assert.IsTrue(tester2.datetype.Value == 2);
+            Assert.IsTrue(tester2.age1.Value == 60);
+            Assert.IsTrue(tester2.age2.Value == 80);
+            Assert.IsTrue(tester2.end1.Value == true);
+            Assert.IsTrue(tester2.end7.Value == 100);
+            Assert.IsTrue(tester2.pro1.Value == 6765);
+            Assert.IsTrue(tester2.pro2.Value == 234);
+            Assert.IsTrue(tester2.pro3.Value == 78);
         }
 
 
