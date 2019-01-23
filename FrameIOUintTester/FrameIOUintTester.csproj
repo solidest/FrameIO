@@ -49,6 +49,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="17.test_oneof_before.cs" />
+    <Compile Include="16.test_tcp_Server_Client.cs" />
     <Compile Include="11.test_max\FioNetObject.cs" />
     <Compile Include="11.test_max\FioNetRunner.cs" />
     <Compile Include="11.test_max\Parameter.cs" />
@@ -140,6 +142,15 @@
     <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
     <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
     <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
+    <Compile Include="16.test_tcp_Server_Client\FioNetObject.cs" />
+    <Compile Include="16.test_tcp_Server_Client\FioNetRunner.cs" />
+    <Compile Include="16.test_tcp_Server_Client\Parameter.cs" />
+    <Compile Include="16.test_tcp_Server_Client\test_tcp_server_client.cs" />
+    <Compile Include="17.test_oneof_before\Enum_Type.cs" />
+    <Compile Include="17.test_oneof_before\FioNetObject.cs" />
+    <Compile Include="17.test_oneof_before\FioNetRunner.cs" />
+    <Compile Include="17.test_oneof_before\Parameter.cs" />
+    <Compile Include="17.test_oneof_before\test_oneof_before.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
