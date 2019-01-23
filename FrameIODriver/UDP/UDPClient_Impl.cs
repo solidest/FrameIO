@@ -57,7 +57,8 @@ namespace FrameIO.Driver
             int len = up.FirstBlockSize;
             while (len != 0)
             {
-                byte[] readDaata = ReadFixedBlock(len);
+                //byte[] readDaata = ReadFixedBlock(len);
+                byte[] readDaata = ReadFixedBlock2(len);
                 len = up.AppendBlock(readDaata);
             }
                 
@@ -78,7 +79,7 @@ namespace FrameIO.Driver
                 }
 
                 var ret = new byte[len];
-                Array.Copy(ret, buffExtra, len);
+                Array.Copy(buffExtra, ret, len);
                 for (int i = len; i < buffExtraDataLen; i++)
                     buffExtra[i - len] = buffExtra[i];
                 buffExtraDataLen -= len;

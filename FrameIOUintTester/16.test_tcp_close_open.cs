@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FrameIOUintTester
 {
     [TestClass]
-    public class Test_tcp_server_client_1
+    public class Test_tcp_close_open
     {
         //test_tcp
         [TestMethod]
@@ -27,7 +27,8 @@ namespace FrameIOUintTester
             Assert.IsTrue(tester1.CHC.Open());
 
             tester1.CHC.Close();
-            tester1.InitialChannelCHC(null);
+            //System.Threading.Thread.Sleep(30000);
+            //tester1.InitialChannelCHC(null);
             Assert.IsTrue(tester1.CHC.Open());
 
             tester.head.Value = 0x55;
@@ -35,11 +36,6 @@ namespace FrameIOUintTester
             tester.end.Value = 0xaa;
 
             tester.A_Send();
-
-            System.Threading.Thread.Sleep(5000);
-            tester.head.Value = 0x55;
-            tester.len.Value = 1;
-            tester.end.Value = 0xaa;
 
             tester1.A_Recv();
 
