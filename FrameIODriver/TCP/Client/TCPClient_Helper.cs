@@ -65,7 +65,7 @@ namespace FrameIO.Driver
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    //System.Diagnostics.Debug.WriteLine(ex.ToString());
                     return false;
                 }
             }

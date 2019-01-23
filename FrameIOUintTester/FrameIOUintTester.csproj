@@ -49,6 +49,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="14.test_tcp_no_localip\FioNetObject.cs" />
+    <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
+    <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
+    <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
+    <Compile Include="16.test_tcp_Server_Client - 复制.cs" />
+    <Compile Include="19.Project.cs" />
+    <Compile Include="18.test_tcp_noconnect.cs" />
     <Compile Include="17.test_oneof_before.cs" />
     <Compile Include="16.test_tcp_Server_Client.cs" />
     <Compile Include="11.test_max\FioNetObject.cs" />
@@ -138,10 +145,6 @@
     <Compile Include="13.test_udp_no_localip\FioNetRunner.cs" />
     <Compile Include="13.test_udp_no_localip\Parameter.cs" />
     <Compile Include="13.test_udp_no_localip\testudpno_localip.cs" />
-    <Compile Include="14.test_tcp_no_localip\FioNetObject.cs" />
-    <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
-    <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
-    <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
     <Compile Include="16.test_tcp_Server_Client\FioNetObject.cs" />
     <Compile Include="16.test_tcp_Server_Client\FioNetRunner.cs" />
     <Compile Include="16.test_tcp_Server_Client\Parameter.cs" />
@@ -151,6 +154,24 @@
     <Compile Include="17.test_oneof_before\FioNetRunner.cs" />
     <Compile Include="17.test_oneof_before\Parameter.cs" />
     <Compile Include="17.test_oneof_before\test_oneof_before.cs" />
+    <Compile Include="18.test_tcp_noconnect\FioNetObject.cs" />
+    <Compile Include="18.test_tcp_noconnect\FioNetRunner.cs" />
+    <Compile Include="18.test_tcp_noconnect\Parameter.cs" />
+    <Compile Include="18.test_tcp_noconnect\test_tcp_noconnect.cs" />
+    <Compile Include="19.Project\CheShouZhuangTai.cs" />
+    <Compile Include="19.Project\FioNetObject.cs" />
+    <Compile Include="19.Project\FioNetRunner.cs" />
+    <Compile Include="19.Project\Parameter.cs" />
+    <Compile Include="19.Project\Subsystem.cs" />
+    <Compile Include="19.Project\Subsystem_DingGaiKaiQiZhuangTai.cs" />
+    <Compile Include="19.Project\Subsystem_GongZuoKongZhi.cs" />
+    <Compile Include="19.Project\Subsystem_GuZhangDaiMa.cs" />
+    <Compile Include="19.Project\Subsystem_KongTiaoGongZuoZhuangTai.cs" />
+    <Compile Include="19.Project\Subsystem_QiDongZhuangTai.cs" />
+    <Compile Include="19.Project\Subsystem_ReceiveCommands.cs" />
+    <Compile Include="19.Project\Subsystem_ShengJiangPingTaiZhuangTai.cs" />
+    <Compile Include="19.Project\Subsystem_TiaoPingZhiTuiZhuangTai.cs" />
+    <Compile Include="19.Project\ZiJianZhuangTai.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />

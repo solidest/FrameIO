@@ -12,7 +12,7 @@ namespace FrameIOUintTester
     {
         //test_tcp
         [TestMethod]
-        public void TCP_c()
+        public void TCP()
         {
             var tester = new test_tcp_server_client.test_tcp_server_client();
             var tester1 = new test_tcp_server_client.test_tcp_server_client();

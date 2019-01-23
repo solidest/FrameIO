@@ -20,20 +20,21 @@ namespace FrameIO.Driver
         private int ReceiveTimeOut = 5000;
 
 
-        private  Socket serverTemp = null;
-        private  bool IsRunning = false; 
+        private Socket serverTemp = null;
+        private bool IsRunning = false;
+
         public Socket InitServer(Dictionary<string, object> config)
         {
             if (client == null)
             {
-                if (!config.ContainsKey("serverip") || !config.ContainsKey("port") || !config.ContainsKey("clientip") )
+                if (!config.ContainsKey("serverip") || !config.ContainsKey("port") || !config.ContainsKey("clientip"))
                     throw new FrameIO.Interface.FrameIOException(Interface.FrameIOErrorType.ChannelErr, "初始化TCP Client", "缺少初始化配置参数!");
 
                 listenerIp = "" + config["serverip"];
                 listenerPort = Convert.ToInt32(config["port"]);
                 clientIp = "" + config["clientip"];
 
-                if(config.ContainsKey("waittimeout"))
+                if (config.ContainsKey("waittimeout"))
                     ReceiveTimeOut = Convert.ToInt32(config["waittimeout"]);
 
                 IPAddress ip = IPAddress.Parse(listenerIp);
@@ -66,7 +67,7 @@ namespace FrameIO.Driver
         private void AcceptConnection(IAsyncResult ar)
         {
             Socket mySserver = (Socket)ar.AsyncState;
-            
+
             var newClient = mySserver.EndAccept(ar);
             System.Diagnostics.Debug.WriteLine(newClient.RemoteEndPoint.ToString());
             client = newClient;
@@ -78,6 +79,9 @@ namespace FrameIO.Driver
         private static bool running = true;
         public Byte[] BeginReceive(int len)
         {
+            if (null == client || !client.Connected)
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端未连接!");
+
             Byte[] data = new byte[len];
 
             int dataleft = len;
@@ -137,6 +141,7 @@ namespace FrameIO.Driver
 
             if (client.Connected)
                 client.Close();
+
 
 
         }
