@@ -14,7 +14,8 @@ namespace FrameIOUintTester
         [TestMethod]
         public void TestIntegerInversion()
         {
-            //输入数据：0x01 0x02 0x55 0xaa
+            //输入数据：0x01 0x02 0x9d 0x80
+            //flo文件中 signed=true 默认是false
             var tester1 = new test_integer_inversion.testIntegerinversion();
 
             tester1.InitialParameter();
