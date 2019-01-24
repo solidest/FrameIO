@@ -38,8 +38,8 @@ namespace FrameIO.Run
             if (o.ContainsKey(ENCODED_TOKEN)) _encoded = Helper.GetEncoded(o);
             if (o.ContainsKey(BYTEORDERT_TOKEN)) _byteorder = Helper.GetByteOrder(o);
             if (o.ContainsKey(VALUE_TOKEN)) _value = Helper.GetExp(o[VALUE_TOKEN]);
-            if (o.ContainsKey(MAXVALUE_TOKEN)) _valid.AddMaxValidate(o);
-            if (o.ContainsKey(MINVALUE_TOKEN)) _valid.AddMinValidate(o);
+            if (o.ContainsKey(MAXVALUE_TOKEN)) _valid.AddMaxValidate(o[MAXVALUE_TOKEN]);
+            if (o.ContainsKey(MINVALUE_TOKEN)) _valid.AddMinValidate(o[MINVALUE_TOKEN]);
         }
 
         #endregion
