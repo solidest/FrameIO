@@ -14,7 +14,7 @@ namespace FrameIOUintTester
         [TestMethod]
         public void TestIntegerInversion()
         {
-            //输入数据：0x01 0x02 0x9d 0x80
+            //输入数据：0x01 0x02 0x9d 0x80（0x9d 0x80是FF62（大端序）的反码）
             //flo文件中 signed=true 默认是false encoded是发送接收前要执行的动作
             var tester1 = new test_integer_inversion.testIntegerinversion();
 
