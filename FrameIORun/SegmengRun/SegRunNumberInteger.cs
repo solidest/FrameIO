@@ -18,6 +18,7 @@ namespace FrameIO.Run
         private IExpRun _value;
         private Validete _valid = new Validete();
         private SegmentCheckValidator _check;
+        
 
 
         public override int BitLen { get => _bitcount; }
@@ -87,17 +88,16 @@ namespace FrameIO.Run
                 v = GetBigOrder(v);
             }
 
-            if (_encoded != EncodedTypeEnum.Primitive)
-            {
-                v = (_encoded == EncodedTypeEnum.Complement ? GetComplement(v) : GetInversion(v));
-            }
-
             if (_signed)
             {
                 //处理负数
                 if((v & ((ulong)1<<(_bitcount-1))) !=0)
                 {
-                    v |= (0xFFFFFFFFFFFFFFFF << _bitcount);  
+                    if (_encoded != EncodedTypeEnum.Primitive)
+                    {
+                        v = (_encoded == EncodedTypeEnum.Complement ? GetComplement(v) : GetInversion(v));
+                    }
+                    v |= ( Helper.FULL << _bitcount);  
                 }
                 return BitConverter.ToInt64(BitConverter.GetBytes(v), 0);
             }
@@ -114,7 +114,7 @@ namespace FrameIO.Run
         {
             if (v >= 0) return (ulong)v;
 
-            var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0) &( 0xFFFFFFFFFFFFFFFF>>(64-_bitcount));
+            var uv = BitConverter.ToUInt64(BitConverter.GetBytes(v), 0) &( Helper.FULL >> (64-_bitcount));
             if (_encoded != EncodedTypeEnum.Primitive) uv = (_encoded == EncodedTypeEnum.Complement ? GetComplement(uv) : GetInversion(uv));
             return uv;
 

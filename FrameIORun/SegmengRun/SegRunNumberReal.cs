@@ -91,7 +91,7 @@ namespace FrameIO.Run
                 v = GetBigOrder(v);
             }
 
-            if (_encoded != EncodedTypeEnum.Primitive)
+            if (_encoded != EncodedTypeEnum.Primitive && (v & ((ulong)1 << (BitLen - 1))) != 0)
             {
                 v = (_encoded == EncodedTypeEnum.Complement ? GetComplement(v) : GetInversion(v));
             }
