@@ -15,7 +15,7 @@ namespace FrameIOUintTester
         public void TestIntegerInversion()
         {
             //输入数据：0x01 0x02 0x9d 0x80
-            //flo文件中 signed=true 默认是false
+            //flo文件中 signed=true 默认是false encoded是发送接收前要执行的动作
             var tester1 = new test_integer_inversion.testIntegerinversion();
 
             tester1.InitialParameter();
