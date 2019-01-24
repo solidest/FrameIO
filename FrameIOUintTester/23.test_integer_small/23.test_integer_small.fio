@@ -1,0 +1,31 @@
+//项目:1.test_calc
+project test_integer_small {
+	//受控对象
+	system testIntegerSmall {
+		byte head;
+		byte len;
+		int end;
+
+		channel CH_COM4 : com {
+			baudrate = 9600;
+			portname = "COM4";
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+		}
+
+		action A_Recv : recv frameSR on CH_COM4 {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD bitcount=8;
+		integer LEN bitcount=8;
+		integer END bitcount=16 byteorder=small;
+	}
+
+}
