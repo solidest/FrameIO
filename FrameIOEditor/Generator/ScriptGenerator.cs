@@ -230,6 +230,7 @@ namespace FrameIO.Main
         protected abstract IList<string> GetSendCode(JProperty seg, SubsysProperty pro);
         protected abstract IList<string> GetRecvCode(JProperty seg, SubsysProperty pro);
         protected abstract string GetRecvSwitchKey(string segFullName);
+        internal abstract string GetBysegValueCode(JProperty node, string bySegName);
 
         //for current work
         private Stack<WhyCode> _workStack;
@@ -289,6 +290,14 @@ namespace FrameIO.Main
                 var pro = pros.Where(p => p.Name == map.SysPropertyName).First();
                 var ret = (ac.IOType == actioniotype.AIO_SEND ? GetSendCode(node, pro) : GetRecvCode(node, pro));
                 codes.AddRange(FormatPreTabs(ret));
+            }
+            else
+            {
+                var bySegName = _jframes.GetSegFullName((JObject)node.Value, true);
+                if (_workParas.Contains(bySegName))
+                {
+                    codes.Add(FormatPreTabs(GetBysegValueCode(node, bySegName)));
+                }
             }
         }
 

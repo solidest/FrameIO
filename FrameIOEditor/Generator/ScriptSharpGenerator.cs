@@ -237,6 +237,13 @@ namespace FrameIO.Main
         }
 
 
+        internal override string GetBysegValueCode(JProperty node, string bySegName)
+        {
+            return string.Format("__v__.SetValue(\"{0}\", (int){1});", bySegName, bySegName.Replace(".", "_"));
+        }
+
+
+
         #endregion
 
         #region --RecvAction-

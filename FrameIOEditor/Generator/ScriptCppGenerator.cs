@@ -244,6 +244,11 @@ namespace FrameIO.Main
             return ret;
         }
 
+        internal override string GetBysegValueCode(JProperty node, string bySegName)
+        {
+            return string.Format("__v__.SetValue(\"{0}\", (int){1});", bySegName, bySegName.Replace(".", "_"));
+        }
+
         #endregion
 
         #region --接收数据--
