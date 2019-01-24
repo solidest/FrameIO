@@ -57,7 +57,7 @@
     <Compile Include="14.test_tcp_no_localip\FioNetRunner.cs" />
     <Compile Include="14.test_tcp_no_localip\Parameter.cs" />
     <Compile Include="14.test_tcp_no_localip\test_tcp.cs" />
-    <Compile Include="16.test_tcp_Server_Client - 复制.cs" />
+    <Compile Include="16.test_tcp_Server_Client.cs" />
     <Compile Include="19.Project_com.cs" />
     <Compile Include="19.Project.cs" />
     <Compile Include="18.test_tcp_noconnect.cs" />
@@ -209,8 +209,14 @@
     <None Include="10.test_subsys\10.test_subsys.fio" />
     <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
     <None Include="11.test_max\11.test_max.fio" />
+    <None Include="12.Tcp_TwoServer\12.test_oneof_Array.fio" />
     <None Include="13.test_udp_no_localip\13.test_udp_no_localip.fio" />
     <None Include="14.test_tcp_no_localip\14.test_tcp_no_localip.fio" />
+    <None Include="16.test_tcp_Server_Client\16.test_tcp_Server_Client.fio" />
+    <None Include="17.test_oneof_before\17.test_oneof_before.fio" />
+    <None Include="18.test_tcp_noconnect\18.test_tcp_noconnect.fio" />
+    <None Include="19.Project\19.Project.fio" />
+    <None Include="19.Project_com\19.Project_Com.fio" />
     <None Include="packages.config" />
     <None Include="readme.md" />
   </ItemGroup>

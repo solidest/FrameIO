@@ -1,0 +1,96 @@
+project test_oneof_before {
+	system test_oneof_before {
+		uint datetype;
+		uint name1;
+		uint name2;
+		uint age1;
+		uint age2;
+		
+		short a;
+		byte b;
+		byte c;
+
+		channel CH_COM3 : com {
+			portname = "COM3";
+			baudrate = 9600;
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+		}
+		channel CH_COM4 : com {
+			portname = "COM4";
+			baudrate = 9600;
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+		}
+
+		action A_Send_Type1 : send Frame_Send on CH_COM3 {
+			Sega:a;
+			Segb:b;
+			Segc:c;
+			DATATYPE : datetype;
+			DAT.enum_type1.NAME1 : name1;
+			DAT.enum_type1.NAME2 : name2;
+			DAT.enum_type2.AGE1 : age1;
+			DAT.enum_type2.AGE2 : age2;
+		}
+		action A_Recv : recv Frame_Recv on CH_COM4 {
+			Sega:a;
+			Segb:b;
+			Segc:c;
+			DATATYPE : datetype;
+			DAT.enum_type1.NAME1 : name1;
+			DAT.enum_type1.NAME2 : name2;
+			DAT.enum_type2.AGE1 : age1;
+			DAT.enum_type2.AGE2 : age2;
+		}
+	}
+
+	//数据帧
+	frame Frame_Send {
+		integer Sega bitcount=16;
+		integer Segb bitcount=8;
+		integer Segc bitcount=8;
+		
+		integer DATATYPE toenum=Enum_Type;
+		block DAT type=oneof(DATATYPE){
+			 enum_type1 : Frame_type1,
+			 enum_type2 : Frame_type2
+		};
+	}
+
+	frame Frame_Recv {
+		integer Sega bitcount=16;
+		integer Segb bitcount=8;
+		integer Segc bitcount=8;
+		
+		integer DATATYPE toenum=Enum_Type;
+		block DAT type=oneof(DATATYPE){
+			 enum_type1 : Frame_type1,
+			 enum_type2 : Frame_type2
+		};
+	}
+
+	frame Frame_type1 {
+		integer NAME1;
+		integer NAME2;
+	}
+
+	frame Frame_type2 {
+		integer AGE1;
+		integer AGE2;
+	}
+
+	frame Frame_Send_Type2 {
+		integer DATATYPE toenum=Enum_Type;
+		integer AGE1;
+		integer AGE2;
+	}
+
+	enum Enum_Type {
+		enum_type1 = 1,
+		enum_type2 = 2
+	}
+
+}

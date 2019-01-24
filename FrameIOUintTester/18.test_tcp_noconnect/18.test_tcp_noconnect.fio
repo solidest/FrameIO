@@ -1,0 +1,38 @@
+//项目:1.test_tcp
+project test_tcp_noconnect {
+	//受控对象
+	system test_tcp_noconnect {
+		uint len;
+		uint end;
+		uint head;
+
+		channel CHS : tcpserver {
+			serverip = "192.168.0.151";
+			port = 8007;
+			clientip = "192.168.0.151";
+		}
+		channel CHC : tcpclient {
+			serverip = "192.168.0.151";
+			port = 8007;
+		}
+
+		action A_Recv : recv frameSR on CHS {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+		action A_Send : send frameSR on CHC {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD;
+		integer LEN;
+		integer END;
+	}
+
+}

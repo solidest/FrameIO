@@ -1,0 +1,202 @@
+//项目:Project
+project Project {
+	system Subsystem {
+		Subsystem_GongZuoKongZhi YiJianTiaoPing;
+		Subsystem_GongZuoKongZhi ZhiDanJiGongZuoKongZhi;
+		ushort GuangXueCangWenDuSheDing;
+		ushort GuangXueCangShiDuSheDing;
+		Subsystem_ReceiveCommands ReceivedCommand;
+		Subsystem_GongZuoKongZhi YiJianTiaoPingFanKui;
+		Subsystem_GongZuoKongZhi ZhiDanJiGongZuoKongZhiFanKui;
+		Subsystem_DingGaiKaiQiZhuangTai DingGaiKaiQiZhuangTai;
+		Subsystem_ShengJiangPingTaiZhuangTai ShengJiangPingTaiZhuangTai;
+		Subsystem_TiaoPingZhiTuiZhuangTai TiaoPingZhiTuiZhuangTai;
+		Subsystem_QiDongZhuangTai HuanKongKaiQiZhuangTai;
+		Subsystem_QiDongZhuangTai ZhiDanJiGongZuoZhuangTai;
+		Subsystem_KongTiaoGongZuoZhuangTai GuangXueCangKongTiaoGongZuoZhuangTai;
+		Subsystem_QiDongZhuangTai JiaReQiGongZuoZhuangTai;
+		Subsystem_QiDongZhuangTai ChuShiQiGongZuoZhuangTai;
+		int Raw_TiaoPingChuanGanQiX;
+		int Raw_TiaoPingChuanGanQiY;
+		int Raw_GuangXueCangNeiWenDu;
+		int Raw_GuangXueCangNeiShiDu;
+		int Raw_CangWaiWenDu;
+		int Raw_CangWaiShiDu;
+		CheShouZhuangTai CheShouZhuangTai;
+		Subsystem_GuZhangDaiMa GuZhangDaiMa;
+		byte BaoJingZhuangTai;
+		ZiJianZhuangTai ZiJianZhuangTai;
+		ushort GuangXueCangWenDuSheDingFanKui;
+		ushort GuangXueCangShiDuSheDingFanKui;
+
+		channel Udp : udp {
+			localip = "127.0.0.1";
+			localport = 10001;
+			remoteip = "127.0.01";
+			remoteport = 10002;
+		}
+
+		action ReceiveFrame : recv Subsystem_ReceiveFrame on Udp {
+			Data.YiJianTiaoPingFanKui.YiJianTiaoPingFanKui : YiJianTiaoPingFanKui;
+			Data.ZhiDanJiGongZuoKongZhiFanKui.ZhiDanJiGongZuoKongZhiFanKui : ZhiDanJiGongZuoKongZhiFanKui;
+			Data.ZhuangTaiShangBao.DingGaiKaiQiZhuangTai : DingGaiKaiQiZhuangTai;
+			Data.ZhuangTaiShangBao.ShengJiangPingTaiZhuangTai : ShengJiangPingTaiZhuangTai;
+			Data.ZhuangTaiShangBao.TiaoPingZhiTuiZhuangTai : TiaoPingZhiTuiZhuangTai;
+			Data.ZhuangTaiShangBao.HuanKongKaiQiZhuangTai : HuanKongKaiQiZhuangTai;
+			Data.ZhuangTaiShangBao.ZhiDanJiGongZuoZhuangTai : ZhiDanJiGongZuoZhuangTai;
+			Data.ZhuangTaiShangBao.GuangXueCangKongTiaoGongZuoZhuangTai : GuangXueCangKongTiaoGongZuoZhuangTai;
+			Data.ZhuangTaiShangBao.JiaReQiGongZuoZhuangTai : JiaReQiGongZuoZhuangTai;
+			Data.ZhuangTaiShangBao.ChuShiQiGongZuoZhuangTai : ChuShiQiGongZuoZhuangTai;
+			Data.ZhuangTaiShangBao.Raw_TiaoPingChuanGanQiX : Raw_TiaoPingChuanGanQiX;
+			Data.ZhuangTaiShangBao.Raw_TiaoPingChuanGanQiY : Raw_TiaoPingChuanGanQiY;
+			Data.ZhuangTaiShangBao.Raw_GuangXueCangNeiWenDu : Raw_GuangXueCangNeiWenDu;
+			Data.ZhuangTaiShangBao.Raw_GuangXueCangNeiShiDu : Raw_GuangXueCangNeiShiDu;
+			Data.ZhuangTaiShangBao.Raw_CangWaiWenDu : Raw_CangWaiWenDu;
+			Data.ZhuangTaiShangBao.Raw_CangWaiShiDu : Raw_CangWaiShiDu;
+			Data.ZhuangTaiShangBao.CheShouZhuangTai : CheShouZhuangTai;
+			Data.ZhuangTaiShangBao.GuZhangDaiMa : GuZhangDaiMa;
+			Data.ZhuangTaiShangBao.BaoJingZhuangTai : BaoJingZhuangTai;
+			Data.ZhuangTaiShangBao.ZiJianZhuangTai : ZiJianZhuangTai;
+			Data.GuangXueCangWenDuSheDingFanKui.GuangXueCangWenDuSheDingFanKui : GuangXueCangWenDuSheDingFanKui;
+			Data.GuangXueCangShiDuSheDingFanKui.GuangXueCangShiDuSheDingFanKui : GuangXueCangShiDuSheDingFanKui;
+			ReceivedCommand : ReceivedCommand;
+		}
+	}
+
+	frame Subsystem_ReceiveFrame {
+		integer Header bitcount=16 match=23120;
+		//integer Header bitcount=16;
+		integer ReceivedCommand bitcount=8 toenum=Subsystem_ReceiveCommands;
+		integer PacketLength bitcount=8;
+		block Data type=oneof(ReceivedCommand){
+			 YiJianTiaoPingFanKui : Subsystem_ReceiveYiJianTiaoPingFanKui,
+			 ZhiDanJiGongZuoKongZhiFanKui : Subsystem_ReceiveZhiDanJiGongZuoKongZhiFanKui,
+			 ZhuangTaiShangBao : Subsystem_ReceiveZhuangTaiShangBao,
+			 GuangXueCangWenDuSheDingFanKui : Subsystem_ReceiveGuangXueCangWenDuSheDingFanKui,
+			 GuangXueCangShiDuSheDingFanKui : Subsystem_ReceiveGuangXueCangShiDuSheDingFanKui
+		};
+		integer Checksum bitcount=16 check=sum8;
+		//integer Checksum bitcount=16;
+	}
+
+	frame Subsystem_ReceiveYiJianTiaoPingFanKui {
+		integer YiJianTiaoPingFanKui bitcount=8;
+		integer Reserved bitcount=8;
+	}
+
+	frame Subsystem_ReceiveZhiDanJiGongZuoKongZhiFanKui {
+		integer ZhiDanJiGongZuoKongZhiFanKui bitcount=8;
+		integer Reserved bitcount=8;
+	}
+
+	frame Subsystem_ReceiveZhuangTaiShangBao {
+		integer DingGaiKaiQiZhuangTai bitcount=8;
+		integer ShengJiangPingTaiZhuangTai bitcount=8;
+		integer TiaoPingZhiTuiZhuangTai bitcount=8;
+		integer HuanKongKaiQiZhuangTai bitcount=8;
+		integer ZhiDanJiGongZuoZhuangTai bitcount=8;
+		integer GuangXueCangKongTiaoGongZuoZhuangTai bitcount=8;
+		integer JiaReQiGongZuoZhuangTai bitcount=8;
+		integer ChuShiQiGongZuoZhuangTai bitcount=8;
+		integer Raw_TiaoPingChuanGanQiX signed=true;
+		integer Raw_TiaoPingChuanGanQiY signed=true;
+		integer Raw_GuangXueCangNeiWenDu signed=true;
+		integer Raw_GuangXueCangNeiShiDu signed=true;
+		integer Raw_CangWaiWenDu signed=true;
+		integer Raw_CangWaiShiDu signed=true;
+		integer CheShouZhuangTai bitcount=8;
+		integer GuZhangDaiMa bitcount=8;
+		integer BaoJingZhuangTai bitcount=8;
+		integer ZiJianZhuangTai bitcount=8;
+		integer Reserved1 bitcount=8;
+		integer Reserved2 bitcount=8;
+		integer Reserved3 bitcount=8;
+		integer Reserved4 bitcount=8;
+		integer Reserved5 bitcount=8;
+		integer Reserved6 bitcount=8;
+		integer Reserved7 bitcount=8;
+		integer Reserved8 bitcount=8;
+	}
+
+	frame Subsystem_ReceiveGuangXueCangWenDuSheDingFanKui {
+		integer GuangXueCangWenDuSheDingFanKui bitcount=16;
+		integer Reserved bitcount=8;
+	}
+
+	frame Subsystem_ReceiveGuangXueCangShiDuSheDingFanKui {
+		integer GuangXueCangShiDuSheDingFanKui bitcount=16;
+		integer Reserved bitcount=8;
+	}
+
+	enum CheShouZhuangTai {
+		WanChengCheShou = 0,
+		ZhengZaiCheShou = 1,
+		CheShouShiBai = 2
+	}
+
+	enum ZiJianZhuangTai {
+		ZhengZaiZiJian = 1,
+		WanChengZiJian = 2,
+		ZiJianShiBai = 3
+	}
+
+	enum Subsystem_ReceiveCommands {
+		YiJianTiaoPingFanKui = 2,
+		ZhiDanJiGongZuoKongZhiFanKui = 4,
+		ZhuangTaiShangBao = 6,
+		GuangXueCangWenDuSheDingFanKui = 10,
+		GuangXueCangShiDuSheDingFanKui = 12
+	}
+
+	enum Subsystem_DingGaiKaiQiZhuangTai {
+		KaiDaoWei = 1,
+		GuanDaoWei = 2,
+		KaiQiZhong = 3,
+		GuanBiZhong = 4,
+		TingZhiZhong = 5
+	}
+
+	enum Subsystem_ShengJiangPingTaiZhuangTai {
+		ShengDaoWei = 1,
+		JiangDaoWei = 2,
+		ShangShengZhong = 3,
+		XiaJiangZhong = 4,
+		TingZhiZhong = 5
+	}
+
+	enum Subsystem_TiaoPingZhiTuiZhuangTai {
+		ShouDaoWei = 1,
+		JiangDaoWei = 2,
+		ShangShengZhong = 3,
+		XiaJiangZhong = 4,
+		YiTiaoPing = 5,
+		TingZhiZhong = 6
+	}
+
+	enum Subsystem_GongZuoKongZhi {
+		KaiQi = 1,
+		GuanBi = 2
+	}
+
+	enum Subsystem_QiDongZhuangTai {
+		YiQiDong = 1,
+		YiGuanBi = 2
+	}
+
+	enum Subsystem_KongTiaoGongZuoZhuangTai {
+		JiaReYiKaiQi = 1,
+		ZhiLengYiKaiQi = 2,
+		YiGuanBi = 3
+	}
+
+	enum Subsystem_GuZhangDaiMa {
+		None = 0,
+		DingGaiGuZhang = 1,
+		ShengJiangGuZhang = 2,
+		KongTiaoGuZhang = 3,
+		JiaReGuZhang = 4,
+		ChuShiGuZhang = 5,
+		ZhiDanGuZhang = 6
+	}
+
+}
