@@ -53,6 +53,7 @@
     <Compile Include="01.test_tcp\FioNetRunner.cs" />
     <Compile Include="01.test_tcp\Parameter.cs" />
     <Compile Include="01.test_tcp\test_tcp.cs" />
+    <Compile Include="33.test_udp_10473.cs" />
     <Compile Include="32.test_tcp_10893.cs" />
     <Compile Include="31.test_tcp_match.cs" />
     <Compile Include="30.test_tcp_client_repeate_connectServer.cs" />
@@ -242,6 +243,10 @@
     <Compile Include="32.test_tcp_10893\FioNetRunner.cs" />
     <Compile Include="32.test_tcp_10893\Parameter.cs" />
     <Compile Include="32.test_tcp_10893\testtcp1000.cs" />
+    <Compile Include="33.test_udp_10473\FioNetObject.cs" />
+    <Compile Include="33.test_udp_10473\FioNetRunner.cs" />
+    <Compile Include="33.test_udp_10473\Parameter.cs" />
+    <Compile Include="33.test_udp_10473\testtcp10473.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />

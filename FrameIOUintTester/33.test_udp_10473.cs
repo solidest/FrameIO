@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 namespace FrameIOUintTester
 {
     [TestClass]
-    public class Test_tcp_10473
+    public class Test_udp_10473
     {
         [TestMethod]
-        public void TCP_tcp_1000()
+        public void TCP_tcp_10473()
         {
             //调试助手持续发送数据情况下 任务管理器里中断进程 
-            var tester = new test_tcp_1000.testtcp1000();
+            var tester = new test_udp_10473.testtcp10473();
 
             tester.InitialParameter();
 
-            tester.InitialChannelCHS(null);
+            tester.InitialChannelCH_UDP(null);
 
-            Assert.IsTrue(tester.CHS.Open());
+            Assert.IsTrue(tester.CH_UDP.Open());
             int loop = 1;
-            while (loop>0)
+            while (loop > 0)
             {
                 loop--;
                 System.Threading.Thread.Sleep(20);

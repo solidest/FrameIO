@@ -25,7 +25,7 @@ namespace FrameIOUintTester
             while (true)
             {
                 System.Threading.Thread.Sleep(20);
-                Exception ex;
+                FrameIO.Interface.FrameIOException ex;
                 try
                 {
                     tester.A_Recv();
@@ -34,8 +34,8 @@ namespace FrameIOUintTester
                 }
                 catch (Exception e)
                 {
-                    ex = e;
-                    System.Diagnostics.Debug.WriteLine("接收异常，停止接收！");
+                    ex = (FrameIO.Interface.FrameIOException)e;
+                    Assert.AreEqual(ex.ErrInfo, "客户端连接已断开!");
                     return;
                 }
             }
@@ -51,11 +51,12 @@ namespace FrameIOUintTester
             tester.InitialChannelCHS(null);
 
             Assert.IsTrue(tester.CHS.Open());
-
-            while (true)
+            int loop = 2;
+            while (loop>0)
             {
+                loop--;
                 System.Threading.Thread.Sleep(20);
-                Exception ex;
+                FrameIO.Interface.FrameIOException ex;
                 try
                 {
                     tester.A_Recv();
@@ -65,6 +66,9 @@ namespace FrameIOUintTester
                 }
                 catch (Exception e)//断开客户端
                 {
+                    ex = (FrameIO.Interface.FrameIOException)e;
+                    Assert.AreEqual(ex.ErrInfo, "客户端连接已断开!");
+                    System.Threading.Thread.Sleep(100);
                     tester.A_Recv();
                     Assert.IsTrue(tester.head.Value == 1);
                     tester.head.Value = 0;
