@@ -235,6 +235,7 @@ namespace FrameIO.Main
         //for current work
         private Stack<WhyCode> _workStack;
         private List<string> _workParas;
+        private List<JProperty> _noMapSegs;
 
         private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
@@ -255,6 +256,7 @@ namespace FrameIO.Main
         {
             _workParas = new List<string>();
             _workStack = new Stack<WhyCode>();
+            _noMapSegs = new List<JProperty>();
 
             var codes = new List<string>();
 
@@ -268,7 +270,16 @@ namespace FrameIO.Main
             codes.AddRange(GetUserScript(ac.EndCodes));
             Debug.Assert(_workStack.Count == 0);
 
- 
+            //对oneof的byseg赋值
+            foreach (var item in _noMapSegs)
+            {
+                var bySegName = _jframes.GetSegFullName((JObject)item.Value, true);
+                if (_workParas.Contains(bySegName))
+                {
+                    codes.Insert(0,FormatPreTabs(GetBysegValueCode(item, bySegName)));
+                }
+            }
+
             //后生成完整函数
             var dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
             codes.InsertRange(0, dec);
@@ -277,6 +288,7 @@ namespace FrameIO.Main
 
             _workStack = null;
             _workParas = null;
+            _noMapSegs = null;
             return codes;
 
         }
@@ -293,11 +305,7 @@ namespace FrameIO.Main
             }
             else
             {
-                var bySegName = _jframes.GetSegFullName((JObject)node.Value, true);
-                if (_workParas.Contains(bySegName))
-                {
-                    codes.Add(FormatPreTabs(GetBysegValueCode(node, bySegName)));
-                }
+                _noMapSegs.Add(node);
             }
         }
 
