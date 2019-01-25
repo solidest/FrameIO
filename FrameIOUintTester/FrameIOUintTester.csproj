@@ -53,6 +53,7 @@
     <Compile Include="01.test_tcp\FioNetRunner.cs" />
     <Compile Include="01.test_tcp\Parameter.cs" />
     <Compile Include="01.test_tcp\test_tcp.cs" />
+    <Compile Include="30.test_tcp_client_repeate_connectServer.cs" />
     <Compile Include="22.test_integer_big\FioNetObject.cs" />
     <Compile Include="22.test_integer_big\FioNetRunner.cs" />
     <Compile Include="22.test_integer_big\Parameter.cs" />
@@ -227,6 +228,10 @@
     <Compile Include="25.test_integer_inversion\FioNetRunner.cs" />
     <Compile Include="25.test_integer_inversion\Parameter.cs" />
     <Compile Include="25.test_integer_inversion\testIntegerinversion.cs" />
+    <Compile Include="30.test_tcp_client_repeate_connectServer\FioNetObject.cs" />
+    <Compile Include="30.test_tcp_client_repeate_connectServer\FioNetRunner.cs" />
+    <Compile Include="30.test_tcp_client_repeate_connectServer\Parameter.cs" />
+    <Compile Include="30.test_tcp_client_repeate_connectServer\testtcpclientrepeateconnectServer.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
