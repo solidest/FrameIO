@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FrameIOUintTester
 {
     [TestClass]
-    public class Test_tcp_1000
+    public class Test_tcp_10473
     {
         [TestMethod]
         public void TCP_tcp_1000()
