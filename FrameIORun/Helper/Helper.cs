@@ -9,6 +9,8 @@ namespace FrameIO.Run
 {
     internal class Helper
     {
+        public const ulong FULL = 0xFFFFFFFFFFFFFFFF;
+
         static internal IExpRun GetExp(JToken t)
         {
             if (t == null) return null;

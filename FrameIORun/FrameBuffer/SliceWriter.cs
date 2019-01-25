@@ -35,7 +35,7 @@ namespace FrameIO.Run
         {
             get
             {
-                return (_v & (0xFFFFFFFFFFFFFFFF>>(64 - BitLen)));
+                return (_v & (Helper.FULL>>(64 - BitLen)));
             }
         }
 

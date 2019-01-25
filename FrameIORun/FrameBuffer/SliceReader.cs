@@ -44,11 +44,11 @@ namespace FrameIO.Run
                 for (int i = _bytePos, ii = 0; i <= (newPos==_cach.Length ? newPos-1:newPos); i++, ii++)
                     newb[ii] = _cach[i];
                 
-                ret = (BitConverter.ToUInt64(newb, 0) >> _bitOdd) & (0xFFFFFFFFFFFFFFFF >> (64 - bitLen));
+                ret = (BitConverter.ToUInt64(newb, 0) >> _bitOdd) & (Helper.FULL >> (64 - bitLen));
             }
             else
             {
-                ret = (BitConverter.ToUInt64(_cach, _bytePos) >> _bitOdd) & (0xFFFFFFFFFFFFFFFF >> (64 - bitLen));
+                ret = (BitConverter.ToUInt64(_cach, _bytePos) >> _bitOdd) & (Helper.FULL >> (64 - bitLen));
             }
 
             _bytePos = newPos;

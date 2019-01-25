@@ -230,10 +230,12 @@ namespace FrameIO.Main
         protected abstract IList<string> GetSendCode(JProperty seg, SubsysProperty pro);
         protected abstract IList<string> GetRecvCode(JProperty seg, SubsysProperty pro);
         protected abstract string GetRecvSwitchKey(string segFullName);
+        internal abstract string GetBysegValueCode(JProperty node, string bySegName);
 
         //for current work
         private Stack<WhyCode> _workStack;
         private List<string> _workParas;
+        private List<JProperty> _noMapSegs;
 
         private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
@@ -254,6 +256,7 @@ namespace FrameIO.Main
         {
             _workParas = new List<string>();
             _workStack = new Stack<WhyCode>();
+            _noMapSegs = new List<JProperty>();
 
             var codes = new List<string>();
 
@@ -267,7 +270,16 @@ namespace FrameIO.Main
             codes.AddRange(GetUserScript(ac.EndCodes));
             Debug.Assert(_workStack.Count == 0);
 
- 
+            //对oneof的byseg赋值
+            foreach (var item in _noMapSegs)
+            {
+                var bySegName = _jframes.GetSegFullName((JObject)item.Value, true);
+                if (_workParas.Contains(bySegName))
+                {
+                    codes.Insert(0,FormatPreTabs(GetBysegValueCode(item, bySegName)));
+                }
+            }
+
             //后生成完整函数
             var dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
             codes.InsertRange(0, dec);
@@ -276,6 +288,7 @@ namespace FrameIO.Main
 
             _workStack = null;
             _workParas = null;
+            _noMapSegs = null;
             return codes;
 
         }
@@ -289,6 +302,10 @@ namespace FrameIO.Main
                 var pro = pros.Where(p => p.Name == map.SysPropertyName).First();
                 var ret = (ac.IOType == actioniotype.AIO_SEND ? GetSendCode(node, pro) : GetRecvCode(node, pro));
                 codes.AddRange(FormatPreTabs(ret));
+            }
+            else
+            {
+                _noMapSegs.Add(node);
             }
         }
 

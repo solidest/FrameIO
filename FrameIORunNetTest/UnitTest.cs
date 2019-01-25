@@ -290,7 +290,6 @@ namespace FrameIORunNetTest
             Assert.IsTrue(tester2.pro2.Value == 234);
             Assert.IsTrue(tester2.pro3.Value == 78);
 
-            tester1.datetype.Value = 2;
             tester1.A_Send_Type1(frame_test_oneof.Enum_Type.enum_type2);
 
             tester2.A_Recv();
