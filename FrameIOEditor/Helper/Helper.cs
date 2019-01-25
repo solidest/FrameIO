@@ -9,25 +9,27 @@ namespace FrameIO.Main
 {
     public static class Helper
     {
-        private static byte[] String2HexValue(string mHex)
+
+
+        //转大端序
+        private static byte[] RevOrder(byte[] data)
         {
-            mHex = Regex.Replace(mHex, "[^0-9A-Fa-f]", "");
-            if (mHex.Length % 2 != 0)
-                mHex = mHex.Remove(mHex.Length - 1, 1);
-            Debug.Assert(mHex.Length > 0);
-            byte[] vBytes = new byte[mHex.Length / 2];
-            if (vBytes.Length < 8) vBytes = new byte[8];
-            for (int i = 0; i < mHex.Length; i += 2)
-                if (!byte.TryParse(mHex.Substring(i, 2), NumberStyles.HexNumber, null, out vBytes[i / 2]))
-                    vBytes[i / 2] = 0;
-            return vBytes;
+            var newv = new byte[data.Length];
+
+            var oldi = data.Length;
+            for (int i = 0; i < data.Length; i++)
+            {
+                newv[i] = data[oldi - 1];
+                oldi -= 1;
+            }
+            return newv;
         }
 
         public static long ToLong(string str)
         {
             if (str.StartsWith("0x") || str.StartsWith("0X"))
             {
-                return BitConverter.ToInt64(String2HexValue(str.Substring(2)), 0);
+                return Convert.ToInt64(str, 16);
             }
 
             var ret= Convert.ToInt64(str);
@@ -38,7 +40,7 @@ namespace FrameIO.Main
         {
             if (str.StartsWith("0x") || str.StartsWith("0X"))
             {
-                var ret = BitConverter.ToUInt64(String2HexValue(str.Substring(2)), 0);
+                var ret = Convert.ToUInt64(str, 16); 
                 return ret;
             }
 

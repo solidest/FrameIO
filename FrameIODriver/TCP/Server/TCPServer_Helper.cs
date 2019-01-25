@@ -95,7 +95,7 @@ namespace FrameIO.Driver
                 }
                 catch (Exception)
                 {
-                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "接收数据超时!");
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", len.ToString());
                 }
 
                 if (irecv == 0)

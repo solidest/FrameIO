@@ -53,6 +53,8 @@
     <Compile Include="01.test_tcp\FioNetRunner.cs" />
     <Compile Include="01.test_tcp\Parameter.cs" />
     <Compile Include="01.test_tcp\test_tcp.cs" />
+    <Compile Include="32.test_tcp_10893.cs" />
+    <Compile Include="31.test_tcp_match.cs" />
     <Compile Include="30.test_tcp_client_repeate_connectServer.cs" />
     <Compile Include="22.test_integer_big\FioNetObject.cs" />
     <Compile Include="22.test_integer_big\FioNetRunner.cs" />
@@ -232,6 +234,14 @@
     <Compile Include="30.test_tcp_client_repeate_connectServer\FioNetRunner.cs" />
     <Compile Include="30.test_tcp_client_repeate_connectServer\Parameter.cs" />
     <Compile Include="30.test_tcp_client_repeate_connectServer\testtcpclientrepeateconnectServer.cs" />
+    <Compile Include="31.test_tcp_match\FioNetObject.cs" />
+    <Compile Include="31.test_tcp_match\FioNetRunner.cs" />
+    <Compile Include="31.test_tcp_match\Parameter.cs" />
+    <Compile Include="31.test_tcp_match\testtcpmatch.cs" />
+    <Compile Include="32.test_tcp_10893\FioNetObject.cs" />
+    <Compile Include="32.test_tcp_10893\FioNetRunner.cs" />
+    <Compile Include="32.test_tcp_10893\Parameter.cs" />
+    <Compile Include="32.test_tcp_10893\testtcp1000.cs" />
     <Compile Include="Test_PowerSupplyManager.cs" />
     <Compile Include="ChannelTester.cs" />
     <Compile Include="UnitTest1.cs" />
