@@ -152,7 +152,7 @@ namespace FrameIO.Run
         }
 
 
-        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunBase seg)
+        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunNumber seg)
         {
             int i1 = 0;
             int i2 = 0;
@@ -166,7 +166,7 @@ namespace FrameIO.Run
 
             i2 = GetFirstPos(buff, vParent, seg.Parent[endsegName]) + (seg.Parent[endsegName].GetBitLen(vParent) / 8);
 
-            return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), i1, i2);
+            return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), i1, i2)  & (Helper.FULL >> (64 - seg.BitLen));
 
         }
 
