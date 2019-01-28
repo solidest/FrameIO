@@ -447,10 +447,11 @@ namespace FrameIORunNetTest
             tester1.PROPERTYc.Value = 9;
             tester1.PROPERTYd.Value = 19.563;
             tester1.PROPERTYe[0].Value  = true;
+            tester1.property_f.aa.Value = 123567;
 
             tester1.SendData();
             tester2.RecvData();
-            Assert.IsTrue(tester2.check_value.Value == 168);
+            Assert.IsTrue(tester2.check_value.Value == 146);
 
         }
 

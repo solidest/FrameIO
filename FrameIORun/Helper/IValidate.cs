@@ -144,7 +144,7 @@ namespace FrameIO.Run
 
         public bool Valid(IFrameReadBuffer buff, SegRunNumber seg, JToken value)
         {
-            var res = GetCheckResult(buff, value.Parent.Parent.Value<JObject>(), seg.Parent, seg);
+            var res = GetCheckResult(buff, value.Parent.Parent.Value<JObject>(), seg);
             var ret = (value.Value<ulong>() == res);
             if (!ret) ErrorInfo = "校验失败";
             
@@ -152,7 +152,7 @@ namespace FrameIO.Run
         }
 
 
-        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunContainer segParent, SegRunBase seg)
+        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunBase seg)
         {
             int i1 = 0;
             int i2 = 0;
@@ -164,7 +164,7 @@ namespace FrameIO.Run
             var endsegName = _end_seg;
             if (endsegName == null) endsegName = seg.Previous.Name;
 
-            i2 = GetFirstPos(buff, vParent, seg.Parent[endsegName]) + (segParent[endsegName].GetBitLen(vParent) / 8);
+            i2 = GetFirstPos(buff, vParent, seg.Parent[endsegName]) + (seg.Parent[endsegName].GetBitLen(vParent) / 8);
 
             return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), i1, i2);
 
