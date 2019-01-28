@@ -143,58 +143,58 @@ namespace FrameIO.Run
 
         public bool Valid(IFrameReadBuffer buff, SegRunNumber seg, JToken value)
         {
-            var res = GetCheckResult(buff, value.Parent.Parent.Value<JObject>(), seg.Parent, value);
+            var res = GetCheckResult(buff, value.Parent.Parent.Value<JObject>(), seg.Parent, seg);
             var ret = (value.Value<ulong>() == res);
             if (!ret) ErrorInfo = "校验失败";
             
             return ret;
         }
 
-        public ulong GetCheckResult(IFrameReadBuffer buff, JObject vParent, SegRunContainer segParent, JToken theValue)
+        //public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunContainer segParent, JToken theValue)
+        //{
+        //    int i1 = 0;
+        //    int i2 = 0;
+
+        //    if(_begin_seg != null)
+        //    {
+        //        var first = vParent[_begin_seg];
+        //        while (first.Type == JTokenType.Object && first.First != null)
+        //            first = ((JProperty)first.First).Value;
+        //        i1 = buff.GetBytePos(first.Parent);
+        //    }
+
+        //    if(_end_seg!=null)
+        //    {
+        //        var end = vParent[_end_seg];
+        //        while (end.Type == JTokenType.Object && end.Last != null)
+        //            end = ((JProperty)end.Last).Value;
+        //        i2 = buff.GetBytePos(end.Parent) + (segParent[_end_seg].GetBitLen(vParent)/8);
+        //    }
+        //    else
+        //    {
+        //        i2 = buff.GetBytePos(theValue.Parent);
+        //    }
+
+
+        //    return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), i1, i2);
+
+        //}
+
+        public ulong GetCheckResult(IFrameBuffer buff, JObject vParent, SegRunContainer segParent, SegRunBase seg)
         {
             int i1 = 0;
             int i2 = 0;
-            
-            if(_begin_seg != null)
+            if (_begin_seg != null)
             {
                 var first = vParent[_begin_seg];
                 while (first.Type == JTokenType.Object && first.First != null)
                     first = ((JProperty)first.First).Value;
                 i1 = buff.GetBytePos(first.Parent);
             }
-            
-            if(_end_seg!=null)
-            {
-                var end = vParent[_end_seg];
-                while (end.Type == JTokenType.Object && end.Last != null)
-                    end = ((JProperty)end.Last).Value;
-                i2 = buff.GetBytePos(end.Parent) + (segParent[_end_seg].GetBitLen(vParent)/8);
-            }
-            else
-            {
-                i2 = buff.GetBytePos(theValue.Parent);
-            }
-
-
-            return CRCHelper.GetCheckValue(_checktype, buff.GetBuffer(), i1, i2);
-
-        }
-
-        public ulong GetCheckResult(IFrameWriteBuffer buff, JObject vParent, SegRunContainer segParent, SegRunBase seg)
-        {
-            int i1 = 0;
-            int i2 = 0;
-            if(_begin_seg != null)
-            {
-                var first = vParent[_begin_seg];
-                while (first.Type== JTokenType.Object && first.First != null) 
-                    first = ((JProperty)first.First).Value;
-                i1 = buff.GetBytePos(first.Parent);
-            }
 
             JToken end = null;
             var endseg = _end_seg;
-            if(_end_seg != null)
+            if (_end_seg != null)
                 end = vParent[_end_seg];
             else
             {
