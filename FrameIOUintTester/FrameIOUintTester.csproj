@@ -61,8 +61,7 @@
     <Compile Include="09.test_crc_sum8\FioNetRunner.cs" />
     <Compile Include="09.test_crc_sum8\Parameter.cs" />
     <Compile Include="09.test_crc_sum8\test_crc_sum8.cs" />
-    <Compile Include="09.test_crc_sum8_oneof_inMainProtocol.cs" />
-    <Compile Include="09.test_crc_sum8_oneof.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array.cs" />
     <Compile Include="09.test_crc_sum8_oneof\enum_end.cs" />
     <Compile Include="09.test_crc_sum8_oneof\FioNetObject.cs" />
     <Compile Include="09.test_crc_sum8_oneof\FioNetRunner.cs" />
@@ -70,6 +69,15 @@
     <Compile Include="09.test_crc_sum8_oneof\frame_two.cs" />
     <Compile Include="09.test_crc_sum8_oneof\Parameter.cs" />
     <Compile Include="09.test_crc_sum8_oneof\test_crc_sum8_oneof.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\enum_end.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\FioNetObject.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\FioNetRunner.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\frame_one.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\frame_two.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\Parameter.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_array\test_crc_sum8_oneof_array.cs" />
+    <Compile Include="09.test_crc_sum8_oneof_inMainProtocol.cs" />
+    <Compile Include="09.test_crc_sum8_oneof.cs" />
     <Compile Include="09.test_crc_sum8_oneof_inMainProtocol\enum_end.cs" />
     <Compile Include="09.test_crc_sum8_oneof_inMainProtocol\FioNetObject.cs" />
     <Compile Include="09.test_crc_sum8_oneof_inMainProtocol\FioNetRunner.cs" />

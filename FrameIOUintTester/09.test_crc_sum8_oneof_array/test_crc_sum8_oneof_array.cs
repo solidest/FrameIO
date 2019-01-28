@@ -5,9 +5,9 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System;
 
-namespace test_crc_sum8_oneof
+namespace test_crc_sum8_oneof_array
 {
-    public partial class test_crc_sum8_oneof
+    public partial class test_crc_sum8_oneof_array
     {
 
         //属性声明
