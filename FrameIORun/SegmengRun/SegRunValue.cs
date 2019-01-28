@@ -41,10 +41,11 @@ namespace FrameIO.Run
                 return false;
             }
 
+
             if (IsArray)
             {
                 repeated = ArrayLen.GetInt(ctx, this);
-                var mypc = new JArray();
+                var mypc = (theValue == null? new JArray() : (JArray)theValue);
                 ctx.Add(Name, mypc);
                 pc = mypc;
             }
