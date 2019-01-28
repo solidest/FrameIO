@@ -91,6 +91,9 @@
     <Compile Include="..\..\FrameIOTest\frame_test_bytesizeof_cs\SYS2.cs">
       <Link>FrameBytesizeof\SYS2.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\ffff.cs">
+      <Link>FrameCrc\ffff.cs</Link>
+    </Compile>
     <Compile Include="..\..\FrameIOTest\frame_test_crc_cs\FioNetObject.cs">
       <Link>FrameCrc\FioNetObject.cs</Link>
     </Compile>

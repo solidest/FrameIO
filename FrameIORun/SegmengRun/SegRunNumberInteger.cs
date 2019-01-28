@@ -145,7 +145,7 @@ namespace FrameIO.Run
             }
             if (_check != null)
             {
-                return new JValue(_check.GetCheckResult(buff, parent, Parent, this));
+                return new JValue(_check.GetCheckResult(buff, parent, this));
             }
             else if (_value != null)
             {
