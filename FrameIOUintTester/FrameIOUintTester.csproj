@@ -294,6 +294,7 @@
     <None Include="08.test_calc\8.test_caculate.fio" />
     <None Include="09.test_crc_sum16_false\9.test_crc_sum16_false.fio" />
     <None Include="09.test_crc_sum8\9.test_crc_sum8.fio" />
+    <None Include="09.test_crc_sum8_oneof\9.test_crc_sum8_oneof.fio" />
     <None Include="09.test_crc_sum8_range\9.test_crc_sum8_range.fio" />
     <None Include="10.test_subsys\10.test_subsys.fio" />
     <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />

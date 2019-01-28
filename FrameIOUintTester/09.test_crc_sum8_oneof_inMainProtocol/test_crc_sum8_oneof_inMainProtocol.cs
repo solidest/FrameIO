@@ -89,6 +89,7 @@ namespace test_crc_sum8_oneof_inMainProtocol
                     break;
                 }
             }
+            __v__.GetValue("CheckinMain", checkinMain);
         }
 
     }
