@@ -18,62 +18,7 @@ namespace FrameIO.Run
         SegRunBase Last { get; set; }
     }
 
-    //internal interface ISegRun
-    //{
 
-    //    #region --For Initial--
-
-
-    //    //父级容器
-    //    SegRunContainer Parent { get; }
-
-    //    //下一个兄弟
-    //    ISegRun Next { get; }
-
-    //    //上一个兄弟
-    //    ISegRun Previous { get; }
-
-    //    //第一个子字段
-    //    ISegRun First { get; }
-
-    //    //最后一个子字段
-    //    ISegRun Last { get; }
-
-    //    //根数据帧
-    //    SegRunFrame Root { get;  }
-
-
-    //    #endregion
-
-    //    #region --For Pack--
-
-    //    //打包
-    //    ISegRun Pack(IFrameWriteBuffer buff, JObject parent);
-
-
-    //    //取位长度
-    //    int GetBitLen(JObject parent);
-
-    //    #endregion
-
-
-    //    //解包
-    //    ISegRun Unpack(IFrameReadBuffer buff, JObject parent);
-
-
-    //    //获取所需位长度
-    //    bool GetNeedBitLen(ref int len, out ISegRun next, JObject parent);
-
-    //    #region --For Unpack--
-
-    //    ISegRunValue GetFirstValueSeg();
-
-    //    #endregion
-
-    //    //记录错误信息
-    //    void LogError(Interface.FrameIOErrorType type, string info);
-
-    //}
 
     //运行时字段的基类
 
