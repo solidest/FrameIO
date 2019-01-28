@@ -5,22 +5,22 @@ using FrameIO.Interface;
 using System.Diagnostics;
 using System;
 
-namespace test_crc
+namespace test_crc_sum8_oneof
 {
-    public partial class test_crc
+    public partial class test_crc_sum8_oneof
     {
 
         //属性声明
-        public Parameter<uint?> len { get; private set;}
-        public Parameter<uint?> end { get; private set;}
-        public Parameter<uint?> head { get; private set;}
+        public Parameter<uint?> flag { get; private set;}
+        public frame_one one { get; private set; }
+        public frame_two two { get; private set; }
 
         //属性初始化
         public void InitialParameter()
         {
-            len = new Parameter<uint?>();
-            end = new Parameter<uint?>();
-            head = new Parameter<uint?>();
+            flag = new Parameter<uint?>();
+            one = new frame_one();
+            two = new frame_two();
         }
 
         //通道声明
@@ -44,6 +44,7 @@ namespace test_crc
             if (ops == null) ops = new ChannelOption();
             if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
+            if (!ops.Contains("waittimeout")) ops.SetOption("waittimeout", 10000);
             ops.SetOption("$channeltype", 4);
             CHC = FioNetRunner.GetChannel(ops);
         }
@@ -68,21 +69,24 @@ namespace test_crc
         }
 
         //数据发送
-        public void A_Send()
-        {
-            var __v__ = FioNetRunner.NewFrameObject("frameSR");
-            __v__.SetValue("HEAD", head);
-            __v__.SetValue("LEN", len);
-            FioNetRunner.SendFrame(__v__, CHS);
-        }
+        
 
         //数据接收
         public void A_Recv()
         {
             var __v__ = FioNetRunner.RecvFrame("frameSR", CHC);
-            __v__.GetValue("HEAD", head);
-            __v__.GetValue("LEN", len);
-            __v__.GetValue("END", end);
+            __v__.GetValue("SegFlag", flag);
+            switch((enum_end)__v__.GetValue("SegFlag"))
+            {
+                case enum_end.one:
+                {
+                    break;
+                }
+                case enum_end.two:
+                {
+                    break;
+                }
+            }
         }
 
     }

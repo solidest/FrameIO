@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using FrameIO.Run;
 
-namespace test_crc
+namespace test_crc_sum8
 {
     public class Parameter<T> : INotifyPropertyChanged
     {

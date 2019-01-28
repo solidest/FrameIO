@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using FrameIO.Run;
 
-namespace test_crc
+namespace test_crc_sum8_oneof_inMainProtocol
 {
     public class FioNetObject
     {
