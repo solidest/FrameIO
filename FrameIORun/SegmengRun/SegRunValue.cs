@@ -45,9 +45,17 @@ namespace FrameIO.Run
             if (IsArray)
             {
                 repeated = ArrayLen.GetInt(ctx, this);
-                var mypc = (theValue == null? new JArray() : (JArray)theValue);
-                if (theValue == null) ctx.Add(Name, mypc);
-                pc = mypc;
+
+                if(theValue == null)
+                {
+                    var mypc = new JArray();
+                    ctx.Add(Name, mypc);
+                    pc = mypc;
+                }
+                else
+                {
+                    pc = (JArray)theValue;
+                }              
             }
             else
             {
