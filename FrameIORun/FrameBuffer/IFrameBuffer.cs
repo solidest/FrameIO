@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 
 namespace FrameIO.Run
 {
-
-    interface IFrameWriteBuffer
+    interface IFrameBuffer
     {
-        void Write(ulong rawValue, int bitLen, object token);
-        void Write(byte[] buff, object token);
         int GetBytePos(object token);
 
         byte[] GetBuffer();
     }
 
-    interface IFrameReadBuffer
+    interface IFrameWriteBuffer : IFrameBuffer
+    {
+        void Write(ulong rawValue, int bitLen, object token);
+        void Write(byte[] buff, object token);
+
+    }
+
+    interface IFrameReadBuffer : IFrameBuffer
     {
         bool CanRead { get;  }
 
@@ -24,8 +28,5 @@ namespace FrameIO.Run
 
         byte[] ReadBytes(int byteLen, object token);
 
-        int GetBytePos(object token);
-
-        byte[] GetBuffer();
     }
 }

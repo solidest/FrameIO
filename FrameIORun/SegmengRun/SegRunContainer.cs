@@ -7,7 +7,7 @@ namespace FrameIO.Run
     //运行时字段的容器
     internal abstract class SegRunContainer : SegRunBase
     {
-        private Dictionary<string, ISegRun> _segs;
+        private Dictionary<string, SegRunBase> _segs;
 
         //internal abstract protected JObject ItemsList { get; }
         internal abstract protected SegmentTypeEnum GetItemType(JObject o);
@@ -15,10 +15,10 @@ namespace FrameIO.Run
 
         public SegRunContainer()
         {
-            _segs = new Dictionary<string, ISegRun>();
+            _segs = new Dictionary<string, SegRunBase>();
         }
 
-        public ISegRun this[string segname]
+        public SegRunBase this[string segname]
         {
             get
             {
