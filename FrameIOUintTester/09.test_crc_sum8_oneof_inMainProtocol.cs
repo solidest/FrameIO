@@ -13,6 +13,7 @@ namespace FrameIOUintTester
         [TestMethod]
         public void _CRC_sum8_oneof_one()
         {
+            //send data 01 00 00 00 01 00 00 00 02 00 00 00 03 00 00 00 06 00 00 00
             var tester_c = new test_crc_sum8_oneof_inMainProtocol.test_crc_sum8_oneof_inMainProtocol();
 
             tester_c.InitialParameter();

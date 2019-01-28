@@ -13,6 +13,7 @@ namespace FrameIOUintTester
         [TestMethod]
         public void _CRC_sum8_No_Range()
         {
+            //send Data：01 00 00 00 02 00 00 00 03 00 00 00 05 00 00 00 0B 00 00 00
             //var tester_s = new test_crc_sum8.test_crc_sum8();
             var tester_c = new test_crc_sum8.test_crc_sum8();
 
@@ -36,7 +37,7 @@ namespace FrameIOUintTester
 
             Assert.IsTrue(tester_c.head.Value == 0x02);
             Assert.IsTrue(tester_c.len.Value == 0x03);
-            Assert.IsTrue(tester_c.end.Value == 0x0a);
+            Assert.IsTrue(tester_c.end.Value == 0x0B);
 
         }
 
