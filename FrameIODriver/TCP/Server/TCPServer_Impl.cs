@@ -44,7 +44,7 @@ namespace FrameIO.Driver
         {
             int len = up.FirstBlockSize;
             while (len != 0)
-                len = up.AppendBlock(TCPServer.BeginReceive(len));
+                len = up.AppendBlock(TCPServer.BeginReceive2(len));
 
             return up.Unpack();
         }

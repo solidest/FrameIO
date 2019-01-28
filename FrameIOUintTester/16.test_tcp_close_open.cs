@@ -8,41 +8,27 @@ using System.Threading.Tasks;
 namespace FrameIOUintTester
 {
     [TestClass]
-    public class Test_tcp_close_open
+    public class Test_tcp_client_repeate_connectServer
     {
-        //test_tcp
         [TestMethod]
-        public void TCP_c()
+        public void TCP_Client_Repeate_Close_ByAssistant()
         {
-            var tester = new test_tcp_server_client.test_tcp_server_client();
-            var tester1 = new test_tcp_server_client.test_tcp_server_client();
+            var tester = new test_tcp_client_repeate_connectServer.testtcpclientrepeateconnectServer();
 
             tester.InitialParameter();
-            tester1.InitialParameter();
 
             tester.InitialChannelCHS(null);
-            tester1.InitialChannelCHC(null);
 
             Assert.IsTrue(tester.CHS.Open());
-            Assert.IsTrue(tester1.CHC.Open());
 
-            tester1.CHC.Close();
-            System.Threading.Thread.Sleep(100);
-            tester1.InitialChannelCHC(null);
-            Assert.IsTrue(tester1.CHC.Open());
+            while(true)
+            {
+                System.Threading.Thread.Sleep(100);
 
-            tester.head.Value = 0x55;
-            tester.len.Value = 1;
-            tester.end.Value = 0xaa;
+                tester.A_Recv();
 
-            tester.A_Send();
-
-            tester1.A_Recv();
-
-            Assert.IsTrue(tester1.head.Value == 0x55);
-            Assert.IsTrue(tester1.len.Value == 1);
-            Assert.IsTrue(tester1.end.Value == 0xaa);
-
+                Assert.IsTrue(tester.head.Value==1);
+            }
 
         }
     }

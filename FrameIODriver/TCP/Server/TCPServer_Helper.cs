@@ -77,6 +77,35 @@ namespace FrameIO.Driver
         }
         private static int recvlen = 0;
         private static bool running = true;
+        public Byte[] BeginReceive2(int len)
+        {
+            if (null == client || !client.Connected)
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端未连接!");
+
+            Byte[] data = new byte[len];
+
+            int pos = 0;
+            int irecv = 0;
+
+            while (pos<len)
+            {
+                try
+                {
+                    irecv = client.Receive(data, pos, len - pos, SocketFlags.None);
+                }
+                catch (Exception)
+                {
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", len.ToString());
+                }
+
+                if (irecv == 0)
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端连接已断开!");
+                else
+                    pos += irecv;
+            }
+            return data;
+        }
+
         public Byte[] BeginReceive(int len)
         {
             if (null == client || !client.Connected)
@@ -88,32 +117,46 @@ namespace FrameIO.Driver
             recvlen = 0;
 
             var dicclient = client;
-
-            
+            var errinfo = "";
             try
             {
-                while (recvlen < len)
+                while (recvlen < len && errinfo.Length==0)
                 {
                     running = true;
-                    dicclient.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
-                    asyncResult =>
-                    {
-                        lock (this)
-                        {
-                            recvlen += dicclient.EndReceive(asyncResult);
-                            running = false;
-                        }
-                    }, null);
+                    
+                    //dicclient.BeginReceive(data, recvlen, data.Length - recvlen, SocketFlags.None,
+                    //asyncResult =>
+                    //{
+                    //    lock (this)
+                    //    {
+                    //        //try
+                    //        //{
+                    //        //    recvlen += dicclient.EndReceive(asyncResult);
+                    //        //    running = false;
+                    //        //}
+                    //        //catch (Exception ex)
+                    //        //{
+                    //        //    errinfo = ex.Message;
+                    //        //}
+                    //        recvlen += dicclient.EndReceive(asyncResult);
+                    //        running = false;
+                    //    }
+
+                    //}, null);
 
                     while (running)
                         Thread.Sleep(10);
                 }
-                return data;
+                if(errinfo.Length==0)
+                    return data;
             }
             catch (Exception)
             {
                 throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "接收数据超时!");
             }
+
+            throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", errinfo);
+
         }
         private void SendData(IAsyncResult ar)
         {
