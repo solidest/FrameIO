@@ -230,12 +230,13 @@ namespace FrameIO.Main
         protected abstract IList<string> GetSendCode(JProperty seg, SubsysProperty pro);
         protected abstract IList<string> GetRecvCode(JProperty seg, SubsysProperty pro);
         protected abstract string GetRecvSwitchKey(string segFullName);
-        internal abstract string GetBysegValueCode(JProperty node, string bySegName);
+        internal abstract string GetSendBysegValueCode(JProperty node, string bySegName);
 
         //for current work
         private Stack<WhyCode> _workStack;
         private List<string> _workParas;
         private List<JProperty> _noMapSegs;
+        private int _workParaIndex;
 
         private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
@@ -257,6 +258,7 @@ namespace FrameIO.Main
             _workParas = new List<string>();
             _workStack = new Stack<WhyCode>();
             _noMapSegs = new List<JProperty>();
+            _workParaIndex = -1;
 
             var codes = new List<string>();
 
@@ -264,21 +266,24 @@ namespace FrameIO.Main
             var frm = FindFrame(ac.FrameName);
 
             //先生成函数体，并收集参数
-
             codes.AddRange(GetUserScript(ac.BeginCodes));
             AppendActionCodeList(codes,  _jframes.GetChildren(jfrm, true), ac, pros);
             codes.AddRange(GetUserScript(ac.EndCodes));
             Debug.Assert(_workStack.Count == 0);
 
             //对oneof的byseg赋值
-            foreach (var item in _noMapSegs)
+            if(ac.IOType == actioniotype.AIO_SEND)
             {
-                var bySegName = _jframes.GetSegFullName((JObject)item.Value, true);
-                if (_workParas.Contains(bySegName))
+                foreach (var item in _noMapSegs)
                 {
-                    codes.Insert(0,FormatPreTabs(GetBysegValueCode(item, bySegName)));
+                    var bySegName = _jframes.GetSegFullName((JObject)item.Value, true);
+                    if (_workParas.Contains(bySegName))
+                    {
+                        codes.Insert(0,FormatPreTabs(GetSendBysegValueCode(item, bySegName)));
+                    }
                 }
             }
+
 
             //后生成完整函数
             var dec =  (ac.IOType == actioniotype.AIO_SEND) ? GetSendFunDeclear(_workParas, ac) : GetRecvFunDeclear(_workParas, ac);
@@ -289,6 +294,7 @@ namespace FrameIO.Main
             _workStack = null;
             _workParas = null;
             _noMapSegs = null;
+            _workParaIndex = -1;
             return codes;
 
         }
@@ -308,39 +314,6 @@ namespace FrameIO.Main
                 _noMapSegs.Add(node);
             }
         }
-
-        //分解子系统到值字段上
-        //private IEnumerable<SubsysProperty> GetSubPropertyList(string proname, IEnumerable<SubsysProperty> pros)
-        //{
-        //    var ret = new List<SubsysProperty>();
-            
-        //    //查找子系统属性
-        //    if(proname.Contains("."))
-        //    {
-        //        var nms = proname.Split('.');
-        //        var mpro = pros.Where(p => p.Name == nms[0]).First();
-        //        var inner = _pj.InnerSubsysList.Where(p => p.Name == mpro.PropertyType).First();
-        //        var pro = inner.Propertys.Where(p => p.Name == nms[1]).First();
-        //        var npro = new SubsysProperty(proname, pro);
-        //        ret.Add(npro);
-        //    }
-        //    else
-        //    {
-        //        var mpro = pros.Where(p => p.Name == proname).First();
-        //        if (mpro.IsInnerSubsys(_pj))
-        //        {
-        //            var inner = _pj.InnerSubsysList.Where(p => p.Name == mpro.PropertyType).First();
-        //            foreach(var pp in inner.Propertys)
-        //            {
-        //                ret.AddRange(GetSubPropertyList(proname + "." + pp.Name, pros));
-        //            }
-        //        }
-        //        else
-        //            ret.Add(mpro);
-        //    }
-
-        //    return ret;
-        //}
 
 
         //查找匹配的映射
@@ -407,6 +380,7 @@ namespace FrameIO.Main
                     {
                         var para = _jframes.GetSegFullName(bySeg.Value.Value<JObject>(), true);
                         _workParas.Add(para);
+                        _workParaIndex++;
                         var key = ac.IOType == actioniotype.AIO_SEND ? para.Replace('.', '_') : GetRecvSwitchKey(para); //HACK read enum
                         codes.Add(FormatPreTabs(string.Format("switch({0})", key)));
                         codes.Add(FormatPreTabs("{"));
@@ -415,7 +389,7 @@ namespace FrameIO.Main
                     break;
                 case WhyCode.Case:
                     {
-                        var byseg = _workParas.Last();
+                        var byseg = _workParas[_workParaIndex];
                         string co = _jframes.GetToEnum(byseg);
                         if (intoCase == "other")
                             co = "default:";
@@ -442,6 +416,7 @@ namespace FrameIO.Main
                     break;
                 case WhyCode.Switch:
                     _workStack.Pop();
+                    _workParaIndex--;
                     codes.Add(FormatPreTabs("}"));
                     break;
                 case WhyCode.Case:

@@ -292,6 +292,24 @@
     <Compile Include="..\..\FrameIOTest\test_multi_cs\System_A.cs">
       <Link>MultiTest\System_A.cs</Link>
     </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\FioNetObject.cs">
+      <Link>FrameCreateOneofCode\FioNetObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\FioNetRunner.cs">
+      <Link>FrameCreateOneofCode\FioNetRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\GRADE.cs">
+      <Link>FrameCreateOneofCode\GRADE.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\oneofGrade.cs">
+      <Link>FrameCreateOneofCode\oneofGrade.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\Parameter.cs">
+      <Link>FrameCreateOneofCode\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\FrameIOTest\test_oneof_natification_cs\testoneofnatification.cs">
+      <Link>FrameCreateOneofCode\testoneofnatification.cs</Link>
+    </Compile>
     <Compile Include="UnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
