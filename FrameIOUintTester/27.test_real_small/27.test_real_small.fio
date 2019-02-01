@@ -1,0 +1,32 @@
+//项目:1.test_calc
+project test_real_small {
+	//受控对象
+	system testrealsmall {
+		byte head;
+		byte len;
+		double end;
+
+		channel CH_COM4 : com {
+			baudrate = 9600;
+			portname = "COM4";
+			parity = 0;
+			databits = 8;
+			stopbits = 1;
+			waittimeout=10000;
+		}
+
+		action A_Recv : recv frameSR on CH_COM4 {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD bitcount=8;
+		integer LEN bitcount=8;
+		real END  byteorder=small;
+	}
+
+}
