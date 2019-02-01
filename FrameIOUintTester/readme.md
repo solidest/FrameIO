@@ -14,10 +14,17 @@
 - double收发
 - float收发
 - 整数字段最大、最小值检查
+>测试用例：20.test_integer_max_min
 - 浮点字段最大、最小值检查
+>测试用例：21.test_real_max_min
 - 整数字段大端序、小端序测试
+>测试用例：22.test_integer_big
+>测试用例：23.test_integer_small
 - 整数字段源码、反码、补码测试
+>测试用例：24.test_integer_primitive
+>测试用例：25.test_integer_inversion
 - 浮点字段大端序、小端序测试
+>测试用例：26.test_real_big
 - 浮点字段源码、反码、补码测试
 - check属性设置检查
 - check属性和checkrange属性设置检查
