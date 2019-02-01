@@ -29,7 +29,7 @@ namespace FrameIOUintTester
             tester_s.head.Value = 0x0102;
             tester_s.len.Value = 0x0302;
             tester_s.A.Value = 0x0101;
-            tester_s.B.Value = 0x0202;
+            tester_s.B.Value = 0x0102;
 
 
             tester_s.A_Send();
@@ -38,7 +38,7 @@ namespace FrameIOUintTester
 
             Assert.IsTrue(tester_c.head.Value == 0x0102);
             Assert.IsTrue(tester_c.len.Value == 0x0302);
-            Assert.IsTrue(tester_c.end.Value == 0x0707);
+            Assert.IsTrue(tester_c.end.Value == 0x0607);
 
         }
 

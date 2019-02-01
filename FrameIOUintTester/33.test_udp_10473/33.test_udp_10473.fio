@@ -1,0 +1,30 @@
+//项目:1.test_tcp
+project test_udp_10473 {
+	//受控对象
+	system testtcp10473 {
+		short head;
+		byte[10470] len;
+		byte end;
+
+		channel CH_UDP : udp {
+			localip = "192.168.0.151";
+			localport = 8007;
+			remoteip = "192.168.0.151";
+			remoteport = 8008;
+		}
+
+		action A_Recv : recv frameSR on CH_UDP {
+			HEAD : head;
+			LEN : len;
+			END : end;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD bitcount=16 match=0x0102;
+		integer LEN  bitcount=8 repeated=10470;
+		integer END bitcount=8;
+	}
+
+}

@@ -1,0 +1,85 @@
+//项目:2.test_udp
+project test_oneof_natification {
+	//受控对象
+	system testoneofnatification {
+		int head;
+		int len;
+		int end;
+
+		channel CH_UDP_SEND : udp {
+			localip = "127.0.0.1";
+			localport = 8007;
+			remoteip = "127.0.0.1";
+			remoteport = 8008;
+		}
+		channel CH_UDP_RECV : udp {
+			localip = "127.0.0.1";
+			localport = 8008;
+			remoteip = "127.0.0.1";
+			remoteport = 8007;
+		}
+
+		action A_Send : send frameSR on CH_UDP_SEND {
+			HEAD : head;
+			END : end;
+			grade.G2.OneofGradeMenu.A2.THREE : len;
+			grade.G2.OneofGradeMenu.A1.SCORE : len;
+			grade.G2.WEHEAD : len;
+			grade.G2.F2branch : len;
+		}
+		action A_Recv : send frameSR on CH_UDP_RECV {
+			HEAD : head;
+			END : end;
+			grade.G2.OneofGradeMenu.A2.THREE : len;
+			grade.G2.OneofGradeMenu.A1.SCORE : len;
+			grade.G2.WEHEAD : len;
+			grade.G2.F2branch : len;
+		}
+	}
+
+	//数据帧
+	frame frameSR {
+		integer HEAD;
+		integer END;
+		integer OneofGradeMenu;
+		integer GRADEmenu toenum=GRADE;
+		block grade type=oneof(GRADEmenu){
+			 G1 : F1,
+			 G2 : F2,
+			 G3 : F3
+		};
+	}
+
+	frame F1 {
+		integer ER;
+	}
+
+	frame F2 {
+		integer WEHEAD;
+		integer F2branch toenum=oneofGrade;
+		block OneofGradeMenu type=oneof(F2branch){
+			 A1 : F6,
+			 A2 : F3
+		};
+	}
+
+	frame F3 {
+		integer THREE;
+	}
+
+	frame F6 {
+		integer SCORE;
+	}
+
+	enum GRADE {
+		G1 = 1,
+		G2 = 2,
+		G3 = 3
+	}
+
+	enum oneofGrade {
+		A1 = 1,
+		A2 = 2
+	}
+
+}
