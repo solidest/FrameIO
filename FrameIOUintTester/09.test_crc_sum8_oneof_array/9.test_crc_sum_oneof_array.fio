@@ -1,0 +1,55 @@
+//项目:1.test_calc
+project test_crc_sum8_oneof_array  {
+	//受控对象
+	system test_crc_sum8_oneof_array {
+		uint flag;
+		frame_one one;
+		frame_two two;
+
+		channel CHS : tcpserver {
+			serverip = "192.168.0.151";
+			port = 8007;
+			clientip = "192.168.0.151";
+		}
+		channel CHC : tcpclient {
+			serverip = "192.168.0.151";
+			port = 8007;
+			waittimeout=10000;
+		}
+
+		action A_Recv : recv frameSR on CHC {
+			SegFlag : flag;
+			DAT.one : one;
+			DAT.two : two;
+		}
+	}
+	[subsys:frame_one]
+	frame frame_one
+	{
+		integer SegA;
+		integer HEAD repeated=2;
+		integer LEN repeated=3;
+		integer SegOne check=sum8 ;
+	}
+	[subsys:frame_two]
+	frame frame_two
+	{
+		integer SegA;
+		integer HEAD repeated=2; 
+		integer LEN repeated=3;
+		integer SegTwo check=sum8 checkrange=(HEAD,LEN);
+	}
+	//数据帧
+	frame frameSR {
+		integer SegFlag toenum=enum_end;
+		block DAT type=oneof(SegFlag){
+			one:frame_one,
+			two:frame_two
+		};
+	}
+	enum enum_end
+	{
+		one=0x01,
+		two=0x02
+	}
+}

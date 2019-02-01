@@ -303,6 +303,8 @@
     <None Include="09.test_crc_sum16_false\9.test_crc_sum16_false.fio" />
     <None Include="09.test_crc_sum8\9.test_crc_sum8.fio" />
     <None Include="09.test_crc_sum8_oneof\9.test_crc_sum8_oneof.fio" />
+    <None Include="09.test_crc_sum8_oneof_array\9.test_crc_sum_oneof_array.fio" />
+    <None Include="09.test_crc_sum8_oneof_inMainProtocol\9.test_crc_sum8_check_inMainProtocol.fio" />
     <None Include="09.test_crc_sum8_range\9.test_crc_sum8_range.fio" />
     <None Include="10.test_subsys\10.test_subsys.fio" />
     <None Include="10.test_subsys_Array\10.test_subsys_Array.fio" />
@@ -322,6 +324,10 @@
     <None Include="23.test_integer_small\23.test_integer_small.fio" />
     <None Include="24.test_integer_primitive\24.test_integer_primitive.fio" />
     <None Include="25.test_integer_inversion\25.test_integer_inversion.fio" />
+    <None Include="30.test_tcp_client_repeate_connectServer\30.test_tcp_Client_Repeate_ConnectServer.fio" />
+    <None Include="31.test_tcp_match\31.test_tcp_match.fio" />
+    <None Include="32.test_tcp_10893\32.test_tcp_1000.fio" />
+    <None Include="33.test_udp_10473\33.test_udp_10473.fio" />
     <None Include="packages.config" />
     <None Include="readme.md" />
   </ItemGroup>
@@ -345,6 +351,10 @@
   <ItemGroup>
     <Folder Include="Test_PowerSupplyManager\" />
     <Folder Include="Test_tcpserver\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="19.Project\对方发送包.txt" />
+    <Content Include="19.Project_com\对方发送包.txt" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
