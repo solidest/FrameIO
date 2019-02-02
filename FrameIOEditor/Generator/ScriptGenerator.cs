@@ -236,7 +236,7 @@ namespace FrameIO.Main
         private Stack<WhyCode> _workStack;
         private List<string> _workParas;
         private List<JProperty> _noMapSegs;
-        private int _workParaIndex;
+        private Stack<string> _workParaStack;
 
         private string GetActions(IEnumerable<SubsysAction> acs, IEnumerable<SubsysProperty> pros, int tabCount)
         {
@@ -258,7 +258,7 @@ namespace FrameIO.Main
             _workParas = new List<string>();
             _workStack = new Stack<WhyCode>();
             _noMapSegs = new List<JProperty>();
-            _workParaIndex = -1;
+            _workParaStack = new Stack<string>();
 
             var codes = new List<string>();
 
@@ -294,7 +294,7 @@ namespace FrameIO.Main
             _workStack = null;
             _workParas = null;
             _noMapSegs = null;
-            _workParaIndex = -1;
+            _workParaStack = null;
             return codes;
 
         }
@@ -380,7 +380,7 @@ namespace FrameIO.Main
                     {
                         var para = _jframes.GetSegFullName(bySeg.Value.Value<JObject>(), true);
                         _workParas.Add(para);
-                        _workParaIndex++;
+                        _workParaStack.Push(para);
                         var key = ac.IOType == actioniotype.AIO_SEND ? para.Replace('.', '_') : GetRecvSwitchKey(para); //HACK read enum
                         codes.Add(FormatPreTabs(string.Format("switch({0})", key)));
                         codes.Add(FormatPreTabs("{"));
@@ -389,7 +389,7 @@ namespace FrameIO.Main
                     break;
                 case WhyCode.Case:
                     {
-                        var byseg = _workParas[_workParaIndex];
+                        var byseg = _workParaStack.Peek();
                         string co = _jframes.GetToEnum(byseg);
                         if (intoCase == "other")
                             co = "default:";
@@ -416,7 +416,7 @@ namespace FrameIO.Main
                     break;
                 case WhyCode.Switch:
                     _workStack.Pop();
-                    _workParaIndex--;
+                    _workParaStack.Pop();
                     codes.Add(FormatPreTabs("}"));
                     break;
                 case WhyCode.Case:
