@@ -48,8 +48,9 @@ namespace FrameIOUintTester
 
             Assert.IsFalse(tester.CHC.Open());
 
-            tester.InitialChannelCHC(null);
+            //tester.InitialChannelCHC(null);
             Assert.IsTrue(tester.CHC.Open());
+            Assert.IsTrue(true);
 
         }
         /// <summary>
@@ -64,12 +65,14 @@ namespace FrameIOUintTester
             tester.InitialChannelCHC(null);
             Assert.IsTrue(tester.CHC.Open());
 
+
             //TODO:此时断开服务器
-            tester.InitialChannelCHC(null);
+            //var isOpen = tester.CHC.IsOpen;
+            //Assert.IsFalse(tester.CHC.IsOpen);
             Assert.IsFalse(tester.CHC.Open());
 
             //TODO:此时再次启动服务器
-            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.IsOpen);
             Assert.IsTrue(tester.CHC.Open());
 
             Assert.IsTrue(true);

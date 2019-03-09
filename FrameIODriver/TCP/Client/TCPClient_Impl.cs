@@ -28,6 +28,10 @@ namespace FrameIO.Driver
         {
             TCPClient.CloseClient();
         }
+        public bool IsOpen()
+        {
+            return DeviceIsOpen;
+        }
 
         public void ClearChannel()
         {
@@ -91,7 +95,10 @@ namespace FrameIO.Driver
                 }
 
                 if (irecv == 0)
+                {
+                    DeviceIsOpen = false;
                     throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端连接已断开!");
+                }
                 else
                     pos += irecv;
             }
@@ -153,10 +160,6 @@ namespace FrameIO.Driver
             BeginWriteFrameList(p, len, callback, AsyncState);
         }
 
-        public bool IsOpen()
-        {
-            return DeviceIsOpen;
-        }
 
 
 
