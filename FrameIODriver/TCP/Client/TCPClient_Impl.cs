@@ -89,15 +89,15 @@ namespace FrameIO.Driver
                 {
                     irecv = netStream.Read(buff, start, dataleft);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", len.ToString());
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP客户端", "接收超时");
                 }
 
                 if (irecv == 0)
                 {
                     DeviceIsOpen = false;
-                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端连接已断开!");
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP客户端", "客户端连接已断开!");
                 }
                 else
                     pos += irecv;

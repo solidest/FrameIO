@@ -47,8 +47,8 @@ namespace FrameIOUintTester
             tester.InitialChannelCHC(null);
 
             Assert.IsFalse(tester.CHC.Open());
-
-            //tester.InitialChannelCHC(null);
+            //TODO:此时断开服务器
+            tester.InitialChannelCHC(null);
             Assert.IsTrue(tester.CHC.Open());
             Assert.IsTrue(true);
 
@@ -67,12 +67,34 @@ namespace FrameIOUintTester
 
 
             //TODO:此时断开服务器
-            //var isOpen = tester.CHC.IsOpen;
-            //Assert.IsFalse(tester.CHC.IsOpen);
+            tester.InitialChannelCHC(null);
             Assert.IsFalse(tester.CHC.Open());
 
             //TODO:此时再次启动服务器
-            Assert.IsTrue(tester.CHC.IsOpen);
+            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.Open());
+
+            Assert.IsTrue(true);
+        }
+        /// <summary>
+        /// TCP  客户端断开重连
+        /// </summary>
+        [TestMethod]
+        public void Test_TCP_Client_onReceiveShutdownServer()
+        {
+            var tester = new test_tcp.test_tcp();
+            tester.InitialParameter();
+
+            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.Open());
+
+            tester.A_Recv();
+            //TODO:此时断开服务器
+            tester.InitialChannelCHC(null);
+            Assert.IsFalse(tester.CHC.Open());
+
+            //TODO:此时再次启动服务器
+            tester.InitialChannelCHC(null);
             Assert.IsTrue(tester.CHC.Open());
 
             Assert.IsTrue(true);
