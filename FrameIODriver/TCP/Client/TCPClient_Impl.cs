@@ -41,7 +41,7 @@ namespace FrameIO.Driver
         {
             int len = up.FirstBlockSize;
             while (len != 0)
-                len = up.AppendBlock(ReadBlock(len));
+                len = up.AppendBlock(ReadBlock2(len));
 
             return up.Unpack();
         }
@@ -51,6 +51,7 @@ namespace FrameIO.Driver
             int dataleft = len;
             int start = 0;
             NetworkStream netStream = new NetworkStream(TCPClient.client);
+            
             try
             {
                 while (dataleft > 0)
@@ -67,7 +68,34 @@ namespace FrameIO.Driver
                 Console.WriteLine(ex.ToString());
                 throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP客户端", "接收数据超时!");
             }
+        }
+        private Byte[] ReadBlock2(int len)
+        {
+            byte[] buff = new byte[len];
+            int dataleft = len;
+            int start = 0;
+            NetworkStream netStream = new NetworkStream(TCPClient.client);
 
+            int pos = 0;
+            int irecv = 0;
+
+            while (pos < len)
+            {
+                try
+                {
+                    irecv = netStream.Read(buff, start, dataleft);
+                }
+                catch (Exception)
+                {
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", len.ToString());
+                }
+
+                if (irecv == 0)
+                    throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP服务器端", "客户端连接已断开!");
+                else
+                    pos += irecv;
+            }
+            return buff;
         }
         public ISegmentGettor[] ReadFrameList(IFrameUnpack up, int framecount)
         {

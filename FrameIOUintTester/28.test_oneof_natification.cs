@@ -15,17 +15,17 @@ namespace FrameIOUintTester
         public void TestRealSmall()
         {
             //输入数据：01 02 C2 F5 48 41 ( C2 F5 48 41==12.56)
-            var tester = new test_oneof_natification.testoneofnatification();
-            var tester1 = new test_oneof_natification.testoneofnatification();
+            //var tester = new test_oneof_natification.testoneofnatification();
+            //var tester1 = new test_oneof_natification.testoneofnatification();
 
-            tester.InitialParameter();
-            tester1.InitialParameter();
+            //tester.InitialParameter();
+            //tester1.InitialParameter();
 
-            tester.InitialChannelCH_UDP_SEND(null);
-            tester1.InitialChannelCH_UDP_RECV(null);
+            //tester.InitialChannelCH_UDP_SEND(null);
+            //tester1.InitialChannelCH_UDP_RECV(null);
 
-            Assert.IsTrue(tester.CH_UDP_SEND.Open());
-            Assert.IsTrue(tester1.CH_UDP_RECV.Open());
+            //Assert.IsTrue(tester.CH_UDP_SEND.Open());
+            //Assert.IsTrue(tester1.CH_UDP_RECV.Open());
 
             //tester1.A_Recv();
 

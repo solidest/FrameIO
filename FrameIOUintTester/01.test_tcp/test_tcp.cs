@@ -31,9 +31,9 @@ namespace test_tcp
         public void InitialChannelCHS(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.164");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
-            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.151");
+            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.164");
             ops.SetOption("$channeltype", 3);
             CHS = FioNetRunner.GetChannel(ops);
         }
@@ -42,7 +42,7 @@ namespace test_tcp
         public void InitialChannelCHC(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.151");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.164");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
             ops.SetOption("$channeltype", 4);
             CHC = FioNetRunner.GetChannel(ops);
@@ -74,13 +74,13 @@ namespace test_tcp
             __v__.SetValue("HEAD", head);
             __v__.SetValue("LEN", len);
             __v__.SetValue("END", end);
-            FioNetRunner.SendFrame(__v__, CHC);
+            FioNetRunner.SendFrame(__v__, CHS);
         }
 
         //数据接收
         public void A_Recv()
         {
-            var __v__ = FioNetRunner.RecvFrame("frameSR", CHS);
+            var __v__ = FioNetRunner.RecvFrame("frameSR", CHC);
             __v__.GetValue("HEAD", head);
             __v__.GetValue("LEN", len);
             __v__.GetValue("END", end);

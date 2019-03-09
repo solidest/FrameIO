@@ -36,5 +36,43 @@ namespace FrameIOUintTester
 
 
         }
+        /// <summary>
+        /// TCP 先启动客户端，后启动服务器
+        /// </summary>
+        [TestMethod]
+        public void Test_TCP_Client_StartClientBeforeServer()
+        {
+            var tester = new test_tcp.test_tcp();
+            tester.InitialParameter();
+            tester.InitialChannelCHC(null);
+
+            Assert.IsFalse(tester.CHC.Open());
+
+            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.Open());
+
+        }
+        /// <summary>
+        /// TCP  客户端断开重连
+        /// </summary>
+        [TestMethod]
+        public void Test_TCP_Client_repeatConnectAfterDown()
+        {
+            var tester = new test_tcp.test_tcp();
+            tester.InitialParameter();
+
+            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.Open());
+
+            //TODO:此时断开服务器
+            tester.InitialChannelCHC(null);
+            Assert.IsFalse(tester.CHC.Open());
+
+            //TODO:此时再次启动服务器
+            tester.InitialChannelCHC(null);
+            Assert.IsTrue(tester.CHC.Open());
+
+            Assert.IsTrue(true);
+        }
     }
 }

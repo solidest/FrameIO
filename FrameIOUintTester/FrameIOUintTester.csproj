@@ -102,12 +102,6 @@
     <Compile Include="27.test_real_small\FioNetRunner.cs" />
     <Compile Include="27.test_real_small\Parameter.cs" />
     <Compile Include="27.test_real_small\testrealsmall.cs" />
-    <Compile Include="28.test_oneof_natification\FioNetObject.cs" />
-    <Compile Include="28.test_oneof_natification\FioNetRunner.cs" />
-    <Compile Include="28.test_oneof_natification\GRADE.cs" />
-    <Compile Include="28.test_oneof_natification\oneofGrade.cs" />
-    <Compile Include="28.test_oneof_natification\Parameter.cs" />
-    <Compile Include="28.test_oneof_natification\testoneofnatification.cs" />
     <Compile Include="33.test_udp_10473.cs" />
     <Compile Include="32.test_tcp_10893.cs" />
     <Compile Include="31.test_tcp_match.cs" />
