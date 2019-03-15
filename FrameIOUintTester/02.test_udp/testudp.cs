@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using FrameIO.Run;
 using FrameIO.Interface;
 using System.Diagnostics;
-using System.Linq;
 using System;
 
 namespace test_udp
@@ -27,14 +26,14 @@ namespace test_udp
         //通道声明
         public FioChannel CH_UDP_SEND;
         public FioChannel CH_UDP_RECV;
-
+        
         //通道初始化
         public void InitialChannelCH_UDP_SEND(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.151");
+            if (!ops.Contains("localip")) ops.SetOption("localip", "127.0.0.1");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8007);
-            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.151");
+            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "127.0.0.1");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8008);
             ops.SetOption("$channeltype", 5);
             CH_UDP_SEND = FioNetRunner.GetChannel(ops);
@@ -44,9 +43,9 @@ namespace test_udp
         public void InitialChannelCH_UDP_RECV(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("localip")) ops.SetOption("localip", "192.168.0.151");
+            if (!ops.Contains("localip")) ops.SetOption("localip", "127.0.0.1");
             if (!ops.Contains("localport")) ops.SetOption("localport", 8008);
-            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "192.168.0.151");
+            if (!ops.Contains("remoteip")) ops.SetOption("remoteip", "127.0.0.1");
             if (!ops.Contains("remoteport")) ops.SetOption("remoteport", 8007);
             ops.SetOption("$channeltype", 5);
             CH_UDP_RECV = FioNetRunner.GetChannel(ops);
@@ -80,19 +79,15 @@ namespace test_udp
             __v__.SetValue("END", end);
             FioNetRunner.SendFrame(__v__, CH_UDP_SEND);
         }
-        
-
-        public void A_Recv()
-        {
-            var __v__ = FioNetRunner.NewFrameObject("frameSR");
-            __v__.SetValue("HEAD", head);
-            __v__.SetValue("LEN", len);
-            __v__.SetValue("END", end);
-            FioNetRunner.SendFrame(__v__, CH_UDP_RECV);
-        }
 
         //数据接收
-        
+        public void A_Recv()
+        {
+            var __v__ = FioNetRunner.RecvFrame("frameSR", CH_UDP_RECV);
+            __v__.GetValue("HEAD", head);
+            __v__.GetValue("LEN", len);
+            __v__.GetValue("END", end);
+        }
 
     }
 }

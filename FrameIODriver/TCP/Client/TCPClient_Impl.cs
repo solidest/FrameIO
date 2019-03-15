@@ -75,6 +75,12 @@ namespace FrameIO.Driver
         }
         private Byte[] ReadBlock2(int len)
         {
+            if (null == TCPClient.client || !TCPClient.client.Connected)
+            {
+                DeviceIsOpen = false;
+                throw new FrameIO.Interface.FrameIOException(FrameIOErrorType.RecvErr, "TCP客户端", "客户端连接已断开!!");
+            }
+                
             byte[] buff = new byte[len];
             int dataleft = len;
             int start = 0;

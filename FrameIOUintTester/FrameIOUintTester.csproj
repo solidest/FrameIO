@@ -53,6 +53,10 @@
     <Compile Include="01.test_tcp\FioNetRunner.cs" />
     <Compile Include="01.test_tcp\Parameter.cs" />
     <Compile Include="01.test_tcp\test_tcp.cs" />
+    <Compile Include="02.test_udp\FioNetObject.cs" />
+    <Compile Include="02.test_udp\FioNetRunner.cs" />
+    <Compile Include="02.test_udp\Parameter.cs" />
+    <Compile Include="02.test_udp\testudp.cs" />
     <Compile Include="09.test_crc_sum16_false\FioNetObject.cs" />
     <Compile Include="09.test_crc_sum16_false\FioNetRunner.cs" />
     <Compile Include="09.test_crc_sum16_false\Parameter.cs" />
@@ -162,10 +166,6 @@
     <Compile Include="01.test_tcp_receivetimeout\FioNetRunner.cs" />
     <Compile Include="01.test_tcp_receivetimeout\Parameter.cs" />
     <Compile Include="01.test_tcp_receivetimeout\test_tcp_receivetimeout.cs" />
-    <Compile Include="02.test_udp\FioNetObject.cs" />
-    <Compile Include="02.test_udp\FioNetRunner.cs" />
-    <Compile Include="02.test_udp\Parameter.cs" />
-    <Compile Include="02.test_udp\testudp.cs" />
     <Compile Include="05.test_array\FioNetObject.cs" />
     <Compile Include="05.test_array\FioNetRunner.cs" />
     <Compile Include="05.test_array\Parameter.cs" />

@@ -31,9 +31,9 @@ namespace test_tcp
         public void InitialChannelCHS(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.164");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "127.0.0.1");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
-            if (!ops.Contains("clientip")) ops.SetOption("clientip", "192.168.0.164");
+            if (!ops.Contains("clientip")) ops.SetOption("clientip", "127.0.0.1");
             ops.SetOption("$channeltype", 3);
             CHS = FioNetRunner.GetChannel(ops);
         }
@@ -42,7 +42,7 @@ namespace test_tcp
         public void InitialChannelCHC(ChannelOption ops)
         {
             if (ops == null) ops = new ChannelOption();
-            if (!ops.Contains("serverip")) ops.SetOption("serverip", "192.168.0.164");
+            if (!ops.Contains("serverip")) ops.SetOption("serverip", "127.0.0.1");
             if (!ops.Contains("port")) ops.SetOption("port", 8007);
             ops.SetOption("$channeltype", 4);
             CHC = FioNetRunner.GetChannel(ops);

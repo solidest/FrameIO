@@ -17,17 +17,17 @@ namespace FrameIOUintTester
             var tester = new test_udp.testudp();
             tester.InitialParameter();
 
-            tester.InitialChannelCH_UDP_SEND(null);
+            //tester.InitialChannelCH_UDP_SEND(null);
             tester.InitialChannelCH_UDP_RECV(null);
 
-            Assert.IsTrue(tester.CH_UDP_SEND.Open());
+            //Assert.IsTrue(tester.CH_UDP_SEND.Open());
             Assert.IsTrue(tester.CH_UDP_RECV.Open());
 
-            tester.head.Value = 0x55;
-            tester.len.Value = 1;
-            tester.end.Value = 0xaa;
+            //tester.head.Value = 0x55;
+            //tester.len.Value = 1;
+            //tester.end.Value = 0xaa;
 
-            tester.A_Send();
+            //tester.A_Send();
 
             tester.A_Recv();
 
